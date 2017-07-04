@@ -1,0 +1,56 @@
+<apex:page controller="VFC_QueueMemberAssignController" title="Queue Members">
+
+    <apex:form id="mainForm">
+
+
+      <apex:outputText value="You are not allowed to access this Page" rendered="{!NOT(isMemberOfRole)}"></apex:outputText>
+
+<div style="overflow: scroll; width: 800px; height: 650px;"> 
+        <apex:pageBlock id="mainPageBlock" title="Queue Members" rendered="{!isMemberOfRole}">
+
+            <apex:pageMessages />           
+            
+            <apex:pageBlockSection columns="3">
+                <apex:pageBlockSectionItem >
+                    <b>Queue:</b>
+                    <apex:selectList value="{!selectedGroupId}" size="1">
+                        <apex:selectOptions value="{!groupOptions}"/>
+                        <apex:actionSupport event="onchange" action="{!refresh}" reRender="mainForm"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!(selectedGroupId != null)}">
+                    <b>User:</b>
+                    <apex:inputField value="{!memberToAdd.userOrGroupId}" required="false"/>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!(selectedGroupId != null)}">
+                    <apex:commandButton action="{!addUserToGroup}" value="Add User"/>
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockTable value="{!groupUsers}" var="user" rendered="{!(selectedGroupId != null)}">
+                <apex:column headerValue="Action">
+                    <apex:commandLink action="{!removeUserFromGroup}"  value="Remove" onclick="return confirm('Are you sure?');">                    
+                        <apex:param name="bugfix" assignTo="{!userIdToRemove}" value="{!user.id}"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Name">
+                    <apex:outputLink value="/{!user.id}">
+                        <apex:outputText value="{0} {1}">
+                            <apex:param value="{!user.firstName}"/>
+                            <apex:param value="{!user.lastName}"/>
+                        </apex:outputText>
+                    </apex:outputLink>
+                </apex:column>
+                <apex:column value="{!user.email}"/>
+                <apex:column value="{!user.username}"/>
+                <apex:column value="{!user.isActive}"/>
+            </apex:pageBlockTable>
+
+        </apex:pageBlock>
+  </div>
+    </apex:form>
+
+</apex:page>

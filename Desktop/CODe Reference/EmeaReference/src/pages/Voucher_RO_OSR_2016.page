@@ -1,0 +1,206 @@
+<apex:page sidebar="false" applyHtmlTag="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="ro" standardcontroller="Voucher__c" extensions="Voucher_RO_OSR_2016_Controller" applyBodyTag="false">
+    <html lang="ro">
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <style>
+            @page {
+              size: A4 portrait;
+              margin: 0px;
+              padding: 0in;
+              border: 0px;}
+              
+              .table-line {
+                position: absolute;
+                left:0;
+                right: 46%;
+                width:200;
+                height:2px;
+                background:#0B5375;
+                margin-bottom: 5px;
+                margin-top:2px;
+              }
+              .line-1, .line-2 {
+                padding-bottom: 10px;
+              }
+              .line-2{
+                padding-top: 10px;
+              }
+              .dashed-lines {
+                border-bottom:1px dashed #000; 
+                width: 40px;
+                display: block;
+                margin: 0 auto;
+              }
+              .VLIs td{
+                vertical-align:middle;
+              }
+        </style>
+    </head>
+    <body style="margin:0; padding:0; border:0; font-weight:normal; font-style:normal; font-size:100%; font-size:13px; vertical-align:baseline; text-decoration:none; line-height:1; font-family:Arial Unicode MS, sans-serif">
+
+    <div id="page1">
+    <table cellspacing="0" style="width:100%; border-collapse:collapse; border-spacing:0; border:0; outline:0; position:relative; top:0; left:0; right:0; bottom:0; height:297mm; vertical-align:top">
+        <tr>
+            <td rowspan="2" style="width:54%; background:#0E6E9B"><apex:image url="{!$Resource.RO_OSR_Voucher2016_Left_Top_2}" width="100%" style="display:block; margin:0; padding:0px 1px; outline:0; border:0;" /></td>
+            <td style="width:54%; background:#0B5375; color:#FFF; padding:40px 40px 8px 25px;">
+                <span style="display:block; text-align:right; margin-bottom:0px"><apex:image url="{!$Resource.DEKALB_COLOR_OLD}" width="92px" style="filter:gray;"/></span>
+                <h2 style="font-size:1.15em; line-height:1.25em;"><b style="font-size:1.1em; font-family:sans-serif; font-weight:bold;">VOUCHER</b> pentru precomanda hibrizilor de<br></br>rapiţă DEKALB<sup>®</sup> în sezonul 2016.</h2>
+            </td>
+        </tr>
+        <tr>
+            <td style="background:#FFF; color:#000; padding:5px 40px 10px 25px;">
+                <h4 style="font-weight:bold; font-family:sans-serif; margin:4px 0 0;">Nume societate agricol<b style="font-family:Arial Unicode MS">ă</b> / Fermier:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:4px 0; margin:0">{!voucher.FarmNameCopy__c} &nbsp;</span>
+                
+                <h4 style="font-weight:bold; font-family:sans-serif; margin:4px 0 0;">Cod fiscal societate/CNP persoan<b style="font-family:Arial Unicode MS">ă</b> fizic<b style="font-family:Arial Unicode MS">ă</b>:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:4px 0; margin:0">{!voucher.FiscalCodeCopy__c} &nbsp;</span>
+                
+                <h4 style="font-weight:bold; font-family:sans-serif; margin:4px 0 0;">Adres<b style="font-family:Arial Unicode MS">ă</b>/Sediu social:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:4px 0; margin:0">{!voucher.AddressCopy__c} {!voucher.AccountRef__r.County__c}&nbsp;</span>
+                
+                <h4 style="display:inline-block; font-family:sans-serif; font-weight:bold; margin:4px 0 0; margin-top:15px; padding:1px 4px 1px 0; background:#FFF">Telefon:</h4>
+                <span style="display:inline-block; border-bottom:1px dotted #000;width:186px; padding:4px 0; padding-left:55px; margin:0; margin-top:15px;">{!Phones} &nbsp;</span>
+            </td>
+        </tr>
+        
+        <tr>
+            <td style="height:459px; width:46%; background:#FFF; vertical-align:top; padding:10px 15px 0 30px;">
+                <!-- HYBRIDS TABLE -->
+                <table cellspacing="0" style="width:100%; border-collapse:collapse; border-spacing:0; border:0; vertical-align:middle; font-size:82%; color:#000; font-family:sans-serif; line-height:0.8em;">
+                    <thead>
+                        <tr style="font-size:100%; text-align:center; vertical-align: top; line-height: 1.2em">
+                            <th style="font-weight:bold; padding:5px 0;width:16%;">Grupe</th>
+                            <th style="font-weight:bold; padding:5px 0;">Hibrid</th>                      
+                            <th style="font-weight:bold; padding:5px 0;width:20%;">Saci <br/>cump<b style="font-family:Arial Unicode MS;">ă</b>ra<b style="font-family:Arial Unicode MS;">ţ</b>i</th>   
+                            <th style="font-weight:bold; padding:5px 0;width:20%;">Discount</th>
+                            <th style="font-weight:bold; padding:5px 0;width:20%;">Saci gratui<b style="font-family:Arial Unicode MS;">ţ</b>i</th>
+                        </tr>
+                    </thead>
+                    <tbody class="VLIs">
+
+                        <tr><td colspan="6" class="line-1"><div class="table-line"></div></td></tr>
+
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_CLASIC}" var="CLASIC">
+                            <tr style="font-size:85%; width: 100%; text-align: center;font-family:sans-serif;">
+                                <td rowspan="{!HYB_NUM_CLASIC}" style="{!if(counter==0,'','display:none;')}; text-align:center;"><b><i>Conven</i></b><b style="font-family:Arial Unicode MS;">ţ</b><b><i>ional</i></b></td> 
+                                <td style="text-align: left;position:relative;white-space:nowrap;"><apex:image url="{!$Resource.RO_Voucher_OSR_2016_Bubble}" width="25px" style="{!if(HYB_NEW_CLASIC[counter],'','display:none;')} position:absolute; left:-3px; top:-10px"/><b style="margin-left: 22px;"><i>{!HYB_NAME_CLASIC[counter]}</i></b></td>
+                                <td style="padding:5px 0 0px 5px;vertical-align:bottom"><b class="dashed-lines"><i>{!HYB_BAGS_CLASIC[counter]}</i></b></td>
+                                <td style="padding:5px 0 0px 5px;vertical-align:bottom"><b class="dashed-lines"><i>{!HYB_DISCOUNT_CLASIC[counter]}</i></b></td>
+                                <td style="padding:5px 0 0px 5px; vertical-align:bottom"><b class="dashed-lines"><i>{!if(MAP_FOC[HYB_NAME_CLASIC[counter]]==0,' ',MAP_FOC[HYB_NAME_CLASIC[counter]])}</i></b></td>
+                            </tr> 
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr style="{!if(HYB_NUM_CLASIC>0,'','display:none;')}"><td colspan="6" class="line-2"><div class="table-line"></div></td></tr>
+
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_CLEARFIELD}" var="CLASIC">
+                            <tr style="font-size:85%; text-align: center;font-family:sans-serif;">
+                                <td rowspan="{!HYB_NUM_CLEARFIELD}" style="{!if(counter==0,'','display:none;')}; text-align:left;"><b><i>Clearfield</i></b></td> 
+                                <td style="text-align: left;position:relative;white-space:nowrap;"><apex:image url="{!$Resource.RO_Voucher_OSR_2016_Bubble}" width="20px" style="{!if(HYB_NEW_CLEARFIELD[counter],'','display:none;')} position:absolute; top:-7px"/><b style="margin-left: 22px;"><i>{!HYB_NAME_CLEARFIELD[counter]}</i></b></td>                              
+                                <td style="padding:5px 0 2px 5px;vertical-align:bottom"><b class="dashed-lines"><i>{!HYB_BAGS_CLEARFIELD[counter]}</i></b></td>
+                                <td style="padding:5px 0 2px 5px;vertical-align:bottom"><b class="dashed-lines"><i>n/a</i></b></td>
+                                <td style="padding:5px 0 2px 5px;vertical-align:bottom"><b class="dashed-lines"><i>{!if(MAP_FOC[HYB_NAME_CLEARFIELD[counter]]==0,'',MAP_FOC[HYB_NAME_CLEARFIELD[counter]])}</i></b></td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr><td colspan="6" class="line-2"><div class="table-line" style="{!if(HYB_NUM_CLEARFIELD>0,'','display:none;')}"></div></td></tr>
+                        
+                        <!-- SUMMARY -->
+                        
+                        <tr>
+                            <td colspan="4" style="line-height:1.2em; padding: 5px 0; font-weight:bold;">TOTAL saci cump<b style="font-family:Arial Unicode MS;">ă</b>ra<b style="font-family:Arial Unicode MS;">&#355;</b>i:</td>
+                            <td style="border-bottom:1px dashed #000;text-align:center; line-height:1.2em; font-weight:bold;padding:5px 0 2px 5px;">{!voucher.TotalBags__c} saci</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="line-height:1.2em; padding: 5px 0; font-weight:bold;">TOTAL discount:</td>
+                            <td style="border-bottom:1px dashed #000;text-align:center; line-height:1.2em; font-weight:bold;padding:5px 0 2px 5px;">{!voucher.Price_Coupon__c} RON</td>
+                        </tr>   
+                        <tr>
+                            <td colspan="4" style="line-height:1.2em; padding: 5px 0; font-weight:bold;">TOTAL saci gratui<b style="font-family:Arial Unicode MS;">&#355;</b>i:</td>
+                            <td style="border-bottom:1px dashed #000;text-align:center; line-height:1.2em; font-weight:bold;padding:5px 0 2px 5px;">{!voucher.TotalBagsFOC__c} saci</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="line-height:1.2em; padding: 5px 0; font-weight:bold;">TOTAL pachete ClearField + Roundup Energy:</td>
+                            <td style="border-bottom:1px dashed #000;text-align:center; line-height:1.2em; font-weight:bold;padding:5px 0 2px 5px;">{!if(TOTAL_ROUNDUP_CANS ==0,'',TOTAL_ROUNDUP_CANS)}</td>
+                        </tr>
+                    </tbody>     
+                </table>
+            </td>
+            <td style="height:650px; width:46%; background:#0B5375; color:#FFF; vertical-align:top; padding:0 5px 10px 25px; font-size:80%; line-height:1.1em;">
+            
+            <div style="background:rgb(255,203,5); color:#000; vertical-align:middle; padding:12px 25px; margin-bottom: 15px; margin-left: -25px; margin-right: -5px; overflow: hidden">
+                <span style="float:left; font-family:sans-serif; font-size:1.25em">Seria Ro Nr. {!voucher.Name}</span> <span style="float:right; text-transform:uppercase; font-family:sans-serif; font-weight:bold; color:#AD2929; font-size:1.25em">{!if(status==1,'Anulat','')}</span>
+            </div>
+            
+                <h2 style="font-size:1.1em; border-bottom:1px solid #FFF; line-height:1.45em; margin-top:5px;">Se completează de <b style="text-transform:uppercase; font-weight:bold; font-family:sans-serif;">fermier</b></h2>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Vânzarea se efectueaz<b style="font-family:Arial Unicode MS;">ă</b> prin <b style="text-transform:uppercase; font-weight:bold; font-family:sans-serif;">DISTRIBUITORUL:</b>
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px; height: 100%; vertical-align: middle;"><b style="font-family:Arial Unicode MS;">{!voucher.DistributorNameCopy__c}</b></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Semn<b style="font-family:Arial Unicode MS;">ă</b>tur<b style="font-family:Arial Unicode MS;">ă</b> <b style="font-family:Arial Unicode MS;">ş</b>i <b style="font-family:Arial Unicode MS;">ş</b>tampil<b style="font-family:Arial Unicode MS;">ă</b>:<br/>&nbsp;
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;">
+                            <span style="display:block; padding:1px;">
+                            <apex:outputPanel layout="inline-block" rendered="{!$CurrentPage.parameters.signature!= null}">
+                                <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" width="130px" style="max-height:60px; max-width:210px; position: relative; top: 15%; transform: translateY(-25%);"/>
+                            </apex:outputPanel>
+                            </span>
+                        </div>
+                    </div>
+                
+                <h2 style="font-size:1.1em; border-bottom:1px solid #FFF; line-height:1.45em; margin-top:5px;">Se completează de <b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">distribuitor</b></h2>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Seria <b style="font-family:Arial Unicode MS;">ş</b>i nr. facturii:
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;"></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Data:
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px"></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Semn<b style="font-family:Arial Unicode MS;">ă</b>tur<b style="font-family:Arial Unicode MS; font-weight:bold;">ă</b> <b style="font-family:Arial Unicode MS;">ş</b>i <b style="font-family:Arial Unicode MS;">ş</b>tampil<b style="font-family:Arial Unicode MS;">ă</b>
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;"></span></div>
+                    </div>
+                    
+                <h2 style="font-size:1.1em; border-bottom:1px solid #FFF; line-height:1.45em; margin-top:5px;">Se completează de <b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">MONSANTO ROM</b>Â<b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">NIA S.R.L.</b></h2>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-family:sans-serif; font-weight:bold;">
+                        Nume <b style="font-family:Arial Unicode MS;">ş</b>i prenume reprezentant vânz<b style="font-family:Arial Unicode MS; font-weight:bold;">ă</b>ri:
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;"><b style="font-family:Arial Unicode MS;">{!Voucher.Owner.Name}</b></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-family:sans-serif;">
+                        <b>Data:</b><br/>&nbsp;
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;">{!data}</span></div>
+                    </div>
+                    
+                <p style="display:block; margin:40px 20px 0px 0;">Sunt de acord ca Monsanto România S.R.L. să preia în evidenţele sale datele incluse pe prezentul formular de precomandă şi să le utilizeze în scop de marketing.</p>
+            </td>
+        </tr>
+        <tr>
+             <td style="width:46%; background:#FFF; vertical-align:top;">
+                <table cellspacing="0" cellpadding="0" style="width:53.75%; border-collapse:collapse;border-spacing:0; border:0; outline:0; top:0; left:0; right:0; bottom:0;position:absolute;margin-top:722px">
+                        <tr>
+                            <td rowspan="3" style="border-right:4px solid rgb(255,203,5); width:100%; height:400px; background:rgb(255,203,5); vertical-align:top; font-size:0.8em; font-family:Arial Unicode MS; padding:5px 10px 0px 20px"><b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;"><br></br><apex:image url="{!if(CHK_PROTECTION_PROGRAM==true, $Resource.Voucher_RO_OSR_2016_CHECKED, $Resource.Voucher_RO_OSR_2016_UNCHECKED)}" width="10px" style="display:inline-block;margin:0; padding:0; border:0;"/>
+                            PROGRAMUL “Protec<b style="font-family:Arial Unicode MS;">ţ</b>ia DEKALB<sup>®</sup> ” *</b><br></br>Fermierii care:<br></br><apex:image url="{!$Resource.RO_Voucher_OSR_2016_Bubble2}" width="10px" style="display:inline-block;margin:0; padding:0; border:0;"/> vor semna voucherul offline p&#226;n&#259; la data de 31 iulie 2016<br></br><apex:image url="{!$Resource.RO_Voucher_OSR_2016_Bubble2}" width="10px" style="display:inline-block;margin:0; padding:0; border:0;"/> vor semăna rapi<b style="font-family:Arial Unicode MS;">ţ</b>a p&#226;n&#259; la data de 15.09.2016<br></br><apex:image url="{!$Resource.RO_Voucher_OSR_2016_Bubble2}" width="10px" style="display:inline-block;margin:0; padding:0; border:0;"/> vor pune la dispozi<b style="font-family:Arial Unicode MS;">ţ</b>ia reprezentan<b style="font-family:Arial Unicode MS;">ţ</b>ilor DEKALB® denumirea blocului/lor fizice<br style="padding-left:13px; position:relative">unde au sem&#259;nat rapi</br><b style="font-family:Arial Unicode MS;">ţ</b>a DEKALB<sup>®</sup><br></br>
+                            <div style="background:#FFF; height:96px; margin:8px 0 8px; color:#000;overflow:hidden;text-overflow: ellipsis;padding:8px 10px"><span style="display:inline-block;"><b style="font-family:Arial Unicode MS;">{!truncatedNote}</b></span></div>
+                            au dreptul la <b style="font-family:sans-serif;">despagubiri 100%</b> din costul semin<b style="font-family:Arial Unicode MS;">ţ</b>elor, în cazul &#238;n care <b style="font-family:sans-serif;">vor pierde cultura din cauza secetei</b> (pierderea trebuie sa fie declarat&#259; p&#226;n&#259; la data <b style="font-family:sans-serif;">31 octombrie 2016</b> si validat&#259; de c&#259;tre reprezentan<b style="font-family:Arial Unicode MS;">ţ</b>ii zonali DEKALB<sup>®</sup>)<br></br><i style="font-family:sans-serif;">*programul se adreseaza cantitatilor achizi</i><b style="font-family:Arial Unicode MS;">ţ</b><i style="font-family:sans-serif;">ionate &#238;n sezonul de vanzari 2016</i><br></br>
+                            <br></br><b style="font-family:sans-serif;">PROGRAMUL “C&#226;mpuri curate” *</b><br></br>Pentru <b style="font-family:sans-serif;">fiecare 3 saci de rapita Clearfield comanda</b><b style="font-family:Arial Unicode MS;">ţ</b><b style="font-family:sans-serif;">i</b>, fermierul poate solicita de la distribuitorul agreat “pachetul Clearfield + Roundup Energy”, care va con<b style="font-family:Arial Unicode MS;">ţ</b>ine 20 l de Roundup Energy (ex.: 1 pachet con<b style="font-family:Arial Unicode MS;">ţ</b>ine 3 saci de rapi<b style="font-family:Arial Unicode MS;">ţ</b>&#259; Clearfield &#351;i 20 l de Roundup Energy)<br></br><apex:image url="{!$Resource.RO_Voucher_OSR_2016_Bubble2}" width="10px" style="display:inline-block;margin:0; padding:0; border:0;"/>Pre<b style="font-family:Arial Unicode MS;">ţ</b> Roundup Energy achizi<b style="font-family:Arial Unicode MS;">ţ</b>ionat separat = 39ron/l la ambalaj de 20l. (Pre<b style="font-family:Arial Unicode MS;">ţ</b> de list<b style="font-family:Arial Unicode MS;">ă</b> al disitribuitorului)<br></br><br></br><i style="font-family:sans-serif;">*promo</i><b style="font-family:Arial Unicode MS;">ţ</b><i style="font-family:sans-serif;">ia se desfasoara &#238;n limita stocurilor disponibile</i>
+                            </td>
+                        </tr>
+                </table>
+            </td>
+            <td style="width:54%; background:#FFF; vertical-align:top;">
+                <table cellspacing="0" cellpadding="0" style="width:100%; border-collapse:collapse; border-spacing:0; border:0; outline:0; top:0; left:0; right:0; bottom:0;">
+                        <tr>
+                            <td rowspan="3" style=" width:100%; border-top:4px solid #0B5375; border-left:2px solid #0B5375; border-right:2px solid #0B5375; height:109px; background:#0B5375; text-align:center; vertical-align:top; color:#FFF; font-size:1.1em; font-family:sans-serif; font-weight:bold; padding:0px 0px 0px 80px; ">EXEMPLAR FERMIER</td>
+                        </tr>    
+                </table>
+            </td>
+        </tr>
+    </table>
+    </div>
+    </body>
+    </html>   
+</apex:page>

@@ -1,0 +1,60 @@
+<apex:page showHeader="false" sidebar="false" controller="ProductLookUpController">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <apex:form >
+    <!--{!queryString}-->
+    
+    <apex:pagemessages ></apex:pagemessages>
+    
+    <apex:pageBlock title="Product Filter" rendered="{!NOT(isMessage)}">
+        <apex:pageBlockSection >
+            <apex:repeat var="f" value="{!searchFieldSet.managedFieldSetMembers}">
+                
+                    
+                    <apex:inputField value="{!searchProduct[f.fieldPath]}"  required="false" />
+                 
+                
+                </apex:repeat>
+            
+           
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="{!$Label.Filter}" action="{!filter}" />
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    <apex:pageBlock title="{!$Label.Products}" rendered="{!NOT(isMessage)}" >
+        <apex:pageBlockTable value="{!results}" var="result">
+            <apex:column headerValue="{!$ObjectType.product2.fields.name.label}">
+                <a idValue="{!result.id}" textValue="{!result.name}" href="#" class="resultLink">{!result.name}</a>
+            </apex:column>
+            <apex:repeat var="f" value="{!resultFieldSet.managedFieldSetMembers}">
+                <apex:column >
+                    <apex:facet name="header">{!f.label}</apex:facet>
+                    <apex:outputField value="{!result.record[f.fieldPath]}" />
+                </apex:column> 
+                
+                </apex:repeat>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+    
+    </apex:form>
+  <apex:pageBlock rendered="{!(isMessage)}" >
+      There is no product catalog for this product family and year. Please contact your manager.
+  </apex:pageBlock>
+  <script>
+  $(".resultLink").on("click", function(e){
+      $(this).attr("idValue");
+      
+      
+      window.opener.callBackData("{!$CurrentPage.parameters.identifier}",$(this).attr("idValue"), $(this).attr('textValue')); 
+      window.close();
+        return false; 
+  });
+  
+  function CallParentWindowFunction()
+  {
+      window.opener.callBackData("{!$CurrentPage.parameters.identifier}","{!$CurrentPage.parameters.id}", "{!$CurrentPage.parameters.text}1"); 
+      window.close()
+        return false; 
+  }
+  </script>
+</apex:page>

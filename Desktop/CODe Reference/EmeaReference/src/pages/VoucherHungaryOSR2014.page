@@ -1,0 +1,136 @@
+<apex:page sidebar="false" language="" renderAs="pdf" standardStylesheets="false" applyBodyTag="false" showHeader="false" standardcontroller="Voucher__c" extensions="VoucherHungaryController" ContentType="text/html;charset=ISO-8859-1"> 
+<html lang="hu" >
+ <head>
+    <meta http-equiv="content-type" content="text/html;charset=ISO-8859-1"/> 
+        <title>Voucher</title>
+   <style>
+@page {
+  size: A4 portrait;
+  margin: 0px;
+  padding: 0in;
+  border: 0px;
+} 
+  </style>
+</head> 
+
+<body style="font-family:'Arial Unicode MS';"> 
+
+
+<table style="width:100%;" >
+<tr style="height:50px">
+<td style=" width:198px; font:12px" align="left"> Sorszám: {!voucher.name} </td>
+<td style=" width:198px; font:18px;" align="center"> KEDVEZMÉNY UTALVÁNY </td>
+<td style=" width:198px; font-size: 16px;" align="right"> <span style="color:#FF0000; padding-right:10px"> {!cancelled}</span>  <apex:image url="{!$Resource.dekalb_bn}" width="70" /></td>
+</tr>
+<tr class="line" style=" height: 2px; background: black;" ><td colspan="3"></td> </tr>
+<tr height="45px">
+    <td style="width:100%; font:9;  font:12px" align="center" colspan="3"> Utalvány kiállítója: Monsanto Hungária KFT. 1238 Budapest, Tùri István út 1., továbbiakban Monsanto</td>
+</tr>
+<tr class="line" style=" height: 2px; background: black;" ><td colspan="3"></td> </tr>
+<tr class="line" style=" height: 15px;" ><td colspan="3"></td> </tr>
+<tr height="30px">
+    <td style="width:100%; font:12px; " align="left" colspan="3"> KEDVEZMÉNYEZETT neve:  {!voucher.FarmNameCopy__c} </td>
+</tr>
+<tr height="30px">
+    <td style="width:100%; font:12px;" align="left" colspan="3"> Partner kódja: {!voucher.AccountRef__r.client_code__c} </td>
+</tr>
+<tr height="30px">
+    <td style="width:100%; font:12px;" align="left" colspan="3"> Adószáma:    {!voucher.FiscalCodeCopy__c} </td>
+</tr>
+<tr height="30px">
+    <td style="width:100%;font:12px;" align="left" colspan="3"> Székhelye: {!voucher.AddressCopy__c}       </td>
+</tr>
+<tr height="30px">
+    <td style="width:100%; font:12px;" align="left" colspan="3"> E-mail címe:   {!voucher.EmailCopy__c} </td>
+</tr>
+<tr height="30px">
+    <td style="width:100%; font:12px;" align="left" colspan="3"> Telefonszáma:   {!voucher.PhoneCopy__c}</td>
+</tr>
+<tr class="line" style=" height: 15px;" ><td colspan="3"></td> </tr>
+<tr height="30px">
+    <td style="width:100%; font:12px;  " align="left" colspan="3"> DISZTRIBÚTOR neve:   {!voucher.DistributorNameCopy__c}</td>
+</tr>
+<tr height="30px">
+    <td style="width:100%; font:12px; " align="left" colspan="3"> Disztribútor székhelye:   {!voucher.DistributorRef__r.Street__c}{!voucher.DistributorRef__r.city__c} {!voucher.DistributorRef__r.StateProvince__c} {!voucher.DistributorRef__r.county__c}</td>
+</tr>
+<tr class="line" style=" height: 25px;" ><td colspan="3"></td> </tr>
+<tr>
+    <td colspan="3" style="width:100%" align="center">
+          
+            <table style="border-collapse:collapse; border-spacing:0px;" align="center" >
+                 <thead>
+                        <tr>
+                            <th style="vertical-align:top">TERMÉK</th> <th></th>
+                            <th style="vertical-align:bottom">Mennyiség <span style="font:9px; margin:0px"><br/> (1,5 millió magot tartalmazó zsák, db)</span></th>
+                        </tr>
+                 </thead> 
+                 <tbody >                              
+             <apex:repeat value="{!hybNames}" var="hybKey">
+             <tr> <td style="padding-right:10px; padding-left:3px; border: 1px solid; text-align:left"> {!hybKey} </td><td style="width:20px"> </td> <td align="center" style="border: 1px solid" cellspacing="0px" cellpadding="0px">  {!hybVsBags[hybKey]}  </td> </tr>
+             </apex:repeat>
+             </tbody>
+        </table> 
+   
+<table align="center">
+<tr class="line" style=" height: 5px;" ><td colspan="2"></td> </tr>
+<tr height="50px">
+    <td align="center"> Kedvezmény összege: </td><td width="180px; border:3px solid">
+     <apex:outputPanel layout="none" rendered="{!IF(tipo='In Bags',true,false)}"> 
+     {!voucher.TotalBagsFOC__c} {!fin}
+     </apex:outputPanel>
+     <apex:outputPanel layout="none" rendered="{!IF(tipo='In Price',true,false)}"> 
+     <!-- {!voucher.PriceWithDiscount__c}{!PriceToDisplay} {!fin}--> 
+     <apex:outputText value="{0,number,#,###,###}">
+        <apex:param value="{!voucher.Price__c - voucher.PriceWithDiscount__c}" />
+    </apex:outputText>
+     {!fin}
+     </apex:outputPanel>
+     </td>
+</tr></table>
+ </td></tr>
+<tr class="line" style=" height: 30px;" ><td colspan="3"></td> </tr>
+<tr height="40px">
+    <td colspan="3" style="width:100%;font:11px;"> 
+    Kedvezményezett hozzájárul ahhoz, hogy disztribútor a Monsanto-val kölcsönösen, jelen ügyletből adódó minden nemű információt, adatot egymással megosszon, különös tekintettel jelen dokumentumban szereplő Kedvezményezett adataira, és a termékek vásárlását igazoló dokumentumokon
+(számla) szereplő adatokra.
+</td> </tr>
+<tr class="line" style=" height: 5px;" ><td colspan="3"></td> </tr>
+<tr height="40px">
+    <td colspan="3" style="width:100%;font:11px;"> 
+Kedvezményezett kijelenti, hogy jelen dokumentumban rögzített kedvezményt üzleti tevékenységével összefüggésben használja fel.
+
+    </td> </tr>
+<tr class="line" style=" height: 5px;" ><td colspan="3"></td> </tr>
+<tr height="40px">    
+    <td colspan="3" style="width:100%;  font:11px; "> 
+Jelen dokumentumban feltüntett kedvezmény évényesítésére a Monsanto által E-mail-ben elküldött „kedvezmény aktiválás” után, 5 munkanapig van lehetősége a Kedvezményezettnek.
+
+</td> </tr>
+<tr class="line" style=" height: 5px;" ><td colspan="3"></td> </tr>
+<tr height="40px">
+<td colspan="3" style="width:100%; font:11px;"> 
+Az utalvány érvényesítésének módja: Az utalványban megjelölt termékekeket a megadott mennyiségben megrendeli a disztribútortól.
+A jelen dokumentumban megjelölt kedvezményt a kedvezményezett a disztribútortól kapja meg.
+A kedvezmény a Kedvezményezettnek csak abban az esetben jár, ha a disztribútor az utalványon szereplő termékmennyiségeket részére leszállította.
+</td> </tr>
+<tr class="line" style=" height: 5px;" ><td colspan="3"></td> </tr>
+<tr height="40px">
+<td colspan="3" style="width:100%;font:11px; "> 
+Amennyiben a Monsanto nem tudja biztosítani valamely, az utalványban szereplő terméket, illetve annak mennyiségét, akkor Kedvezményezett a kedvezményre akkor is jogosult, ha a Kedvezményezett összes vásárlása a Monsanto által forgalmazott repce vetőmagokból minimálisan eléri az utalványban szereplő összes mennyiséget.
+</td> </tr>
+<tr class="line" style=" height: 20px;" ><td colspan="3"></td> </tr>
+<tr height="30px">
+    
+    <td colspan="3" style="width:33%;font:11px;" align="right"> <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}" ><img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="55px" width="130px" style="max-height:55px; max-width:130px;"/></apex:outputPanel></td>
+</tr>
+<tr height="30px">
+   
+    <td colspan="3"  style="width:100%;font:11px;" align="right">Kedvezményezett aláírása</td>
+</tr>
+</table>
+
+
+
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,13 @@
+<!-- 
+* @author: Accenture
+* @date: 2015
+* @project: Invoice PDF
+*
+* @group: ACS
+*
+* @description: Extension use to create and handle a web service to retrieve an Invoice PDF from SAP-DataPower.
+* 				
+*-->
+<apex:page standardController="Invoice__c" extensions="ACSInvoicePDF_Controller" action="{!autoRun}" showHeader="false" sidebar="false">		
+	<apex:sectionHeader title="{!processingError}"></apex:sectionHeader>   
+</apex:page>

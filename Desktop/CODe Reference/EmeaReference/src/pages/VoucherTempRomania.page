@@ -1,0 +1,275 @@
+<apex:page sidebar="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="it" controller="VoucherItalyController">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Unbenanntes Dokument</title>
+<style type="text/css">
+
+@page {
+    margin :0cm 0cm 0cm 0cm;
+    size: 8.27in 11.69in;
+    }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+h1 {
+    font-size: 24px;
+    color: #00B0F0;
+}
+h2 {
+    font-size: 18px;
+}
+table
+{
+    font-size: 12px;    
+}
+.contrast {
+    color: #FFF;
+}
+h3 {
+    font-size: 16px;
+    padding:2px;
+}
+p
+{
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    margin: 2px;
+}
+</style>
+</head>
+
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <td height="75" colspan="6">&nbsp;</td>
+    <td colspan="7" align="right" bgcolor="#00B0F0"><apex:image value="{!URLFOR($Resource.dekalb_for_pdf_png)}" width="120px" /></td>
+  </tr>
+  <tr>
+    <td height="59" colspan="6"><h1>Fii lider cu DEKALB!</h1></td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="4" bgcolor="#00B0F0" class="contrast">VOUCHER pentru precomanda hibrizilor de porumb DEKALB în sezonul 2012</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="6" bgcolor="#00B0F0" class="contrast"><h2>CONDIŢIILE DE PARTICIPARE LA PROMOŢIA INIŢIATĂ DE MONSANTO ROMÂNIA S.R.L.:</h2>
+      
+        <p>1. Achiziţionarea a minim 2 hibrizi de porumb Dekalb din care cel puţin
+        unul trebuie să fie din grupa INOVAŢIE.</p>
+        <p>2. Transmiterea VOUCHER-ului de la fermier către distribuitor, până la
+        data de 30 decembrie 2011</p>
+        <p>3. Cantitatea comandată va fi livrată până la data de 31 decembrie 2011
+        în limita stocului disponibil.
+        </p>
+    
+    </td>
+    <td width="5%">&nbsp;</td>
+    <td colspan="4"><p>Nume societate agricolă/Fermier:<br />
+    {!currentAccount.name}</p>
+    <p>Cod fiscal societate/CNP persoană fizică:<br />
+      {!currentAccount.GC_VATIN_Number__c}</p>
+    <p>Adresa/Sediu social:<br />
+      {!currentAccount.Street__c}<br />
+      {!currentAccount.ZIPPostalCode__c} {!currentAccount.City__c}</p>
+    <p>Telefon:<br />
+      {!currentAccount.Phone}<br />
+    </p></td>
+    <td width="5%">&nbsp;</td>
+    <td width="5%">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="6" rowspan="19" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
+      <tr>
+        <th scope="col">Hibrizi  de porumb</th>
+        <th scope="col">Cantitatea comandată       (saci 80.000 boabe)</th>
+        <th scope="col">Total reducere (saci)</th>
+        </tr>
+      <apex:repeat value="{!lineItems}" var="lineItem">
+      <tr>
+        <td>{!lineItem.ProductRef__r.Name}</td>
+        <td>{!lineItem.Quantity__c}</td>
+        <td>&nbsp;</td>
+        </tr>
+      </apex:repeat>
+    </table></td>
+    <td height="41" bgcolor="#92D050">&nbsp;</td>
+    <td colspan="4" bgcolor="#92D050"><h3>Seria Ro Nr. ………../2012</h3></td>
+    <td bgcolor="#92D050">&nbsp;</td>
+    <td bgcolor="#92D050">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td width="10%" bgcolor="#00B0F0">&nbsp;</td>
+    <td width="10%" bgcolor="#00B0F0">&nbsp;</td>
+    <td width="5%" bgcolor="#00B0F0">&nbsp;</td>
+    <td width="10%" bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="3" bgcolor="#00B0F0" class="contrast">Se completează de <strong>FERMIER</strong></td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="2" bgcolor="#00B0F0" class="contrast"><p>Vânzarea se efectuează prin<br />
+        <strong>DISTRIBUITORUL:</strong></p></td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0" class="contrast">Semnătură şi stampilă:</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td height="40" bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="2" bgcolor="#FFFFFF">{!lineitems[0].DistributorRef__r.Name}</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#FFFFFF">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="4" bgcolor="#00B0F0" class="contrast"><strong>Se completează de DISTRIBUITOR</strong></td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="2" bgcolor="#00B0F0" class="contrast">Seria şi nr. Facturii:</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0" class="contrast">Data:</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td height="40" bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="2" bgcolor="#FFFFFF">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#FFFFFF">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="2" bgcolor="#00B0F0" class="contrast">Semnătură şi stampilă:</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td height="40" bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="2" bgcolor="#FFFFFF">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="4" bgcolor="#00B0F0" class="contrast">Se completează de MONSANTO ROMÂNIA S.R.L.</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="2" bgcolor="#00B0F0" class="contrast">Nume şi prenume reprezentant vânzări:</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0" class="contrast">Data</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td height="40" bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="2" bgcolor="#FFFFFF">{!currentAccount.Owner.Name}</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#FFFFFF">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="4" bgcolor="#00B0F0" class="contrast">Orice modificări ulterioare completării VOUCHER-ului duc la anularea acestuia!</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+ 
+  <tr>
+    <td colspan="5" bgcolor="#92D050" class="contrast"><h2>OBSERVAŢII:</h2></td>
+    <td bgcolor="#92D050">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td colspan="4" bgcolor="#00B0F0"><h2>EXEMPLAR FERMIER</h2></td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td height="40" bgcolor="#92D050">&nbsp;</td>
+    <td bgcolor="#92D050">&nbsp;</td>
+    <td bgcolor="#92D050">&nbsp;</td>
+    <td bgcolor="#92D050">&nbsp;</td>
+    <td bgcolor="#92D050">&nbsp;</td>
+    <td bgcolor="#92D050">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+    <td bgcolor="#00B0F0">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="13" bgcolor="#00B0F0">Sunt de acord ca MONSANTO ROMÂNIA S.R.L. să preia în evidenţele sale datele incluse pe prezentul formular de precomandă şi să le utilizeze în scop de marketing.</td>
+  </tr>
+</table>
+</body>
+</apex:page>

@@ -1,0 +1,1 @@
+{"Error":{"item":[{"clientOrderLineId":"","errorMessage":"Purchase order number in document number:0000123456 already exist"}]},"Success":{"item":[{"clientOrderLineId":"ITEM10","sapOrderNumber":"00000130234","sapOrderItemNumber":"000010"},{"clientOrderLineId":"ITEM20","sapOrderNumber":"00000130235","sapOrderItemNumber":"000010"}]}}

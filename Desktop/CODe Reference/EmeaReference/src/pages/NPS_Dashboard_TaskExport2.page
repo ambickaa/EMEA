@@ -1,0 +1,135 @@
+<apex:page id="page" controller="NPSDashboardChartsController" sidebar="false" contentType="application/vnd.ms-excel#{!fileName}.xls">
+    <apex:outputText value="{!xlsHeader}"/>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">      
+         <Styles>
+             <Style ss:ID="s1">
+                 <Alignment/>
+                 <Borders/>
+                 <Font ss:Bold="1"/>
+                 <Interior/>
+                 <NumberFormat/>
+                 <Protection/>
+             </Style>
+         </Styles>
+    <!--
+         <Worksheet ss:Name="Example sheet 1(Tasks List)">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >ID</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Status</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Days to Close</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Due date</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >NPS EXT Response ID</Data></Cell>              
+                     </Row>
+                 <apex:repeat value="{!listaTasksExport}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.id}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.LKP_NPS_Case__r.NPS_Country__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.status}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.FRML_DAYS_TO_CLOSE__c}</Data></Cell>
+                         <Cell><Data ss:Type="String"><apex:outputText value=" {!item.ActivityDate}"/></Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.LKP_NPS_Case__r.NPS_EXT_RESPONSEID__c}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+    </Worksheet>     -->
+
+         <Worksheet ss:Name="Follow-Up calls by Status">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Not Started</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Completed</Data></Cell>                      
+                     </Row>
+                 <apex:repeat value="{!listaCallsStatus}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.calls}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.tasks}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+         <Worksheet ss:Name="Days to Close">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >0-5 (days)</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >5-10 (days)</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >>10 (days)</Data></Cell>                    
+                     </Row>
+                 <apex:repeat value="{!listaDaysClose}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.detractors}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.promoters}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.passives}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+         <Worksheet ss:Name="% Days to Close">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >0-5 (days)</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >5-10 (days)</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >>10 (days)</Data></Cell>                    
+                     </Row>
+                 <apex:repeat value="{!listaDaysClosePerc}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.detractors}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.promoters}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.passives}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+         <Worksheet ss:Name="Avg. Days Open">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Avg. days Open</Data></Cell>                 
+                     </Row>
+                 <apex:repeat value="{!listaAvgDaysOpen}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.score}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+    </Workbook>    
+</apex:page>

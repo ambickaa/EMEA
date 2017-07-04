@@ -1,0 +1,23 @@
+<apex:component controller="OrderLineItemComponentCtrl">
+    <apex:attribute assignTo="{!orderId}" name="parentOrderId" type="Id" description="Order Id"/>
+    <apex:attribute assignTo="{!arrOrderItems}" name="orderItems" type="Object" description="List of Order Items"/>
+    <apex:pageBlock title="Order Line Items">
+        <apex:pageBlockTable value="{!lstOrderItemsShow}" var="lineitem" 
+                             rendered="{!lstOrderItemsShow.size != 0}">
+            <apex:column headerValue="{!$ObjectType.OrderItem.fields.GC_SalesOrder_Item_Nbr__c.Label}">
+                <apex:outputLink value="javascript:fnOpenSubtab('{!lineitem.Id}','{!lineitem.GC_SalesOrder_Item_Nbr__c}')">{!lineitem.GC_SalesOrder_Item_Nbr__c}</apex:outputLink>
+            </apex:column>    
+            <apex:column value="{!lineitem.PricebookEntry.ProductCode}"/>
+            <apex:column value="{!lineitem.Description}"/>
+            <apex:column value="{!lineitem.GC_Quantity__c}"/>
+            <apex:column value="{!lineitem.GC_Sales_UoM_Text__c}"/>
+            <apex:column value="{!lineitem.fGC_Unit_Price__c}"/>
+        </apex:pageBlockTable>
+        <apex:outputPanel layout="block" style="margin-top: 5px" rendered="{!lstOrderItems.size > 5}">
+            <apex:outputLink value="javascript:fnOpenSubtab('{!orderId}','Order')">Go to details page to see the complete list ({!lstOrderItems.size}) »</apex:outputLink>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!lstOrderItemsShow.size == 0}">
+            No records to display
+        </apex:outputPanel>    
+    </apex:pageBlock>
+</apex:component>

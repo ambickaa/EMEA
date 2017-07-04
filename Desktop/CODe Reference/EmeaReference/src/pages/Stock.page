@@ -1,0 +1,53 @@
+<apex:page controller="StockAdminController" tabStyle="Stock__c">
+    <apex:sectionHeader title="Stock Allocation"/>
+    <apex:form >
+        <style>
+            input[type="text"]{width:50px;}
+        </style>
+        <apex:pageMessages id="messages"/>
+            <apex:pageBlock mode="mainDetail" >
+            <apex:variable var="showButtons" value="{!OR(False)}"/>
+            <apex:pageBlockSection title="Insert the stock" columns="1" collapsible="false">
+                <apex:facet name="header">
+                    <apex:outputPanel layout="block">
+                        <h3 style="float:left">Insert the stock</h3>
+                        <apex:outputPanel id="buttons" layout="block" style="float:right">
+                            <apex:outputText rendered="{!products.size > 0}">{!offset + 1} - {!offset + pageSize} / {!products.size}</apex:outputText>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:commandLink value="Previous Page" reRender="stocksTable,buttons" rendered="{!!(offset - pageSize < 0)}" ><apex:param assignTo="{!offset}" value="{!offset - pageSize}" /></apex:commandLink>
+                            <apex:outputText value="Previous Page" rendered="{!(offset - pageSize < 0)}"/>
+                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                            <apex:commandLink value="Next Page" reRender="stocksTable,buttons" rendered="{!!(offset + pageSize >= products.size)}" ><apex:param assignTo="{!offset}" value="{!offset + pageSize}" /></apex:commandLink>
+                            <apex:outputText value="Next Page" rendered="{!(offset + pageSize >= products.size)}" />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:facet>
+                <apex:pageBlockTable value="{!pagedProducts}" var="product" id="stocksTable">
+                    <apex:column value="{!product.product.ProductRef__r.Name}" />
+                    <apex:column value="{!product.product.ProductRef__r.ProductKernelSize__c}" />
+                    <apex:column value="{!product.product.ProductRef__r.ProductTreatment__c}" />
+                    <apex:repeat value="{!currentUser}" var="user">
+                        <apex:column headerValue="{!user.Name}" >
+                            <apex:outputField value="{!currentStockMap[product.product.ID][user.ID].Allocation_RSA__c}" rendered="{!NOT($CurrentPage.parameters.catalog == 'Tax')}" />
+                            <apex:outputField value="{!currentStockMap[product.product.ID][user.ID].TaxAllocation_RSA__c}" rendered="{!$CurrentPage.parameters.catalog == 'Tax'}" />
+                        </apex:column> 
+                    </apex:repeat>
+                    <apex:repeat value="{!users}" var="user">
+                        <apex:column headerValue="{!user.Name}" >
+                            <apex:inputField value="{!stocksMap[product.product.ID][user.ID].Allocation_RSA__c}" rendered="{!AND(usersMap[user.id].isActive,NOT($CurrentPage.parameters.catalog == 'Tax'))}" />
+                            <apex:inputField value="{!stocksMap[product.product.ID][user.ID].TaxAllocation_RSA__c}" rendered="{!AND(usersMap[user.id].isActive,$CurrentPage.parameters.catalog == 'Tax')}" />
+                            <apex:outputField value="{!stocksMap[product.product.ID][user.ID].Allocation_RSA__c}" rendered="{!AND(NOT(usersMap[user.id].isActive),NOT($CurrentPage.parameters.catalog == 'Tax'))}" />
+                            <apex:outputField value="{!stocksMap[product.product.ID][user.ID].TaxAllocation_RSA__c}" rendered="{!AND(NOT(usersMap[user.id].isActive),$CurrentPage.parameters.catalog == 'Tax')}" />
+                            <apex:variable var="showButtons" value="{!OR(True)}"/>
+                        </apex:column>
+                    </apex:repeat>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <br/>
+            <apex:commandButton value="Switch to Tax" action="{!gotoStockTax}" rendered="{!AND($User.ProfileId == '00eD0000001lv5NIAQ',NOT($CurrentPage.parameters.catalog == 'Tax'))}"/>
+            <apex:commandButton value="Switch to Regular" action="{!gotoStockRegular}" rendered="{!AND($User.ProfileId == '00eD0000001lv5NIAQ',$CurrentPage.parameters.catalog == 'Tax')}"/>
+            <apex:commandButton value="Update Stock" action="{!Save}" rendered="{!showButtons}"/>
+            <apex:commandButton value="Add Multiple Lines" action="{!gotoProductStockPicker}" rendered="{!$User.ProfileId == '00eD0000001lv5NIAQ'}" />
+        </apex:pageBlock>
+    </apex:form>
+    {!info}
+</apex:page>

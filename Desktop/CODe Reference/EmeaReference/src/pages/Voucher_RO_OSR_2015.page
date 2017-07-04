@@ -1,0 +1,164 @@
+<apex:page sidebar="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="en" standardcontroller="Voucher__c" extensions="Voucher_RO_OSR_2015_Controller">
+    <html lang="ro">
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <style>
+            @page {
+              size: A4 portrait;
+              margin: 0px;
+              padding: 0in;
+              border: 0px;}
+        </style>
+    </head>
+    <body style="margin:0; padding:0; border:0; font-weight:normal; font-style:normal; font-size:100%; font-size:13px; vertical-align:baseline; text-decoration:none; line-height:1; font-family:Arial Unicode MS, sans-serif">
+
+    <div id="page1">
+    <table cellspacing="0" style="width:100%; border-collapse:collapse; border-spacing:0; border:0; outline:0; position:relative; top:0; left:0; right:0; bottom:0; height:297mm; vertical-align:top">
+        <tr>
+            <td rowspan="3" style="width:54%; background:#0B5375"><apex:image url="{!$Resource.Voucher_RO_OSR_2015_IMG1}" width="100%" style="display:block; margin:0; padding:0; outline:0; border:0;" /></td>
+            <td style="width:54%; background:#0B5375; color:#FFF; padding:40px 40px 8px 25px;">
+                <span style="display:block; text-align:right; margin-bottom:30px"><apex:image url="{!$Resource.DEKALB_COLOR_OLD}" width="92px" style="filter:gray;"/></span>
+                <h2 style="font-size:1.15em; line-height:1.25em;"><b style="font-size:1.1em; font-family:sans-serif; font-weight:bold;">VOUCHER</b> pentru precomanda hibrizilor de rapiţă DEKALB în sezonul 2015</h2>
+            </td>
+        </tr>
+        <tr>
+            <td style="background:#FFF; color:#000; padding:10px 40px 15px 25px;">
+                <h4 style="font-weight:bold; font-family:sans-serif; margin:4px 0 0;">Nume societate agricol<b style="font-family:Arial Unicode MS">ă</b>/Fermier:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:6px 0; margin:0">{!voucher.FarmNameCopy__c} &nbsp;</span>
+                
+                <h4 style="font-weight:bold; font-family:sans-serif; margin:4px 0 0;">Cod fiscal societate/CNP persoan<b style="font-family:Arial Unicode MS">ă</b> fizic<b style="font-family:Arial Unicode MS">ă</b>:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:6px 0; margin:0">{!voucher.FiscalCodeCopy__c} &nbsp;</span>
+                
+                <h4 style="font-weight:bold; font-family:sans-serif; margin:4px 0 0;">Adresa/Sediu social:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:6px 0; margin:0">{!voucher.AddressCopy__c} &nbsp;</span>
+                
+                <h4 style="display:inline-block; font-family:sans-serif; font-weight:bold; margin:4px 0 0; margin-top:15px; padding:2px 4px 2px 0; background:#FFF">Telefon:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:6px 0; padding-left:55px; margin:0; margin-top:-26px;">{!Phones} &nbsp;</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="background:#FDE200; color:#000; vertical-align:middle; padding:0 25px;">
+                <span style="float:left; font-family:sans-serif;">Seria Ro Nr. {!voucher.Name}</span> <span style="float:right; text-transform:uppercase; font-family:sans-serif; font-weight:bold; color:#AD2929;">{!if(status==1,'Anulat','')}</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="height:719px; width:46%; background:#FFF; vertical-align:top; padding:10px 15px 0 40px; position:relative">
+                <!-- HYBRIDS TABLE -->
+                <table cellspacing="0" style="width:100%; border-collapse:collapse; border-spacing:0; border:0; vertical-align:middle; font-size:85%; color:#000; font-family:sans-serif; line-height:1.05em;">
+                    <thead>
+                        <tr style="font-size:90%;">
+                            <th style="font-weight:bold; border-bottom:6px solid #FDE200; padding:5px 0;">Grupe</th>
+                            <th style="font-weight:bold; border-bottom:6px solid #FDE200; padding:5px 0;">Hibrid</th>
+                            <th style="font-weight:bold; border-bottom:6px solid #FDE200; padding:5px 0;">Cantitatea comandat<b style="font-family:Arial Unicode MS;">ă</b><br/>1,5 mil. boabe/sac</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="4" style="height:6px; background:#0B5375;"></td></tr>
+                        
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_CLASIC}" var="CLASIC">
+                            <tr>
+                                <td rowspan="{!HYB_NUM_CLASIC}" style="{!if(counter==0,'','display:none;')}">CLASIC</td>
+                                <td>{!HYB_NAME_CLASIC[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_CLASIC[counter]}</td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr><td colspan="3" style="height:8px; border-bottom:4px solid #FDE200; display:none; {!DISPLAY[0]}"></td></tr>
+                        <tr><td colspan="3" style="height:6px; background:#0B5375; display:none; {!DISPLAY[0]}"></td></tr>
+
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_CLEARFIELD}" var="CLEARFIELD">
+                            <tr>
+                                <td rowspan="{!HYB_NUM_CLEARFIELD}" style="{!if(counter==0,'','display:none;')}">CLEARFIELD</td>
+                                <td>{!HYB_NAME_CLEARFIELD[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_CLEARFIELD[counter]}</td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <!--<tr><td colspan="3" style="height:6px; border-bottom:4px solid #0B5375; {!if(HYB_NUM_CLEARFIELD!=0,'','display:none;')}"></td></tr>-->
+                        <tr><td colspan="3" style="height:6px; border-bottom:4px solid #0B5375;"></td></tr>
+
+                        <tr>
+                            <td colspan="2" style="font-family:Arial Unicode MS; line-height:1.2em;">TOTAL saci cumpăraţi:</td>
+                            <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!voucher.TotalBags__c}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="border-bottom:1px solid transparent; font-weight:bold; font-size:1.2em; line-height:1.2em;">TOTAL cupoane:</td>
+                            <td style="border-bottom:1px dashed #000; font-weight:bold; font-size:1.2em; line-height:1.2em; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!voucher.Price_Coupon__c} <span style="{!if(voucher.Price_Coupon__c > 0, '', 'display:none')}">RON</span></td>
+                        </tr>                        
+                    </tbody>
+                </table>
+                
+                <!-- NOTA -->
+                <div style="margin-top:6px; padding: 10px 16px 20px 40px; font-size:75%; color:#000; line-height:1.05em; background:#FDE200; position:absolute; bottom:0; left:0; right:0">
+                  <h6 style="padding:0; margin:0; padding-bottom:5px; font-size:1em; font-style:italic;">*Notă</h6>
+                  <ul style="margin:0; padding:0; text-align:justify; list-style:none;">
+                    <li style="font-size:.95em; padding-bottom: 5px; color: #333">&bull; Cuponul valoric de 80 RON/sac este calculat la un consum minim la semănat de 5l/ha şi o normă de semănat de maxim 60 boabe/mp. Astfel un sac de 1.500.000 boabe este suficient pentru a semăna minim 2,5 ha cu un consum de 12,5 l respectiv un cost mediu de aproximativ 80 RON. Acest calcul reprezintă o aproximaţie. În momentul prezentării acestui cupon în staţiile OMV Petrom, fermierii vor beneficia de combustibil în funcţie de valoarea bonurilor prezentate. Bonurile sunt valabile exclusiv în reţeaua OMV Petrom.</li>
+                    <li style="font-size:.95em; padding-bottom: 5px; color: #333">&bull; Fermierii care cumpară minim 300 saci vor primi un cupon adiţional de 50 RON pentru fiecare sac achiziţionat.</li>
+                    <li style="font-size:.95em; padding-bottom: 5px; color: #333">&bull; Pentru fiecare sac CLEARFIELD achiziţionat fermierul primeste un cupon adiţional de 30 RON pentru fiecare sac.</li>
+                    <li style="font-size:.95em; padding-bottom: 5px; color: #000"><div style="display:inline-block; float:left; vertical-align:top; background:#FFF; position:relative; width: 38px; height: 38px; margin-right: 5px; text-align: center"><span style="position:absolute; left:2px; right:0; bottom:0; top:8px; font-size:3em; {!if(Checked, '', 'display:none')}">&#10003;</span></div>&bull; Pentru a beneficia de Programul “Protecţia DEKALB”, trebuie să îndepliniţi toate condiţiile din voucher, iar livrarea sămanţei să se facă până la 15.08.2015. Dacă apar probleme la răsarire, Monsanto pune la dispoziţie hibrizii Extec şi Expower cu 50% reducere pentru reînsămanţare.</li>
+                    <li style="font-size:.95em; padding-bottom: 5px; color: #333">&bull; Portofoliul de hibrizi DEKALB nu se rezumă la lista de mai sus.</li>
+                    <li style="font-size:.95em; padding-bottom: 5px; color: #333">&bull; Cupoanele vor fi livrate prin intermediul reţelei de distribuţie în momentul ridicării
+produselor.</li>
+                    <li style="font-size:.95em; padding-bottom: 5px; color: #333">&bull; Cupoanele sunt valabile pentru orice tip de combustibil (motorină, benzină).</li>
+                  </ul>
+                  <p style="margin-top:2px; padding-top:2px; color: #333">Atenţie: nu se dă rest!</p>
+                </div>
+            
+            </td>
+            <td style="height:719px; width:46%; background:#0B5375; color:#FFF; vertical-align:top; padding:15px 5px 10px 25px; font-size:92%; line-height:1.1em;">
+            
+                <h2 style="font-size:1em; border-bottom:1px solid #FFF; line-height:1.45em; margin-top:10px;">Se completează de <b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">fermier</b></h2>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top;">
+                        Vânzarea se efectuează prin DISTRIBUITORUL:
+                        <div style="background:#FFF; height:62px; margin:8px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;">{!voucher.DistributorNameCopy__c}</span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-family:Arial Unicode MS;">
+                        Semnătură şi ştampilă:<br/>&nbsp;
+                        <div style="background:#FFF; height:62px; margin:8px 0 12px; color:#000;">
+                            <span style="display:block; padding:1px;">
+                            <apex:outputPanel layout="inline-block" rendered="{!$CurrentPage.parameters.signature!= null}">
+                                <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" width="130px" style="max-height:60px; max-width:210px;"/>
+                            </apex:outputPanel>
+                            </span>
+                        </div>
+                    </div>
+                
+                <h2 style="font-size:1em; border-bottom:1px solid #FFF; line-height:1.45em; margin-top:10px;">Se completează de <b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">distribuitor</b></h2>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top;">
+                        Seria şi nr. facturii:
+                        <div style="background:#FFF; height:62px; margin:8px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;"></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top;">
+                        Data:
+                        <div style="background:#FFF; height:62px; margin:8px 0 12px; color:#000;"><span style="display:inline-block; padding:5px"></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top;">
+                        Semnătură şi ştampilă:
+                        <div style="background:#FFF; height:62px; margin:8px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;"></span></div>
+                    </div>
+                    
+                <h2 style="font-size:1em; border-bottom:1px solid #FFF; line-height:1.45em; margin-top:10px;">Se completează de <b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">MONSANTO ROM</b>Â<b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">NIA S.R.L.</b></h2>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top;">
+                        Nume şi prenume reprezentant vânzări:
+                        <div style="background:#FFF; height:62px; margin:8px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;">{!Voucher.Owner.Name}</span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top;">
+                        Data:<br/>&nbsp;
+                        <div style="background:#FFF; height:62px; margin:8px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;">{!data}</span></div>
+                    </div>
+                    
+                <b style="display: none; margin:20px 30px 12px 0;">Orice modificări ulterioare completării VOUCHER-ului duc la anularea acestuia!</b>
+                <p style="display:block; margin:15px 30px 20px 0;">Sunt de acord ca MONSANTO ROMÂNIA S.R.L. să preia în evidenţele sale datele incluse pe prezentul formular de precomandă şi să le utilizeze în scop de marketing.</p>
+                <div style="text-align:right; font-size:1.3em; margin-right:30px; font-family:sans-serif; font-weight:bold">EXEMPLAR FERMIER</div>
+            </td>
+        </tr>
+    </table>
+    </div>
+    
+    </body>
+    </html>   
+</apex:page>

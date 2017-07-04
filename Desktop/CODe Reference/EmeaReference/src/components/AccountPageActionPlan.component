@@ -1,0 +1,367 @@
+<apex:component allowDML="true" controller="AccountPageActionPlanController">
+    
+    <apex:attribute name="account" type="Account" description="currentAccount" required="true" />
+    
+    <apex:form id="List_Records_Table">
+    
+    <span class="component-messages">
+        <apex:pageMessages rendered="{!showActionPlanMessages}" escape="false" />
+    </span>
+    
+    <apex:pageBlock >
+        
+        <div class="pageBlockSection {!IF(currentCampaign != null, '', 'hidden')}">
+            <apex:pageBlockSection title="{!$Label.AccountPage_title_campaign_summary} {!IF(currentCampaign != null, currentCampaign.Name, '')}" columns="2" collapsible="false" rendered="{!currentCampaign != null}">
+                <apex:repeat value="{!FieldSet_Detail}" var="f">
+
+                    <!-- Start: COMMON BEHAVIOUR FOR ALL FIELDSETS -->
+                    <apex:outputField value="{!currentCampaign[f]}" styleClass="{!f.fieldPath}" />
+                    <apex:outputText value="" rendered="{!f.required}" />
+                    <!-- End: COMMON BEHAVIOUR FOR ALL FIELDSETS -->
+                    
+                    <apex:outputText value="" rendered="{!AND(f.fieldPath == 'NUM_TotalCampaignBudgetDist__c', CONTAINS(currentCampaign.Name, 'Germany'))}" />
+                    <apex:outputText value="" rendered="{!AND(f.fieldPath == 'NUM_TotalCampaignBudgetDist__c', CONTAINS(currentCampaign.Name, 'Germany'))}" />
+                    
+                    <apex:outputPanel rendered="{!AND(f.fieldPath == 'NUM_TotalCampaignBudgetDist__c', CONTAINS(currentCampaign.Name, 'Germany'))}">
+                        <tr>
+                            <th class="labelCol panelTitle" scope="row">{!$Label.CP_AP_Plan}</th><td class="dataCol"></td>
+                            <th class="labelCol panelTitle" scope="row">{!$Label.CP_AP_Agreed}</th><td class="dataCol"></td>
+                        </tr>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!AND(f.fieldPath == 'PrcAgreedAdvancementSales__c', CONTAINS(currentCampaign.Name, 'Germany'))}">
+                        <tr>
+                            <th class="labelCol panelTitle" scope="row">{!$Label.CP_AP_NetSales}</th><td class="dataCol"></td>
+                            <th class="labelCol panelTitle" scope="row"></th><td class="dataCol"></td>
+                        </tr>
+                    </apex:outputPanel>
+
+                </apex:repeat>
+            </apex:pageBlockSection>
+        </div>
+
+        <div class="pageBlockSection">
+            <apex:pageBlockSection title="{!$Label.TacticalPlan}" columns="1" collapsible="false"></apex:pageBlockSection>
+        </div>
+        
+        <div class="pbHeader buttonsSection">
+            <table>
+                <tr>
+                    <td class="pbTitle"></td>
+                    <td class="pbButton">
+                        <apex:commandButton value="{!$Label.New}" styleClass="{!IF(OR(modeEdit, NOT(isOwner), currentCampaign == null), 'hidden', '')} btn-view" onClick="modeAdd(this, Add_ActionPlan); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_edit}" disabled="true" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner)), currentCampaign == null), 'hidden', '')} btn-view btn-rows" onClick="rowsEdit(this, RowsEdit_ActionPlan); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_edit_all}" disabled="false" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner)), currentCampaign == null), 'hidden', '')} btn-view btn-all" onClick="rowsEditAll(this, RowsEdit_ActionPlan); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_delete}" disabled="true" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')} btn-view btn-rows" onClick="xConfirm(this, 'delete', RowsDelete_ActionPlan); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_add}" styleClass="{!IF(modeAdd, '', 'hidden')} btn-add" disabled="true" onClick="rowsAdd(this, RowsNew_ActionPlan); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_save}" styleClass="{!IF(AND(modeEdit, NOT(modeAdd)), '', 'hidden')} btn-action" onClick="if(!requiredCheck(this)) { return false; } xConfirm(this, 'save', RowsSave_ActionPlan); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_discard}" styleClass="{!IF(modeEdit, '', 'hidden')} btn-action" onClick="xConfirm(this, 'cancel', Cancel_ActionPlan); return false;" />
+                        <apex:commandButton value="{!$Label.ButtonExcelCreate}" styleClass="{!IF(!modeEdit, '', 'hidden')} btn-action" rendered="{!AND(!modeEdit, ZVDButtons)}" onClick="showLoader(); getZVD(); iniAll(); return false;" />
+                        <apex:commandButton value="{!$Label.ButtonExcelMail}" styleClass="{!IF(!modeEdit, '', 'hidden')} btn-action" rendered="{!AND(!modeEdit, ZVDButtons)}" onClick="showLoader(); getZVDEmail(); return false;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <select class="chosen-product-picker {!IF(modeAdd, '', 'hidden')}" data-placeholder="{!$Label.AccountPage_picklist_choose_products}" multiple="multiple" id="ProductPicker_ActionPlan"></select>
+        
+        <table class="sortable-features-off compact row-border hover nowrap {!IF(OR(List_Records_add == null, List_Records_add.size == 0), 'hidden', '')} tablePCE">
+            <thead>
+                <tr>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <th>{!f.label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat var="r" value="{!List_Records_add}">
+                <tr class="dataPCE" data-pce="{!r.ProductCatalogEntryRef__c}">
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <td class="{!f}">
+                            <apex:outputField value="{!r[f.fieldPath]}" rendered="{!OR(f.fieldPath == 'ProductRef__c', AND(OR(f.fieldPath == 'Forecast__c', f.fieldPath == 'Agreed__c'), Map_isCompetitor[r.ProductRef__c]))}" />
+                            <apex:inputField value="{!r[f.fieldPath]}" rendered="{!AND(f.fieldPath != 'ProductRef__c', f.fieldPath != 'Type__c', NOT(AND(OR(f.fieldPath == 'Forecast__c', f.fieldPath == 'Agreed__c'), Map_isCompetitor[r.ProductRef__c])))}" style="width:75%" styleClass="{!IF(OR(f.required, f.dbrequired), 'required', '')} {!IF(OR(AND(f.fieldPath == 'Forecast__c', currentCampaign.DisableForecastStatus__c), AND(f.fieldPath == 'Agreed__c', currentCampaign.DisableAgreedStatus__c),AND(f.fieldPath == 'POG__c', $User.Country == 'United Kingdom')), 'isDisabled', '')}" />
+                            
+                            <apex:selectList rendered="{!f.fieldPath == 'Type__c'}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select required">
+                                <apex:selectOptions value="{!Options_Type}" />
+                            </apex:selectList>                        
+                        </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+        
+        <apex:variable var="rows_edit" value="{!''}{!Rows}" />
+        
+        <table class="sortable compact row-border hover nowrap" id="SalesPlanTable">
+            <thead class="{!IF(List_Records.size == 0, 'hidden', '')}">
+                <tr>
+                    <th class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"></th>
+                    <th class="col-flag {!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" /></th>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <th>{!f.label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat var="r" value="{!List_Records}">
+                <tr class="{!IF(OR(AND(modeEdit, NOT(CONTAINS(rows_edit, r.Id))), AND(modeNew, r.Id != null), r.ProductCatalogEntryRef__c == null), 'row-disabled', '')} {!IF(AND(!modeNew, r.Id == null), 'hidden', '')} {!IF(AND(modeNew, r.Id == null), 'newLine', '')}">
+                    <td class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r.Id}" title="{!r.Name}" target="_blank" onClick="event.stopPropagation()"><img src="/img/alohaSkin/help_grey.png" /></a></td>
+                    <td class="col-flag {!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" record-id="{!r.Id}" class="{!IF(r.ProductCatalogEntryRef__c == null, 'hide', '')}" /></td>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <td class="{!f} {!f.Type}__cell">
+                            <apex:variable value="{!OR(f.fieldPath == 'NUM_FARM_AGREED__c', f.fieldPath == 'NUM_FARM_FORECAST__c', f.fieldPath == 'NUM_ORDERED_CY_QTY__c', f.fieldPath == 'NUM_ORDERED_PY_QTY__c', f.fieldPath == 'NUM_INVOICED_CY_QTY__c', f.fieldPath == 'NUM_INVOICED_PY_QTY__c', f.fieldPath == 'POGPY__c', AND(f.fieldPath == 'DE_isPremium__c', OR(NOT(r.ProductCatalogEntryRef__r.DE_isPremium__c), NOT(isOwner))),AND(f.fieldPath == 'POG__c', $User.Country == 'United Kingdom'))}" var="numDisabled" />
+                            <apex:variable value="{!OR(AND(NOT(r.NUM_FARM_AGREED__c == 0), NOT(r.NUM_FARM_AGREED__c == null)), AND(NOT(r.NUM_FARM_FORECAST__c == 0), NOT(r.NUM_FARM_FORECAST__c == null)), AND(NOT(r.NUM_ORDERED_CY_QTY__c == 0), NOT(r.NUM_ORDERED_CY_QTY__c == null)), AND(NOT(r.NUM_ORDERED_PY_QTY__c == 0), NOT(r.NUM_ORDERED_PY_QTY__c == null)), AND(NOT(r.NUM_INVOICED_CY_QTY__c == 0), NOT(r.NUM_INVOICED_CY_QTY__c == null)), AND(NOT(r.NUM_INVOICED_PY_QTY__c == 0), NOT(r.NUM_INVOICED_PY_QTY__c == null)), AND(NOT(r.POGPY__c == 0), NOT(r.POGPY__c == null)))}" var="typeDisabled" />
+                            <apex:outputText value="{!r.ProductRef__r.Name}" rendered="{!IF(AND(CONTAINS(rows_edit, r.Id), f.fieldPath == 'ProductRef__c'), true, false)}" />
+                            <apex:outputField value="{!r.Type__c}" rendered="{!IF(AND(CONTAINS(rows_edit, r.Id), OR(AND(r.POGPY__c != null, r.POGPY__c > 0, f.fieldPath == 'Type__c'), AND(typeDisabled, f.fieldPath == 'Type__c'))), true, false)}" />
+                            <apex:outputField value="{!r[f.fieldPath]}" rendered="{!IF(AND(CONTAINS(rows_edit, r.Id), NOT(AND(OR(f.fieldPath == 'Forecast__c', f.fieldPath == 'Agreed__c'), Map_isCompetitor[r.ProductRef__c]))), false, true)}" />
+                            <apex:inputField value="{!r[f.fieldPath]}" rendered="{!IF(AND(CONTAINS(rows_edit, r.Id), f.fieldPath != 'ProductRef__c', f.fieldPath != 'Type__c', NOT(AND(OR(f.fieldPath == 'Forecast__c', f.fieldPath == 'Agreed__c'), Map_isCompetitor[r.ProductRef__c]))), true, false)}" style="width:75%" required="{!OR(f.required, f.dbrequired)}" styleClass="{!IF(OR(numDisabled, AND(f.fieldPath == 'Forecast__c', currentCampaign.DisableForecastStatus__c), AND(f.fieldPath == 'Agreed__c', currentCampaign.DisableAgreedStatus__c)), 'isDisabled', '')}" />
+
+                            <apex:selectList rendered="{!AND(CONTAINS(rows_edit, r.Id), f.fieldPath == 'Type__c', OR(r.POGPY__c == null, r.POGPY__c == 0), NOT(typeDisabled))}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select {!IF(OR(f.required, f.dbrequired), 'required', '')}">
+                                <apex:selectOptions value="{!Options_Type}" />
+                            </apex:selectList>
+                        </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+                <style type="text/css">
+                    .apex_cli td.double__cell input,
+                    .apex_cli td.PlantingDensity__c input {max-width: 90px}
+                </style>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th class="{!IF(NOT(isAdmin), 'hidden', '')}"></th>
+                    <th class="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"></th>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <th class="{!IF(f.Type == 'double', f.Type + ' ' + f, '')}"></th>
+                    </apex:repeat>
+                </tr>
+            </tfoot>
+        </table>
+        
+        <ul class="block-details-list">
+            <apex:repeat var="r" value="{!availableReports}">
+                <li class="{!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r.Id}?pv1={!account.Id}" target="_blank"><img src="/img/icon/custom51_100/gears16.png" />{!r.Name}</a></li>
+            </apex:repeat>
+        </ul>
+        
+    </apex:pageBlock>
+
+    <apex:actionFunction action="{!doDelete}" name="RowsDelete_ActionPlan" reRender="List_Records_Table" oncomplete="iniAll()" status="actionLoader" >
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+    </apex:actionFunction>
+
+    <apex:actionFunction action="{!modeNew}" name="RowsNew_ActionPlan" reRender="List_Records_Table" oncomplete="iniAll()" status="actionLoader" >
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction action="{!modeEdit}" name="RowsEdit_ActionPlan" reRender="List_Records_Table" oncomplete="iniAll()" status="actionLoader" >
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction action="{!cancelModes}" name="Cancel_ActionPlan" reRender="List_Records_Table" oncomplete="iniAll()" status="actionLoader" />
+    <apex:actionFunction action="{!doSave}" name="RowsSave_ActionPlan" reRender="List_Records_Table" oncomplete="iniAll()" status="actionLoader">
+        <apex:param name="firstParam" assignTo="{!SelectedTypes}" value="" />
+    </apex:actionFunction>
+    <apex:actionFunction action="{!modeAdd}" name="Add_ActionPlan" reRender="List_Records_Table" oncomplete="iniAll()" status="actionLoader" />
+
+    <apex:actionFunction action="{!getZVD}" name="getZVD" reRender="List_Records_Table" oncomplete="iniAll()" status="actionLoader" />
+    <apex:actionFunction action="{!getZVDEmail}" name="getZVDEmail" reRender="List_Records_Table" oncomplete="iniAll()" status="actionLoader" />
+
+
+    <script type="text/javascript">
+        $(document).ready(function()
+        {
+            if('{!modeAdd}' == 'true')
+                iniProductPicker();
+            
+            if('{!modeNew}' == 'true' && '{!modeAdd}' == 'false')
+                fillProductValues();
+            
+            if('{!modeEdit}' == 'true')
+                checkPlantingDensity();
+        });
+        
+        function checkPlantingDensity()
+        {           
+            $('.apex_cli .sortable tbody tr:visible, .apex_cli .sortable-features-off tbody tr:visible').each(function() {
+                var Agreed = $(this).find('td.Agreed__c').find('input').val();
+                var POG = $(this).find('td.POG__c').find('input').val();
+                if(!(!Agreed && !POG))
+                {
+                    var $pd = $(this).find('td.PlantingDensity__c input:visible');
+                    var $ds = $(this).find('td.DistributorRef__c input:visible');
+                    
+                    $pd.addClass('required');
+                    $ds.addClass('required');
+                }
+            });
+            
+            $('td.Agreed__c input, td.POG__c input').bind('keyup', function(e) {
+                var Agreed = $(this).closest('tr').find('td.Agreed__c').find('input').val();
+                var POG = $(this).closest('tr').find('td.POG__c').find('input').val();
+                
+                var $pd = $(this).closest('tr').find('td.PlantingDensity__c input:visible');
+                var $ds = $(this).closest('tr').find('td.DistributorRef__c input');
+                var $ds_vis = $(this).closest('tr').find('td.DistributorRef__c input:visible');
+                
+                if(!(!Agreed && !POG))
+                {
+                    if(!$pd.hasClass('required') && !$ds.hasClass('required'))
+                    {
+                        $pd.addClass('required');
+                        $ds.addClass('required');
+    
+                        $pd.parent().wrapInner('<div class="requiredInput"></div>');
+                        $ds.parent().wrapInner('<div class="requiredInput"></div>');
+                        
+                        $pd.closest('.requiredInput').prepend('<div class="requiredBlock">');
+                        $ds.closest('.requiredInput').prepend('<div class="requiredBlock">');
+                    }
+
+                } else {
+                    console.log($pd.length);
+                    if(($pd.hasClass('required') || $pd.length == 0) && $ds.hasClass('required'))
+                    {
+                        $pd.removeClass('required');
+                        $ds.removeClass('required');
+                        
+                        $pd.parent().contents().unwrap();
+                        $ds_vis.parent().contents().unwrap();
+                        
+                        $pd.parent().find('.requiredBlock').remove();
+                        $ds.parent().find('.requiredBlock').remove();
+                    }
+                }
+            });
+        }
+        
+        function iniProductPicker()
+        {
+            var ProductCatalogue = '{!Id_ProductCatalogue}';
+            query = "SELECT Id, ProductRef__c, Product_Name__c, ProductRef__r.ProductVendor__c, Vendor__c,";
+            query += " ProductRef__r.ProductGroupRef__c, ProductRef__r.ProductGroupRef__r.Name,";
+            query += " ProductRef__r.ProductTypeRef__c, ProductRef__r.ProductTypeRef__r.Name";
+            query += " FROM ProductCatalogEntry__c";
+            query += " WHERE ProductCatalogRef__c = '" + ProductCatalogue + "'";
+            query += " AND IsActive__c = true AND ProductRef__c != null";
+            query += " AND ProductRef__r.ProductVendor__c != null";
+            query += " AND ProductRef__r.IsActive = true";
+            query += " ORDER BY Vendor__c ASC, Product_Name__c ASC";
+            
+            try {
+                result = sforce.connection.query(query);
+            } catch(e) {
+                console.log(e);
+            }
+            
+            var queryMore = true;
+            var options = "";
+            while(queryMore)
+            {
+                var records = result.getArray("records");
+                var records_mto = [];
+                var records_other = [];
+                var prodNames = [];
+                for(var i = 0; i < records.length; i++)
+                {
+                    if(records[i].Vendor__c.indexOf('Monsanto') >= 0)
+                        records_mto.push(records[i]);
+                    else
+                        records_other.push(records[i]);
+                    
+                    prodNames.push(records[i].Product_Name__c + ' - ' + records[i].Vendor__c);
+                }
+                
+                var prodSortNames = prodNames.slice().sort();
+                var prodDuplicates = [];
+                for(var i = 0; i < prodNames.length - 1; i++)
+                {
+                    if(prodSortNames[i + 1] == prodSortNames[i])
+                        prodDuplicates.push(prodSortNames[i]);
+                }
+                
+                records = $.merge( $.merge( [], records_mto ), records_other );
+                for(var i = 0; i < records.length; i++)
+                {
+                    if(i == 0)
+                        options += "<optgroup label='" + records[i].Vendor__c + "'>";
+                    
+                    var pr2Name = records[i].Product_Name__c + ' - ' + records[i].Vendor__c;
+                    var pr2Group = records[i].ProductRef__r.ProductGroupRef__c != null ? ' - ' + records[i].ProductRef__r.ProductGroupRef__r.Name : '';
+                    var pr2Type = records[i].ProductRef__r.ProductTypeRef__c != null ? ' - ' + records[i].ProductRef__r.ProductTypeRef__r.Name : '';
+                    
+                    if(prodDuplicates.indexOf(pr2Name) >= 0)
+                        options += "<option value='" + records[i].ProductRef__c + "/" + records[i].Id + "'>" + records[i].Product_Name__c + pr2Group + pr2Type + "</option>";
+                    else
+                        options += "<option value='" + records[i].ProductRef__c + "/" + records[i].Id + "'>" + records[i].Product_Name__c + "</option>";
+                    
+                    if(i != (records.length - 1) && records[i].ProductRef__r.ProductVendor__c != records[i+1].ProductRef__r.ProductVendor__c)
+                        options += "</optgroup><optgroup label='" + records[i+1].Vendor__c + "'>";
+                    if(i == (records.length - 1))
+                        options += "</optgroup>";
+                }
+                if(result.getBoolean("done"))
+                    queryMore = false;
+                else
+                    result = sforce.connection.queryMore(result.queryLocator);
+            }
+
+            $('#ProductPicker_ActionPlan').html(options);
+
+            $('#ProductPicker_ActionPlan').chosen({disable_search_threshold: 8, max_selected_options: 12, search_contains: true, no_results_text: "{!$Label.AccountPage_picklist_no_results}"}).change(function() {
+
+                $(this).trigger('chosen:updated');
+
+                if($('#ProductPicker_ActionPlan ~ .chosen-container .chosen-choices .search-choice').length == 0)
+                    $(this).closest('.accountBlock').find('.btn-add').prop('disabled', true).addClass('btnDisabled').removeClass('btn');
+                else
+                    $(this).closest('.accountBlock').find('.btn-add').prop('disabled', false).removeClass('btnDisabled').addClass('btn');
+            });
+        }
+        
+        function fillProductValues()
+        {
+            var arrayPCE = [];
+            $('.dataPCE').each(function()
+            {
+                arrayPCE.push('\'' + $(this).attr('data-pce') + '\'');
+            });
+            
+            query = "SELECT Id, ProductRef__r.Name, ProductRef__r.Description,";
+            
+            if('{!currentCampaign.Name}'.includes('Germany')) query += " DE_isPremium__c,";
+            
+            query += " ProductRef__r.ProductTypeRef__c, ProductRef__r.ProductTypeRef__r.Name,";
+            query += " ProductRef__r.ProductTreatment__c, ProductRef__r.ProductBagSize__c, ProductRef__r.ProductVendor__r.Name, ProdHumidity__c";
+            query += " FROM ProductCatalogEntry__c";
+            query += " WHERE Id IN (" + arrayPCE.toString() + ")";
+
+            try {
+                result = sforce.connection.query(query);
+            } catch(e) {
+                console.log(e);
+            }
+            
+            records = result.getArray("records");
+            for(i = 0; i < records.length; i++) {
+                $('.tablePCE').find('[data-pce="' + records[i].Id + '"]').children('td').each(function() {
+                    if($(this).hasClass('ProductRef__c')) $(this).html(records[i].ProductRef__r.Name);
+                    if($(this).hasClass('HybridName__c')) $(this).html(records[i].ProductRef__r.Description);
+                    if($(this).hasClass('Treatment__c')) $(this).html(records[i].ProductRef__r.ProductTreatment__c);
+                    if($(this).hasClass('Provider__c')) $(this).html(records[i].ProductRef__r.ProductVendor__r.Name);
+                    if($(this).hasClass('Humidity__c')) $(this).html(records[i].ProdHumidity__c);
+                    if($(this).hasClass('ProductRef__r.ProductBagSize__c')) $(this).html(Math.round(records[i].ProductRef__r.ProductBagSize__c));
+                    if($(this).hasClass('DE_isPremium__c') && records[i].DE_isPremium__c == 'false') $(this).children('input').addClass('isDisabled');
+                    if($(this).hasClass('FRML_PRODUCTTYPE__c')) {
+                        records[i].ProductRef__r.ProductTypeRef__c != null ? $(this).html(records[i].ProductRef__r.ProductTypeRef__r.Name) : $(this).html('');
+                    }
+                });
+            }
+        }
+    </script>
+    
+    </apex:form>
+    
+</apex:component>

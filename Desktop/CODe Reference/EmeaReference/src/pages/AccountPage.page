@@ -1,0 +1,35 @@
+<apex:page standardController="Account" extensions="AccountPageController" tabStyle="Account" sidebar="false" action="{!redirectPage}">
+
+    <script type="text/javascript">document.body.className += ' scroll-disabled';</script>
+    <div id="PageLoader" style="position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 99; background: #fff"></div>
+    
+    <c:AccountPageStyles />
+
+    <span id="PageMessages">
+        <apex:pageMessages rendered="{!showPageMessages}" escape="false" />
+    </span>
+    
+    <span id="PageDetail">
+        <apex:detail relatedList="true" inlineEdit="true" title="true" showChatter="false" rendered="{!showDetail}" />
+    </span>
+    
+    <span id="PageComponents">
+        <span class="apex_acr"><c:AccountPageAcreages account="{!account}" rendered="{!showAcreages}" /></span>
+        <span class="apex_swi"><c:AccountDivisionSwitcher rendered="{!showDivisionSwitcher}" /></span>
+        <span class="apex_cli"><c:AccountPageActionPlan account="{!account}" rendered="{!showActionPlan}" /></span>
+        <span class="apex_ret"><c:AccountPageRetoure account="{!account}" rendered="{!showRetoure}" /></span>
+        <span class="apex_tri"><c:AccountPageTrials account="{!account}" rendered="{!showTrials}" /></span>
+        <span class="apex_gaw"><c:AccountPageGiveAways account="{!account}" rendered="{!showGiveAways}" /></span>
+        <span class="apex_vou"><c:AccountPageVouchers account="{!account}" rendered="{!showVouchers}" /></span>
+        <span class="apex_mrk"><c:AccountPageMarketingCampaign account="{!account}" rendered="{!showMarketingCampaigns}" /></span>
+    </span>
+
+    <span id="RelatedLists"></span>
+
+    <span class="PageLocale hidden">
+        <apex:outputField value="{!currentAccount.NUM_Locale_Test__c}" />
+    </span>
+    
+    <c:AccountPageScripts />
+
+</apex:page>

@@ -1,0 +1,43 @@
+<apex:component controller="AccountListOfOrdersRSAController" >
+       <!--<apex:pageMessages ></apex:pageMessages>
+    <apex:variable value="{!0}" var="counter"/>-->
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    <apex:form >
+        <style>
+            .apexp .individualPalette .bPageBlock .pbBody .pbSubheader{
+                background-image:url('/img/alohaSkin/opacity75.png');
+                color:black;
+                padding:4px 16px;
+            }
+            .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3{
+                font-size: 1.2em;
+                font-color: black;
+            }
+                .apexp .bPageBlock.apexDefaultPageBlock .pbBody{
+                margin: 0px 0px 0px;
+            }
+        </style>
+        <apex:pageBlock title="List of Orders">
+              
+                <apex:pageBlockTable value="{!orders}" var="order" >
+                    
+                    <apex:column headerValue="Order Number" >
+                    <apex:outputLink value="/{!order.ID}" >{!order.Name}</apex:outputLink> </apex:column>
+                    <apex:column headerValue="Version" value="{!order.version_Id_RSA__c}"/>
+                    <apex:column headerValue="Season" value="{!order.Type_RSA__c}"/>
+                    <apex:column headerValue="Consigned" value="{!order.Consigned__c}"/>
+                    <apex:column headerValue="Type" value="{!order.RecordTypeID}"/>
+                    <apex:column headerValue="Status" value="{!order.Status_RSA__c}"/>
+                    <apex:column headerValue="Cancelation Reason" value="{!order.Cancellation_Reason_RSA__c}"/>                   
+                    <!--<apex:column headerValue="Amount" value="{!dataSum[order.id]}"/>-->
+                    <apex:column headerValue="Last Update" value="{!order.LastModifiedDate}"/>
+                    <apex:column headerValue="Document" ><apex:repeat value="{!order.attachments}" var="attachment"><apex:outputLink target="_blank" value="/servlet/servlet.FileDownload?file={!attachment.id}"><apex:image value="/img/icon/documents16.png" /></apex:outputLink></apex:repeat></apex:column>
+                    <apex:column headerValue="Signed" value="{!order.Signed_RSA__c}"/>
+                    <apex:column headerValue="Created " value="{!order.CreatedDate}"/>                
+                </apex:pageBlockTable>
+                   
+        </apex:pageBlock>
+    </apex:form>
+
+
+</apex:component>

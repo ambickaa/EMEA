@@ -1,0 +1,58 @@
+<apex:page standardController="ProductCatalog__c" extensions="ProductCatalogPickerController">
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:form >
+    <apex:pageBlock title="Current Products">
+        <apex:pageBlockTable value="{!currentProducts}" var="product" >
+            <apex:column headerValue="Select">
+                <apex:inputCheckbox value="{!product.checked}" disabled="{!product.isDisabled}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.product2.fields.name.label}">
+                <apex:outputText >{!product.record.ProductRef__r.name}</apex:outputText>
+            </apex:column>
+            <apex:repeat var="f" value="{!resultFieldSet.managedFieldSetMembers}">
+                <apex:column >
+                    <apex:facet name="header">{!f.label}</apex:facet>
+                    <apex:outputField value="{!product.record['ProductRef__r.'&f.fieldPath]}" />
+                </apex:column> 
+            </apex:repeat>
+        </apex:pageBlockTable>
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Return to Product Catalog" action="{!doCancel}"/>
+            <apex:commandButton action="{!doDeleteProducts}" value="{!$Label.Delete}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    
+    <apex:pageBlock >
+        <apex:pageBlockSection >
+            <apex:repeat var="f" value="{!searchFieldSet.managedFieldSetMembers}">
+                <apex:inputField value="{!searchProduct[f.fieldPath]}"  required="false" />
+            </apex:repeat>
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="{!$Label.Filter}" action="{!doFilter}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+   
+    <apex:pageBlock title="Possible Products">
+        <apex:pageBlockTable value="{!resultProducts}" var="product">
+            <apex:column >
+                <apex:inputCheckbox value="{!product.checked}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.product2.fields.name.label}">
+                <apex:outputlink value="/{!product.Id}">
+                    <apex:outputText >{!product.name}</apex:outputText>
+                </apex:outputlink>
+            </apex:column>
+             <apex:repeat var="f" value="{!resultFieldSet.managedFieldSetMembers}">
+                <apex:column >
+                    <apex:facet name="header">{!f.label}</apex:facet>
+                    <apex:outputField value="{!product.record[f.fieldPath]}" />
+                </apex:column> 
+            </apex:repeat>
+        </apex:pageBlockTable>
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Add Products" action="{!doAddProducts}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    </apex:form> 
+</apex:page>

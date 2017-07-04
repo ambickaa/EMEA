@@ -1,0 +1,98 @@
+<apex:component allowDML="true" controller="AccountPageRetoureController">
+
+    <apex:attribute name="account" type="Account" description="currentAccount" required="true" />    
+
+    <apex:form id="List_Records_Table">
+    
+        <apex:variable value="{!List_Records[0]}" var="Retoure"/>
+        
+        <span class="component-messages">
+            <apex:pageMessages rendered="{!showRetoureMessages}" escape="false" />
+        </span>
+        
+        <apex:pageBlock rendered="{!currentCampaign != null}">
+        <div class="pageBlockSection {!IF(currentCampaign != null, '', 'hidden')}">
+        <apex:pageBlockSection title="Bemerkung" collapsible="false" rendered="{!currentCampaign != null}">
+                    <apex:outPutField value="{!Retoure.TXT_Bemerkung__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField value="{!Retoure.TXT_Bemerkung__c}" rendered="{!modeEdit}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="{!$Label.Retoure}" columns="2" collapsible="false" rendered="{!currentCampaign != null}">
+
+                    <apex:outPutField value="{!Retoure.Vorlieferant1__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField value="{!Retoure.Vorlieferant1__c}" rendered="{!modeEdit}"/>
+
+                    <apex:outPutField value="{!Retoure.Retoure1__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField value="{!Retoure.Retoure1__c}" rendered="{!modeEdit}"/>
+                                
+                    <apex:outPutField value="{!Retoure.Vorlieferant2__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField value="{!Retoure.Vorlieferant2__c}" rendered="{!modeEdit}"/>
+                
+                    <apex:outPutField value="{!Retoure.Retoure2__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField value="{!Retoure.Retoure2__c}" rendered="{!modeEdit}"/>
+                 
+                    <apex:outPutField value="{!Retoure.Vorlieferant3__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField value="{!Retoure.Vorlieferant3__c}" rendered="{!modeEdit}"/>
+                
+                    <apex:outPutField value="{!Retoure.Retoure3__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField value="{!Retoure.Retoure3__c}" rendered="{!modeEdit}"/>
+
+                    <apex:outPutField label="{!$Label.AccountPage_Retoure_FruhkaufRabatt}" value="{!Retoure.FruekaufRabatt__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField label="{!$Label.AccountPage_Retoure_FruhkaufRabatt}" value="{!Retoure.FruekaufRabatt__c}" rendered="{!modeEdit}"/>
+                
+                    <apex:outPutField label="{!$Label.AccountPage_Retoure_FruhRabMenge}" value="{!Retoure.FruekaufMenge__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField label="{!$Label.AccountPage_Retoure_FruhRabMenge}" value="{!Retoure.FruekaufMenge__c}" rendered="{!modeEdit}"/>
+
+                    <apex:outPutField label="{!$Label.AccountPage_Retoure_Extrarabatt}" value="{!Retoure.Extrarabatt__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField label="{!$Label.AccountPage_Retoure_Extrarabatt}" value="{!Retoure.Extrarabatt__c}" rendered="{!modeEdit}"/>
+                    
+                    <apex:outPutField label="{!$Label.AccountPage_Retoure_ExtrarabattMenge}" value="{!Retoure.RabattMenge__c}" rendered="{!(!modeEdit)}"/>
+                    <apex:inputField label="{!$Label.AccountPage_Retoure_ExtrarabattMenge}" value="{!Retoure.RabattMenge__c}" rendered="{!modeEdit}"/>
+
+                    <apex:outPutField label="{!$Label.AccountPage_Retoure_RuckMenge}" value="{!Retoure.NUM_MENGE_TAX__c}" rendered="{!AND((!modeEdit),currentDivision.Name == 'Corn')}"/>
+                    <apex:inputField label="{!$Label.AccountPage_Retoure_RuckMenge}" value="{!Retoure.NUM_MENGE_TAX__c}" rendered="{!AND(modeEdit,currentDivision.Name == 'Corn')}"/>
+
+                    <apex:outPutField label="{!$Label.AccountPage_Retoure_DKExp}" value="{!Retoure.NUM_ExpansionRabatt__c}" rendered="{!AND((!modeEdit),currentDivision.Name == 'OSR')}"/>
+                    <apex:inputField label="{!$Label.AccountPage_Retoure_DKExp}" value="{!Retoure.NUM_ExpansionRabatt__c}" rendered="{!AND(modeEdit,currentDivision.Name == 'OSR')}"/>       
+
+                    <apex:outPutText value="" rendered="{!AND((!modeEdit),currentDivision.Name == 'OSR')}"/>
+
+                    <apex:outPutField label="{!$Label.AccountPage_Retoure_DKExi}"  value="{!Retoure.EximusRabat__c}" rendered="{!AND((!modeEdit),currentDivision.Name == 'OSR')}"/>
+                    <apex:inputField label="{!$Label.AccountPage_Retoure_DKExi}" value="{!Retoure.EximusRabat__c}" rendered="{!AND(modeEdit,currentDivision.Name == 'OSR')}"/>  
+
+                    <apex:outPutText value="" rendered="{!AND((!modeEdit),currentDivision.Name == 'OSR')}"/>
+
+                    <apex:outPutField label="{!$Label.AccountPage_Retoure_DKExc}" value="{!Retoure.NUM_ExceptionRabatt__c}" rendered="{!AND((!modeEdit),currentDivision.Name == 'OSR')}"/>
+                    <apex:inputField label="{!$Label.AccountPage_Retoure_DKExc}" value="{!Retoure.NUM_ExceptionRabatt__c}" rendered="{!AND(modeEdit,currentDivision.Name == 'OSR')}"/>
+                
+                	<apex:outPutText value="" rendered="{!AND((!modeEdit),currentDivision.Name == 'OSR')}"/>
+                
+                	<apex:outPutText label="{!$Label.AccountPage_Retoure_Return_Rate}" value="{0,number,0}%" rendered="{!AND((!modeEdit),currentDivision.Name == 'OSR')}">
+                        <apex:param value="{!FLOOR(Retoure.NUM_Returns_Rate__c)}" />
+                	</apex:outPutText>
+                    <apex:inputField value="{!Retoure.NUM_Returns_Rate__c}" rendered="{!AND(modeEdit,currentDivision.Name == 'OSR')}"/>
+            </apex:pageBlockSection>
+        </div>
+
+           <div class="pbHeader buttonsSection">
+            <table>
+                <tr>
+                    <td class="pbTitle"></td>
+                    <td class="pbButton">
+                <apex:commandButton value="{!$Label.AccountPage_btn_edit}" disabled="{OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner)), currentCampaign == null)}" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner)), currentCampaign == null), 'hidden', '')} btn-view btn-rows" onClick="rowsEdit(this, RowsEdit_Retoure); return false;" />
+                <apex:commandButton value="{!$Label.AccountPage_btn_save}" styleClass="{!IF(modeEdit, '', 'hidden')} btn-action" onClick="if(!requiredCheck(this)) { return false; } xConfirm(this, 'save', RowsSave_Retoure); return false;" />
+                <apex:commandButton value="{!$Label.AccountPage_btn_discard}" styleClass="{!IF(modeEdit, '', 'hidden')} btn-action" onClick="xConfirm(this, 'cancel', Cancel_Retoure); return false;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        </apex:pageBlock>
+       
+        <apex:actionFunction action="{!modeEdit}" name="RowsEdit_Retoure" reRender="List_Records_Table" oncomplete="iniAll()">
+            <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+        </apex:actionFunction>
+        
+        <apex:actionFunction action="{!cancelModes}" name="Cancel_Retoure" reRender="List_Records_Table" oncomplete="iniAll()" />
+        <apex:actionFunction action="{!doSave}" name="RowsSave_Retoure" reRender="List_Records_Table" oncomplete="iniAll()" />
+            
+    </apex:form>
+</apex:component>

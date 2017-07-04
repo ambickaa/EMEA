@@ -1,0 +1,186 @@
+<apex:page showHeader="false" language="{!$CurrentPage.parameters.lang}" title="{!$CurrentPage.parameters.origin} {!$Label.SLC_confirmation_title}" docType="html-5.0">
+    <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <link href="{!URLFOR($Resource.bootStrap, 'bootstrap-3.3.2/dist/css/bootstrap.min.css')}" rel="stylesheet" media="screen"/>
+            
+            <style type="text/css">
+                .container-fluid{
+                    padding-left: 0px;
+                    padding-right: 0px;
+                }
+                html, body {
+                height: 100%;    /* The html and body elements cannot have any padding or margin. */                  
+                }
+                #wrapper {
+                padding: 0;
+                margin: 0 auto;
+                min-height: 100%;
+                height: 100%;
+                }
+                .headerIn{
+                    background: #005983;
+                    color: #fff;
+                    border-bottom: .08em solid #fff;
+                }
+                .contentHeader {
+                max-width: 84em;
+                margin: 0 auto;
+                padding: 1.8em 0;
+                }
+                #content.content {
+                max-width: 84em;
+                margin: 0 auto;
+                padding: 0 .9375em;
+                }
+                .logo{
+                padding: 0 0 0 .625em;
+                }
+                .footer {
+                padding-top: 1.25em;
+                margin-top: 0;
+                width: 100%;
+                clear: both;
+                position: relative;
+                bottom: 0;
+                }
+                #footerLogo{
+                text-align: right;
+                margin: 7em 0 .625em 0;
+                width: 100%;                    
+                padding-right: 1.5em;
+                }
+                .footer .content {
+                max-width: 84em;
+                margin: 0 auto;
+                text-align: right;
+                }
+                #footerIn{
+                background: #005983;
+                color: #fff;
+                padding: .5em 0;
+                }
+                #footerIn ul {
+                float: left;
+                margin: 0;
+                font-size: .8125em;
+                font-weight: bold;
+                }
+                #footerIn ul li {
+                display: block;
+                float: left;
+                }              
+                #footerIn .box-copy {
+                text-align: right;
+                }        
+                #footerIn .copy {
+                padding: 0 .625em 0 0;
+                font-size: .8125em;
+                font-weight: bold;
+                display: inline-block;
+                line-height: 1;
+                }                 
+                #footerIn .copy-mon {
+                padding: 0 .625em;
+                font-size: .8125em;
+                font-weight: bold;
+                } 
+                #footerIn ul li a {
+                color: #fff;
+                padding: 0 .5em 0 .5em;
+                }              
+            </style>   
+        </head>
+        <body>
+            <div class="container-fluid" id="wrapper">
+                <!-- HEADER -->
+                <header>
+                    <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.origin == $Label.SLC_Dekalb_brand}">
+                        <div class="headerIn">
+                            <div class="contentHeader">
+                                <div class="logo">
+                                    <apex:image styleClass="img-responsive" url="{!$Resource.SLC_DEKALB}" />
+                                </div>
+                            </div>                  
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.origin == $Label.SLC_Roundup_brand}">
+                        <div class="headerIn" style="background: url({!$Resource.SLC_WIDMA_Header}) repeat-x">
+                            <div class="contentHeader">
+                                <apex:image styleClass="img-responsive" url="{!$Resource.SLC_WIDMA}" />
+                            </div>                  
+                        </div>
+                    </apex:outputPanel>
+                </header>
+                <!-- CONTENT -->
+                 <apex:outputPanel layout="block" rendered="true">               
+                    <div class="panel-body">
+                        <div id="content" class="content">
+                            <span id="theText" style="color:red;font-weight: bold">{!$Label.SLC_site_confirm_KO1}</span>
+                            <p style="font-weight: bold">{!$Label.SLC_site_confirm_KO2}</p>
+                        </div>
+                    </div>
+                 </apex:outputPanel>
+                 
+                <!--FOOTER-->
+                <footer class="footer">
+                    <div id="footerLogo">
+                        <div class="content">
+                            <a href="http://www.monsanto.com"><apex:image id="theImage" value="{!$Resource.SLC_Monsanto}" /></a>
+                        </div>
+                    </div>
+                    <apex:outputPanel rendered="{!$CurrentPage.parameters.origin == $Label.SLC_Dekalb_brand}">
+                        <div id="footerIn">
+                            <div class="content">
+                                <ul style="padding-left: 0px;">
+                                    <li>
+                                        <a href="{!$Label.SLC_site_DEKALB_privacy_link}" target="_blank" title="{!$Label.SLC_site_DEKALB_privacy}">{!$Label.SLC_site_DEKALB_privacy}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{!$Label.SLC_site_DEKALB_terms_link}" target="_blank" title="{!$Label.SLC_site_DEKALB_terms}">{!$Label.SLC_site_DEKALB_terms}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{!$Label.SLC_site_DEKALB_cookies_link}" target="_blank" title="{!$Label.SLC_site_DEKALB_cookies}">{!$Label.SLC_site_DEKALB_cookies}    </a>
+                                    </li>
+                                </ul>                           
+                                <div class="box-copy">
+                                    <span class="copy">
+                                        <apex:outputText value="{!$Label.SLC_site_DEKALB_copyright}" escape="false" />
+                                    </span> <br/>
+                                    <span class="copy-mon"> 
+                                        <apex:outputText value="{!$Label.SLC_site_DEKALB_registered}" escape="false" />                                    
+                                    </span>
+                                </div>
+                            </div>                        
+                        </div>                   
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!$CurrentPage.parameters.origin == $Label.SLC_Roundup_brand}">
+                        <div id="footerIn" style="background: url({!$Resource.SLC_WIDMA_Header}) repeat-x">
+                            <div class="content">
+                                <ul style="padding-left: 0px;">
+                                     <li>
+                                        <a href="{!$Label.SLC_site_WidMa_privacy_link}" target="_blank" title="{!$Label.SLC_site_WidMa_privacy}">{!$Label.SLC_site_WidMa_privacy}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{!$Label.SLC_site_WidMa_terms_link}" target="_blank" title="{!$Label.SLC_site_WidMa_terms}">{!$Label.SLC_site_WidMa_terms}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{!$Label.SLC_site_WidMa_cookies_link}" target="_blank" title="{!$Label.SLC_site_WidMa_cookies}">{!$Label.SLC_site_WidMa_cookies}</a>
+                                    </li>
+                                </ul>                     
+                                <div class="box-copy">
+                                     <span class="copy">
+                                         <apex:outputText value="{!$Label.SLC_site_WidMa_copyright}" escape="false" />
+                                     </span> <br/>
+                                    <span class="copy-mon">
+                                        <apex:outputText value="{!$Label.SLC_site_WidMa_registered}" escape="false" />
+                                    </span>
+                                </div>
+                            </div>                        
+                        </div>                   
+                    </apex:outputPanel>                    
+                </footer>                             
+            </div>            
+        </body>
+    </html>    
+</apex:page>

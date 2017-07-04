@@ -1,0 +1,163 @@
+<apex:page sidebar="false" language="" renderAs="pdf" standardStylesheets="false" applyBodyTag="false" showHeader="false" standardcontroller="Voucher__c" extensions="VoucherHungaryCorn2015Controller" ContentType="text/html;charset=ISO-8859-1"> 
+<html lang="hu" >
+ <head>
+    <meta http-equiv="content-type" content="text/html;charset=ISO-8859-1"/> 
+        <title>Voucher</title>
+   <style>
+@page {
+  size: A4 portrait;
+  margin: 0px;
+  padding: 0in;
+  border: 0px;
+} 
+  </style>
+</head> 
+
+<body style="font-family:'Arial Unicode MS';"> 
+ <div id="page1" style="page-break-after:auto; position:relative; width:100%; height:900px;">
+
+<table style="width:100%;" >
+
+<div style="">
+<span style="display:inline-block; "> <apex:image url="{!$Resource.HU_header_corn2015}" width="400px"/> </span>
+<span style="text-align:center; padding:2px; font-weight:100; position:absolute; top:2px; left:400px; font-size:12px; border:1px solid #000; display:inline-block; width:200px; min-height:60px;">Sorszám: <br/><span style="vertica-align:center; font-size:16px"> {!voucher.name}</span></span>
+<span style="font-size:20px;text-align:right; position:absolute; top:0px; left:630px; "></span>
+</div>
+<div style="text-align:right">
+<span style="width:100%;  font:11px; text-align:right; margin-right:20px" > Tájékoztató kiállítója: Monsanto Hungária KFT. 1238 Budapest, Tùri István út 1., továbbiakban Monsanto</span>
+</div>
+
+
+<tr>
+<td style=" width:198px; font-size: 16px;" align="right"> <span style="color:#FF0000; padding-right:10px"> {!cancelled}</span> </td>
+</tr>
+<tr class="line" style=" height: 15px; " ><td colspan="3"></td> </tr>
+
+<div style="position:relative;font:12px; margin-top:5px; padding-bottom:1px; border-bottom:1px dotted #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; width:25%; text-align:right; position:relative; bottom:-3px; left:-3px; padding:3px 5px 3px 3px; background:#FFF">KEDVEZMÉNYEZETT neve:</span>
+            <span style="color:#333; width:75%; text-transform:uppercase">{!voucher.FarmNameCopy__c} &nbsp;</span>
+            
+        </div>
+         <div style="margin-top:2px; font:12px; padding-bottom:1px; border-bottom:1px dotted #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; width:25%; text-align:right; position:relative; position:relative; bottom:-3px; left:-3px; padding:3px 5px 3px 3px; background:#FFF">CIP kód:</span>
+            <span style="color:#333; width:75%; text-transform:uppercase">{!voucher.AccountRef__r.client_code__c} &nbsp;</span>               
+        </div>
+        <div style="margin-top:2px; font:12px; padding-bottom:1px; border-bottom:1px dotted #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; width:25%; text-align:right; position:relative; bottom:-3px; left:-3px; padding:3px 5px 3px 3px; background:#FFF">Bankszámla szám:</span>
+            <span style="color:#333; width:75%; text-transform:uppercase">{!voucher.AccountRef__r.Address_line_2__c} &nbsp;</span>               
+        </div>
+        <div style="margin-top:2px; font:12px; padding-bottom:1px; border-bottom:1px dotted #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; width:25%; text-align:right; position:relative; bottom:-3px; left:-3px; padding:3px 5px 3px 3px; background:#FFF">Adószáma:</span>
+            <span style="color:#333; width:75%; text-transform:uppercase">{!voucher.FiscalCodeCopy__c} &nbsp;</span>               
+        </div>
+        <div style="margin-top:2px; font:12px; padding-bottom:1px; border-bottom:1px dotted #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; width:25%; text-align:right; position:relative; position:relative; bottom:-3px; left:-3px; padding:3px 5px 3px 3px; background:#FFF">Székhelye:</span>
+            <span style="color:#333; width:75%; text-transform:uppercase">{!voucher.AddressCopy__c} &nbsp;</span>               
+        </div>
+         <div style="margin-top:2px;font:12px; padding-bottom:1px; border-bottom:1px dotted #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; width:25%; text-align:right; position:relative; position:relative; bottom:-3px; left:-3px; padding:3px 5px 3px 3px; background:#FFF">E-mail címe:</span>
+            <span style=" width:75%; color:#333;">{!voucher.EmailCopy__c} &nbsp;</span>               
+        </div>
+        <div style="margin-top:2px; font:12px;padding-bottom:1px; border-bottom:1px dotted #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; width:25%; text-align:right; position:relative;  position:relative; bottom:-3px; left:-3px; padding:3px 5px 3px 3px; background:#FFF">Telefonszáma:</span>
+            <span style=" width:75%; color:#333; text-transform:uppercase">{!voucher.PhoneCopy__c} &nbsp;</span>               
+        </div>
+       
+        <div style="margin-top:2px;font:12px; padding-bottom:1px; border-bottom:1px dotted #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; width:25%; text-align:right; position:relative; position:relative; bottom:-3px; left:-3px; padding:3px 5px 3px 3px; background:#FFF">DISZTRIBÚTOR neve:</span>
+            <span style=" width:75%; color:#333; text-transform:uppercase">{!voucher.DistributorNameCopy__c} &nbsp;</span>               
+        </div>  
+ 
+        <apex:outputPanel layout="none">
+        
+        <div style="background:#FFF; width:49%;padding-top: 15px; vertical-align:top; display:inline-block; {!HYB_DISPLAY}">
+            <table cellspacing="0" style="width:100%; text-align:center; border:1px solid black;">
+                <thead style="line-height:1.2em">
+                    <tr>
+                        <th cellspacing="0" style="border:none; vertical-align:middle; background:#1F497D; color:#FFF; font-weight:bold; padding:2px 2px 4px;font:12px">TERMÉK</th>
+                        <th cellspacing="0" style="border:none; vertical-align:middle; background:#1F497D; color:#FFF; font-weight:bold; padding:2px 2px 4px;font:12px">Csávázás</th>
+                        <th cellspacing="0" style="border:none; vertical-align:middle; background:#1F497D; color:#FFF; font-weight:bold; padding:2px 2px 4px;font:12px">Mennyiség (*)</th>
+                    </tr>
+                </thead>
+                <tbody style="margin:0; padding:0; line-height:1.2em; border-collapse:collapse;font:12px;">                            
+                    
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!HYB_NAME}" var="hyb">
+
+                        <tr style="margin:0; padding:1px;">    
+                            <td style="border-right:1px solid #1F497D; border-top:1px solid #1F497D; vertical-align:middle; padding:1px;font:12px;">{!HYB_NAME[counter]}</td>
+                            <td style="border-right:1px solid #1F497D; border-top:1px solid #1F497D; vertical-align:middle; padding:1px;font:12px;">{!HYB_TREAT[counter]}</td>
+                            <td style="border-top:1px solid #1F497D; vertical-align:middle; padding:1px;font:12px;">{!HYB_BAGS[counter]}</td>
+                        </tr>
+                        
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat>
+
+                    <tr style="margin:0; padding:1px;">
+                        <td style="border-right:1px solid #1F497D; border-top:1px solid #1F497D; vertical-align:middle; padding:1px; background:#1F497D; color:#FFF;font:12px;" colspan="2">Összesen</td>
+                        <td style="border-top:1px solid #1F497D; vertical-align:middle; padding:1px; color:black;font:12px;">{!HYB_NUM_BAGS}</td>
+                    </tr>
+
+                </tbody>                
+            </table>
+        </div>
+        <div style="background:#FFF; vertical-align:top;padding-top: 15px; width:49%; display:inline-block; {!FOC_DISPLAY}">
+            <table cellspacing="0" style="width:100%; text-align:center; border:1px solid black;">
+                <thead style="line-height:1.2em">
+                    <tr>
+                        <th cellspacing="0" style="border:none; vertical-align:middle; background:#1F497D; color:#FFF; font-weight:bold; padding:2px 2px 4px;font:12px;">TERMÉK</th> 
+                        <th cellspacing="0" style="border:none; vertical-align:middle; background:#1F497D; color:#FFF; font-weight:bold; padding:2px 2px 4px;font:12px;">Mennyiség (*)</th>
+                    </tr>
+                </thead>
+                <tbody style="margin:0; padding:0; line-height:1.2em; border-collapse:collapse;font:12px;">                            
+                    
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!FOC_NAME}" var="foc">
+
+                        <tr style="margin:0; padding:1px;">    
+                            <td style="border-right:1px solid #1F497D; border-top:1px solid #1F497D; vertical-align:middle; padding:1px;font:12px;">{!FOC_NAME[counter]}</td> 
+                            <td style="border-top:1px solid #1F497D; vertical-align:middle; padding:1px;font:12px;">{!FOC_BAGS[counter]}</td>
+                        </tr>
+                        
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat>
+
+                    <tr style="margin:0; padding:1px;">
+                        <td style="border-right:1px solid #1F497D; border-top:1px solid #1F497D; vertical-align:middle; padding:1px; background:#1F497D; color:#FFF;font:12px;">Összes FOC</td>
+                        <td style="border-top:1px solid #1F497D; vertical-align:middle; padding:1px; color:black;font:12px;">{!FOC_NUM_BAGS}</td>
+                    </tr>
+
+                </tbody>                
+            </table>
+        </div>
+        <small style="font:9px;">(*)80.000 magot tartalmazó zsák (db)</small>
+        
+        </apex:outputPanel>          
+
+
+<tr class="line" style=" height: 25px;" ><td colspan="3"></td> </tr>
+<tr> <td colspan="3" style="width:100%" align="center"> </td></tr>
+
+<tr>
+    <td colspan="3" style="width:100%;font:13px;"> 
+    A fent jelzett hibrideket kivánom megvásárolni a 2015-ös vetőmagszezonban.<br/> 
+</td> </tr>
+ 
+<tr class="line" style=" height: 100px;" ><td colspan="3"></td> </tr>
+<tr height="30px">
+    <td style="width:33%;font:11px;border-bottom:1px dotted #000" align="center">{!Voucher.Owner.Name}<br></br>{!CreateDate}</td>
+     <td style="width:33%;font:11px;" align="center"> </td>
+    <td style="width:33%;font:11px;border-bottom:1px dotted #000" align="center"> <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}" ><img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="55px" width="130px" style="max-height:55px; max-width:130px;"/></apex:outputPanel></td>
+</tr>
+<tr height="30px">
+   <td style="width:33%;font:12px;" align="center"> <span> DEKALB Területi képviselő</span> </td>
+   <td style="width:33%;font:12px;" align="center"> </td>
+    <td style="width:33%;font:12px;" align="center"><span>Kedvezményezett aláírása</span></td>
+</tr>
+</table> 
+</div>  
+ <apex:image url="{!$Resource.voucherHUfooter}" width="100%" style="position:absolute; bottom:0; left:0; right:0; padding:0; margin:0;"/> 
+ 
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,263 @@
+<apex:page sidebar="false" language="" renderAs="pdf" standardStylesheets="false" showHeader="false" standardcontroller="Voucher__c" extensions="VouchersGeneratorController" ContentType="text/html;charset=iso-8859-16">
+
+<html lang="ro" >
+ <head>
+ <meta http-equiv="content-type" content="text/html;charset=iso-8859-16"/>
+        <title>Voucher</title>
+   <style>
+@page {size: A4 portrait;
+  margin: 0px;
+  padding: 0in;
+  border: 0px;
+  
+}
+
+ 
+  </style>
+</head> 
+     <body style=" margin: 0px; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; vertical-align: baseline; text-decoration: none;font-family: 'Arial Unicode MS', Calibri, Arial, Verdana, Geneva, Helvetica, sans-serif;">
+        <div class="web" style=" padding: 0; border: none; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; background: #fff; width: 795px;  margin: 0 auto;">
+            <div class="grid2-1" style="float: left; width: 444px;">
+                <div class="header" style="text-decoration: none; height:320px">
+                    <apex:image url="{!$Resource.RO_vchr_h1condDef}" width="444px" />
+                </div>
+               
+                 <div class="content" style="height:620px; margin-top:0px;"> 
+                    <div class="table" style=" border-spacing: 0;  font-size: 12px;">  <!--  background-image: url({!$resource.RO_vchr_bckgrnd}); background-repeat: no-repeat -->
+                        <table class="table01" style=" margin: 0; border: none; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; padding: 60px 15px 0px 35px;" cellspacing="0" cellpadding="0.5"  >
+                            <thead>
+                                <tr>
+                                    <th id="bodyLcol1" class="especial" style=" padding-right: 40px; padding-left: 5px; width: 200px;">Hibrizi</th>
+                                    <th id="bodyLcol2" style=" padding:  0; text-align: center; font-weight: bold; vertical-align: middle;   width: 200px;">Cantitate comandată <br/> (1,5 mil boabe/sac) </th>
+                                 <!--   <th id="bodyLcol3" style=" padding: 0; text-align: left; font-weight: bold; vertical-align: middle;   width: 83px;">FAO</th>
+                                    <th id="bodyLcol4" style=" padding: 0; text-align: left; font-weight: bold; vertical-align: middle;   width: 72px;">Pret RON <span style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; width:100%; float:left;">2014</span></th>
+                                    <th id="bodyLcol5" style=" padding: 0; text-align: left; font-weight: bold; vertical-align: middle; " >Cantitatea comandata (saci)</th>
+                                --> </tr>
+                            </thead>
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr style="height: 6px; background: #C7D200;"><td></td><td></td></tr>
+                              <!--  <tr style="height: 3px; background: #00ade9;"><td></td><td></td></tr> -->
+                            </tbody>
+                            
+                                                     
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 14px; font-family: inherit; vertical-align: baseline; text-decoration: none;">                            
+
+                                <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold; color:#00ade9;  text-transform: uppercase;"> DK IMMINENT CL </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">  {!IF(ISNULL(FLOOR(sumIMM)),0,FLOOR(sumIMM))}  </span></td>
+                                </tr>
+                                  <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold;color:#00ade9; text-transform: uppercase;"> DK IMIDO CL </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">  {!IF(ISNULL(FLOOR(sumIMID)),0,FLOOR(sumIMID))}  </span></td>
+                                </tr>  
+                                  <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold; color:#00ade9; text-transform: uppercase;"> DK IMPRESSION CL </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">  {!IF(ISNULL(FLOOR(sumIMP)),0,FLOOR(sumIMP))}   </span></td>
+                                </tr>  
+                                  <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold; color:#00ade9; text-transform: uppercase;"> DK IMIRON CL </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">  {!IF(ISNULL(FLOOR(sumIMIR)),0,FLOOR(sumIMIR))}   </span></td>
+                                </tr>   
+                                  <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold; color:#00ade9; text-transform: uppercase;"> DK IMAGINE CL </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">  {!IF(ISNULL(FLOOR(sumIMA)),0,FLOOR(sumIMA))}  </span></td>
+                                </tr>  
+                              
+                            </tbody>
+                            
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr style="height: 6px; background: #C7D200;"><td></td><td></td></tr>
+                              <!--  <tr style="height: 3px; background: #00ade9;"><td></td><td></td></tr> -->
+                            </tbody>
+                            
+                              <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 14px; font-color:#00ade9; font-family: inherit; vertical-align: baseline; text-decoration: none;">                            
+
+                                <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-left: 5px; vertical-align: middle; color:#00ade9; font-weight: bold; text-transform: uppercase;"> DK EXSTORM </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">   {!IF(ISNULL(FLOOR(sumEXS)),0,FLOOR(sumEXS))} </span></td>
+                                </tr>
+                                  <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-left: 5px; vertical-align: middle; color:#00ade9; font-weight: bold; text-transform: uppercase;"> DK EXCELLIUM </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">   {!IF(ISNULL(FLOOR(sumEXC)),0,FLOOR(sumEXC))} </span></td>
+                                </tr>  
+                                  <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-left: 5px; vertical-align: middle; color:#00ade9; font-weight: bold; text-transform: uppercase;"> DK EXPOWER </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">   {!IF(ISNULL(FLOOR(sumEXP)),0,FLOOR(sumEXP))}  </span></td>
+                                </tr>  
+                                  <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold; color:#00ade9; text-transform: uppercase;"> DK EXTEC </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">  {!IF(ISNULL(FLOOR(sumEXT)),0,FLOOR(sumEXT))} </span></td>
+                               </tr>
+                               <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-right: 5px;  text-align: right; vertical-align: middle; font-weight: bold; font-size:12px;"> TOTAL saci cumpăraţi: </td>
+                                    <td class="box-line02" style="padding-right: 5px;  vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; align:middle; ">   {!voucher.TotalBags__c} </span></td>
+                               </tr>
+                            </tbody>
+                            
+                             <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr style="height: 6px; background: #C7D200;"><td></td><td></td></tr>
+                              <!--  <tr style="height: 3px; background: #00ade9;"><td></td><td></td></tr> -->
+                            </tbody>
+                            
+                             <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal;  font-size: 14px; font-color:#00ade9; font-family: inherit; vertical-align: baseline; text-decoration: none;">                            
+                                 
+                                  <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-right: 5px; text-align: right; vertical-align: middle; font-weight: bold; font-size:12px;"> Total cupoane: </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">  {!voucher.TotalBags__c}  </span></td>
+                               </tr>
+                               
+                                <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                 <td colspan="2"> 
+                                 <apex:image url="{!$Resource.RO_vchr_txtDisc}"  width="400px" /> 
+                                 </td> 
+                                 </tr>
+                                 
+                                 <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-right: 5px; text-align: right; vertical-align: middle; font-weight: bold; font-size:12px;"> Total FOC EXAGONE (saci): </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; "> {!voucher.TotalBagsFOC__c}  </span></td>
+                               </tr>
+                                <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                    <td class="first" style="padding-right: 5px;  text-align: right; vertical-align: middle; font-weight: bold; font-size:12px;"> Total saci: </td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">  {!totalbagsOSR}   </span></td>
+                               </tr>
+                               
+                            </tbody>
+                            
+                            
+        
+                        </table>
+                   
+                    </div>
+                    
+                <!--     <div class="box-Rfoot" style=" position:relative; top:30px; padding: 10px 0px 10px 30px;">
+                                <span id="bodyRfoot2"  style="padding-bottom: 20px; padding-lefti:20px; display: block; font-size: 12px; line-height: 1; color: #000;"> 
+                                Fermierii care cumpără minim 400 de saci vor primi o reducere adiţională de 5% raportată la cantitatea totală din hibridul Exagone. Sacii vor fi livraţi prin intermediul reţelei de distribuţie. <br/>
+                                *Cuponul valoric de 80 RON/sac este calculat la un consum minim la semănat de 5l/ha şi o normă de semănat de 60 boabe/mp . Astfel un sac de 1.500.000 boabe este suficient pentru a semăna minim 2,5 ha cu un consum de 12,5 l respectiv un cost mediu de aproximativ 80 RON. În momentul prezentării acestui cupon în staţiile OMV Petrom, fermierii vor beneficia de combustibil în funcţie de valoarea bonurilor prezentate. Bonurile sunt valabile exclusiv în reţeaua OMV Petrom.
+                                 </span>  
+                     </div>   -->
+                    <div style="padding-top:50px">  <apex:image url="{!$Resource.RO_vchr_txtDef}" width="438px" /> </div>
+
+                </div>
+            </div>
+           <div class="grid2-2 blue" style="float: left; background: #39abe6; width: 351px; background: #00B6F0; color: #fff;">
+                <div class="header">
+                    <div class="box-right" style="padding: 15px 25px 13px 20px; height:160px;">
+                        <div class="box-logo" style="margin-bottom: 45px;">
+                            <div class="imagendekalb" style="margin-top: 0px; padding-top: 0px; margin-left: 190px;">
+                            <apex:image url="{!$Resource.dekalb}" width="95"/>
+                            </div>
+                           <!-- <img id="headerTRlogo" src="img/dekalb.png" alt="Logo Dekalb" width="95" style="display: block; margin: 0; padding: 0; margin-left: 190px;"/>-->
+                        </div>
+                         <span style="color:red; font-size:18px;"> {!aviso} </span>
+                        <h2 id="headerTR" style="margin:0 ; padding-bottom: 0px; border: 0px; font-style: normal; font-family: inherit; vertical-align: baseline; text-decoration: none; font-size: 15px; color: #fff; line-height: 1;"><span  style="margin: 0; padding: 0; border: 0px; font-style: normal; font-family: inherit; vertical-align: baseline; text-decoration: none; font-size: 18px; font-weight: bold;">VOUCHER</span> pentru precomanda hibrizilor de rapiţă DEKALB în sezonul 2014</h2>
+                       
+                    </div>
+                 </div>                             
+                <div class="content" style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">                
+                    <div id="headerBR" class="white" style="padding: 10px 30px 10px 15px; background: #fff; color: #000;">                        
+                        <span id="farmNameTitle" class="title" style="padding-left: 5px; font-size: 14px; font-weight: bold;">Nume societate agricolă/Fermier:</span>
+                        <span id="farmName" class="line" style="display: block; font-size:{!tamletranom}px; padding-top: 5px; padding-left: 5px; margin-bottom: 5px; border-bottom: 1px dotted #000; width: 100%;">   {!voucher.FarmNameCopy__c}  </span>
+                        <span id="fiscalCodeTitle" class="title" style="padding-left: 5px; font-size: 14px; font-weight: bold;">Cod fiscal societate/CNP persoană fizică:</span>
+                        <span id="fiscalCode" class="line" style="display: block;font-size: 14px; padding-top: 5px; padding-left: 5px; margin-bottom: 5px; border-bottom: 1px dotted #000; width: 100%;"> {!voucher.FiscalCodeCopy__c} </span>
+                        <span id="addressTitle" class="title" style="padding-left: 5px; font-size: 14px; font-weight: bold;">Adresa/Sediu social:</span>
+                        <span style="padding-top: 0px; display:block; width:100%">
+                            <span id="phoneTitle" class="title" style="display:inline-block; padding-left: 5px; font-size: 14px; font-weight: bold;">Jud:</span>
+                            <span id="phone" class="line continue"  style="font-size: 14px; display: inline-block ; padding-top: 5px; padding-left: 5px; border-bottom: 1px dotted #000; width:90px;"> {!jud}</span> 
+                            <span id="mailTitle" class="title" style=" display:inline-block; padding-left: 5px; font-size: 14px; font-weight: bold;">Loc:</span>
+                            <span id="phone" class="line continue"  style="font-size: 14px; padding-top: 5px; display: inline-block; padding-left: 5px; border-bottom: 1px dotted #000; width:125px;"> {!loc}</span> 
+                        </span>
+                        <span style="padding-top: 5px; display:block; width:100%">
+                               <span id="phoneTitle" class="title" style="display:inline-block; padding-left: 5px; font-size: 14px; font-weight: bold;">Str/Num:</span>
+                               <span id="address" class="line" style="display: inline-block; font-size: {!tamletra}px; padding-top: 5px; padding-left: 5px; margin-bottom: 0px; border-bottom: 1px dotted #000; width:230px"> {!voucher.AddressCopy__c}  </span>
+                        </span>
+                        <span style="padding-top: 5px; display:block; width:100%">
+                            <span id="phoneTitle" class="title" style="display:inline-block; padding-left: 5px; font-size: 14px; font-weight: bold;">Telefon:</span>
+                            <span id="phone" class="line continue"  style="font-size: 14px; display: inline-block ; padding-top: 5px; padding-left: 5px; border-bottom: 1px dotted #000; width:80px;">  {!voucher.PhoneCopy__c}</span> 
+                           
+                            <span id="mailTitle" class="title" style=" display: block; padding-left: 5px; font-size: 14px; font-weight: bold;">Mail:</span>
+                            <span id="phone" class="line continue"  style="font-size:{!tamletramail}px; display: block; padding-left: 5px; border-bottom: 1px dotted #000; width:{!IF(longimail>22,'100%','100px')};">{!voucher.emailcopy__c}</span>
+                           
+                        </span>
+                    </div>
+                    <div id="bodyR" style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; height:650px">
+                        <span id="bodyRtitle" class="box-bodyR" style="padding: 10px 30px 10px 20px; display: block; color: #000; font-weight: bold; background: #c8d300; ">Seria Ro Nr. {!voucher.name} </span>                    
+                        <div style="padding: 5px 0 5px 15px;">                        
+                            <div>
+                                <span id="bodyRtitle1" class="title02" style="display: block; padding: 5px 0 4px 5px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #fff;">Se completează de <span class="destacado" style=" text-transform: uppercase; font-weight: bold; ">fermier</span></span>
+                              
+                              
+                                <div class="box-bodyRtitle" style=" padding-right: 30px; height: 100px; padding-bottom: 100px;">
+                                <table style="padding-top:10px; padding-bottom:5px;">
+                                    <tr style="font-weight: bold; font-size: 12px">
+                                        <th width="128px" > Vânzarea se efectuează prin <span class="destacado" style=" text-transform: uppercase; font-weight: bold; " >distribuitorul</span>:</th>
+                                        <th width="132px"  style=" padding-left:13px; padding-top:5px; vertical-align:bottom"> Semnătură şi ştampilă: </th>
+                                    </tr>
+
+                                    <tr>
+                                        <td  width="128px" style=" padding-left:1px; padding-right:1px; vertical-align:middle;  height: 55px;  background: #fff;font-size:{!tamletradis}px; color:black; text-align:center;">  <apex:outputField style="width:130px" value="{!voucher.DistributorNameCopy__c}"/> </td>
+                                        <td  width="145px" style="display: block;  height: 55px; padding-left:13px; ">  <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}" ><img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="55px" width="130px" style="max-height:55px; max-width:130px;"/></apex:outputPanel> </td>
+                                    </tr>
+
+</table>
+                                </div>
+                                
+ <!-- STARTTT                               
+                                <div class="box-bodyRtitle"  style="padding-right: 30px; height: 135px; padding-bottom: 80px;"> 
+                                    
+                                        <div id="bodyRtitle1a" class="txt-box" style="display: inline-block; position:relative; top:5px; left: 10px; width:41.5%; padding: 10px 0 5px 0; font-weight: bold; font-size: 11px; margin-bottom:10px;">Vânzarea se efectuează prin <span class="destacado" style=" text-transform: uppercase; font-weight: bold; " >distribuitorul</span>:</div>
+                                        <div id="bodyRtitle1b" class="txt-box" style="display: inline-block; position:relative; top: -8px; right: -20px; width:41.5%; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Semnătură și ștampilă:</div>
+                   
+                                          <div id="bodyRtitle1Box1" class="box" style="display: table-cell; vertical-align: middle; position:relative; top:30px; left: 5px; width: 135px; height: 55px; background: #fff; font-size:{!tamletradis}px; text-align:center; color:black; "> <apex:outputField style="width:135px" value="{!voucher.DistributorNameCopy__c}"/> </div> 
+                                         <div id="bodyRtitle1Box2" class="box" style="display: inline-block; width: 41.5%;position:relative; top:-56px; right: -153px; height: 55px; background: #fff;"> 
+                                                 <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}" ><img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="55px" width="130px" style="max-height:70px; max-width:210px;"/></apex:outputPanel> 
+                                           </div>
+                                    
+                                </div>   
+                                
+ END -->                               
+                                                             
+                                <span id="bodyRtitle2" class="title02" style=" position:relative; top:-90px; display: block; padding: 5px 0 4px 5px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #fff;">Se completează de <span class="destacado" style=" text-transform: uppercase; font-weight: bold; ">distribuitor</span></span>
+                               <div class="box-bodyRtitle" style="  position:relative; top:-95px; padding-right: 30px; padding-bottom: 15px;" >
+                                    <div class="box-signer" style="display: inline-block; padding-left: 5px; margin-right: 7px; width: 43%;">
+                                        <span id="bodyRtitle2a" class="txt-box" style="display: block; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Seria şi nr. facturii:</span>
+                                        <span id="bodyRtitle2Box1" class="box" style="display: block; width: 100%; height: 55px; background: #fff;">  </span>
+                                    </div>
+                                    <div class="box-signer" style="display: inline-block; padding-left: 4px; margin-right: 7px; width: 43%;">
+                                        <span id="bodyRtitle2b" class="txt-box" style="display: block; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Data:</span>
+                                        <span id="bodyRtitle2Box2" class="box" style="display: block; width: 100%; height: 55px; background: #fff;font-size:13px; color:black;">  </span>
+                                    </div>
+                                    <div class="box-signer" style="display: inline-block; padding-left: 4px; margin-right: 7px; width: 43%;">
+                                        <span id="bodyRtitle2c" class="txt-box" style="display: block; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Semnătură şi ştampilă:</span>
+                                        <span id="bodyRtitle2Box3" class="box" style="display: block; width: 100%; height: 55px; background: #fff;"> </span>
+                                    </div>
+                                </div> 
+                                <span id="bodyRtitle3" class="title02" style=" position:relative; top:-95px; display: block; padding: 5px 0 4px 0px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #fff;">Se completează de către reprezentant vânzări <span class="destacado" style="text-transform: uppercase; font-weight: bold;"> MONSANTO ROMÂNIA S.R.L./</span> Distribuitor</span>
+                                <div class="box-bodyRtitle" style=" position:relative; top:-95px;">
+                                    <div class="box-signer" style="position: absolute; top:0px; right:188px; display: inline-block;  width: 43%;">
+                                        <span id="bodyRtitle3a" class="txt-box" style="display: inline-block; position:relative; top:0px; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Nume şi prenume reprezentant vânzări:</span>
+                                        <span id="bodyRtitle3Box1" class="box" style="display: table-cell; vertical-align:middle; position:relative; top:0px; width: 135px; height: 55px; background: #fff;font-size:{!tamletradis}px; color:black; text-align:center;"> {!Voucher.Owner.Name} </span>
+                                    </div>
+                                    <div class="box-signer" style="position: absolute; top:16px; right:38px; display: inline-block;   width: 43%;">
+                                        <span id="bodyRtitle3b" class="txt-box" style="display: inline-block; position:relative; top:0px; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Data:</span>
+                                        <span id="bodyRtitle3Box2" class="box" style="display: table-cell; vertical-align:middle;  position:relative; top:0px; width: 130px; height: 55px;  text-align:center; background: #fff;font-size:{!tamletradis}px; color:black;">  {!CreatedDate}   </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-Rfoot" style=" position:relative; top:30px; padding: 0px 30px 5px 0px;">
+                                <!-- <span id="bodyRfoot1"  style="padding-bottom: 10px; display: block; font-size: 12px; line-height: 1; font-weight: bold;">Orice mod
+                                icări ulterioare completării VOUCHER-ului duc la anularea acestuia!</span> -->
+                                <span id="bodyRfoot2"  style="padding-bottom: 10px; display: block; font-size: 12px; line-height: 1; color: #000;">Sunt de acord ca MONSANTO ROMÂNIA S.R.L. să preia în evidențele sale datele incluse pe prezentul formular de precomandă și să le utilizeze în scop de marketing. </span>
+                                <span id="bodyRfoot3"  class="destacado" style="padding-bottom: 2px; display: block; font-size: 12px; line-height: 1.5; text-align: right; font-size: 16px; color: #000;"> EXEMPLAR FERMIER </span>
+                            </div>                     
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+     <!--   <div class="box-bodyLdiscount" style=" padding-bottom: 0px; margin-bottom: 0px;   text-align: justify; font-size: 6px; position: absolute; top: 1050px;padding-left: 7px;  border: none; font-weight: normal; font-style: normal; font-family: inherit; vertical-align: baseline; text-decoration: none; background: #fff; width: 770px;  margin-left:5px; margin-right:5px;" >
+<span id="bodyLdiscount5">Prin prezenta sunt de acord si-mi exprim consimtamantul ca Monsanto Romania SRL (“Monsanto") ca parte a  grupului global de societati Monsanto (“Grupul Monsanto")sa prelucreze datele mele cu caracter personal in vederea stabilirii si gestionarii unei relatii furnizor-client si  sa ma contacteze prin email,SMS, MMS sau orice alte mijloace de comunicare electronice  in scop de marketing.Inteleg ca am urmatoarele drepturi in ceea ce priveste prelucrarea datelor mele cu caracter personal in temeiul prezentei notificari:(i)dreptul de acces la date si de interventie asupra acestora;(ii)dreptul de opozitie ;(iii) dreptul de a nu face obiectul unei decizii individuale automate in considerarea acestora date.(iv)dreptul de a deferii  orice disputa cu privire la prelucrarea datelor mele cu caracter personal unei instante de judecata si ca aceste drepturi pot fi exercitate in conformitate cu termenii  si conditiile Legii  nr 667/2001 privind prelucrarea datelor cu caracter personal si libera circulatie a acestora .Imi exprim deasemenea consimtamantul cu privire la transferul datelor mele cu caracter personal catre destinatarii din grupul Monsanto ,tertii care presteaza diverse servicii in temeiul unor contracte incheiate cu Monsanto sau membrii ai grupului Monsanto sau in scopul respectarii obligatiilor legale, fiscale sau de orice alta natura societatii precum si catre terti din jurisdictii din afara UE /SSE care poate nu ofera acelasi nivel  de protectie ca jurisdictiile UE/SSE in sensul articolului 29 din Legea 677/2001.Sunt constient de faptul ca semnarea acestui formular nu este obligatorie si in acelasi timp inteleg ca daca aleg sa nu il semnez este posibil ca Monsanto sa nu imi poate presta serviciile societatii in  viitor atunci cand aceste Informatii sunt necesare pentru prestarea acestor servicii.</span>
+</div>  -->
+
+    </body>
+    </html>
+</apex:page>

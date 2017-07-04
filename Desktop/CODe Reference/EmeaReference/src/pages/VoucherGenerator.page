@@ -1,0 +1,35 @@
+<apex:page controller="VoucherGeneratorController" tabStyle="Account">
+    <apex:form >
+        <apex:pageBlock title="{!$Label.CreateVoucher}">
+            <apex:pageBlockSection columns="1" title="{!$Label.SelectDistributor}">
+                <apex:pageBlockSectionItem >
+                    <apex:selectRadio layout="pageDirection" value="{!selectedDistributor}">
+                        <apex:selectOptions value="{!distributors}"></apex:selectOptions>
+                    </apex:selectRadio>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="{!$Label.SelectTemplate}" rendered="{!IsTemplate}">
+                <apex:selectList size="1" value="{!selectedTemplate}" >
+                   <apex:selectOptions value="{!templates}"></apex:selectOptions>
+                </apex:selectList>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="{!$Label.CreateVoucher}" action="{!goToVoucherPage}" rendered="{!IsTemplate}"/>
+                <apex:commandButton value="{!$Label.BackToAccount}" action="{!goToAccount}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:form >
+        <apex:pageBlock rendered="{!IF(templateUrl== null, false, true)}">
+            <apex:pageBlockButtons location="top" rendered="{!IsTemplate}">
+                <apex:commandButton action="{!saveAsAttachement}" value="{!$Label.SaveAsAttachment}"/>
+                
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1">
+                <iframe src="{!templateUrl}" width="100%" height="1000px"></iframe>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    
+    
+</apex:page>

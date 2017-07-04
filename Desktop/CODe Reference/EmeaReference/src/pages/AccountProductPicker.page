@@ -1,0 +1,63 @@
+<apex:page standardController="Account" extensions="AccountProductPickerController" tabStyle="Account" sidebar="false">
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:form >
+    <apex:pageBlock title="{!$Label.ButtonProductsTo}">
+        <apex:pageBlockTable value="{!picker.selectedObjects}" var="product">
+            <apex:column headerValue="{!$Label.HeaderSelect}">
+                <apex:inputCheckbox value="{!product.checked}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.product2.fields.name.label}">
+                <apex:outputText >{!product.name}</apex:outputText>
+            </apex:column>
+            <apex:repeat var="f" value="{!resultFieldSet.managedFieldSetMembers}">
+                <apex:column >
+                    <apex:facet name="header">{!f.label}</apex:facet>
+                    <apex:outputField value="{!product.record[f.fieldPath]}" />
+                </apex:column> 
+            </apex:repeat>
+        </apex:pageBlockTable>
+        <apex:pageBlockButtons >
+            <apex:commandButton value="{!$Label.ButtonAddProducts}" action="{!doSave}"/>
+            <apex:commandButton value="{!$Label.Cancel}" action="{!doCancel}"/>
+            <apex:commandButton action="{!picker.doDeleteSelected}" id="doDeleteSelected" value="{!$Label.Delete}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    
+    <apex:pageBlock >
+        <apex:pageBlockSection >
+        
+            <apex:repeat var="f" value="{!searchFieldSet.managedFieldSetMembers}">
+                    <apex:inputField value="{!picker.searchProduct[f.fieldPath]}"  required="false" />
+                </apex:repeat>
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="{!$Label.Filter}" action="{!picker.doFilter}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+   
+    <apex:pageBlock title="{!$Label.ButtonPossibleProducts}">
+        <apex:pageBlockTable value="{!picker.currentResult}" var="product">
+            <apex:column >
+                <apex:inputCheckbox value="{!product.checked}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.product2.fields.name.label}">
+                <apex:outputlink value="/{!product.Id}">
+                    <apex:outputText >{!product.name}</apex:outputText>
+                </apex:outputlink>
+            </apex:column>
+            
+            <apex:repeat var="f" value="{!resultFieldSet.managedFieldSetMembers}">
+                <apex:column >
+                    <apex:facet name="header">{!f.label}</apex:facet>
+                    <apex:outputField value="{!product.record[f.fieldPath]}" />
+                </apex:column> 
+                
+            </apex:repeat>
+            
+        </apex:pageBlockTable>
+        <apex:pageBlockButtons >
+            <apex:commandButton value="{!$Label.ButtonSelectProducts}" action="{!picker.doAddSelected}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

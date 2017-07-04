@@ -1,0 +1,43 @@
+<apex:page controller="AddMultProduct2TacticalPlan" tabStyle="ProductCatalog__c">
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:form >
+    
+    
+    <apex:pageBlock >
+        <apex:pageBlockSection >
+            <apex:inputField value="{!searchProduct.Name}" required="false"/>
+            <apex:inputField value="{!searchProduct.ProductTreatment__c}" />
+            <apex:inputField value="{!searchProduct.ProductBagSize__c}" />
+            <apex:inputField value="{!searchProduct.ProductPrmyPkType__c}"/>
+            <apex:inputField value="{!searchProduct.ProductMaturity__c}"/>
+            <apex:inputField value="{!searchProduct.ProductVendor__c}"/>
+            <apex:inputField value="{!searchProduct.ProductKernelSize__c}"/>
+            <apex:inputField value="{!searchProduct.ProductBagWeight__c}"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="{!$Label.Filter}" action="{!filter}"/>
+            <apex:commandButton value="{!'Back to catalog'}" action="{!backToProductCatalog}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    
+    
+    <apex:pageBlock title="Possible Products">
+        <apex:pageBlockTable value="{!results}" var="result">
+            
+            <apex:column >
+                <apex:inputCheckbox value="{!result.checked}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.product2.fields.name.label}">
+                <apex:outputText >{!result.name}</apex:outputText>
+            </apex:column>
+            <apex:column value="{!result.record.ProductTreatment__c}" headerValue="{!$ObjectType.product2.fields.ProductTreatment__c.label}"></apex:column>
+            <apex:column value="{!result.record.ProductBagSize__c}" headerValue="{!$ObjectType.product2.fields.ProductBagSize__c.label}"></apex:column>
+            <apex:column value="{!result.record.ProductKernelSize__c}" headerValue="{!$ObjectType.product2.fields.ProductKernelSize__c.label}"></apex:column>
+            <apex:column value="{!result.record.Description}" headerValue="{!$ObjectType.product2.fields.Description.label}"></apex:column>
+        </apex:pageBlockTable>
+        <apex:pageBlockButtons >
+            <apex:commandButton value="{!$Label.Save}" action="{!saveNewRecords}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

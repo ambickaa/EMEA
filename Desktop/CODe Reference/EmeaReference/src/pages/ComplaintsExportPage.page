@@ -1,0 +1,34 @@
+<apex:page id="page" controller="ComplaintsExportController" sidebar="false" docType="html-5.0">
+    <apex:pageBlock id="block">
+     
+  <style type="text/css">
+    .ExcelBtn {
+        display: inline-block;
+        margin: 10px;
+        padding: 10px;
+    }
+    .ExcelBtn img {
+        margin-right: 10px;
+    }
+    .ExcelBtn span {
+        vertical-align: super;
+    }
+    .centerAlign .dataCol{
+        text-align:center!important;
+    }
+  </style>
+    <div class="centerAlign">
+    <apex:pageBlockSection columns="2" title="Download Complaints">
+
+        <apex:pageBlockSectionItem >
+                <a class="ExcelBtn" href="/apex/ComplaintsExportExcel1?params=1" target="_blank"><img src="{!$Resource.excelicon}" title="Download Customer Complaints" width="25" height="25"/><span>Download Customer Complaints</span></a>
+        </apex:pageBlockSectionitem>
+        <apex:pageBlockSectionItem >
+                <a class="ExcelBtn" href="/apex/ComplaintsExportExcel2?params=2" target="_blank"><img src="{!$Resource.excelicon}" title="Download Customer Products" width="25" height="25"/><span>Download Customer Products</span></a>
+        </apex:pageBlockSectionitem>
+
+       </apex:pageBlockSection>
+    </div>   
+    </apex:pageBlock>
+
+</apex:page>

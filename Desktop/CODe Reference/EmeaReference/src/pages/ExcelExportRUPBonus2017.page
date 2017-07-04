@@ -1,0 +1,904 @@
+<apex:page showHeader="false" Controller="ExcelExportRUPBonusController" contentType="{!IF(ISNULL($CurrentPage.parameters.asHTML),IF(pageview,'application/vnd.ms-excel#Roundup Bonus-Programm 2017_W-Stufe.xls','application/vnd.ms-excel#Roundup Bonus-Programm 2017_GHNL.xls'),'')}" cache="true">
+
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="ProgId" content="Excel.Sheet"/>
+<meta name="Generator" content="Microsoft Excel 14"/>
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+x\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<style>
+table = 'mso-displayed-decimal-separator:"\,"; mso-displayed-thousand-separator:"\";';
+</style>
+{!xmlContent}
+</head>
+
+<body>
+<!----------------------------->
+<!--START OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD -->
+<!----------------------------->
+
+<div align="center" x:publishsource="Excel">
+
+<table border="0" cellpadding="0" cellspacing="0" width="1061" style='{!xl655351366} border-collapse:collapse;table-layout:fixed;width:806pt'>
+ <col width="38" style='{!xl631366} mso-width-source:userset; mso-width-alt:2400;width:29pt'/>
+ <col width="223" style='{!xl631366} mso-width-source:userset;mso-width-alt: 7936;width:167pt'/>
+ <col width="38" span="7" style='{!xl631366} mso-width-source:userset; mso-width-alt:2400;width:29pt'/>
+ <col width="38" style='{!xl631366} mso-width-source:userset; mso-width-alt:2400;width:29pt'/>
+ <col width="38" span="3" style='{!xl631366} mso-width-source:userset; mso-width-alt:2400;width:29pt'/>
+ <col width="38" span="3" style='{!xl655351366} mso-width-source:userset; mso-width-alt:2400;width:29pt'/>
+ <col width="73" style='{!xl655351366} mso-width-source:userset;mso-width-alt: 2588;width:55pt'/>
+ <tr height="110" style='mso-height-source:userset;height:82.5pt'>
+  <td colspan="23" height="110" width="1061" style='height:82.5pt;width:806pt' align="left" valign="top">
+  <span style='mso-ignore:vglayout; position:absolute;z-index:1;margin-left:2px;margin-top:5px;width:1002px; height:78px'><br/></span>
+  <span style='mso-ignore:vglayout2'>
+  <table cellpadding="0" cellspacing="0">
+   <tr>
+    <td height="33" width="78"></td>
+    <td><img width="151" height="78" src="{!RoundupRekordLogo}" style='display:block; margin-top:20pt'/></td>
+    <td colspan="12" height="110" width="822" style='{!xl961366} height:82.5pt; width:806pt; border-left:1px solid #FFF; border-right:1px solid #FFF;'><font style="{!font81366}">Roundup</font><font style="{!font101366}">®</font><font style="{!font81366}"> Bonus-Programm 2017</font></td>
+    <td colspan="3"><img width="151" height="78" src="{!RoundupPowerFlexLogo}" style='display:block; margin-top:20pt'/></td>
+   </tr>
+  </table>
+  </span></td>
+ </tr>
+ <tr height="33" style='mso-height-source:userset;height:24.9pt'>
+  <td height="33" style='{!xl661366} height:24.9pt'></td>
+  <td height="33" style='{!xl661366} height:24.9pt'>Firma</td>
+  <td colspan="7" style="{!xl1031366} font-size:9.0pt; text-align:left">{!AccountInfo.Name}</td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td colspan="2" style="{!xl1061366} text-align:center;">Account ID</td>
+  <td colspan="4" style="{!xl1071366} font-size:9.0pt">{!AccountInfo.Client_Code__c}</td>
+ </tr>
+ <tr height="33" style='mso-height-source:userset;height:24.9pt'>
+  <td height="33" style='{!xl661366} height:24.9pt'></td>
+  <td height="33" style='{!xl661366} height:24.9pt'>Ansprechpartner</td>
+  <td colspan="7" style="{!xl1041366} font-size:9.0pt; text-align:left">{!AccountInfo.DE_Ansprechpartner_ZV_CP__r.Name}</td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="33" style='mso-height-source:userset;height:24.9pt'>
+  <td height="33" style='{!xl661366} height:24.9pt'></td>
+  <td height="33" style='{!xl661366} height:24.9pt'>Straße</td>
+  <td colspan="7" style="{!xl1041366} font-size:9.0pt; text-align:left">{!AccountInfo.Street__c}</td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="33" style='mso-height-source:userset;height:24.9pt'>
+  <td height="33" style='{!xl661366} height:24.9pt'></td>
+  <td height="33" style='{!xl661366} height:24.9pt'>PLZ und Ort</td>
+  <td colspan="7" style="{!xl1041366} font-size:9.0pt; text-align:left">{!AccountInfo.DE_ZIP_PLZ__c} {!AccountInfo.City__c}</td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="16" style='mso-height-source:userset;height:12.0pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="16" style='mso-height-source:userset;height:12.0pt'><br/>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+<rowgroup>
+ <tr height="34" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:26.25pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td colspan="16" height="34" style='{!xl891366} height:26.25pt'>Volumenbonus</td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="25" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:18.9pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td rowspan="2" height="55" width="223" style='{!xl1051366} height:42.15pt; width:167pt'></td>
+  <td colspan="2" rowspan="2" width="76" style='{!xl901366} width:58pt'>geplant<br/>in l / kg</td>
+  <td colspan="2" rowspan="2" width="76" style='{!xl901366} width:58pt'>l / kg<br/>je Palette</td>
+  <td colspan="2" rowspan="2" width="76" style='{!xl901366} width:58pt'>Anzahl<br/>Paletten</td>
+  <td colspan="2" rowspan="2" width="76" style='{!xl1081366} border-right:.5pt solid black; width:58pt'>final<span style='mso-spacerun:yes'> </span><br/>in l / kg</td>
+  <td width="5" style='{!xl811366} width:4pt'></td>
+  <td colspan="3" width="76" style='{!xl1081366} border-right:.5pt solid black; width:58pt'>Gesamtbonus Planung</td>
+  <td colspan="3" style="{!xl655351366} border:.5pt solid black;"></td>
+ </tr>
+ <tr height="30" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:23.25pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="30" width="5" style='{!xl811366} height:23.25pt;width:4pt'></td>
+  <td colspan="3" width="76" style='{!xl691366}'>Volumenbonus</td>
+  <td colspan="3" style="{!xl655351366} border:.5pt solid black;"></td>
+ </tr>
+ <tr height="29" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl691366} height:21.75pt; font-size:11.0pt'>Roundup<font style="{!font91366}">® </font><font style="{!font61366}">PowerFlex 1 Liter</font></td>
+  <td colspan="2" style='{!xl1111366} border-left:none; font-size:9.0pt'>={!MapAgreed['11953395']}*{!MapUnits['11953395']}</td>
+  <td colspan="2" style='{!xl881366} border-left:none; font-size:9.0pt'>720</td>
+  <td colspan="2" style='{!xl1131366} border-left:none; font-size:9.0pt'>=C11/E11</td>
+  <td colspan="2" style='{!xl1161366} border-right:.5pt solid black; border-left:none; vertical-align:middle; font-size:9.0pt'>={!MapPoG['11953395']}*{!MapUnits['11953395']}</td>
+  <td style="{!xl821366}"></td>
+  <td colspan="3" width="76" style='{!xl691366}'>Palettenbonus</td>
+  <td colspan="3" style="{!xl655351366} border:.5pt solid black;"></td>
+ </tr>
+ <tr height="29" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl691366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font91366}">®</font><font style="{!font61366}"> PowerFlex 5 Liter</font></td>
+  <td colspan="2" style='{!xl1111366} border-left:none; font-size:9.0pt'>={!MapAgreed['11864374']}*{!MapUnits['11864374']}</td>
+  <td colspan="2" style='{!xl881366} border-left:none; font-size:9.0pt'>800</td>
+  <td colspan="2" style='{!xl1131366} border-left:none; font-size:9.0pt'>=C12/E12</td>
+  <td colspan="2" style='{!xl1161366} border-right:.5pt solid black; border-left:none; vertical-align:middle; font-size:9.0pt'>={!MapPoG['11864374']}*{!MapUnits['11864374']}</td>
+  <td style="{!xl821366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="29" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl691366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font91366}">®</font><font style="{!font61366}"> PowerFlex 15 Liter</font></td>
+  <td colspan="2" style='{!xl1111366} border-left:none; font-size:9.0pt'>={!MapAgreed['11864372']}*{!MapUnits['11864372']}</td>
+  <td colspan="2" style='{!xl881366} border-left:none; font-size:9.0pt'>720</td>
+  <td colspan="2" style='{!xl1131366} border-left:none; font-size:9.0pt'>=C13/E13</td>
+  <td colspan="2" style='{!xl1161366} border-right:.5pt solid black; border-left:none; vertical-align:middle; font-size:9.0pt'>={!MapPoG['11864372']}*{!MapUnits['11864372']}</td>
+  <td style="{!xl821366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="29" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl691366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font91366}">®</font><font style="{!font61366}"> PowerFlex 640 Liter</font></td>
+  <td colspan="2" style='{!xl1111366} border-left:none; font-size:9.0pt'>={!MapAgreed['11864373']}*{!MapUnits['11864373']}</td>
+  <td colspan="2" style='{!xl881366} border-left:none; font-size:9.0pt'>640</td>
+  <td colspan="2" style='{!xl1131366} border-left:none; font-size:9.0pt'>=C14/E14</td>
+  <td colspan="2" style='{!xl1161366} border-right:.5pt solid black; border-left:none; vertical-align:middle; font-size:9.0pt'>={!MapPoG['11864373']}*{!MapUnits['11864373']}</td>
+  <td style="{!xl821366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="29" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl691366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font91366}">®</font><font style="{!font61366}"> REKORD</font></td>
+  <td colspan="2" style='{!xl1111366} border-left:none; font-size:9.0pt'>={!MapAgreed['1111111122']}*{!MapUnits['1111111122']}</td>
+  <td colspan="2" style='{!xl881366} border-left:none; font-size:9.0pt'>550</td>
+  <td colspan="2" style='{!xl1131366} border-left:none; font-size:9.0pt'>=C15/E15</td>
+  <td colspan="2" style='{!xl1161366} border-right:.5pt solid black; border-left:none; vertical-align:middle; font-size:9.0pt'>={!MapPoG['1111111122']}*{!MapUnits['1111111122']}</td>
+  <td style="{!xl821366}"></td>
+  <td colspan="3" width="76" style='{!xl1081366} border-right:.5pt solid black; width:58pt'>Gesamtbonus IST </td>
+  <td colspan="3" style="{!xl655351366} border:.5pt solid black;"></td>
+ </tr>
+ <tr height="29" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl871366} height:21.75pt;border-top:none; font-size:11.0pt'>Gesamtvolumen</td>
+  <td colspan="2" style='{!xl1141366} border-left:none; font-size:9.0pt'>=C11+C12+C13+C14+C15</td>
+  <td colspan="2" style='{!xl1181366} border-left:none; font-size:9.0pt'></td>
+  <td colspan="2" style='{!xl1191366} border-left:none; font-size:9.0pt'>=G11+G12+G13+G14+G15</td>
+  <td colspan="2" style='{!xl1201366} border-right:.5pt solid black; border-left:none; vertical-align:middle; font-size:9.0pt'>=I11+I12+I13+I14+I15</td>
+  <td style="{!xl821366}"></td>
+  <td colspan="3" width="76" style='{!xl691366}'>Volumenbonus</td>
+  <td colspan="3" style="{!xl655351366} border:.5pt solid black;"></td>
+ </tr>
+ <tr height="29" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl691366} height:21.75pt;border-top:none; font-size:11.0pt'>Volumenrabattsatz</td>
+  <td colspan="2" style='{!xl1151366} border-left:none; font-size:9.0pt'>{!DiscountAgreed}</td>
+  <td colspan="2" style='{!xl881366} border-left:none; font-size:9.0pt'></td>
+  <td colspan="2" style='{!xl881366} border-left:none; font-size:9.0pt'></td>
+  <td colspan="2" style='{!xl1221366} border-right:.5pt solid black; border-left:none; vertical-align:middle; font-size:9.0pt'>{!DiscountPoG}</td>
+  <td style="{!xl821366}"></td>
+  <td colspan="3" width="76" style='{!xl691366}'>Palettenbonus</td>
+  <td colspan="3" style="{!xl655351366} border:.5pt solid black;"></td>
+ </tr>
+ <tr height="29" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl871366} height:21.75pt;border-top:none; font-size:11.0pt'>Gesamtbetrag</td>
+  <td colspan="2" style='{!xl1121366} border-left:none; font-size:9.0pt'>=C16*C17</td>
+  <td colspan="2" style='{!xl881366} border-left:none; font-size:9.0pt'></td>
+  <td colspan="2" style='{!xl881366} border-left:none; font-size:9.0pt'></td>
+  <td colspan="2" style='{!xl1241366} border-right:.5pt solid black; border-left:none; vertical-align:middle; font-size:9.0pt'>=I16*I17</td>
+  <td style="{!xl821366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="16" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:12.0pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="16" style='{!xl631366} height:12.0pt'></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="16" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:12.0pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="16" style='{!xl631366} height:12.0pt'></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="16" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:12.0pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="16" style='{!xl631366} height:12.0pt'></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="16" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:12.0pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="16" style='{!xl631366} height:12.0pt'></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="16" style='{!IF(pageview,"","display:none;")}mso-height-source:userset;height:12.0pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="16" style='{!xl631366} height:12.0pt'></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+</rowgroup>
+ <tr height="40" style='mso-height-source:userset;height:30.0pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td colspan="13" height="40" style='{!xl891366} height:30.0pt'>Palettenbonus</td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="25" style='mso-height-source:userset;height:18.9pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="25" style='{!xl661366} height:18.9pt'>Roundup<font style="{!font91366}">®</font><font style="{!font61366}"> PowerFlex</font></td>
+  <td style="{!xl13128201noborder}">55</td>
+  <td style="{!xl661366}; font-size:11.0pt">je halbe Palette</td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="25" style='mso-height-source:userset;height:18.9pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="25" style='{!xl661366} height:18.9pt'>Roundup<font style="{!font91366}">®</font><font style="{!font61366}"> PowerFlex</font></td>
+  <td style="{!xl13128201noborder}">125</td>
+  <td style="{!xl661366}; font-size:11.0pt">je volle Palette</td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="25" style='mso-height-source:userset;height:18.9pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="25" style='{!xl661366} height:18.9pt'>Roundup<font style="{!font91366}">®</font><font style="{!font61366}"> REKORD</font></td>
+  <td style="{!xl13128201noborder}">80</td>
+  <td style="{!xl661366}; font-size:11.0pt">je halbe Palette (280 kg)</td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="25" style='mso-height-source:userset;height:18.9pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="25" style='{!xl661366} height:18.9pt'>Roundup<font style="{!font91366}">®</font><font style="{!font61366}"> REKORD</font></td>
+  <td style="{!xl13128201noborder}">180</td>
+  <td style="{!xl661366}; font-size:11.0pt">je volle Palette (550 kg)</td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="10" style='mso-height-source:userset;height:8.25pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="10" style='{!xl661366} height:8.25pt'></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="26" style='mso-height-source:userset;height:19.5pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="26" style='{!xl631366} height:19.5pt'></td>
+  <td colspan="4" style="{!xl951366}">Frühjahr</td>
+  <td style="{!xl631366}"></td>
+  <td colspan="7" style="{!xl951366}">Sommer / Herbst</td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="46" style='mso-height-source:userset;height:34.5pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="46" witdth="223" style='{!xl771366} height:34.5pt;width:167pt'>Planung<br style="mso-data-placement:same-cell;" /><font style="{!font71366}">(Anzahl der Paletten)</font></td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Januar</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Februar</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>März</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>April</td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border-right:.5pt solid black'>Mai</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Juni</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Juli</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>August</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Sept.</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Oktober</td>
+  <td style='{!xl791366} border-left:none'>Ges.</td>
+  <td style="{!xl831366}"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>Januar</td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>Februar</td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>März</td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>April</td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>Mai</td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>Juni</td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>Juli</td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>August</td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>Sept.</td>
+  <td style='{!xl791366} border:none;background:#FFFFFF'>Oktober</td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex 1 Liter</font></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C32+D32+E32+F32+H32+I32+J32+K32+L32+M32</td>
+  <td style="{!xl831366}"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(C32=1,C32=2,C32=3,C32=4,C32=5,C32=6,C32=7,C32=8,C32=9,C32=10,C32=11,C32=12,C32=13,C32=14,C32=15,C32=16,C32=17,C32=18,C32=19,C32=20,C32=21,C32=22,C32=23,C32=24,C32=25,C32=26,C32=27,C32=28,C32=29,C32=30,C32=31,C32=32,C32=33),C32*$C$26,IF(C32=0.5,$C$25,IF(C32=1.5,$C$25+$C$26,IF(C32=2.5,(2*$C$26)+$C$25,IF(C32=3.5,(3*$C$26)+$C$25,IF(C32=4.5,(4*$C$26)+$C$25,IF(C32=5.5,(5*$C$26)+$C$25,IF(C32=6.5,(6*$C$26)+$C$25,IF(C32=7.5,(7*$C$26)+$C$25,IF(C32=8.5,(8*$C$26)+$C$25,IF(C32=9.5,(9*$C$26)+$C$25,IF(C32=10.5,(10*$C$26)+$C$25,IF(C32=12.5,(12*$C$26)+$C$25,IF(C32=13.5,(13*$C$26)+$C$25,IF(C32=14.5,(14*$C$26)+$C$25,IF(C32=15.5,(15*$C$26)+$C$25,IF(C32=16.5,(6*$C$26)+$C$25,IF(C32=17.5,(17*$C$26)+$C$25,IF(C32=18.5,(18*$C$26)+$C$25,IF(C32=19.5,(19*$C$26)+$C$25,IF(C32=20.5,(20*$C$26)+$C$25,IF(C32=21.5,(21*$C$26)+$C$25,IF(C32=22.5,(22*$C$26)+$C$25,IF(C32=23.5,(23*$C$26)+$C$25,IF(C32=24.5,(24*$C$26)+$C$25,IF(C32=25.5,(25*$C$26)+$C$25,IF(C32=26.5,(26*$C$26)+$C$25,IF(C32=27.5,(27*$C$26)+$C$25,IF(C32=28.5,(28*$C$26)+$C$25,IF(C32=29.5,(29*$C$26)+$C$25,IF(C32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(D32=1,D32=2,D32=3,D32=4,D32=5,D32=6,D32=7,D32=8,D32=9,D32=10,D32=11,D32=12,D32=13,D32=14,D32=15,D32=16,D32=17,D32=18,D32=19,D32=20,D32=21,D32=22,D32=23,D32=24,D32=25,D32=26,D32=27,D32=28,D32=29,D32=30,D32=31,D32=32,D32=33),D32*$C$26,IF(D32=0.5,$C$25,IF(D32=1.5,$C$25+$C$26,IF(D32=2.5,(2*$C$26)+$C$25,IF(D32=3.5,(3*$C$26)+$C$25,IF(D32=4.5,(4*$C$26)+$C$25,IF(D32=5.5,(5*$C$26)+$C$25,IF(D32=6.5,(6*$C$26)+$C$25,IF(D32=7.5,(7*$C$26)+$C$25,IF(D32=8.5,(8*$C$26)+$C$25,IF(D32=9.5,(9*$C$26)+$C$25,IF(D32=10.5,(10*$C$26)+$C$25,IF(D32=12.5,(12*$C$26)+$C$25,IF(D32=13.5,(13*$C$26)+$C$25,IF(D32=14.5,(14*$C$26)+$C$25,IF(D32=15.5,(15*$C$26)+$C$25,IF(D32=16.5,(6*$C$26)+$C$25,IF(D32=17.5,(17*$C$26)+$C$25,IF(D32=18.5,(18*$C$26)+$C$25,IF(D32=19.5,(19*$C$26)+$C$25,IF(D32=20.5,(20*$C$26)+$C$25,IF(D32=21.5,(21*$C$26)+$C$25,IF(D32=22.5,(22*$C$26)+$C$25,IF(D32=23.5,(23*$C$26)+$C$25,IF(D32=24.5,(24*$C$26)+$C$25,IF(D32=25.5,(25*$C$26)+$C$25,IF(D32=26.5,(26*$C$26)+$C$25,IF(D32=27.5,(27*$C$26)+$C$25,IF(D32=28.5,(28*$C$26)+$C$25,IF(D32=29.5,(29*$C$26)+$C$25,IF(D32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(E32=1,E32=2,E32=3,E32=4,E32=5,E32=6,E32=7,E32=8,E32=9,E32=10,E32=11,E32=12,E32=13,E32=14,E32=15,E32=16,E32=17,E32=18,E32=19,E32=20,E32=21,E32=22,E32=23,E32=24,E32=25,E32=26,E32=27,E32=28,E32=29,E32=30,E32=31,E32=32,E32=33),E32*$C$26,IF(E32=0.5,$C$25,IF(E32=1.5,$C$25+$C$26,IF(E32=2.5,(2*$C$26)+$C$25,IF(E32=3.5,(3*$C$26)+$C$25,IF(E32=4.5,(4*$C$26)+$C$25,IF(E32=5.5,(5*$C$26)+$C$25,IF(E32=6.5,(6*$C$26)+$C$25,IF(E32=7.5,(7*$C$26)+$C$25,IF(E32=8.5,(8*$C$26)+$C$25,IF(E32=9.5,(9*$C$26)+$C$25,IF(E32=10.5,(10*$C$26)+$C$25,IF(E32=12.5,(12*$C$26)+$C$25,IF(E32=13.5,(13*$C$26)+$C$25,IF(E32=14.5,(14*$C$26)+$C$25,IF(E32=15.5,(15*$C$26)+$C$25,IF(E32=16.5,(6*$C$26)+$C$25,IF(E32=17.5,(17*$C$26)+$C$25,IF(E32=18.5,(18*$C$26)+$C$25,IF(E32=19.5,(19*$C$26)+$C$25,IF(E32=20.5,(20*$C$26)+$C$25,IF(E32=21.5,(21*$C$26)+$C$25,IF(E32=22.5,(22*$C$26)+$C$25,IF(E32=23.5,(23*$C$26)+$C$25,IF(E32=24.5,(24*$C$26)+$C$25,IF(E32=25.5,(25*$C$26)+$C$25,IF(E32=26.5,(26*$C$26)+$C$25,IF(E32=27.5,(27*$C$26)+$C$25,IF(E32=28.5,(28*$C$26)+$C$25,IF(E32=29.5,(29*$C$26)+$C$25,IF(E32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(F32=1,F32=2,F32=3,F32=4,F32=5,F32=6,F32=7,F32=8,F32=9,F32=10,F32=11,F32=12,F32=13,F32=14,F32=15,F32=16,F32=17,F32=18,F32=19,F32=20,F32=21,F32=22,F32=23,F32=24,F32=25,F32=26,F32=27,F32=28,F32=29,F32=30,F32=31,F32=32,F32=33),F32*$C$26,IF(F32=0.5,$C$25,IF(F32=1.5,$C$25+$C$26,IF(F32=2.5,(2*$C$26)+$C$25,IF(F32=3.5,(3*$C$26)+$C$25,IF(F32=4.5,(4*$C$26)+$C$25,IF(F32=5.5,(5*$C$26)+$C$25,IF(F32=6.5,(6*$C$26)+$C$25,IF(F32=7.5,(7*$C$26)+$C$25,IF(F32=8.5,(8*$C$26)+$C$25,IF(F32=9.5,(9*$C$26)+$C$25,IF(F32=10.5,(10*$C$26)+$C$25,IF(F32=12.5,(12*$C$26)+$C$25,IF(F32=13.5,(13*$C$26)+$C$25,IF(F32=14.5,(14*$C$26)+$C$25,IF(F32=15.5,(15*$C$26)+$C$25,IF(F32=16.5,(6*$C$26)+$C$25,IF(F32=17.5,(17*$C$26)+$C$25,IF(F32=18.5,(18*$C$26)+$C$25,IF(F32=19.5,(19*$C$26)+$C$25,IF(F32=20.5,(20*$C$26)+$C$25,IF(F32=21.5,(21*$C$26)+$C$25,IF(F32=22.5,(22*$C$26)+$C$25,IF(F32=23.5,(23*$C$26)+$C$25,IF(F32=24.5,(24*$C$26)+$C$25,IF(F32=25.5,(25*$C$26)+$C$25,IF(F32=26.5,(26*$C$26)+$C$25,IF(F32=27.5,(27*$C$26)+$C$25,IF(F32=28.5,(28*$C$26)+$C$25,IF(F32=29.5,(29*$C$26)+$C$25,IF(F32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(H32=1,H32=2,H32=3,H32=4,H32=5,H32=6,H32=7,H32=8,H32=9,H32=10,H32=11,H32=12,H32=13,H32=14,H32=15,H32=16,H32=17,H32=18,H32=19,H32=20,H32=21,H32=22,H32=23,H32=24,H32=25,H32=26,H32=27,H32=28,H32=29,H32=30,H32=31,H32=32,H32=33),H32*$C$26,IF(H32=0.5,$C$25,IF(H32=1.5,$C$25+$C$26,IF(H32=2.5,(2*$C$26)+$C$25,IF(H32=3.5,(3*$C$26)+$C$25,IF(H32=4.5,(4*$C$26)+$C$25,IF(H32=5.5,(5*$C$26)+$C$25,IF(H32=6.5,(6*$C$26)+$C$25,IF(H32=7.5,(7*$C$26)+$C$25,IF(H32=8.5,(8*$C$26)+$C$25,IF(H32=9.5,(9*$C$26)+$C$25,IF(H32=10.5,(10*$C$26)+$C$25,IF(H32=12.5,(12*$C$26)+$C$25,IF(H32=13.5,(13*$C$26)+$C$25,IF(H32=14.5,(14*$C$26)+$C$25,IF(H32=15.5,(15*$C$26)+$C$25,IF(H32=16.5,(6*$C$26)+$C$25,IF(H32=17.5,(17*$C$26)+$C$25,IF(H32=18.5,(18*$C$26)+$C$25,IF(H32=19.5,(19*$C$26)+$C$25,IF(H32=20.5,(20*$C$26)+$C$25,IF(H32=21.5,(21*$C$26)+$C$25,IF(H32=22.5,(22*$C$26)+$C$25,IF(H32=23.5,(23*$C$26)+$C$25,IF(H32=24.5,(24*$C$26)+$C$25,IF(H32=25.5,(25*$C$26)+$C$25,IF(H32=26.5,(26*$C$26)+$C$25,IF(H32=27.5,(27*$C$26)+$C$25,IF(H32=28.5,(28*$C$26)+$C$25,IF(H32=29.5,(29*$C$26)+$C$25,IF(H32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(I32=1,I32=2,I32=3,I32=4,I32=5,I32=6,I32=7,I32=8,I32=9,I32=10,I32=11,I32=12,I32=13,I32=14,I32=15,I32=16,I32=17,I32=18,I32=19,I32=20,I32=21,I32=22,I32=23,I32=24,I32=25,I32=26,I32=27,I32=28,I32=29,I32=30,I32=31,I32=32,I32=33),I32*$C$26,IF(I32=0.5,$C$25,IF(I32=1.5,$C$25+$C$26,IF(I32=2.5,(2*$C$26)+$C$25,IF(I32=3.5,(3*$C$26)+$C$25,IF(I32=4.5,(4*$C$26)+$C$25,IF(I32=5.5,(5*$C$26)+$C$25,IF(I32=6.5,(6*$C$26)+$C$25,IF(I32=7.5,(7*$C$26)+$C$25,IF(I32=8.5,(8*$C$26)+$C$25,IF(I32=9.5,(9*$C$26)+$C$25,IF(I32=10.5,(10*$C$26)+$C$25,IF(I32=12.5,(12*$C$26)+$C$25,IF(I32=13.5,(13*$C$26)+$C$25,IF(I32=14.5,(14*$C$26)+$C$25,IF(I32=15.5,(15*$C$26)+$C$25,IF(I32=16.5,(6*$C$26)+$C$25,IF(I32=17.5,(17*$C$26)+$C$25,IF(I32=18.5,(18*$C$26)+$C$25,IF(I32=19.5,(19*$C$26)+$C$25,IF(I32=20.5,(20*$C$26)+$C$25,IF(I32=21.5,(21*$C$26)+$C$25,IF(I32=22.5,(22*$C$26)+$C$25,IF(I32=23.5,(23*$C$26)+$C$25,IF(I32=24.5,(24*$C$26)+$C$25,IF(I32=25.5,(25*$C$26)+$C$25,IF(I32=26.5,(26*$C$26)+$C$25,IF(I32=27.5,(27*$C$26)+$C$25,IF(I32=28.5,(28*$C$26)+$C$25,IF(I32=29.5,(29*$C$26)+$C$25,IF(I32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(J32=1,J32=2,J32=3,J32=4,J32=5,J32=6,J32=7,J32=8,J32=9,J32=10,J32=11,J32=12,J32=13,J32=14,J32=15,J32=16,J32=17,J32=18,J32=19,J32=20,J32=21,J32=22,J32=23,J32=24,J32=25,J32=26,J32=27,J32=28,J32=29,J32=30,J32=31,J32=32,J32=33),J32*$C$26,IF(J32=0.5,$C$25,IF(J32=1.5,$C$25+$C$26,IF(J32=2.5,(2*$C$26)+$C$25,IF(J32=3.5,(3*$C$26)+$C$25,IF(J32=4.5,(4*$C$26)+$C$25,IF(J32=5.5,(5*$C$26)+$C$25,IF(J32=6.5,(6*$C$26)+$C$25,IF(J32=7.5,(7*$C$26)+$C$25,IF(J32=8.5,(8*$C$26)+$C$25,IF(J32=9.5,(9*$C$26)+$C$25,IF(J32=10.5,(10*$C$26)+$C$25,IF(J32=12.5,(12*$C$26)+$C$25,IF(J32=13.5,(13*$C$26)+$C$25,IF(J32=14.5,(14*$C$26)+$C$25,IF(J32=15.5,(15*$C$26)+$C$25,IF(J32=16.5,(6*$C$26)+$C$25,IF(J32=17.5,(17*$C$26)+$C$25,IF(J32=18.5,(18*$C$26)+$C$25,IF(J32=19.5,(19*$C$26)+$C$25,IF(J32=20.5,(20*$C$26)+$C$25,IF(J32=21.5,(21*$C$26)+$C$25,IF(J32=22.5,(22*$C$26)+$C$25,IF(J32=23.5,(23*$C$26)+$C$25,IF(J32=24.5,(24*$C$26)+$C$25,IF(J32=25.5,(25*$C$26)+$C$25,IF(J32=26.5,(26*$C$26)+$C$25,IF(J32=27.5,(27*$C$26)+$C$25,IF(J32=28.5,(28*$C$26)+$C$25,IF(J32=29.5,(29*$C$26)+$C$25,IF(J32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(K32=1,K32=2,K32=3,K32=4,K32=5,K32=6,K32=7,K32=8,K32=9,K32=10,K32=11,K32=12,K32=13,K32=14,K32=15,K32=16,K32=17,K32=18,K32=19,K32=20,K32=21,K32=22,K32=23,K32=24,K32=25,K32=26,K32=27,K32=28,K32=29,K32=30,K32=31,K32=32,K32=33),K32*$C$26,IF(K32=0.5,$C$25,IF(K32=1.5,$C$25+$C$26,IF(K32=2.5,(2*$C$26)+$C$25,IF(K32=3.5,(3*$C$26)+$C$25,IF(K32=4.5,(4*$C$26)+$C$25,IF(K32=5.5,(5*$C$26)+$C$25,IF(K32=6.5,(6*$C$26)+$C$25,IF(K32=7.5,(7*$C$26)+$C$25,IF(K32=8.5,(8*$C$26)+$C$25,IF(K32=9.5,(9*$C$26)+$C$25,IF(K32=10.5,(10*$C$26)+$C$25,IF(K32=12.5,(12*$C$26)+$C$25,IF(K32=13.5,(13*$C$26)+$C$25,IF(K32=14.5,(14*$C$26)+$C$25,IF(K32=15.5,(15*$C$26)+$C$25,IF(K32=16.5,(6*$C$26)+$C$25,IF(K32=17.5,(17*$C$26)+$C$25,IF(K32=18.5,(18*$C$26)+$C$25,IF(K32=19.5,(19*$C$26)+$C$25,IF(K32=20.5,(20*$C$26)+$C$25,IF(K32=21.5,(21*$C$26)+$C$25,IF(K32=22.5,(22*$C$26)+$C$25,IF(K32=23.5,(23*$C$26)+$C$25,IF(K32=24.5,(24*$C$26)+$C$25,IF(K32=25.5,(25*$C$26)+$C$25,IF(K32=26.5,(26*$C$26)+$C$25,IF(K32=27.5,(27*$C$26)+$C$25,IF(K32=28.5,(28*$C$26)+$C$25,IF(K32=29.5,(29*$C$26)+$C$25,IF(K32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(L32=1,L32=2,L32=3,L32=4,L32=5,L32=6,L32=7,L32=8,L32=9,L32=10,L32=11,L32=12,L32=13,L32=14,L32=15,L32=16,L32=17,L32=18,L32=19,L32=20,L32=21,L32=22,L32=23,L32=24,L32=25,L32=26,L32=27,L32=28,L32=29,L32=30,L32=31,L32=32,L32=33),L32*$C$26,IF(L32=0.5,$C$25,IF(L32=1.5,$C$25+$C$26,IF(L32=2.5,(2*$C$26)+$C$25,IF(L32=3.5,(3*$C$26)+$C$25,IF(L32=4.5,(4*$C$26)+$C$25,IF(L32=5.5,(5*$C$26)+$C$25,IF(L32=6.5,(6*$C$26)+$C$25,IF(L32=7.5,(7*$C$26)+$C$25,IF(L32=8.5,(8*$C$26)+$C$25,IF(L32=9.5,(9*$C$26)+$C$25,IF(L32=10.5,(10*$C$26)+$C$25,IF(L32=12.5,(12*$C$26)+$C$25,IF(L32=13.5,(13*$C$26)+$C$25,IF(L32=14.5,(14*$C$26)+$C$25,IF(L32=15.5,(15*$C$26)+$C$25,IF(L32=16.5,(6*$C$26)+$C$25,IF(L32=17.5,(17*$C$26)+$C$25,IF(L32=18.5,(18*$C$26)+$C$25,IF(L32=19.5,(19*$C$26)+$C$25,IF(L32=20.5,(20*$C$26)+$C$25,IF(L32=21.5,(21*$C$26)+$C$25,IF(L32=22.5,(22*$C$26)+$C$25,IF(L32=23.5,(23*$C$26)+$C$25,IF(L32=24.5,(24*$C$26)+$C$25,IF(L32=25.5,(25*$C$26)+$C$25,IF(L32=26.5,(26*$C$26)+$C$25,IF(L32=27.5,(27*$C$26)+$C$25,IF(L32=28.5,(28*$C$26)+$C$25,IF(L32=29.5,(29*$C$26)+$C$25,IF(L32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(M32=1,M32=2,M32=3,M32=4,M32=5,M32=6,M32=7,M32=8,M32=9,M32=10,M32=11,M32=12,M32=13,M32=14,M32=15,M32=16,M32=17,M32=18,M32=19,M32=20,M32=21,M32=22,M32=23,M32=24,M32=25,M32=26,M32=27,M32=28,M32=29,M32=30,M32=31,M32=32,M32=33),M32*$C$26,IF(M32=0.5,$C$25,IF(M32=1.5,$C$25+$C$26,IF(M32=2.5,(2*$C$26)+$C$25,IF(M32=3.5,(3*$C$26)+$C$25,IF(M32=4.5,(4*$C$26)+$C$25,IF(M32=5.5,(5*$C$26)+$C$25,IF(M32=6.5,(6*$C$26)+$C$25,IF(M32=7.5,(7*$C$26)+$C$25,IF(M32=8.5,(8*$C$26)+$C$25,IF(M32=9.5,(9*$C$26)+$C$25,IF(M32=10.5,(10*$C$26)+$C$25,IF(M32=12.5,(12*$C$26)+$C$25,IF(M32=13.5,(13*$C$26)+$C$25,IF(M32=14.5,(14*$C$26)+$C$25,IF(M32=15.5,(15*$C$26)+$C$25,IF(M32=16.5,(6*$C$26)+$C$25,IF(M32=17.5,(17*$C$26)+$C$25,IF(M32=18.5,(18*$C$26)+$C$25,IF(M32=19.5,(19*$C$26)+$C$25,IF(M32=20.5,(20*$C$26)+$C$25,IF(M32=21.5,(21*$C$26)+$C$25,IF(M32=22.5,(22*$C$26)+$C$25,IF(M32=23.5,(23*$C$26)+$C$25,IF(M32=24.5,(24*$C$26)+$C$25,IF(M32=25.5,(25*$C$26)+$C$25,IF(M32=26.5,(26*$C$26)+$C$25,IF(M32=27.5,(27*$C$26)+$C$25,IF(M32=28.5,(28*$C$26)+$C$25,IF(M32=29.5,(29*$C$26)+$C$25,IF(M32=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex 5 Liter</font></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C33+D33+E33+F33+H33+I33+J33+K33+L33+M33</td>
+  <td style="{!xl831366}"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(C33=1,C33=2,C33=3,C33=4,C33=5,C33=6,C33=7,C33=8,C33=9,C33=10,C33=11,C33=12,C33=13,C33=14,C33=15,C33=16,C33=17,C33=18,C33=19,C33=20,C33=21,C33=22,C33=23,C33=24,C33=25,C33=26,C33=27,C33=28,C33=29,C33=30,C33=31,C33=32,C33=33),C33*$C$26,IF(C33=0.5,$C$25,IF(C33=1.5,$C$25+$C$26,IF(C33=2.5,(2*$C$26)+$C$25,IF(C33=3.5,(3*$C$26)+$C$25,IF(C33=4.5,(4*$C$26)+$C$25,IF(C33=5.5,(5*$C$26)+$C$25,IF(C33=6.5,(6*$C$26)+$C$25,IF(C33=7.5,(7*$C$26)+$C$25,IF(C33=8.5,(8*$C$26)+$C$25,IF(C33=9.5,(9*$C$26)+$C$25,IF(C33=10.5,(10*$C$26)+$C$25,IF(C33=12.5,(12*$C$26)+$C$25,IF(C33=13.5,(13*$C$26)+$C$25,IF(C33=14.5,(14*$C$26)+$C$25,IF(C33=15.5,(15*$C$26)+$C$25,IF(C33=16.5,(6*$C$26)+$C$25,IF(C33=17.5,(17*$C$26)+$C$25,IF(C33=18.5,(18*$C$26)+$C$25,IF(C33=19.5,(19*$C$26)+$C$25,IF(C33=20.5,(20*$C$26)+$C$25,IF(C33=21.5,(21*$C$26)+$C$25,IF(C33=22.5,(22*$C$26)+$C$25,IF(C33=23.5,(23*$C$26)+$C$25,IF(C33=24.5,(24*$C$26)+$C$25,IF(C33=25.5,(25*$C$26)+$C$25,IF(C33=26.5,(26*$C$26)+$C$25,IF(C33=27.5,(27*$C$26)+$C$25,IF(C33=28.5,(28*$C$26)+$C$25,IF(C33=29.5,(29*$C$26)+$C$25,IF(C33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(D33=1,D33=2,D33=3,D33=4,D33=5,D33=6,D33=7,D33=8,D33=9,D33=10,D33=11,D33=12,D33=13,D33=14,D33=15,D33=16,D33=17,D33=18,D33=19,D33=20,D33=21,D33=22,D33=23,D33=24,D33=25,D33=26,D33=27,D33=28,D33=29,D33=30,D33=31,D33=32,D33=33),D33*$C$26,IF(D33=0.5,$C$25,IF(D33=1.5,$C$25+$C$26,IF(D33=2.5,(2*$C$26)+$C$25,IF(D33=3.5,(3*$C$26)+$C$25,IF(D33=4.5,(4*$C$26)+$C$25,IF(D33=5.5,(5*$C$26)+$C$25,IF(D33=6.5,(6*$C$26)+$C$25,IF(D33=7.5,(7*$C$26)+$C$25,IF(D33=8.5,(8*$C$26)+$C$25,IF(D33=9.5,(9*$C$26)+$C$25,IF(D33=10.5,(10*$C$26)+$C$25,IF(D33=12.5,(12*$C$26)+$C$25,IF(D33=13.5,(13*$C$26)+$C$25,IF(D33=14.5,(14*$C$26)+$C$25,IF(D33=15.5,(15*$C$26)+$C$25,IF(D33=16.5,(6*$C$26)+$C$25,IF(D33=17.5,(17*$C$26)+$C$25,IF(D33=18.5,(18*$C$26)+$C$25,IF(D33=19.5,(19*$C$26)+$C$25,IF(D33=20.5,(20*$C$26)+$C$25,IF(D33=21.5,(21*$C$26)+$C$25,IF(D33=22.5,(22*$C$26)+$C$25,IF(D33=23.5,(23*$C$26)+$C$25,IF(D33=24.5,(24*$C$26)+$C$25,IF(D33=25.5,(25*$C$26)+$C$25,IF(D33=26.5,(26*$C$26)+$C$25,IF(D33=27.5,(27*$C$26)+$C$25,IF(D33=28.5,(28*$C$26)+$C$25,IF(D33=29.5,(29*$C$26)+$C$25,IF(D33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(E33=1,E33=2,E33=3,E33=4,E33=5,E33=6,E33=7,E33=8,E33=9,E33=10,E33=11,E33=12,E33=13,E33=14,E33=15,E33=16,E33=17,E33=18,E33=19,E33=20,E33=21,E33=22,E33=23,E33=24,E33=25,E33=26,E33=27,E33=28,E33=29,E33=30,E33=31,E33=32,E33=33),E33*$C$26,IF(E33=0.5,$C$25,IF(E33=1.5,$C$25+$C$26,IF(E33=2.5,(2*$C$26)+$C$25,IF(E33=3.5,(3*$C$26)+$C$25,IF(E33=4.5,(4*$C$26)+$C$25,IF(E33=5.5,(5*$C$26)+$C$25,IF(E33=6.5,(6*$C$26)+$C$25,IF(E33=7.5,(7*$C$26)+$C$25,IF(E33=8.5,(8*$C$26)+$C$25,IF(E33=9.5,(9*$C$26)+$C$25,IF(E33=10.5,(10*$C$26)+$C$25,IF(E33=12.5,(12*$C$26)+$C$25,IF(E33=13.5,(13*$C$26)+$C$25,IF(E33=14.5,(14*$C$26)+$C$25,IF(E33=15.5,(15*$C$26)+$C$25,IF(E33=16.5,(6*$C$26)+$C$25,IF(E33=17.5,(17*$C$26)+$C$25,IF(E33=18.5,(18*$C$26)+$C$25,IF(E33=19.5,(19*$C$26)+$C$25,IF(E33=20.5,(20*$C$26)+$C$25,IF(E33=21.5,(21*$C$26)+$C$25,IF(E33=22.5,(22*$C$26)+$C$25,IF(E33=23.5,(23*$C$26)+$C$25,IF(E33=24.5,(24*$C$26)+$C$25,IF(E33=25.5,(25*$C$26)+$C$25,IF(E33=26.5,(26*$C$26)+$C$25,IF(E33=27.5,(27*$C$26)+$C$25,IF(E33=28.5,(28*$C$26)+$C$25,IF(E33=29.5,(29*$C$26)+$C$25,IF(E33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(F33=1,F33=2,F33=3,F33=4,F33=5,F33=6,F33=7,F33=8,F33=9,F33=10,F33=11,F33=12,F33=13,F33=14,F33=15,F33=16,F33=17,F33=18,F33=19,F33=20,F33=21,F33=22,F33=23,F33=24,F33=25,F33=26,F33=27,F33=28,F33=29,F33=30,F33=31,F33=32,F33=33),F33*$C$26,IF(F33=0.5,$C$25,IF(F33=1.5,$C$25+$C$26,IF(F33=2.5,(2*$C$26)+$C$25,IF(F33=3.5,(3*$C$26)+$C$25,IF(F33=4.5,(4*$C$26)+$C$25,IF(F33=5.5,(5*$C$26)+$C$25,IF(F33=6.5,(6*$C$26)+$C$25,IF(F33=7.5,(7*$C$26)+$C$25,IF(F33=8.5,(8*$C$26)+$C$25,IF(F33=9.5,(9*$C$26)+$C$25,IF(F33=10.5,(10*$C$26)+$C$25,IF(F33=12.5,(12*$C$26)+$C$25,IF(F33=13.5,(13*$C$26)+$C$25,IF(F33=14.5,(14*$C$26)+$C$25,IF(F33=15.5,(15*$C$26)+$C$25,IF(F33=16.5,(6*$C$26)+$C$25,IF(F33=17.5,(17*$C$26)+$C$25,IF(F33=18.5,(18*$C$26)+$C$25,IF(F33=19.5,(19*$C$26)+$C$25,IF(F33=20.5,(20*$C$26)+$C$25,IF(F33=21.5,(21*$C$26)+$C$25,IF(F33=22.5,(22*$C$26)+$C$25,IF(F33=23.5,(23*$C$26)+$C$25,IF(F33=24.5,(24*$C$26)+$C$25,IF(F33=25.5,(25*$C$26)+$C$25,IF(F33=26.5,(26*$C$26)+$C$25,IF(F33=27.5,(27*$C$26)+$C$25,IF(F33=28.5,(28*$C$26)+$C$25,IF(F33=29.5,(29*$C$26)+$C$25,IF(F33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(H33=1,H33=2,H33=3,H33=4,H33=5,H33=6,H33=7,H33=8,H33=9,H33=10,H33=11,H33=12,H33=13,H33=14,H33=15,H33=16,H33=17,H33=18,H33=19,H33=20,H33=21,H33=22,H33=23,H33=24,H33=25,H33=26,H33=27,H33=28,H33=29,H33=30,H33=31,H33=32,H33=33),H33*$C$26,IF(H33=0.5,$C$25,IF(H33=1.5,$C$25+$C$26,IF(H33=2.5,(2*$C$26)+$C$25,IF(H33=3.5,(3*$C$26)+$C$25,IF(H33=4.5,(4*$C$26)+$C$25,IF(H33=5.5,(5*$C$26)+$C$25,IF(H33=6.5,(6*$C$26)+$C$25,IF(H33=7.5,(7*$C$26)+$C$25,IF(H33=8.5,(8*$C$26)+$C$25,IF(H33=9.5,(9*$C$26)+$C$25,IF(H33=10.5,(10*$C$26)+$C$25,IF(H33=12.5,(12*$C$26)+$C$25,IF(H33=13.5,(13*$C$26)+$C$25,IF(H33=14.5,(14*$C$26)+$C$25,IF(H33=15.5,(15*$C$26)+$C$25,IF(H33=16.5,(6*$C$26)+$C$25,IF(H33=17.5,(17*$C$26)+$C$25,IF(H33=18.5,(18*$C$26)+$C$25,IF(H33=19.5,(19*$C$26)+$C$25,IF(H33=20.5,(20*$C$26)+$C$25,IF(H33=21.5,(21*$C$26)+$C$25,IF(H33=22.5,(22*$C$26)+$C$25,IF(H33=23.5,(23*$C$26)+$C$25,IF(H33=24.5,(24*$C$26)+$C$25,IF(H33=25.5,(25*$C$26)+$C$25,IF(H33=26.5,(26*$C$26)+$C$25,IF(H33=27.5,(27*$C$26)+$C$25,IF(H33=28.5,(28*$C$26)+$C$25,IF(H33=29.5,(29*$C$26)+$C$25,IF(H33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(I33=1,I33=2,I33=3,I33=4,I33=5,I33=6,I33=7,I33=8,I33=9,I33=10,I33=11,I33=12,I33=13,I33=14,I33=15,I33=16,I33=17,I33=18,I33=19,I33=20,I33=21,I33=22,I33=23,I33=24,I33=25,I33=26,I33=27,I33=28,I33=29,I33=30,I33=31,I33=32,I33=33),I33*$C$26,IF(I33=0.5,$C$25,IF(I33=1.5,$C$25+$C$26,IF(I33=2.5,(2*$C$26)+$C$25,IF(I33=3.5,(3*$C$26)+$C$25,IF(I33=4.5,(4*$C$26)+$C$25,IF(I33=5.5,(5*$C$26)+$C$25,IF(I33=6.5,(6*$C$26)+$C$25,IF(I33=7.5,(7*$C$26)+$C$25,IF(I33=8.5,(8*$C$26)+$C$25,IF(I33=9.5,(9*$C$26)+$C$25,IF(I33=10.5,(10*$C$26)+$C$25,IF(I33=12.5,(12*$C$26)+$C$25,IF(I33=13.5,(13*$C$26)+$C$25,IF(I33=14.5,(14*$C$26)+$C$25,IF(I33=15.5,(15*$C$26)+$C$25,IF(I33=16.5,(6*$C$26)+$C$25,IF(I33=17.5,(17*$C$26)+$C$25,IF(I33=18.5,(18*$C$26)+$C$25,IF(I33=19.5,(19*$C$26)+$C$25,IF(I33=20.5,(20*$C$26)+$C$25,IF(I33=21.5,(21*$C$26)+$C$25,IF(I33=22.5,(22*$C$26)+$C$25,IF(I33=23.5,(23*$C$26)+$C$25,IF(I33=24.5,(24*$C$26)+$C$25,IF(I33=25.5,(25*$C$26)+$C$25,IF(I33=26.5,(26*$C$26)+$C$25,IF(I33=27.5,(27*$C$26)+$C$25,IF(I33=28.5,(28*$C$26)+$C$25,IF(I33=29.5,(29*$C$26)+$C$25,IF(I33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(J33=1,J33=2,J33=3,J33=4,J33=5,J33=6,J33=7,J33=8,J33=9,J33=10,J33=11,J33=12,J33=13,J33=14,J33=15,J33=16,J33=17,J33=18,J33=19,J33=20,J33=21,J33=22,J33=23,J33=24,J33=25,J33=26,J33=27,J33=28,J33=29,J33=30,J33=31,J33=32,J33=33),J33*$C$26,IF(J33=0.5,$C$25,IF(J33=1.5,$C$25+$C$26,IF(J33=2.5,(2*$C$26)+$C$25,IF(J33=3.5,(3*$C$26)+$C$25,IF(J33=4.5,(4*$C$26)+$C$25,IF(J33=5.5,(5*$C$26)+$C$25,IF(J33=6.5,(6*$C$26)+$C$25,IF(J33=7.5,(7*$C$26)+$C$25,IF(J33=8.5,(8*$C$26)+$C$25,IF(J33=9.5,(9*$C$26)+$C$25,IF(J33=10.5,(10*$C$26)+$C$25,IF(J33=12.5,(12*$C$26)+$C$25,IF(J33=13.5,(13*$C$26)+$C$25,IF(J33=14.5,(14*$C$26)+$C$25,IF(J33=15.5,(15*$C$26)+$C$25,IF(J33=16.5,(6*$C$26)+$C$25,IF(J33=17.5,(17*$C$26)+$C$25,IF(J33=18.5,(18*$C$26)+$C$25,IF(J33=19.5,(19*$C$26)+$C$25,IF(J33=20.5,(20*$C$26)+$C$25,IF(J33=21.5,(21*$C$26)+$C$25,IF(J33=22.5,(22*$C$26)+$C$25,IF(J33=23.5,(23*$C$26)+$C$25,IF(J33=24.5,(24*$C$26)+$C$25,IF(J33=25.5,(25*$C$26)+$C$25,IF(J33=26.5,(26*$C$26)+$C$25,IF(J33=27.5,(27*$C$26)+$C$25,IF(J33=28.5,(28*$C$26)+$C$25,IF(J33=29.5,(29*$C$26)+$C$25,IF(J33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(K33=1,K33=2,K33=3,K33=4,K33=5,K33=6,K33=7,K33=8,K33=9,K33=10,K33=11,K33=12,K33=13,K33=14,K33=15,K33=16,K33=17,K33=18,K33=19,K33=20,K33=21,K33=22,K33=23,K33=24,K33=25,K33=26,K33=27,K33=28,K33=29,K33=30,K33=31,K33=32,K33=33),K33*$C$26,IF(K33=0.5,$C$25,IF(K33=1.5,$C$25+$C$26,IF(K33=2.5,(2*$C$26)+$C$25,IF(K33=3.5,(3*$C$26)+$C$25,IF(K33=4.5,(4*$C$26)+$C$25,IF(K33=5.5,(5*$C$26)+$C$25,IF(K33=6.5,(6*$C$26)+$C$25,IF(K33=7.5,(7*$C$26)+$C$25,IF(K33=8.5,(8*$C$26)+$C$25,IF(K33=9.5,(9*$C$26)+$C$25,IF(K33=10.5,(10*$C$26)+$C$25,IF(K33=12.5,(12*$C$26)+$C$25,IF(K33=13.5,(13*$C$26)+$C$25,IF(K33=14.5,(14*$C$26)+$C$25,IF(K33=15.5,(15*$C$26)+$C$25,IF(K33=16.5,(6*$C$26)+$C$25,IF(K33=17.5,(17*$C$26)+$C$25,IF(K33=18.5,(18*$C$26)+$C$25,IF(K33=19.5,(19*$C$26)+$C$25,IF(K33=20.5,(20*$C$26)+$C$25,IF(K33=21.5,(21*$C$26)+$C$25,IF(K33=22.5,(22*$C$26)+$C$25,IF(K33=23.5,(23*$C$26)+$C$25,IF(K33=24.5,(24*$C$26)+$C$25,IF(K33=25.5,(25*$C$26)+$C$25,IF(K33=26.5,(26*$C$26)+$C$25,IF(K33=27.5,(27*$C$26)+$C$25,IF(K33=28.5,(28*$C$26)+$C$25,IF(K33=29.5,(29*$C$26)+$C$25,IF(K33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(L33=1,L33=2,L33=3,L33=4,L33=5,L33=6,L33=7,L33=8,L33=9,L33=10,L33=11,L33=12,L33=13,L33=14,L33=15,L33=16,L33=17,L33=18,L33=19,L33=20,L33=21,L33=22,L33=23,L33=24,L33=25,L33=26,L33=27,L33=28,L33=29,L33=30,L33=31,L33=32,L33=33),L33*$C$26,IF(L33=0.5,$C$25,IF(L33=1.5,$C$25+$C$26,IF(L33=2.5,(2*$C$26)+$C$25,IF(L33=3.5,(3*$C$26)+$C$25,IF(L33=4.5,(4*$C$26)+$C$25,IF(L33=5.5,(5*$C$26)+$C$25,IF(L33=6.5,(6*$C$26)+$C$25,IF(L33=7.5,(7*$C$26)+$C$25,IF(L33=8.5,(8*$C$26)+$C$25,IF(L33=9.5,(9*$C$26)+$C$25,IF(L33=10.5,(10*$C$26)+$C$25,IF(L33=12.5,(12*$C$26)+$C$25,IF(L33=13.5,(13*$C$26)+$C$25,IF(L33=14.5,(14*$C$26)+$C$25,IF(L33=15.5,(15*$C$26)+$C$25,IF(L33=16.5,(6*$C$26)+$C$25,IF(L33=17.5,(17*$C$26)+$C$25,IF(L33=18.5,(18*$C$26)+$C$25,IF(L33=19.5,(19*$C$26)+$C$25,IF(L33=20.5,(20*$C$26)+$C$25,IF(L33=21.5,(21*$C$26)+$C$25,IF(L33=22.5,(22*$C$26)+$C$25,IF(L33=23.5,(23*$C$26)+$C$25,IF(L33=24.5,(24*$C$26)+$C$25,IF(L33=25.5,(25*$C$26)+$C$25,IF(L33=26.5,(26*$C$26)+$C$25,IF(L33=27.5,(27*$C$26)+$C$25,IF(L33=28.5,(28*$C$26)+$C$25,IF(L33=29.5,(29*$C$26)+$C$25,IF(L33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(M33=1,M33=2,M33=3,M33=4,M33=5,M33=6,M33=7,M33=8,M33=9,M33=10,M33=11,M33=12,M33=13,M33=14,M33=15,M33=16,M33=17,M33=18,M33=19,M33=20,M33=21,M33=22,M33=23,M33=24,M33=25,M33=26,M33=27,M33=28,M33=29,M33=30,M33=31,M33=32,M33=33),M33*$C$26,IF(M33=0.5,$C$25,IF(M33=1.5,$C$25+$C$26,IF(M33=2.5,(2*$C$26)+$C$25,IF(M33=3.5,(3*$C$26)+$C$25,IF(M33=4.5,(4*$C$26)+$C$25,IF(M33=5.5,(5*$C$26)+$C$25,IF(M33=6.5,(6*$C$26)+$C$25,IF(M33=7.5,(7*$C$26)+$C$25,IF(M33=8.5,(8*$C$26)+$C$25,IF(M33=9.5,(9*$C$26)+$C$25,IF(M33=10.5,(10*$C$26)+$C$25,IF(M33=12.5,(12*$C$26)+$C$25,IF(M33=13.5,(13*$C$26)+$C$25,IF(M33=14.5,(14*$C$26)+$C$25,IF(M33=15.5,(15*$C$26)+$C$25,IF(M33=16.5,(6*$C$26)+$C$25,IF(M33=17.5,(17*$C$26)+$C$25,IF(M33=18.5,(18*$C$26)+$C$25,IF(M33=19.5,(19*$C$26)+$C$25,IF(M33=20.5,(20*$C$26)+$C$25,IF(M33=21.5,(21*$C$26)+$C$25,IF(M33=22.5,(22*$C$26)+$C$25,IF(M33=23.5,(23*$C$26)+$C$25,IF(M33=24.5,(24*$C$26)+$C$25,IF(M33=25.5,(25*$C$26)+$C$25,IF(M33=26.5,(26*$C$26)+$C$25,IF(M33=27.5,(27*$C$26)+$C$25,IF(M33=28.5,(28*$C$26)+$C$25,IF(M33=29.5,(29*$C$26)+$C$25,IF(M33=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex 15 Liter</font></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C34+D34+E34+F34+H34+I34+J34+K34+L34+M34</td>
+  <td style="{!xl831366}"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(C34=1,C34=2,C34=3,C34=4,C34=5,C34=6,C34=7,C34=8,C34=9,C34=10,C34=11,C34=12,C34=13,C34=14,C34=15,C34=16,C34=17,C34=18,C34=19,C34=20,C34=21,C34=22,C34=23,C34=24,C34=25,C34=26,C34=27,C34=28,C34=29,C34=30,C34=31,C34=32,C34=33),C34*$C$26,IF(C34=0.5,$C$25,IF(C34=1.5,$C$25+$C$26,IF(C34=2.5,(2*$C$26)+$C$25,IF(C34=3.5,(3*$C$26)+$C$25,IF(C34=4.5,(4*$C$26)+$C$25,IF(C34=5.5,(5*$C$26)+$C$25,IF(C34=6.5,(6*$C$26)+$C$25,IF(C34=7.5,(7*$C$26)+$C$25,IF(C34=8.5,(8*$C$26)+$C$25,IF(C34=9.5,(9*$C$26)+$C$25,IF(C34=10.5,(10*$C$26)+$C$25,IF(C34=12.5,(12*$C$26)+$C$25,IF(C34=13.5,(13*$C$26)+$C$25,IF(C34=14.5,(14*$C$26)+$C$25,IF(C34=15.5,(15*$C$26)+$C$25,IF(C34=16.5,(6*$C$26)+$C$25,IF(C34=17.5,(17*$C$26)+$C$25,IF(C34=18.5,(18*$C$26)+$C$25,IF(C34=19.5,(19*$C$26)+$C$25,IF(C34=20.5,(20*$C$26)+$C$25,IF(C34=21.5,(21*$C$26)+$C$25,IF(C34=22.5,(22*$C$26)+$C$25,IF(C34=23.5,(23*$C$26)+$C$25,IF(C34=24.5,(24*$C$26)+$C$25,IF(C34=25.5,(25*$C$26)+$C$25,IF(C34=26.5,(26*$C$26)+$C$25,IF(C34=27.5,(27*$C$26)+$C$25,IF(C34=28.5,(28*$C$26)+$C$25,IF(C34=29.5,(29*$C$26)+$C$25,IF(C34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(D34=1,D34=2,D34=3,D34=4,D34=5,D34=6,D34=7,D34=8,D34=9,D34=10,D34=11,D34=12,D34=13,D34=14,D34=15,D34=16,D34=17,D34=18,D34=19,D34=20,D34=21,D34=22,D34=23,D34=24,D34=25,D34=26,D34=27,D34=28,D34=29,D34=30,D34=31,D34=32,D34=33),D34*$C$26,IF(D34=0.5,$C$25,IF(D34=1.5,$C$25+$C$26,IF(D34=2.5,(2*$C$26)+$C$25,IF(D34=3.5,(3*$C$26)+$C$25,IF(D34=4.5,(4*$C$26)+$C$25,IF(D34=5.5,(5*$C$26)+$C$25,IF(D34=6.5,(6*$C$26)+$C$25,IF(D34=7.5,(7*$C$26)+$C$25,IF(D34=8.5,(8*$C$26)+$C$25,IF(D34=9.5,(9*$C$26)+$C$25,IF(D34=10.5,(10*$C$26)+$C$25,IF(D34=12.5,(12*$C$26)+$C$25,IF(D34=13.5,(13*$C$26)+$C$25,IF(D34=14.5,(14*$C$26)+$C$25,IF(D34=15.5,(15*$C$26)+$C$25,IF(D34=16.5,(6*$C$26)+$C$25,IF(D34=17.5,(17*$C$26)+$C$25,IF(D34=18.5,(18*$C$26)+$C$25,IF(D34=19.5,(19*$C$26)+$C$25,IF(D34=20.5,(20*$C$26)+$C$25,IF(D34=21.5,(21*$C$26)+$C$25,IF(D34=22.5,(22*$C$26)+$C$25,IF(D34=23.5,(23*$C$26)+$C$25,IF(D34=24.5,(24*$C$26)+$C$25,IF(D34=25.5,(25*$C$26)+$C$25,IF(D34=26.5,(26*$C$26)+$C$25,IF(D34=27.5,(27*$C$26)+$C$25,IF(D34=28.5,(28*$C$26)+$C$25,IF(D34=29.5,(29*$C$26)+$C$25,IF(D34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(E34=1,E34=2,E34=3,E34=4,E34=5,E34=6,E34=7,E34=8,E34=9,E34=10,E34=11,E34=12,E34=13,E34=14,E34=15,E34=16,E34=17,E34=18,E34=19,E34=20,E34=21,E34=22,E34=23,E34=24,E34=25,E34=26,E34=27,E34=28,E34=29,E34=30,E34=31,E34=32,E34=33),E34*$C$26,IF(E34=0.5,$C$25,IF(E34=1.5,$C$25+$C$26,IF(E34=2.5,(2*$C$26)+$C$25,IF(E34=3.5,(3*$C$26)+$C$25,IF(E34=4.5,(4*$C$26)+$C$25,IF(E34=5.5,(5*$C$26)+$C$25,IF(E34=6.5,(6*$C$26)+$C$25,IF(E34=7.5,(7*$C$26)+$C$25,IF(E34=8.5,(8*$C$26)+$C$25,IF(E34=9.5,(9*$C$26)+$C$25,IF(E34=10.5,(10*$C$26)+$C$25,IF(E34=12.5,(12*$C$26)+$C$25,IF(E34=13.5,(13*$C$26)+$C$25,IF(E34=14.5,(14*$C$26)+$C$25,IF(E34=15.5,(15*$C$26)+$C$25,IF(E34=16.5,(6*$C$26)+$C$25,IF(E34=17.5,(17*$C$26)+$C$25,IF(E34=18.5,(18*$C$26)+$C$25,IF(E34=19.5,(19*$C$26)+$C$25,IF(E34=20.5,(20*$C$26)+$C$25,IF(E34=21.5,(21*$C$26)+$C$25,IF(E34=22.5,(22*$C$26)+$C$25,IF(E34=23.5,(23*$C$26)+$C$25,IF(E34=24.5,(24*$C$26)+$C$25,IF(E34=25.5,(25*$C$26)+$C$25,IF(E34=26.5,(26*$C$26)+$C$25,IF(E34=27.5,(27*$C$26)+$C$25,IF(E34=28.5,(28*$C$26)+$C$25,IF(E34=29.5,(29*$C$26)+$C$25,IF(E34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(F34=1,F34=2,F34=3,F34=4,F34=5,F34=6,F34=7,F34=8,F34=9,F34=10,F34=11,F34=12,F34=13,F34=14,F34=15,F34=16,F34=17,F34=18,F34=19,F34=20,F34=21,F34=22,F34=23,F34=24,F34=25,F34=26,F34=27,F34=28,F34=29,F34=30,F34=31,F34=32,F34=33),F34*$C$26,IF(F34=0.5,$C$25,IF(F34=1.5,$C$25+$C$26,IF(F34=2.5,(2*$C$26)+$C$25,IF(F34=3.5,(3*$C$26)+$C$25,IF(F34=4.5,(4*$C$26)+$C$25,IF(F34=5.5,(5*$C$26)+$C$25,IF(F34=6.5,(6*$C$26)+$C$25,IF(F34=7.5,(7*$C$26)+$C$25,IF(F34=8.5,(8*$C$26)+$C$25,IF(F34=9.5,(9*$C$26)+$C$25,IF(F34=10.5,(10*$C$26)+$C$25,IF(F34=12.5,(12*$C$26)+$C$25,IF(F34=13.5,(13*$C$26)+$C$25,IF(F34=14.5,(14*$C$26)+$C$25,IF(F34=15.5,(15*$C$26)+$C$25,IF(F34=16.5,(6*$C$26)+$C$25,IF(F34=17.5,(17*$C$26)+$C$25,IF(F34=18.5,(18*$C$26)+$C$25,IF(F34=19.5,(19*$C$26)+$C$25,IF(F34=20.5,(20*$C$26)+$C$25,IF(F34=21.5,(21*$C$26)+$C$25,IF(F34=22.5,(22*$C$26)+$C$25,IF(F34=23.5,(23*$C$26)+$C$25,IF(F34=24.5,(24*$C$26)+$C$25,IF(F34=25.5,(25*$C$26)+$C$25,IF(F34=26.5,(26*$C$26)+$C$25,IF(F34=27.5,(27*$C$26)+$C$25,IF(F34=28.5,(28*$C$26)+$C$25,IF(F34=29.5,(29*$C$26)+$C$25,IF(F34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(H34=1,H34=2,H34=3,H34=4,H34=5,H34=6,H34=7,H34=8,H34=9,H34=10,H34=11,H34=12,H34=13,H34=14,H34=15,H34=16,H34=17,H34=18,H34=19,H34=20,H34=21,H34=22,H34=23,H34=24,H34=25,H34=26,H34=27,H34=28,H34=29,H34=30,H34=31,H34=32,H34=33),H34*$C$26,IF(H34=0.5,$C$25,IF(H34=1.5,$C$25+$C$26,IF(H34=2.5,(2*$C$26)+$C$25,IF(H34=3.5,(3*$C$26)+$C$25,IF(H34=4.5,(4*$C$26)+$C$25,IF(H34=5.5,(5*$C$26)+$C$25,IF(H34=6.5,(6*$C$26)+$C$25,IF(H34=7.5,(7*$C$26)+$C$25,IF(H34=8.5,(8*$C$26)+$C$25,IF(H34=9.5,(9*$C$26)+$C$25,IF(H34=10.5,(10*$C$26)+$C$25,IF(H34=12.5,(12*$C$26)+$C$25,IF(H34=13.5,(13*$C$26)+$C$25,IF(H34=14.5,(14*$C$26)+$C$25,IF(H34=15.5,(15*$C$26)+$C$25,IF(H34=16.5,(6*$C$26)+$C$25,IF(H34=17.5,(17*$C$26)+$C$25,IF(H34=18.5,(18*$C$26)+$C$25,IF(H34=19.5,(19*$C$26)+$C$25,IF(H34=20.5,(20*$C$26)+$C$25,IF(H34=21.5,(21*$C$26)+$C$25,IF(H34=22.5,(22*$C$26)+$C$25,IF(H34=23.5,(23*$C$26)+$C$25,IF(H34=24.5,(24*$C$26)+$C$25,IF(H34=25.5,(25*$C$26)+$C$25,IF(H34=26.5,(26*$C$26)+$C$25,IF(H34=27.5,(27*$C$26)+$C$25,IF(H34=28.5,(28*$C$26)+$C$25,IF(H34=29.5,(29*$C$26)+$C$25,IF(H34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(I34=1,I34=2,I34=3,I34=4,I34=5,I34=6,I34=7,I34=8,I34=9,I34=10,I34=11,I34=12,I34=13,I34=14,I34=15,I34=16,I34=17,I34=18,I34=19,I34=20,I34=21,I34=22,I34=23,I34=24,I34=25,I34=26,I34=27,I34=28,I34=29,I34=30,I34=31,I34=32,I34=33),I34*$C$26,IF(I34=0.5,$C$25,IF(I34=1.5,$C$25+$C$26,IF(I34=2.5,(2*$C$26)+$C$25,IF(I34=3.5,(3*$C$26)+$C$25,IF(I34=4.5,(4*$C$26)+$C$25,IF(I34=5.5,(5*$C$26)+$C$25,IF(I34=6.5,(6*$C$26)+$C$25,IF(I34=7.5,(7*$C$26)+$C$25,IF(I34=8.5,(8*$C$26)+$C$25,IF(I34=9.5,(9*$C$26)+$C$25,IF(I34=10.5,(10*$C$26)+$C$25,IF(I34=12.5,(12*$C$26)+$C$25,IF(I34=13.5,(13*$C$26)+$C$25,IF(I34=14.5,(14*$C$26)+$C$25,IF(I34=15.5,(15*$C$26)+$C$25,IF(I34=16.5,(6*$C$26)+$C$25,IF(I34=17.5,(17*$C$26)+$C$25,IF(I34=18.5,(18*$C$26)+$C$25,IF(I34=19.5,(19*$C$26)+$C$25,IF(I34=20.5,(20*$C$26)+$C$25,IF(I34=21.5,(21*$C$26)+$C$25,IF(I34=22.5,(22*$C$26)+$C$25,IF(I34=23.5,(23*$C$26)+$C$25,IF(I34=24.5,(24*$C$26)+$C$25,IF(I34=25.5,(25*$C$26)+$C$25,IF(I34=26.5,(26*$C$26)+$C$25,IF(I34=27.5,(27*$C$26)+$C$25,IF(I34=28.5,(28*$C$26)+$C$25,IF(I34=29.5,(29*$C$26)+$C$25,IF(I34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(J34=1,J34=2,J34=3,J34=4,J34=5,J34=6,J34=7,J34=8,J34=9,J34=10,J34=11,J34=12,J34=13,J34=14,J34=15,J34=16,J34=17,J34=18,J34=19,J34=20,J34=21,J34=22,J34=23,J34=24,J34=25,J34=26,J34=27,J34=28,J34=29,J34=30,J34=31,J34=32,J34=33),J34*$C$26,IF(J34=0.5,$C$25,IF(J34=1.5,$C$25+$C$26,IF(J34=2.5,(2*$C$26)+$C$25,IF(J34=3.5,(3*$C$26)+$C$25,IF(J34=4.5,(4*$C$26)+$C$25,IF(J34=5.5,(5*$C$26)+$C$25,IF(J34=6.5,(6*$C$26)+$C$25,IF(J34=7.5,(7*$C$26)+$C$25,IF(J34=8.5,(8*$C$26)+$C$25,IF(J34=9.5,(9*$C$26)+$C$25,IF(J34=10.5,(10*$C$26)+$C$25,IF(J34=12.5,(12*$C$26)+$C$25,IF(J34=13.5,(13*$C$26)+$C$25,IF(J34=14.5,(14*$C$26)+$C$25,IF(J34=15.5,(15*$C$26)+$C$25,IF(J34=16.5,(6*$C$26)+$C$25,IF(J34=17.5,(17*$C$26)+$C$25,IF(J34=18.5,(18*$C$26)+$C$25,IF(J34=19.5,(19*$C$26)+$C$25,IF(J34=20.5,(20*$C$26)+$C$25,IF(J34=21.5,(21*$C$26)+$C$25,IF(J34=22.5,(22*$C$26)+$C$25,IF(J34=23.5,(23*$C$26)+$C$25,IF(J34=24.5,(24*$C$26)+$C$25,IF(J34=25.5,(25*$C$26)+$C$25,IF(J34=26.5,(26*$C$26)+$C$25,IF(J34=27.5,(27*$C$26)+$C$25,IF(J34=28.5,(28*$C$26)+$C$25,IF(J34=29.5,(29*$C$26)+$C$25,IF(J34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(K34=1,K34=2,K34=3,K34=4,K34=5,K34=6,K34=7,K34=8,K34=9,K34=10,K34=11,K34=12,K34=13,K34=14,K34=15,K34=16,K34=17,K34=18,K34=19,K34=20,K34=21,K34=22,K34=23,K34=24,K34=25,K34=26,K34=27,K34=28,K34=29,K34=30,K34=31,K34=32,K34=33),K34*$C$26,IF(K34=0.5,$C$25,IF(K34=1.5,$C$25+$C$26,IF(K34=2.5,(2*$C$26)+$C$25,IF(K34=3.5,(3*$C$26)+$C$25,IF(K34=4.5,(4*$C$26)+$C$25,IF(K34=5.5,(5*$C$26)+$C$25,IF(K34=6.5,(6*$C$26)+$C$25,IF(K34=7.5,(7*$C$26)+$C$25,IF(K34=8.5,(8*$C$26)+$C$25,IF(K34=9.5,(9*$C$26)+$C$25,IF(K34=10.5,(10*$C$26)+$C$25,IF(K34=12.5,(12*$C$26)+$C$25,IF(K34=13.5,(13*$C$26)+$C$25,IF(K34=14.5,(14*$C$26)+$C$25,IF(K34=15.5,(15*$C$26)+$C$25,IF(K34=16.5,(6*$C$26)+$C$25,IF(K34=17.5,(17*$C$26)+$C$25,IF(K34=18.5,(18*$C$26)+$C$25,IF(K34=19.5,(19*$C$26)+$C$25,IF(K34=20.5,(20*$C$26)+$C$25,IF(K34=21.5,(21*$C$26)+$C$25,IF(K34=22.5,(22*$C$26)+$C$25,IF(K34=23.5,(23*$C$26)+$C$25,IF(K34=24.5,(24*$C$26)+$C$25,IF(K34=25.5,(25*$C$26)+$C$25,IF(K34=26.5,(26*$C$26)+$C$25,IF(K34=27.5,(27*$C$26)+$C$25,IF(K34=28.5,(28*$C$26)+$C$25,IF(K34=29.5,(29*$C$26)+$C$25,IF(K34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(L34=1,L34=2,L34=3,L34=4,L34=5,L34=6,L34=7,L34=8,L34=9,L34=10,L34=11,L34=12,L34=13,L34=14,L34=15,L34=16,L34=17,L34=18,L34=19,L34=20,L34=21,L34=22,L34=23,L34=24,L34=25,L34=26,L34=27,L34=28,L34=29,L34=30,L34=31,L34=32,L34=33),L34*$C$26,IF(L34=0.5,$C$25,IF(L34=1.5,$C$25+$C$26,IF(L34=2.5,(2*$C$26)+$C$25,IF(L34=3.5,(3*$C$26)+$C$25,IF(L34=4.5,(4*$C$26)+$C$25,IF(L34=5.5,(5*$C$26)+$C$25,IF(L34=6.5,(6*$C$26)+$C$25,IF(L34=7.5,(7*$C$26)+$C$25,IF(L34=8.5,(8*$C$26)+$C$25,IF(L34=9.5,(9*$C$26)+$C$25,IF(L34=10.5,(10*$C$26)+$C$25,IF(L34=12.5,(12*$C$26)+$C$25,IF(L34=13.5,(13*$C$26)+$C$25,IF(L34=14.5,(14*$C$26)+$C$25,IF(L34=15.5,(15*$C$26)+$C$25,IF(L34=16.5,(6*$C$26)+$C$25,IF(L34=17.5,(17*$C$26)+$C$25,IF(L34=18.5,(18*$C$26)+$C$25,IF(L34=19.5,(19*$C$26)+$C$25,IF(L34=20.5,(20*$C$26)+$C$25,IF(L34=21.5,(21*$C$26)+$C$25,IF(L34=22.5,(22*$C$26)+$C$25,IF(L34=23.5,(23*$C$26)+$C$25,IF(L34=24.5,(24*$C$26)+$C$25,IF(L34=25.5,(25*$C$26)+$C$25,IF(L34=26.5,(26*$C$26)+$C$25,IF(L34=27.5,(27*$C$26)+$C$25,IF(L34=28.5,(28*$C$26)+$C$25,IF(L34=29.5,(29*$C$26)+$C$25,IF(L34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(M34=1,M34=2,M34=3,M34=4,M34=5,M34=6,M34=7,M34=8,M34=9,M34=10,M34=11,M34=12,M34=13,M34=14,M34=15,M34=16,M34=17,M34=18,M34=19,M34=20,M34=21,M34=22,M34=23,M34=24,M34=25,M34=26,M34=27,M34=28,M34=29,M34=30,M34=31,M34=32,M34=33),M34*$C$26,IF(M34=0.5,$C$25,IF(M34=1.5,$C$25+$C$26,IF(M34=2.5,(2*$C$26)+$C$25,IF(M34=3.5,(3*$C$26)+$C$25,IF(M34=4.5,(4*$C$26)+$C$25,IF(M34=5.5,(5*$C$26)+$C$25,IF(M34=6.5,(6*$C$26)+$C$25,IF(M34=7.5,(7*$C$26)+$C$25,IF(M34=8.5,(8*$C$26)+$C$25,IF(M34=9.5,(9*$C$26)+$C$25,IF(M34=10.5,(10*$C$26)+$C$25,IF(M34=12.5,(12*$C$26)+$C$25,IF(M34=13.5,(13*$C$26)+$C$25,IF(M34=14.5,(14*$C$26)+$C$25,IF(M34=15.5,(15*$C$26)+$C$25,IF(M34=16.5,(6*$C$26)+$C$25,IF(M34=17.5,(17*$C$26)+$C$25,IF(M34=18.5,(18*$C$26)+$C$25,IF(M34=19.5,(19*$C$26)+$C$25,IF(M34=20.5,(20*$C$26)+$C$25,IF(M34=21.5,(21*$C$26)+$C$25,IF(M34=22.5,(22*$C$26)+$C$25,IF(M34=23.5,(23*$C$26)+$C$25,IF(M34=24.5,(24*$C$26)+$C$25,IF(M34=25.5,(25*$C$26)+$C$25,IF(M34=26.5,(26*$C$26)+$C$25,IF(M34=27.5,(27*$C$26)+$C$25,IF(M34=28.5,(28*$C$26)+$C$25,IF(M34=29.5,(29*$C$26)+$C$25,IF(M34=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex 640 Liter</font></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C35+D35+E35+F35+H35+I35+J35+K35+L35+M35</td>
+  <td style="{!xl831366}"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(C35=1,C35=2,C35=3,C35=4,C35=5,C35=6,C35=7,C35=8,C35=9,C35=10,C35=11,C35=12,C35=13,C35=14,C35=15,C35=16,C35=17,C35=18,C35=19,C35=20,C35=21,C35=22,C35=23,C35=24,C35=25,C35=26,C35=27,C35=28,C35=29,C35=30,C35=31,C35=32,C35=33),C35*$C$26,IF(C35=0.5,$C$25,IF(C35=1.5,$C$25+$C$26,IF(C35=2.5,(2*$C$26)+$C$25,IF(C35=3.5,(3*$C$26)+$C$25,IF(C35=4.5,(4*$C$26)+$C$25,IF(C35=5.5,(5*$C$26)+$C$25,IF(C35=6.5,(6*$C$26)+$C$25,IF(C35=7.5,(7*$C$26)+$C$25,IF(C35=8.5,(8*$C$26)+$C$25,IF(C35=9.5,(9*$C$26)+$C$25,IF(C35=10.5,(10*$C$26)+$C$25,IF(C35=12.5,(12*$C$26)+$C$25,IF(C35=13.5,(13*$C$26)+$C$25,IF(C35=14.5,(14*$C$26)+$C$25,IF(C35=15.5,(15*$C$26)+$C$25,IF(C35=16.5,(6*$C$26)+$C$25,IF(C35=17.5,(17*$C$26)+$C$25,IF(C35=18.5,(18*$C$26)+$C$25,IF(C35=19.5,(19*$C$26)+$C$25,IF(C35=20.5,(20*$C$26)+$C$25,IF(C35=21.5,(21*$C$26)+$C$25,IF(C35=22.5,(22*$C$26)+$C$25,IF(C35=23.5,(23*$C$26)+$C$25,IF(C35=24.5,(24*$C$26)+$C$25,IF(C35=25.5,(25*$C$26)+$C$25,IF(C35=26.5,(26*$C$26)+$C$25,IF(C35=27.5,(27*$C$26)+$C$25,IF(C35=28.5,(28*$C$26)+$C$25,IF(C35=29.5,(29*$C$26)+$C$25,IF(C35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(D35=1,D35=2,D35=3,D35=4,D35=5,D35=6,D35=7,D35=8,D35=9,D35=10,D35=11,D35=12,D35=13,D35=14,D35=15,D35=16,D35=17,D35=18,D35=19,D35=20,D35=21,D35=22,D35=23,D35=24,D35=25,D35=26,D35=27,D35=28,D35=29,D35=30,D35=31,D35=32,D35=33),D35*$C$26,IF(D35=0.5,$C$25,IF(D35=1.5,$C$25+$C$26,IF(D35=2.5,(2*$C$26)+$C$25,IF(D35=3.5,(3*$C$26)+$C$25,IF(D35=4.5,(4*$C$26)+$C$25,IF(D35=5.5,(5*$C$26)+$C$25,IF(D35=6.5,(6*$C$26)+$C$25,IF(D35=7.5,(7*$C$26)+$C$25,IF(D35=8.5,(8*$C$26)+$C$25,IF(D35=9.5,(9*$C$26)+$C$25,IF(D35=10.5,(10*$C$26)+$C$25,IF(D35=12.5,(12*$C$26)+$C$25,IF(D35=13.5,(13*$C$26)+$C$25,IF(D35=14.5,(14*$C$26)+$C$25,IF(D35=15.5,(15*$C$26)+$C$25,IF(D35=16.5,(6*$C$26)+$C$25,IF(D35=17.5,(17*$C$26)+$C$25,IF(D35=18.5,(18*$C$26)+$C$25,IF(D35=19.5,(19*$C$26)+$C$25,IF(D35=20.5,(20*$C$26)+$C$25,IF(D35=21.5,(21*$C$26)+$C$25,IF(D35=22.5,(22*$C$26)+$C$25,IF(D35=23.5,(23*$C$26)+$C$25,IF(D35=24.5,(24*$C$26)+$C$25,IF(D35=25.5,(25*$C$26)+$C$25,IF(D35=26.5,(26*$C$26)+$C$25,IF(D35=27.5,(27*$C$26)+$C$25,IF(D35=28.5,(28*$C$26)+$C$25,IF(D35=29.5,(29*$C$26)+$C$25,IF(D35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(E35=1,E35=2,E35=3,E35=4,E35=5,E35=6,E35=7,E35=8,E35=9,E35=10,E35=11,E35=12,E35=13,E35=14,E35=15,E35=16,E35=17,E35=18,E35=19,E35=20,E35=21,E35=22,E35=23,E35=24,E35=25,E35=26,E35=27,E35=28,E35=29,E35=30,E35=31,E35=32,E35=33),E35*$C$26,IF(E35=0.5,$C$25,IF(E35=1.5,$C$25+$C$26,IF(E35=2.5,(2*$C$26)+$C$25,IF(E35=3.5,(3*$C$26)+$C$25,IF(E35=4.5,(4*$C$26)+$C$25,IF(E35=5.5,(5*$C$26)+$C$25,IF(E35=6.5,(6*$C$26)+$C$25,IF(E35=7.5,(7*$C$26)+$C$25,IF(E35=8.5,(8*$C$26)+$C$25,IF(E35=9.5,(9*$C$26)+$C$25,IF(E35=10.5,(10*$C$26)+$C$25,IF(E35=12.5,(12*$C$26)+$C$25,IF(E35=13.5,(13*$C$26)+$C$25,IF(E35=14.5,(14*$C$26)+$C$25,IF(E35=15.5,(15*$C$26)+$C$25,IF(E35=16.5,(6*$C$26)+$C$25,IF(E35=17.5,(17*$C$26)+$C$25,IF(E35=18.5,(18*$C$26)+$C$25,IF(E35=19.5,(19*$C$26)+$C$25,IF(E35=20.5,(20*$C$26)+$C$25,IF(E35=21.5,(21*$C$26)+$C$25,IF(E35=22.5,(22*$C$26)+$C$25,IF(E35=23.5,(23*$C$26)+$C$25,IF(E35=24.5,(24*$C$26)+$C$25,IF(E35=25.5,(25*$C$26)+$C$25,IF(E35=26.5,(26*$C$26)+$C$25,IF(E35=27.5,(27*$C$26)+$C$25,IF(E35=28.5,(28*$C$26)+$C$25,IF(E35=29.5,(29*$C$26)+$C$25,IF(E35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(F35=1,F35=2,F35=3,F35=4,F35=5,F35=6,F35=7,F35=8,F35=9,F35=10,F35=11,F35=12,F35=13,F35=14,F35=15,F35=16,F35=17,F35=18,F35=19,F35=20,F35=21,F35=22,F35=23,F35=24,F35=25,F35=26,F35=27,F35=28,F35=29,F35=30,F35=31,F35=32,F35=33),F35*$C$26,IF(F35=0.5,$C$25,IF(F35=1.5,$C$25+$C$26,IF(F35=2.5,(2*$C$26)+$C$25,IF(F35=3.5,(3*$C$26)+$C$25,IF(F35=4.5,(4*$C$26)+$C$25,IF(F35=5.5,(5*$C$26)+$C$25,IF(F35=6.5,(6*$C$26)+$C$25,IF(F35=7.5,(7*$C$26)+$C$25,IF(F35=8.5,(8*$C$26)+$C$25,IF(F35=9.5,(9*$C$26)+$C$25,IF(F35=10.5,(10*$C$26)+$C$25,IF(F35=12.5,(12*$C$26)+$C$25,IF(F35=13.5,(13*$C$26)+$C$25,IF(F35=14.5,(14*$C$26)+$C$25,IF(F35=15.5,(15*$C$26)+$C$25,IF(F35=16.5,(6*$C$26)+$C$25,IF(F35=17.5,(17*$C$26)+$C$25,IF(F35=18.5,(18*$C$26)+$C$25,IF(F35=19.5,(19*$C$26)+$C$25,IF(F35=20.5,(20*$C$26)+$C$25,IF(F35=21.5,(21*$C$26)+$C$25,IF(F35=22.5,(22*$C$26)+$C$25,IF(F35=23.5,(23*$C$26)+$C$25,IF(F35=24.5,(24*$C$26)+$C$25,IF(F35=25.5,(25*$C$26)+$C$25,IF(F35=26.5,(26*$C$26)+$C$25,IF(F35=27.5,(27*$C$26)+$C$25,IF(F35=28.5,(28*$C$26)+$C$25,IF(F35=29.5,(29*$C$26)+$C$25,IF(F35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(H35=1,H35=2,H35=3,H35=4,H35=5,H35=6,H35=7,H35=8,H35=9,H35=10,H35=11,H35=12,H35=13,H35=14,H35=15,H35=16,H35=17,H35=18,H35=19,H35=20,H35=21,H35=22,H35=23,H35=24,H35=25,H35=26,H35=27,H35=28,H35=29,H35=30,H35=31,H35=32,H35=33),H35*$C$26,IF(H35=0.5,$C$25,IF(H35=1.5,$C$25+$C$26,IF(H35=2.5,(2*$C$26)+$C$25,IF(H35=3.5,(3*$C$26)+$C$25,IF(H35=4.5,(4*$C$26)+$C$25,IF(H35=5.5,(5*$C$26)+$C$25,IF(H35=6.5,(6*$C$26)+$C$25,IF(H35=7.5,(7*$C$26)+$C$25,IF(H35=8.5,(8*$C$26)+$C$25,IF(H35=9.5,(9*$C$26)+$C$25,IF(H35=10.5,(10*$C$26)+$C$25,IF(H35=12.5,(12*$C$26)+$C$25,IF(H35=13.5,(13*$C$26)+$C$25,IF(H35=14.5,(14*$C$26)+$C$25,IF(H35=15.5,(15*$C$26)+$C$25,IF(H35=16.5,(6*$C$26)+$C$25,IF(H35=17.5,(17*$C$26)+$C$25,IF(H35=18.5,(18*$C$26)+$C$25,IF(H35=19.5,(19*$C$26)+$C$25,IF(H35=20.5,(20*$C$26)+$C$25,IF(H35=21.5,(21*$C$26)+$C$25,IF(H35=22.5,(22*$C$26)+$C$25,IF(H35=23.5,(23*$C$26)+$C$25,IF(H35=24.5,(24*$C$26)+$C$25,IF(H35=25.5,(25*$C$26)+$C$25,IF(H35=26.5,(26*$C$26)+$C$25,IF(H35=27.5,(27*$C$26)+$C$25,IF(H35=28.5,(28*$C$26)+$C$25,IF(H35=29.5,(29*$C$26)+$C$25,IF(H35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(I35=1,I35=2,I35=3,I35=4,I35=5,I35=6,I35=7,I35=8,I35=9,I35=10,I35=11,I35=12,I35=13,I35=14,I35=15,I35=16,I35=17,I35=18,I35=19,I35=20,I35=21,I35=22,I35=23,I35=24,I35=25,I35=26,I35=27,I35=28,I35=29,I35=30,I35=31,I35=32,I35=33),I35*$C$26,IF(I35=0.5,$C$25,IF(I35=1.5,$C$25+$C$26,IF(I35=2.5,(2*$C$26)+$C$25,IF(I35=3.5,(3*$C$26)+$C$25,IF(I35=4.5,(4*$C$26)+$C$25,IF(I35=5.5,(5*$C$26)+$C$25,IF(I35=6.5,(6*$C$26)+$C$25,IF(I35=7.5,(7*$C$26)+$C$25,IF(I35=8.5,(8*$C$26)+$C$25,IF(I35=9.5,(9*$C$26)+$C$25,IF(I35=10.5,(10*$C$26)+$C$25,IF(I35=12.5,(12*$C$26)+$C$25,IF(I35=13.5,(13*$C$26)+$C$25,IF(I35=14.5,(14*$C$26)+$C$25,IF(I35=15.5,(15*$C$26)+$C$25,IF(I35=16.5,(6*$C$26)+$C$25,IF(I35=17.5,(17*$C$26)+$C$25,IF(I35=18.5,(18*$C$26)+$C$25,IF(I35=19.5,(19*$C$26)+$C$25,IF(I35=20.5,(20*$C$26)+$C$25,IF(I35=21.5,(21*$C$26)+$C$25,IF(I35=22.5,(22*$C$26)+$C$25,IF(I35=23.5,(23*$C$26)+$C$25,IF(I35=24.5,(24*$C$26)+$C$25,IF(I35=25.5,(25*$C$26)+$C$25,IF(I35=26.5,(26*$C$26)+$C$25,IF(I35=27.5,(27*$C$26)+$C$25,IF(I35=28.5,(28*$C$26)+$C$25,IF(I35=29.5,(29*$C$26)+$C$25,IF(I35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(J35=1,J35=2,J35=3,J35=4,J35=5,J35=6,J35=7,J35=8,J35=9,J35=10,J35=11,J35=12,J35=13,J35=14,J35=15,J35=16,J35=17,J35=18,J35=19,J35=20,J35=21,J35=22,J35=23,J35=24,J35=25,J35=26,J35=27,J35=28,J35=29,J35=30,J35=31,J35=32,J35=33),J35*$C$26,IF(J35=0.5,$C$25,IF(J35=1.5,$C$25+$C$26,IF(J35=2.5,(2*$C$26)+$C$25,IF(J35=3.5,(3*$C$26)+$C$25,IF(J35=4.5,(4*$C$26)+$C$25,IF(J35=5.5,(5*$C$26)+$C$25,IF(J35=6.5,(6*$C$26)+$C$25,IF(J35=7.5,(7*$C$26)+$C$25,IF(J35=8.5,(8*$C$26)+$C$25,IF(J35=9.5,(9*$C$26)+$C$25,IF(J35=10.5,(10*$C$26)+$C$25,IF(J35=12.5,(12*$C$26)+$C$25,IF(J35=13.5,(13*$C$26)+$C$25,IF(J35=14.5,(14*$C$26)+$C$25,IF(J35=15.5,(15*$C$26)+$C$25,IF(J35=16.5,(6*$C$26)+$C$25,IF(J35=17.5,(17*$C$26)+$C$25,IF(J35=18.5,(18*$C$26)+$C$25,IF(J35=19.5,(19*$C$26)+$C$25,IF(J35=20.5,(20*$C$26)+$C$25,IF(J35=21.5,(21*$C$26)+$C$25,IF(J35=22.5,(22*$C$26)+$C$25,IF(J35=23.5,(23*$C$26)+$C$25,IF(J35=24.5,(24*$C$26)+$C$25,IF(J35=25.5,(25*$C$26)+$C$25,IF(J35=26.5,(26*$C$26)+$C$25,IF(J35=27.5,(27*$C$26)+$C$25,IF(J35=28.5,(28*$C$26)+$C$25,IF(J35=29.5,(29*$C$26)+$C$25,IF(J35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(K35=1,K35=2,K35=3,K35=4,K35=5,K35=6,K35=7,K35=8,K35=9,K35=10,K35=11,K35=12,K35=13,K35=14,K35=15,K35=16,K35=17,K35=18,K35=19,K35=20,K35=21,K35=22,K35=23,K35=24,K35=25,K35=26,K35=27,K35=28,K35=29,K35=30,K35=31,K35=32,K35=33),K35*$C$26,IF(K35=0.5,$C$25,IF(K35=1.5,$C$25+$C$26,IF(K35=2.5,(2*$C$26)+$C$25,IF(K35=3.5,(3*$C$26)+$C$25,IF(K35=4.5,(4*$C$26)+$C$25,IF(K35=5.5,(5*$C$26)+$C$25,IF(K35=6.5,(6*$C$26)+$C$25,IF(K35=7.5,(7*$C$26)+$C$25,IF(K35=8.5,(8*$C$26)+$C$25,IF(K35=9.5,(9*$C$26)+$C$25,IF(K35=10.5,(10*$C$26)+$C$25,IF(K35=12.5,(12*$C$26)+$C$25,IF(K35=13.5,(13*$C$26)+$C$25,IF(K35=14.5,(14*$C$26)+$C$25,IF(K35=15.5,(15*$C$26)+$C$25,IF(K35=16.5,(6*$C$26)+$C$25,IF(K35=17.5,(17*$C$26)+$C$25,IF(K35=18.5,(18*$C$26)+$C$25,IF(K35=19.5,(19*$C$26)+$C$25,IF(K35=20.5,(20*$C$26)+$C$25,IF(K35=21.5,(21*$C$26)+$C$25,IF(K35=22.5,(22*$C$26)+$C$25,IF(K35=23.5,(23*$C$26)+$C$25,IF(K35=24.5,(24*$C$26)+$C$25,IF(K35=25.5,(25*$C$26)+$C$25,IF(K35=26.5,(26*$C$26)+$C$25,IF(K35=27.5,(27*$C$26)+$C$25,IF(K35=28.5,(28*$C$26)+$C$25,IF(K35=29.5,(29*$C$26)+$C$25,IF(K35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(L35=1,L35=2,L35=3,L35=4,L35=5,L35=6,L35=7,L35=8,L35=9,L35=10,L35=11,L35=12,L35=13,L35=14,L35=15,L35=16,L35=17,L35=18,L35=19,L35=20,L35=21,L35=22,L35=23,L35=24,L35=25,L35=26,L35=27,L35=28,L35=29,L35=30,L35=31,L35=32,L35=33),L35*$C$26,IF(L35=0.5,$C$25,IF(L35=1.5,$C$25+$C$26,IF(L35=2.5,(2*$C$26)+$C$25,IF(L35=3.5,(3*$C$26)+$C$25,IF(L35=4.5,(4*$C$26)+$C$25,IF(L35=5.5,(5*$C$26)+$C$25,IF(L35=6.5,(6*$C$26)+$C$25,IF(L35=7.5,(7*$C$26)+$C$25,IF(L35=8.5,(8*$C$26)+$C$25,IF(L35=9.5,(9*$C$26)+$C$25,IF(L35=10.5,(10*$C$26)+$C$25,IF(L35=12.5,(12*$C$26)+$C$25,IF(L35=13.5,(13*$C$26)+$C$25,IF(L35=14.5,(14*$C$26)+$C$25,IF(L35=15.5,(15*$C$26)+$C$25,IF(L35=16.5,(6*$C$26)+$C$25,IF(L35=17.5,(17*$C$26)+$C$25,IF(L35=18.5,(18*$C$26)+$C$25,IF(L35=19.5,(19*$C$26)+$C$25,IF(L35=20.5,(20*$C$26)+$C$25,IF(L35=21.5,(21*$C$26)+$C$25,IF(L35=22.5,(22*$C$26)+$C$25,IF(L35=23.5,(23*$C$26)+$C$25,IF(L35=24.5,(24*$C$26)+$C$25,IF(L35=25.5,(25*$C$26)+$C$25,IF(L35=26.5,(26*$C$26)+$C$25,IF(L35=27.5,(27*$C$26)+$C$25,IF(L35=28.5,(28*$C$26)+$C$25,IF(L35=29.5,(29*$C$26)+$C$25,IF(L35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(M35=1,M35=2,M35=3,M35=4,M35=5,M35=6,M35=7,M35=8,M35=9,M35=10,M35=11,M35=12,M35=13,M35=14,M35=15,M35=16,M35=17,M35=18,M35=19,M35=20,M35=21,M35=22,M35=23,M35=24,M35=25,M35=26,M35=27,M35=28,M35=29,M35=30,M35=31,M35=32,M35=33),M35*$C$26,IF(M35=0.5,$C$25,IF(M35=1.5,$C$25+$C$26,IF(M35=2.5,(2*$C$26)+$C$25,IF(M35=3.5,(3*$C$26)+$C$25,IF(M35=4.5,(4*$C$26)+$C$25,IF(M35=5.5,(5*$C$26)+$C$25,IF(M35=6.5,(6*$C$26)+$C$25,IF(M35=7.5,(7*$C$26)+$C$25,IF(M35=8.5,(8*$C$26)+$C$25,IF(M35=9.5,(9*$C$26)+$C$25,IF(M35=10.5,(10*$C$26)+$C$25,IF(M35=12.5,(12*$C$26)+$C$25,IF(M35=13.5,(13*$C$26)+$C$25,IF(M35=14.5,(14*$C$26)+$C$25,IF(M35=15.5,(15*$C$26)+$C$25,IF(M35=16.5,(6*$C$26)+$C$25,IF(M35=17.5,(17*$C$26)+$C$25,IF(M35=18.5,(18*$C$26)+$C$25,IF(M35=19.5,(19*$C$26)+$C$25,IF(M35=20.5,(20*$C$26)+$C$25,IF(M35=21.5,(21*$C$26)+$C$25,IF(M35=22.5,(22*$C$26)+$C$25,IF(M35=23.5,(23*$C$26)+$C$25,IF(M35=24.5,(24*$C$26)+$C$25,IF(M35=25.5,(25*$C$26)+$C$25,IF(M35=26.5,(26*$C$26)+$C$25,IF(M35=27.5,(27*$C$26)+$C$25,IF(M35=28.5,(28*$C$26)+$C$25,IF(M35=29.5,(29*$C$26)+$C$25,IF(M35=30.5,(30*$C$26)+$C$25,0)))))))))))))))))))))))))))))))"></td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> REKORD</font></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C36+D36+E36+F36+H36+I36+J36+K36+L36+M36</td>
+  <td style="{!xl831366}"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(C36=1,C36=2,C36=3,C36=4,C36=5,C36=6,C36=7,C36=8,C36=9,C36=10,C36=11,C36=12,C36=13,C36=14,C36=15,C36=16,C36=17,C36=18,C36=19,C36=20,C36=21,C36=22,C36=23,C36=24,C36=25,C36=26,C36=27,C36=28,C36=29,C36=30,C36=31,C36=32,C36=33),C36*$C$28,IF(C36=0.5,$C$27,IF(C36=1.5,$C$27+$C$28,IF(C36=2.5,(2*$C$28)+$C$27,IF(C36=3.5,(3*$C$28)+$C$27,IF(C36=4.5,(4*$C$28)+$C$27,IF(C36=5.5,(5*$C$28)+$C$27,IF(C36=6.5,(6*$C$28)+$C$27,IF(C36=7.5,(7*$C$28)+$C$27,IF(C36=8.5,(8*$C$28)+$C$27,IF(C36=9.5,(9*$C$28)+$C$27,IF(C36=10.5,(10*$C$28)+$C$27,IF(C36=12.5,(12*$C$28)+$C$27,IF(C36=13.5,(13*$C$28)+$C$27,IF(C36=14.5,(14*$C$28)+$C$27,IF(C36=15.5,(15*$C$28)+$C$27,IF(C36=16.5,(6*$C$28)+$C$27,IF(C36=17.5,(17*$C$28)+$C$27,IF(C36=18.5,(18*$C$28)+$C$27,IF(C36=19.5,(19*$C$28)+$C$27,IF(C36=20.5,(20*$C$28)+$C$27,IF(C36=21.5,(21*$C$28)+$C$27,IF(C36=22.5,(22*$C$28)+$C$27,IF(C36=23.5,(23*$C$28)+$C$27,IF(C36=24.5,(24*$C$28)+$C$27,IF(C36=25.5,(25*$C$28)+$C$27,IF(C36=26.5,(26*$C$28)+$C$27,IF(C36=27.5,(27*$C$28)+$C$27,IF(C36=28.5,(28*$C$28)+$C$27,IF(C36=29.5,(29*$C$28)+$C$27,IF(C36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(D36=1,D36=2,D36=3,D36=4,D36=5,D36=6,D36=7,D36=8,D36=9,D36=10,D36=11,D36=12,D36=13,D36=14,D36=15,D36=16,D36=17,D36=18,D36=19,D36=20,D36=21,D36=22,D36=23,D36=24,D36=25,D36=26,D36=27,D36=28,D36=29,D36=30,D36=31,D36=32,D36=33),D36*$C$28,IF(D36=0.5,$C$27,IF(D36=1.5,$C$27+$C$28,IF(D36=2.5,(2*$C$28)+$C$27,IF(D36=3.5,(3*$C$28)+$C$27,IF(D36=4.5,(4*$C$28)+$C$27,IF(D36=5.5,(5*$C$28)+$C$27,IF(D36=6.5,(6*$C$28)+$C$27,IF(D36=7.5,(7*$C$28)+$C$27,IF(D36=8.5,(8*$C$28)+$C$27,IF(D36=9.5,(9*$C$28)+$C$27,IF(D36=10.5,(10*$C$28)+$C$27,IF(D36=12.5,(12*$C$28)+$C$27,IF(D36=13.5,(13*$C$28)+$C$27,IF(D36=14.5,(14*$C$28)+$C$27,IF(D36=15.5,(15*$C$28)+$C$27,IF(D36=16.5,(6*$C$28)+$C$27,IF(D36=17.5,(17*$C$28)+$C$27,IF(D36=18.5,(18*$C$28)+$C$27,IF(D36=19.5,(19*$C$28)+$C$27,IF(D36=20.5,(20*$C$28)+$C$27,IF(D36=21.5,(21*$C$28)+$C$27,IF(D36=22.5,(22*$C$28)+$C$27,IF(D36=23.5,(23*$C$28)+$C$27,IF(D36=24.5,(24*$C$28)+$C$27,IF(D36=25.5,(25*$C$28)+$C$27,IF(D36=26.5,(26*$C$28)+$C$27,IF(D36=27.5,(27*$C$28)+$C$27,IF(D36=28.5,(28*$C$28)+$C$27,IF(D36=29.5,(29*$C$28)+$C$27,IF(D36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(E36=1,E36=2,E36=3,E36=4,E36=5,E36=6,E36=7,E36=8,E36=9,E36=10,E36=11,E36=12,E36=13,E36=14,E36=15,E36=16,E36=17,E36=18,E36=19,E36=20,E36=21,E36=22,E36=23,E36=24,E36=25,E36=26,E36=27,E36=28,E36=29,E36=30,E36=31,E36=32,E36=33),E36*$C$28,IF(E36=0.5,$C$27,IF(E36=1.5,$C$27+$C$28,IF(E36=2.5,(2*$C$28)+$C$27,IF(E36=3.5,(3*$C$28)+$C$27,IF(E36=4.5,(4*$C$28)+$C$27,IF(E36=5.5,(5*$C$28)+$C$27,IF(E36=6.5,(6*$C$28)+$C$27,IF(E36=7.5,(7*$C$28)+$C$27,IF(E36=8.5,(8*$C$28)+$C$27,IF(E36=9.5,(9*$C$28)+$C$27,IF(E36=10.5,(10*$C$28)+$C$27,IF(E36=12.5,(12*$C$28)+$C$27,IF(E36=13.5,(13*$C$28)+$C$27,IF(E36=14.5,(14*$C$28)+$C$27,IF(E36=15.5,(15*$C$28)+$C$27,IF(E36=16.5,(6*$C$28)+$C$27,IF(E36=17.5,(17*$C$28)+$C$27,IF(E36=18.5,(18*$C$28)+$C$27,IF(E36=19.5,(19*$C$28)+$C$27,IF(E36=20.5,(20*$C$28)+$C$27,IF(E36=21.5,(21*$C$28)+$C$27,IF(E36=22.5,(22*$C$28)+$C$27,IF(E36=23.5,(23*$C$28)+$C$27,IF(E36=24.5,(24*$C$28)+$C$27,IF(E36=25.5,(25*$C$28)+$C$27,IF(E36=26.5,(26*$C$28)+$C$27,IF(E36=27.5,(27*$C$28)+$C$27,IF(E36=28.5,(28*$C$28)+$C$27,IF(E36=29.5,(29*$C$28)+$C$27,IF(E36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(F36=1,F36=2,F36=3,F36=4,F36=5,F36=6,F36=7,F36=8,F36=9,F36=10,F36=11,F36=12,F36=13,F36=14,F36=15,F36=16,F36=17,F36=18,F36=19,F36=20,F36=21,F36=22,F36=23,F36=24,F36=25,F36=26,F36=27,F36=28,F36=29,F36=30,F36=31,F36=32,F36=33),F36*$C$28,IF(F36=0.5,$C$27,IF(F36=1.5,$C$27+$C$28,IF(F36=2.5,(2*$C$28)+$C$27,IF(F36=3.5,(3*$C$28)+$C$27,IF(F36=4.5,(4*$C$28)+$C$27,IF(F36=5.5,(5*$C$28)+$C$27,IF(F36=6.5,(6*$C$28)+$C$27,IF(F36=7.5,(7*$C$28)+$C$27,IF(F36=8.5,(8*$C$28)+$C$27,IF(F36=9.5,(9*$C$28)+$C$27,IF(F36=10.5,(10*$C$28)+$C$27,IF(F36=12.5,(12*$C$28)+$C$27,IF(F36=13.5,(13*$C$28)+$C$27,IF(F36=14.5,(14*$C$28)+$C$27,IF(F36=15.5,(15*$C$28)+$C$27,IF(F36=16.5,(6*$C$28)+$C$27,IF(F36=17.5,(17*$C$28)+$C$27,IF(F36=18.5,(18*$C$28)+$C$27,IF(F36=19.5,(19*$C$28)+$C$27,IF(F36=20.5,(20*$C$28)+$C$27,IF(F36=21.5,(21*$C$28)+$C$27,IF(F36=22.5,(22*$C$28)+$C$27,IF(F36=23.5,(23*$C$28)+$C$27,IF(F36=24.5,(24*$C$28)+$C$27,IF(F36=25.5,(25*$C$28)+$C$27,IF(F36=26.5,(26*$C$28)+$C$27,IF(F36=27.5,(27*$C$28)+$C$27,IF(F36=28.5,(28*$C$28)+$C$27,IF(F36=29.5,(29*$C$28)+$C$27,IF(F36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(H36=1,H36=2,H36=3,H36=4,H36=5,H36=6,H36=7,H36=8,H36=9,H36=10,H36=11,H36=12,H36=13,H36=14,H36=15,H36=16,H36=17,H36=18,H36=19,H36=20,H36=21,H36=22,H36=23,H36=24,H36=25,H36=26,H36=27,H36=28,H36=29,H36=30,H36=31,H36=32,H36=33),H36*$C$28,IF(H36=0.5,$C$27,IF(H36=1.5,$C$27+$C$28,IF(H36=2.5,(2*$C$28)+$C$27,IF(H36=3.5,(3*$C$28)+$C$27,IF(H36=4.5,(4*$C$28)+$C$27,IF(H36=5.5,(5*$C$28)+$C$27,IF(H36=6.5,(6*$C$28)+$C$27,IF(H36=7.5,(7*$C$28)+$C$27,IF(H36=8.5,(8*$C$28)+$C$27,IF(H36=9.5,(9*$C$28)+$C$27,IF(H36=10.5,(10*$C$28)+$C$27,IF(H36=12.5,(12*$C$28)+$C$27,IF(H36=13.5,(13*$C$28)+$C$27,IF(H36=14.5,(14*$C$28)+$C$27,IF(H36=15.5,(15*$C$28)+$C$27,IF(H36=16.5,(6*$C$28)+$C$27,IF(H36=17.5,(17*$C$28)+$C$27,IF(H36=18.5,(18*$C$28)+$C$27,IF(H36=19.5,(19*$C$28)+$C$27,IF(H36=20.5,(20*$C$28)+$C$27,IF(H36=21.5,(21*$C$28)+$C$27,IF(H36=22.5,(22*$C$28)+$C$27,IF(H36=23.5,(23*$C$28)+$C$27,IF(H36=24.5,(24*$C$28)+$C$27,IF(H36=25.5,(25*$C$28)+$C$27,IF(H36=26.5,(26*$C$28)+$C$27,IF(H36=27.5,(27*$C$28)+$C$27,IF(H36=28.5,(28*$C$28)+$C$27,IF(H36=29.5,(29*$C$28)+$C$27,IF(H36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(I36=1,I36=2,I36=3,I36=4,I36=5,I36=6,I36=7,I36=8,I36=9,I36=10,I36=11,I36=12,I36=13,I36=14,I36=15,I36=16,I36=17,I36=18,I36=19,I36=20,I36=21,I36=22,I36=23,I36=24,I36=25,I36=26,I36=27,I36=28,I36=29,I36=30,I36=31,I36=32,I36=33),I36*$C$28,IF(I36=0.5,$C$27,IF(I36=1.5,$C$27+$C$28,IF(I36=2.5,(2*$C$28)+$C$27,IF(I36=3.5,(3*$C$28)+$C$27,IF(I36=4.5,(4*$C$28)+$C$27,IF(I36=5.5,(5*$C$28)+$C$27,IF(I36=6.5,(6*$C$28)+$C$27,IF(I36=7.5,(7*$C$28)+$C$27,IF(I36=8.5,(8*$C$28)+$C$27,IF(I36=9.5,(9*$C$28)+$C$27,IF(I36=10.5,(10*$C$28)+$C$27,IF(I36=12.5,(12*$C$28)+$C$27,IF(I36=13.5,(13*$C$28)+$C$27,IF(I36=14.5,(14*$C$28)+$C$27,IF(I36=15.5,(15*$C$28)+$C$27,IF(I36=16.5,(6*$C$28)+$C$27,IF(I36=17.5,(17*$C$28)+$C$27,IF(I36=18.5,(18*$C$28)+$C$27,IF(I36=19.5,(19*$C$28)+$C$27,IF(I36=20.5,(20*$C$28)+$C$27,IF(I36=21.5,(21*$C$28)+$C$27,IF(I36=22.5,(22*$C$28)+$C$27,IF(I36=23.5,(23*$C$28)+$C$27,IF(I36=24.5,(24*$C$28)+$C$27,IF(I36=25.5,(25*$C$28)+$C$27,IF(I36=26.5,(26*$C$28)+$C$27,IF(I36=27.5,(27*$C$28)+$C$27,IF(I36=28.5,(28*$C$28)+$C$27,IF(I36=29.5,(29*$C$28)+$C$27,IF(I36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(J36=1,J36=2,J36=3,J36=4,J36=5,J36=6,J36=7,J36=8,J36=9,J36=10,J36=11,J36=12,J36=13,J36=14,J36=15,J36=16,J36=17,J36=18,J36=19,J36=20,J36=21,J36=22,J36=23,J36=24,J36=25,J36=26,J36=27,J36=28,J36=29,J36=30,J36=31,J36=32,J36=33),J36*$C$28,IF(J36=0.5,$C$27,IF(J36=1.5,$C$27+$C$28,IF(J36=2.5,(2*$C$28)+$C$27,IF(J36=3.5,(3*$C$28)+$C$27,IF(J36=4.5,(4*$C$28)+$C$27,IF(J36=5.5,(5*$C$28)+$C$27,IF(J36=6.5,(6*$C$28)+$C$27,IF(J36=7.5,(7*$C$28)+$C$27,IF(J36=8.5,(8*$C$28)+$C$27,IF(J36=9.5,(9*$C$28)+$C$27,IF(J36=10.5,(10*$C$28)+$C$27,IF(J36=12.5,(12*$C$28)+$C$27,IF(J36=13.5,(13*$C$28)+$C$27,IF(J36=14.5,(14*$C$28)+$C$27,IF(J36=15.5,(15*$C$28)+$C$27,IF(J36=16.5,(6*$C$28)+$C$27,IF(J36=17.5,(17*$C$28)+$C$27,IF(J36=18.5,(18*$C$28)+$C$27,IF(J36=19.5,(19*$C$28)+$C$27,IF(J36=20.5,(20*$C$28)+$C$27,IF(J36=21.5,(21*$C$28)+$C$27,IF(J36=22.5,(22*$C$28)+$C$27,IF(J36=23.5,(23*$C$28)+$C$27,IF(J36=24.5,(24*$C$28)+$C$27,IF(J36=25.5,(25*$C$28)+$C$27,IF(J36=26.5,(26*$C$28)+$C$27,IF(J36=27.5,(27*$C$28)+$C$27,IF(J36=28.5,(28*$C$28)+$C$27,IF(J36=29.5,(29*$C$28)+$C$27,IF(J36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(K36=1,K36=2,K36=3,K36=4,K36=5,K36=6,K36=7,K36=8,K36=9,K36=10,K36=11,K36=12,K36=13,K36=14,K36=15,K36=16,K36=17,K36=18,K36=19,K36=20,K36=21,K36=22,K36=23,K36=24,K36=25,K36=26,K36=27,K36=28,K36=29,K36=30,K36=31,K36=32,K36=33),K36*$C$28,IF(K36=0.5,$C$27,IF(K36=1.5,$C$27+$C$28,IF(K36=2.5,(2*$C$28)+$C$27,IF(K36=3.5,(3*$C$28)+$C$27,IF(K36=4.5,(4*$C$28)+$C$27,IF(K36=5.5,(5*$C$28)+$C$27,IF(K36=6.5,(6*$C$28)+$C$27,IF(K36=7.5,(7*$C$28)+$C$27,IF(K36=8.5,(8*$C$28)+$C$27,IF(K36=9.5,(9*$C$28)+$C$27,IF(K36=10.5,(10*$C$28)+$C$27,IF(K36=12.5,(12*$C$28)+$C$27,IF(K36=13.5,(13*$C$28)+$C$27,IF(K36=14.5,(14*$C$28)+$C$27,IF(K36=15.5,(15*$C$28)+$C$27,IF(K36=16.5,(6*$C$28)+$C$27,IF(K36=17.5,(17*$C$28)+$C$27,IF(K36=18.5,(18*$C$28)+$C$27,IF(K36=19.5,(19*$C$28)+$C$27,IF(K36=20.5,(20*$C$28)+$C$27,IF(K36=21.5,(21*$C$28)+$C$27,IF(K36=22.5,(22*$C$28)+$C$27,IF(K36=23.5,(23*$C$28)+$C$27,IF(K36=24.5,(24*$C$28)+$C$27,IF(K36=25.5,(25*$C$28)+$C$27,IF(K36=26.5,(26*$C$28)+$C$27,IF(K36=27.5,(27*$C$28)+$C$27,IF(K36=28.5,(28*$C$28)+$C$27,IF(K36=29.5,(29*$C$28)+$C$27,IF(K36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(L36=1,L36=2,L36=3,L36=4,L36=5,L36=6,L36=7,L36=8,L36=9,L36=10,L36=11,L36=12,L36=13,L36=14,L36=15,L36=16,L36=17,L36=18,L36=19,L36=20,L36=21,L36=22,L36=23,L36=24,L36=25,L36=26,L36=27,L36=28,L36=29,L36=30,L36=31,L36=32,L36=33),L36*$C$28,IF(L36=0.5,$C$27,IF(L36=1.5,$C$27+$C$28,IF(L36=2.5,(2*$C$28)+$C$27,IF(L36=3.5,(3*$C$28)+$C$27,IF(L36=4.5,(4*$C$28)+$C$27,IF(L36=5.5,(5*$C$28)+$C$27,IF(L36=6.5,(6*$C$28)+$C$27,IF(L36=7.5,(7*$C$28)+$C$27,IF(L36=8.5,(8*$C$28)+$C$27,IF(L36=9.5,(9*$C$28)+$C$27,IF(L36=10.5,(10*$C$28)+$C$27,IF(L36=12.5,(12*$C$28)+$C$27,IF(L36=13.5,(13*$C$28)+$C$27,IF(L36=14.5,(14*$C$28)+$C$27,IF(L36=15.5,(15*$C$28)+$C$27,IF(L36=16.5,(6*$C$28)+$C$27,IF(L36=17.5,(17*$C$28)+$C$27,IF(L36=18.5,(18*$C$28)+$C$27,IF(L36=19.5,(19*$C$28)+$C$27,IF(L36=20.5,(20*$C$28)+$C$27,IF(L36=21.5,(21*$C$28)+$C$27,IF(L36=22.5,(22*$C$28)+$C$27,IF(L36=23.5,(23*$C$28)+$C$27,IF(L36=24.5,(24*$C$28)+$C$27,IF(L36=25.5,(25*$C$28)+$C$27,IF(L36=26.5,(26*$C$28)+$C$27,IF(L36=27.5,(27*$C$28)+$C$27,IF(L36=28.5,(28*$C$28)+$C$27,IF(L36=29.5,(29*$C$28)+$C$27,IF(L36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+  <td style='{!xl791366} border:none;background:#FFFFFF' x:fmla="=IF(OR(M36=1,M36=2,M36=3,M36=4,M36=5,M36=6,M36=7,M36=8,M36=9,M36=10,M36=11,M36=12,M36=13,M36=14,M36=15,M36=16,M36=17,M36=18,M36=19,M36=20,M36=21,M36=22,M36=23,M36=24,M36=25,M36=26,M36=27,M36=28,M36=29,M36=30,M36=31,M36=32,M36=33),M36*$C$28,IF(M36=0.5,$C$27,IF(M36=1.5,$C$27+$C$28,IF(M36=2.5,(2*$C$28)+$C$27,IF(M36=3.5,(3*$C$28)+$C$27,IF(M36=4.5,(4*$C$28)+$C$27,IF(M36=5.5,(5*$C$28)+$C$27,IF(M36=6.5,(6*$C$28)+$C$27,IF(M36=7.5,(7*$C$28)+$C$27,IF(M36=8.5,(8*$C$28)+$C$27,IF(M36=9.5,(9*$C$28)+$C$27,IF(M36=10.5,(10*$C$28)+$C$27,IF(M36=12.5,(12*$C$28)+$C$27,IF(M36=13.5,(13*$C$28)+$C$27,IF(M36=14.5,(14*$C$28)+$C$27,IF(M36=15.5,(15*$C$28)+$C$27,IF(M36=16.5,(6*$C$28)+$C$27,IF(M36=17.5,(17*$C$28)+$C$27,IF(M36=18.5,(18*$C$28)+$C$27,IF(M36=19.5,(19*$C$28)+$C$27,IF(M36=20.5,(20*$C$28)+$C$27,IF(M36=21.5,(21*$C$28)+$C$27,IF(M36=22.5,(22*$C$28)+$C$27,IF(M36=23.5,(23*$C$28)+$C$27,IF(M36=24.5,(24*$C$28)+$C$27,IF(M36=25.5,(25*$C$28)+$C$27,IF(M36=26.5,(26*$C$28)+$C$27,IF(M36=27.5,(27*$C$28)+$C$27,IF(M36=28.5,(28*$C$28)+$C$27,IF(M36=29.5,(29*$C$28)+$C$27,IF(M36=30.5,(30*$C$28)+$C$27,0)))))))))))))))))))))))))))))))"></td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none'>Gesamt Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex<span style='mso-spacerun:yes'> </span></font></td>
+  <td colspan="4" style='{!xl971366} border-left:none' x:fmla="=SUM(C32:F35)"></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td colspan="7" style="{!xl981366}" x:fmla="=SUM(H32:N35)"></td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none'>Gesamt Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> REKORD</font></td>
+  <td colspan="4" style='{!xl971366} border-left:none' x:fmla="=SUM(C36:F36)"></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td colspan="7" style="{!xl981366}" x:fmla="=SUM(H36:N36)"></td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl711366} height:21.75pt;border-top:none'>Gesamtbetrag</td>
+  <td colspan="4" style='{!xl1281366} border-left:none' x:fmla="=SUM(Q32:T35)+SUM(Q36:T36)"></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td colspan="7" style="{!xl1271366}" x:fmla="=SUM(V32:AA35)+SUM(V36:AA36)"></td>
+ </tr>
+ <tr height="10" style='mso-height-source:userset;height:8.25pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="10" style='{!xl661366} height:8.25pt'></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl661366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="26" style='mso-height-source:userset;height:19.5pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="26" width="223" style='{!xl651366} height:19.5pt;width:167pt'></td>
+  <td colspan="4" style="{!xl951366}">Frühjahr</td>
+  <td style="{!xl631366}"></td>
+  <td colspan="7" style="{!xl951366}">Sommer / Herbst</td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="46" style='mso-height-source:userset;height:34.5pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="46" witdth="223" style='{!xl771366} height:34.5pt;width:167pt'>Abrechnung<br style="mso-data-placement:same-cell;" /><font style="{!font71366}">(Anzahl der Paletten)</font></td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Januar</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Februar</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>März</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>April</td>
+  <td style="{!xl831366}"></td>
+  <td style='{!xl791366} border-right:.5pt solid black'>Mai</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Juni</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Juli</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>August</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Sept.</td>
+  <td style='{!xl791366} border-right:.5pt solid black; border-left:none'>Oktober</td>
+  <td style='{!xl791366} border-left:none'>Ges.</td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex 1 Liter</font></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C43+D43+E43+F43+H43+I43+J43+K43+L43+M43</td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex 5 Liter</font></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C44+D44+E44+F44+H44+I44+J44+K44+L44+M44</td>
+ </tr>
+ <tr height="29" style='{!xl655351366} mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex 15 Liter</font></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C45+D45+E45+F45+H45+I45+J45+K45+L45+M45</td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex 640 Liter</font></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C46+D46+E46+F46+H46+I46+J46+K46+L46+M46</td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none; font-size:11.0pt'>Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> REKORD</font></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl1261366} border-left:none'></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td style='{!xl921366} border-right:.5pt solid black; border-left:none'></td>
+  <td align="right" style='{!xl861366} border-top:none'>=C47+D47+E47+F47+H47+I47+J47+K47+L47+M47</td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none'>Gesamt Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> PowerFlex<span style='mso-spacerun:yes'> </span></font></td>
+  <td colspan="4" style='{!xl971366} border-right:.5pt solid black; border-left:none' x:fmla="=SUM(C43:F46)"></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td colspan="7" style="{!xl981366}" x:fmla="=SUM(H43:N46)"></td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl701366} height:21.75pt;border-top:none'>Gesamt Roundup<font style="{!font111366}">®</font><font style="{!font51366}"> REKORD</font></td>
+  <td colspan="4" style='{!xl971366} border-right:.5pt solid black; border-left:none' x:fmla="=SUM(C47:F47)"></td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td colspan="7" style="{!xl981366}" x:fmla="=SUM(H47:N47)"></td>
+ </tr>
+ <tr height="29" style='mso-height-source:userset;height:21.75pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="29" style='{!xl711366} height:21.75pt;border-top:none'>Gesamtbetrag</td>
+  <td colspan="4" style='{!xl1001366} border-right:.5pt solid black; border-left:none'>{!IF(pageview,"=(C50*100)+(C51*200)","=(C50*20)+(C51*20)")}</td>
+  <td style='{!xl841366} border-top:none'></td>
+  <td colspan="7" style="{!xl1271366}">{!IF(pageview,"=(H50*100)+(H51*200)","=(H50*20)+(H51*20)")}</td>
+ </tr>
+ <tr height="16" style='mso-height-source:userset;height:12.0pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="16" style='{!xl631366} height:12.0pt'></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style='{!xl841366}'></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl631366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="34" style='mso-height-source:userset;height:25.5pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td rowspan="2" height="72" style='{!xl1101366} height:54.0pt'>weitere Aktionen</td>
+  <td colspan="12" style="{!xl671366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="38" style='mso-height-source:userset;height:28.5pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="38" style='{!xl851366} height:28.5pt' colspan="12"></td>
+ </tr>
+ <tr height="66" style='page-break-before:always;mso-height-source:userset; height:49.5pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="66" style='{!xl631366} height:49.5pt; text-align:right' colspan="2"></td>
+  <td style="{!xl655351366}"></td>
+  <td colspan="4" style="{!xl911366} text-align:right"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+  <td colspan="4" style="{!xl911366} text-align:right"></td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+ <tr height="25" style='mso-height-source:userset;height:18.9pt'>
+  <td height="16" style='{!xl641366} height:12.0pt'></td>
+  <td height="25" style='{!xl781366} height:18.9pt' colspan="2">Unterschrift Monsanto Mitarbeiter</td>
+  <td style="{!xl631366}"></td>
+  <td colspan="4" style="{!xl911366}">Ort, Datum</td>
+  <td style="{!xl671366}"></td>
+  <td style="{!xl671366}"></td>
+  <td colspan="4" style="{!xl911366}">Unterschrift Kunde</td>
+  <td style="{!xl655351366}"></td>
+  <td style="{!xl655351366}"></td>
+ </tr>
+
+</table>
+
+</div>
+
+
+<!----------------------------->
+<!--END OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD-->
+<!----------------------------->
+</body>
+
+</html>
+</apex:page>

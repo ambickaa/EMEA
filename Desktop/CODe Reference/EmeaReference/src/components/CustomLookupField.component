@@ -1,0 +1,31 @@
+<apex:component >
+    <apex:attribute name="division" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="pricebookid" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="searchtype" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="identifier" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="text" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="idField" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="catalog" type="String" description="Catalog to use ['Tax','Order'])" />
+    <apex:attribute name="consignment" type="String" description="TODO: Describe me"/>
+    
+        <span class="{!identifier}"> 
+        <div class="requiredInput">
+            <div class="requiredBlock"></div>
+            <input type="text" value="{!Text}" disabled="disabled" id="thefield" class="textField lookupInput" style="width:200px"></input>
+            <a href="javascript:;" onclick="javascript:popUp('/apex/ProductLookUp?id={!idField}&text={!Text}&identifier={!identifier}&consignment={!consignment}&accountId={!accountId}&mode={!mode}{!IF($currentpage.parameters.division!= null, '&division=', '')}{!$currentpage.parameters.division}{!IF(NOT(ISNULL(catalog)),'&catalog=' + catalog,'')}');"><img src="/s.gif" alt="Hybrid Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" title="Hybrid Lookup (New Window)"/></a>
+            
+            <apex:componentBody />
+        </div>
+        </span>
+   
+    <style>
+        .idField
+        {
+            display:none;
+        }
+    </style>
+    
+    
+</apex:component>

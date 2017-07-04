@@ -1,0 +1,80 @@
+<!-- Page Name : VFP_CustConsole_Links -->
+<!-- Description : Display Custom console Link-->
+<!-- Created by : Accenture IDC -->
+<apex:page controller="VFC_CustConsoleLinks">
+    <!-- CS -->
+    <apex:stylesheet value="{!$Resource.Element}" />
+    <apex:stylesheet value="{!$Resource.App}" />
+    <apex:stylesheet value="{!$Resource.ExtAll}" />
+    <apex:stylesheet value="{!$Resource.ServiceDesk}" /> 
+    <!-- JS -->   
+    <apex:includeScript value="/support/console/22.0/integration.js" />
+    <apex:includeScript value="{!$Resource.VFP_CustConsole_Links}" />
+    
+    <script type="text/javascript">
+        function OpenPrimaryTab(Name, URL) {
+            //Open a new primary tab with the salesforce.com home page in it          
+            alert(URL);
+            sforce.console.openPrimaryTab(null, URL, true, Name, openSuccess, Name);
+        }
+
+
+        var openSuccess = function openSuccess(result) {
+                if (result.success == true) {
+
+                } else {
+
+                }
+            };
+
+        
+    </script>
+    <div data-aura-rendered-by="3:5.0" class="consoleMruWidget">
+        <div class="mruWidgetHeader" data-aura-rendered-by="4:5.0">
+            <div class="hiddenAuraLabels" data-aura-rendered-by="5:5.0"></div> <span data-aura-rendered-by="9:5.0">Links
+            </span>
+
+        </div>
+        <apex:repeat value="{!lstfav}" var="links">
+            <ul class="mruEntry" data-aura-rendered-by="0:0.0">
+                <li class="mruWidgetRowItem" data-aura-rendered-by="630:c">
+                    <div data-aura-rendered-by="2:c" class="consoleMruEntry"> <span class="entryLabel" id="0:c_mruEntryLink" data-aura-rendered-by="45:c">
+                        <span class="tabIcon fileMru" data-aura-rendered-by="46:c">
+                            <span class="mruIcon" data-aura-rendered-by="47:c"><!---->
+                            </span>
+</span> <span class="tabText uiOutputText" dir="ltr" data-aura-rendered-by="50:c">
+                            <!--<A HREF="#" onClick="OpenPrimaryTab();return false" style="text-decoration:none;">{!$Label.myHR}</a>-->
+                            <apex:outputpanel layout="none" rendered="{!links.Open_in_new_window__c}">
+                            <A HREF="{!links.URL__c}" target="_blank" style="text-decoration:none;">{!links.Name}</a>
+                            </apex:outputpanel>
+                            <apex:outputpanel layout="none" rendered="{!NOT(links.Open_in_new_window__c)}">
+                            <A HREF="#" onClick="OpenPrimaryTab('{!links.Name}','{!links.URL__C}');return false" style="text-decoration:none;">{!links.Name}</a>
+                            </apex:outputpanel>                            
+                            
+                        </span>
+</span>
+                    </div>
+                </li>
+                <!-- <li class="mruWidgetRowItem" data-aura-rendered-by="632:c">
+                <div data-aura-rendered-by="63:c" class="consoleMruEntry">
+                    <div role="application" data-aura-rendered-by="104:c" class="uiMenu">                           
+                        <div class="mruPrimaryMenu uiMenuList" role="menu" data-aura-rendered-by="99:c" aria-labelledby="66:c" style="top: auto;">
+                        </div>
+                    </div>
+                    <span class="entryLabel" id="61:c_mruEntryLink" data-aura-rendered-by="106:c">
+                        <span class="tabIcon fileMru" data-aura-rendered-by="107:c">
+                            <span class="mruIcon" data-aura-rendered-by="108:c">
+                            </span>
+                        </span>
+                        <span class="tabText uiOutputText" dir="ltr" data-aura-rendered-by="111:c">-->
+                <!--<A HREF="#" onClick="OpenPrimaryTabContactUs();return false " style="text-decoration:none;">{!$Label.Contact_US}</a>-->
+                <!--<A HREF="#" onClick="OpenPrimaryTabContactUs();return false " style="text-decoration:none;">{!links.Name}</a>
+                            
+                        </span>
+                    </span>
+                </div>
+            </li>-->
+            </ul>
+        </apex:repeat>
+    </div>
+</apex:page>

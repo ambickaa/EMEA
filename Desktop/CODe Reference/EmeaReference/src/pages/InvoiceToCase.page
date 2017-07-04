@@ -1,0 +1,3 @@
+<apex:page standardController="Invoice__c" extensions="OrderToCaseController" action="{!url}">
+    Redirecting...
+</apex:page>

@@ -1,0 +1,34 @@
+<apex:component controller="AccountPageMarkCampController">
+    
+    <apex:attribute name="account" type="Account" description="currentAccount" required="false"/>
+
+    <apex:pageBlock >
+       
+         <div class="pageBlockSection">
+            <apex:pageBlockSection title="{!$Label.MarketingCampaigns}" columns="1" collapsible="false"></apex:pageBlockSection>
+        </div><br/>
+        
+        <table class="sortable compact row-border hover nowrap">
+            <thead class="{!IF(List_Records.size == 0, 'hidden', '')}">
+                <tr>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <th>{!f.label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat var="r" value="{!List_Records}">
+                <tr class="dataMarketingCampaign" data-mc="{!r.Name}">
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <td class="{!f}">
+                            <apex:outputField value="{!r[f.fieldPath]}" />  
+                        </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+        
+    </apex:pageBlock>
+    
+</apex:component>

@@ -1,0 +1,351 @@
+<!--
+Created By: Abhinav Sharma
+Organization: Accenture
+Email Id: abhinav.l.sharma@accenture.com
+Associated Class: AccountRelatedListExtension
+-->
+
+<apex:page StandardController="Account" extensions="AccountRelatedListExtension" tabstyle="Account">
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.tablesorter, 'jquery.tablesorter.min.js')}"/>
+    <apex:includeScript value="/support/console/30.0/integration.js"/>
+    
+    <script type="text/javascript">           
+        var preRecordId;
+        var preRecordName;
+        function fnOpenSubtab(id, name) {
+            preRecordId= id;
+            preRecordName=name;
+
+            if (sforce.console.isInConsole()){
+               sforce.console.getEnclosingPrimaryTabId(openSubtab);
+            }else{
+                window.open('/' + id,'_blank');
+            }
+        }
+        
+        var openSubtab = function openSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/'+ preRecordId , true,preRecordName, null,'salesforceSubtab'); 
+        };    
+    </script>
+         
+    <script type="text/javascript">
+        $j = jQuery.noConflict();    
+        $j(document).click(function () {
+            $j("[id$=Table]").tablesorter();
+        });
+    </script>
+    <apex:form >
+    <apex:pageBlock id="mainBlock">
+    <apex:pageMessages id="theMessages" />
+    <apex:pageBlockSection collapsible="false" columns="1">
+    <apex:outputPanel >
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            
+            <h1>Division Code</h1>
+            &nbsp;
+            <apex:selectList value="{!lstDivisonCode}" size="1" id="Dvalues">
+                <apex:selectOptions value="{!DivisonCode}"/>
+            </apex:selectList>
+                       
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            
+            <h1>Sales Org Code</h1>
+            &nbsp;
+            <apex:selectList value="{!lstSalesOrg}" size="1" id="Ovalues">
+                <apex:selectOptions value="{!SalesOrg}"/>
+            </apex:selectList>
+            
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            
+            <!--
+            <h1>Sales District</h1>
+            &nbsp;
+            <apex:selectList value="{!lstChannelCode}" size="1" id="Cvalues">
+                <apex:selectOptions value="{!ChannelCode}"/>
+            </apex:selectList>
+            
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            -->
+            
+            <h1>Fiscal Year</h1>
+            &nbsp;
+            <apex:selectList value="{!lstFYear}" size="1" id="Fvalues">
+                <apex:selectOptions value="{!FYear}"/>
+            </apex:selectList>                 
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            
+            <apex:commandButton value="Search" action="{!Datalist}" reRender="Opage,Dpage,Ipage,Cpage,AllOpage,AllDpage,AllIpage,AllCpage,mainBlock"/>
+            &nbsp;&nbsp;&nbsp;
+            <apex:commandLink value="Orders" onclick="fnOpenSubtab('{!ReportID}?pv0={!RecID_trim}&pv1={!OrderShipToID}','{!ReportName}'); return false;"/>
+             &nbsp;&nbsp;&nbsp;
+            <apex:commandLink value="Deliveries" onclick="fnOpenSubtab('{!DReportID}?pv0={!RecID_trim}&pv1={!DeliveryShipToID}','{!DReportName}'); return false;"/>
+            &nbsp;&nbsp;&nbsp;
+            <apex:commandLink value="Invoices" onclick="fnOpenSubtab('{!IReportID}?pv0={!RecID_trim}&pv1={!InvoiceShipToID}','{!IReportName}'); return false;"/>
+            &nbsp;&nbsp;&nbsp;
+            <apex:commandLink value="Contracts" onclick="fnOpenSubtab('{!CReportID}?pv0={!RecID_trim}&pv1={!ContractShipToID}','{!CReportName}'); return false;"/>
+    </apex:outputPanel>
+    </apex:pageBlockSection>
+    
+   
+    <apex:outputPanel id="AllOpage" >
+     <apex:pageBlock rendered="{!AllbolRender}">
+        <apex:pageBlockSection collapsible="false" columns="1" title="Order Details">
+                        
+            <apex:outputPanel rendered="{!IF(All_O_Records.size==0,true,false)}">No Record to Display</apex:outputPanel>
+                         
+            <apex:pageBlockTable value="{!All_O_Records}" var="index" styleClass="tablesorter" headerClass="orderHeader" id="Table" rendered="{!IF(All_O_Records.size==0,false,true)}">                                
+                <apex:column headerValue="Ship To Party Description" value="{!index.GC_Ship_To_Party_Descr__c}" />
+                <apex:column headerValue="SAP Order Number">
+                        <apex:commandLink value="{!index.Name}" onclick="fnOpenSubtab('{!index.Id}','{!index.Name}'); return false;"/>
+                </apex:column>
+                <apex:column headerValue="PO Number" value="{!index.PoNumber}" />
+                <apex:column headerValue="Document Type Description" value="{!index.GC_Document_Type_Descr__c}" />                
+                <apex:column headerValue="Document Date (creation date)" value="{!index.GC_Doc_Creation_Date__c}" />
+                <apex:column headerValue="Requested Delivery Date" value="{!index.GC_Requested_Delivery_Date__c}" />
+                <apex:column headerValue="Open Order Quantity" value="{!index.GC_Open_Order_Qty__c}" />
+                <!--Added by Support team-->
+                <apex:column headerValue="Last Modified Date" value="{!index.LastModifiedDate}" />
+                <!--Added by Support team-->
+            </apex:pageblocktable>
+            
+              <apex:panelGrid columns="2">                                     
+                  <apex:commandLink value="Previous" action="{!AllOprvbtn}" rendered="{!Onxt}" reRender="AllOpage"/>
+                  <apex:commandLink value="Next" action="{!AllOnextbtn}" rendered="{!IF(All_O_Records.size!=5,false,true)}" reRender="AllOpage"/>
+              </apex:panelGrid>
+              
+        </apex:pageBlockSection>
+        </apex:pageBlock>
+        </apex:outputPanel>
+    
+    <apex:outputPanel id="AllDpage"> 
+     <apex:pageBlock rendered="{!AllbolRender}">
+        <apex:pageBlockSection collapsible="false" columns="1" title="Delivery Details">
+                        
+            <apex:outputPanel rendered="{!IF(All_D_Records.size==0,true,false)}">No Record to Display</apex:outputPanel>
+                          
+            <apex:pageBlockTable value="{!All_D_Records}" var="index" styleClass="tablesorter" headerClass="DeliveryHeader" id="Table" rendered="{!IF(All_D_Records.size==0,false,true)}">
+                <apex:column headerValue="SAP Delivery Number">
+                    <apex:commandlink value="{!index.Name}" onclick="fnOpenSubtab('{!index.Id}','{!index.Name}'); return false;"/>
+                </apex:column> 
+                <apex:column headerValue="Ship-To Name">
+                        <apex:commandLink value="{!index.ShipTo_Acc_Integration_Key__r.Name}" onclick="fnOpenSubtab('{!index.ShipTo_Acc_Integration_Key__c}','{!index.ShipTo_Acc_Integration_Key__r.Name}'); return false;"/>
+                </apex:column>
+                <apex:column headerValue="Delivery Creation date (Header)" value="{!index.GC_Delivery_Creation_Date__c}" />
+                <apex:column headerValue="Delivery Date" value="{!index.GC_Delivery_Date__c}" />    
+                <apex:column headerValue="Proposed GI Date" value="{!index.GC_Proposed_GI_Date__c}" />
+                <apex:column headerValue="Actual GI Date" value="{!index.GC_Actual_GI_Date__c}" /> 
+                <apex:column headerValue="Order Number" value="{!index.GC_Order_Number__c}" />
+                <!--Added by Support team-->
+                <apex:column headerValue="Last Modified Date" value="{!index.LastModifiedDate}" />
+                <!--Added by Support team-->
+            </apex:pageblocktable>
+            
+              <apex:panelGrid columns="2">
+                  <apex:commandLink value="Previous" action="{!AllDprvbtn}" rendered="{!Dnxt}" reRender="AllDpage"/>  
+                  <apex:commandLink value="Next" action="{!AllDnextbtn}" rendered="{!IF(All_D_Records.size!=5,false,true)}" reRender="AllDpage"/>                 
+              </apex:panelGrid>
+              
+        </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:outputPanel>
+    
+    <apex:outputPanel id="AllIpage">   
+     <apex:pageBlock rendered="{!AllbolRender}">
+        <apex:pageBlockSection collapsible="false" columns="1" title="Invoice Details">
+                        
+            <apex:outputPanel rendered="{!IF(All_I_Records.size==0,true,false)}">No Record to Display</apex:outputPanel>
+                          
+            <apex:pageBlockTable value="{!All_I_Records}" var="index" styleClass="tablesorter" headerClass="InvoiceHeader" id="Table" rendered="{!IF(All_I_Records.size==0,false,true)}">
+                <apex:column headerValue="SAP invoice Number">
+                    <apex:commandLink value="{!index.Name}" onclick="fnOpenSubtab('{!index.Id}','{!index.Name}'); return false;"/>
+                </apex:column>
+                <apex:column headerValue="Payer Name" value="{!index.GC_Payer_Descr__c}" />  
+                <apex:column headerValue="Invoice Type Description" value="{!index.GC_Invoice_Type_Descr__c}" />
+                <!--Added by Support team-->
+                <apex:column headerValue="Invoice Creation Date" value="{!index.GC_Invoice_Creation_Date__c}" />
+                <!--Added by Support team-->
+                <apex:column headerValue="Due Date" value="{!index.GC_Invoice_Due_Date__c}" />
+                <apex:column headerValue="Cash application Date" value="{!index.GC_Cash_Application_Date__c}" />
+                <apex:column headerValue="Order Number" value="{!index.GC_Order_Number__c}" />
+                <apex:column headerValue="Total Invoice Amount" value="{!index.GC_Total_Inv_Amount_Nbr__c}" />                
+                <!--Added by Support team-->                
+                <apex:column headerValue="Last Modified Date" value="{!index.LastModifiedDate}" />
+                <!--Added by Support team-->
+                <!--Added by ACS Team for Invoice PDF-->
+                <apex:column headerValue="View Invoice PDF" value="{!index.View_Invoice_PDF__c}" />
+            </apex:pageblocktable>
+            
+              <apex:panelGrid columns="2">
+                  <apex:commandLink value="Previous" action="{!AllIprvbtn}" rendered="{!Inxt}" reRender="AllIpage"/>
+                  <apex:commandLink value="Next" action="{!AllInextbtn}" rendered="{!IF(All_I_Records.size!=5,false,true)}" reRender="AllIpage"/>                
+              </apex:panelGrid>
+                          
+        </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:outputPanel>
+    
+    <apex:outputPanel id="AllCpage">   
+ <apex:pageBlock rendered="{!AllbolRender}">   
+        <apex:pageBlockSection collapsible="false" columns="1" title="Contract Details">
+                        
+            <apex:outputPanel rendered="{!IF(All_C_Records.size==0,true,false)}">No Record to Display</apex:outputPanel>  
+                        
+            <apex:pageBlockTable value="{!All_C_Records}" var="index" styleClass="tablesorter" headerClass="ContractHeader" id="Table" rendered="{!IF(All_C_Records.size==0,false,true)}">
+                <apex:column headerValue="SAP Contract Number">
+                        <apex:commandLink value="{!index.GC_Integration_Key__c}" onclick="fnOpenSubtab('{!index.Id}','{!index.ContractNumber}'); return false;"/>
+                </apex:column>
+                <apex:column headerValue="Ship-To Party Name" value="{!index.ShipToParty_Name_Text__c}"/>
+                <apex:column headerValue="PO Number" value="{!index.PO_Number_Text__c}" />
+                <apex:column headerValue="Document Date (creation date)" value="{!index.Document_Date__c}" />
+                <apex:column headerValue="Total Contract Quantity" value="{!index.Total_Contract_Qty__c}" />              
+                <apex:column headerValue="Called-off Contract Quantity" value="{!index.CalledOff_Contract_Qty__c}" />
+                <apex:column headerValue="Outstanding Contract Quantity" value="{!index.OutStanding_Contract_Qty__c}" /> 
+                <!--Added by Support team-->
+                <apex:column headerValue="Last Modified Date" value="{!index.LastModifiedDate}" />
+                <!--Added by Support team-->                
+            </apex:pageblocktable>
+            
+              <apex:panelGrid columns="2">
+                  <apex:commandLink value="Previous" action="{!AllCprvbtn}" rendered="{!Cnxt}" reRender="AllCpage"/>  
+                  <apex:commandLink value="Next" action="{!AllCnextbtn}" rendered="{!IF(All_C_Records.size!=5,false,true)}" reRender="AllCpage" />                
+              </apex:panelGrid> 
+                       
+        </apex:pageBlockSection>
+       </apex:pageBlock> 
+    </apex:outputPanel>
+
+    <apex:outputPanel id="Opage">
+    <apex:PageBlock rendered="{!bolRender}">
+        <apex:pageBlockSection collapsible="false" columns="1" title="Order Details" rendered="{!(lstSalesOrg != null && lstSalesOrg != '')
+                        || ( lstDivisonCode != null && lstDivisonCode != '') || ( lstChannelCode != null && lstChannelCode != '')}">
+                        
+            <apex:outputPanel rendered="{!IF(Records.size==0,true,false)}">No Record to Display</apex:outputPanel>
+                         
+            <apex:pageBlockTable value="{!Records}" var="index" styleClass="tablesorter" headerClass="orderHeader" id="Table" rendered="{!IF(Records.size==0,false,true)}">                                
+                <apex:column headerValue="Ship To Party Description" value="{!index.GC_Ship_To_Party_Descr__c}" />
+                <apex:column headerValue="SAP Order Number">
+                        <apex:commandLink value="{!index.Name}" onclick="fnOpenSubtab('{!index.Id}','{!index.Name}'); return false;"/>
+                </apex:column>
+                <apex:column headerValue="PO Number" value="{!index.PoNumber}" />
+                <apex:column headerValue="Document Type Description" value="{!index.GC_Document_Type_Descr__c}" />                
+                <apex:column headerValue="Document Date (creation date)" value="{!index.GC_Doc_Creation_Date__c}" />
+                <apex:column headerValue="Requested Delivery Date" value="{!index.GC_Requested_Delivery_Date__c}" />
+                <apex:column headerValue="Open Order Quantity" value="{!index.GC_Open_Order_Qty__c}" />  
+                <!--Added by Support team-->
+                <apex:column headerValue="Last Modified Date" value="{!index.LastModifiedDate}" />
+                <!--Added by Support team-->                
+            </apex:pageblocktable>
+            
+              <apex:panelGrid columns="2">                   
+                  <apex:commandLink value="Previous" action="{!prvbtn}" rendered="{!Onxt}" reRender="Opage"/>
+                  <apex:commandLink value="Next" action="{!nextbtn}" rendered="{!IF(Records.size!=5,false,true)}" reRender="Opage"/>
+              </apex:panelGrid>
+              
+        </apex:pageBlockSection>
+    </apex:PageBlock>
+    </apex:outputPanel> 
+                  
+    <apex:outputPanel id="Dpage">
+    <apex:PageBlock rendered="{!bolRender}"> 
+        <apex:pageBlockSection collapsible="false" columns="1" title="Delivery Details"  rendered="{!( lstSalesOrg != null && lstSalesOrg != '')
+                        || ( lstDivisonCode != null && lstDivisonCode != '') || ( lstChannelCode != null && lstChannelCode != '')}">
+                        
+            <apex:outputPanel rendered="{!IF(DRecords.size==0,true,false)}">No Record to Display</apex:outputPanel>
+                          
+            <apex:pageBlockTable value="{!DRecords}" var="index" styleClass="tablesorter" headerClass="DeliveryHeader" id="Table" rendered="{!IF(DRecords.size==0,false,true)}">
+                <apex:column headerValue="SAP Delivery Number">
+                    <apex:commandLink value="{!index.Name}" onclick="fnOpenSubtab('{!index.Id}','{!index.Name}'); return false;"/>
+                </apex:column> 
+                <apex:column headerValue="Ship-To Name">
+                        <apex:commandLink value="{!index.ShipTo_Acc_Integration_Key__r.Name}" onclick="fnOpenSubtab('{!index.ShipTo_Acc_Integration_Key__c}','{!index.ShipTo_Acc_Integration_Key__r.Name}'); return false;"/>
+                </apex:column>
+                <apex:column headerValue="Delivery Creation date (Header)" value="{!index.GC_Delivery_Creation_Date__c}" />
+                <apex:column headerValue="Delivery Date" value="{!index.GC_Delivery_Date__c}" />    
+                <apex:column headerValue="Proposed GI Date" value="{!index.GC_Proposed_GI_Date__c}" />
+                <apex:column headerValue="Actual GI Date" value="{!index.GC_Actual_GI_Date__c}" /> 
+                <apex:column headerValue="Order Number" value="{!index.GC_Order_Number__c}" /> 
+                <!--Added by Support team-->
+                <apex:column headerValue="Last Modified Date" value="{!index.LastModifiedDate}" />
+                <!--Added by Support team-->                
+            </apex:pageblocktable>
+            
+              <apex:panelGrid columns="2">
+                  <apex:commandLink value="Previous" action="{!prvbtnD}" rendered="{!Dnxt}" reRender="Dpage"/>  
+                  <apex:commandLink value="Next" action="{!nextbtnD}" rendered="{!IF(DRecords.size!=5,false,true)}" reRender="Dpage"/>                 
+              </apex:panelGrid>
+              
+        </apex:pageBlockSection>
+    </apex:PageBlock>
+    </apex:outputPanel>
+    
+    <apex:outputPanel id="Ipage">
+    <apex:PageBlock rendered="{!bolRender}">   
+        <apex:pageBlockSection collapsible="false" columns="1" title="Invoice Details"  rendered="{!( lstSalesOrg != null && lstSalesOrg != '')
+                        || ( lstDivisonCode != null && lstDivisonCode != '') || ( lstChannelCode != null && lstChannelCode != '')}">
+                        
+            <apex:outputPanel rendered="{!IF(IRecords.size==0,true,false)}">No Record to Display</apex:outputPanel>
+                          
+            <apex:pageBlockTable value="{!IRecords}" var="index" styleClass="tablesorter" headerClass="InvoiceHeader" id="Table" rendered="{!IF(IRecords.size==0,false,true)}">
+                <apex:column headerValue="SAP invoice Number">
+                    <apex:commandLink value="{!index.Name}" onclick="fnOpenSubtab('{!index.Id}','{!index.Name}'); return false;"/>
+                </apex:column>
+                <apex:column headerValue="Payer Name" value="{!index.GC_Payer_Descr__c}" />              
+                <apex:column headerValue="Invoice Type Description" value="{!index.GC_Invoice_Type_Descr__c}" />
+                <!--Added by Support team-->
+                <apex:column headerValue="Invoice Creation Date" value="{!index.GC_Invoice_Creation_Date__c}" />
+                <!--Added by Support team-->               
+                <apex:column headerValue="Due Date" value="{!index.GC_Invoice_Due_Date__c}" />
+                <apex:column headerValue="Cash application Date" value="{!index.GC_Cash_Application_Date__c}" />
+                <apex:column headerValue="Order Number" value="{!index.GC_Order_Number__c}" />
+                <apex:column headerValue="Total Invoice Amount" value="{!index.GC_Total_Inv_Amount_Nbr__c}" /> 
+                <!--Added by Support team-->
+                <apex:column headerValue="Last Modified Date" value="{!index.LastModifiedDate}" />
+                <!--Added by Support team-->                
+            </apex:pageblocktable>
+            
+              <apex:panelGrid columns="2">
+                  <apex:commandLink value="Previous" action="{!prvbtnI}" rendered="{!Inxt}" reRender="Ipage"/>
+                  <apex:commandLink value="Next" action="{!nextbtnI}" rendered="{!IF(IRecords.size!=5,false,true)}" reRender="Ipage"/>                
+              </apex:panelGrid>
+                          
+        </apex:pageBlockSection>
+    </apex:PageBlock>
+    </apex:outputPanel>
+    
+    <apex:outputPanel id="Cpage">
+    <apex:PageBlock rendered="{!bolRender}">    
+        <apex:pageBlockSection collapsible="false" columns="1" title="Contract Details"  rendered="{!( lstSalesOrg != null && lstSalesOrg != '')
+                        || ( lstDivisonCode != null && lstDivisonCode != '') || ( lstChannelCode != null && lstChannelCode != '')}">
+                        
+            <apex:outputPanel rendered="{!IF(CRecords.size==0,true,false)}">No Record to Display</apex:outputPanel>  
+                        
+            <apex:pageBlockTable value="{!CRecords}" var="index" styleClass="tablesorter" headerClass="ContractHeader" id="Table" rendered="{!IF(CRecords.size==0,false,true)}">
+                <apex:column headerValue="SAP Contract Number">
+                        <apex:commandLink value="{!index.GC_Integration_Key__c}" onclick="fnOpenSubtab('{!index.ID}','{!index.ContractNumber}'); return false;"/>
+                </apex:column>
+                <apex:column headerValue="Ship-To Party Name" value="{!index.ShipToParty_Name_Text__c}"/>
+                <apex:column headerValue="PO Number" value="{!index.PO_Number_Text__c}" />
+                <apex:column headerValue="Document Date (creation date)" value="{!index.Document_Date__c}" />
+                <apex:column headerValue="Total Contract Quantity" value="{!index.Total_Contract_Qty__c}" />              
+                <apex:column headerValue="Called-off Contract Quantity" value="{!index.CalledOff_Contract_Qty__c}" />
+                <apex:column headerValue="Outstanding Contract Quantity" value="{!index.OutStanding_Contract_Qty__c}" />   
+                <!--Added by Support team-->
+                <apex:column headerValue="Last Modified Date" value="{!index.LastModifiedDate}" />
+                <!--Added by Support team-->                
+            </apex:pageblocktable>
+            
+              <apex:panelGrid columns="2">
+                  <apex:commandLink value="Previous" action="{!prvbtnC}" rendered="{!Cnxt}" reRender="Cpage"/>  
+                  <apex:commandLink value="Next" action="{!nextbtnC}" rendered="{!IF(CRecords.size!=5,false,true)}" reRender="Cpage" />                
+              </apex:panelGrid> 
+                       
+        </apex:pageBlockSection>
+    </apex:PageBlock>    
+    </apex:outputPanel>
+    </apex:pageBlock>    
+</apex:form>
+</apex:page>

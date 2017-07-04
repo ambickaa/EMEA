@@ -1,0 +1,25 @@
+<apex:component >
+    <script>
+    	<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"/>
+        <apex:includeScript value="{!URLFOR($Resource.tablesorter, 'jquery.tablesorter.min.js')}"/>
+        <apex:includeScript value="/support/console/30.0/integration.js"/>
+        <apex:includeScript value="{!$Resource.ODICommonJS}"/>
+            
+        $(document).ready(function(){
+            $(document).on('click',"[id*='btnExpandAll']",function(){
+                $(this).toggle();
+                $("[id*='btnCollapseAll']").toggle();
+                $("[id*='plusimageSearch']").hide();
+                $("[id*='minusimagesearch']").show();
+                $("[id*='colSubSection']").show();
+            });
+            $(document).on('click',"[id*='btnCollapseAll']",function(){
+                $(this).toggle();
+                $("[id*='btnExpandAll']").toggle();
+                $("[id*='plusimageSearch']").show();
+                $("[id*='minusimagesearch']").hide();
+                $("[id*='colSubSection']").hide();
+            });
+        });
+    </script>
+</apex:component>

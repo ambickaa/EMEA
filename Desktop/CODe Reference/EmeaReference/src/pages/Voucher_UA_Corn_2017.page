@@ -1,0 +1,135 @@
+<apex:page sidebar="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="uk" standardcontroller="Voucher__c" extensions="Voucher_UA_Corn_2017_controller" applyBodyTag="false">
+    <html lang="uk">
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <style>
+            @page {
+              size: A4 portrait;
+              margin: 0px;
+              padding: 0in;
+              border: 0px;}
+        </style>
+    </head>
+    <body style="margin:0 40px; padding:0; border:0; font-style:normal; font-size:100%; font-size:13px; vertical-align:baseline; text-decoration:none; line-height:1em; font-family:Arial Unicode MS;">
+        
+        <div style="padding:0; margin:0; border:none; font-family:inherit; background:#FFF;">
+            <apex:image url="{!$Resource.Voucher_UA_CORN_2017_HEADER}" width="720px" style="margin:0; margin-left:-40px; margin-top:0; display:inline-block;"/>
+        </div>
+        
+        <div style="padding-top:20px; line-height:1.8em; font-weight:bold; font-size:14.5px; font-family:inherit; text-align:center; margin:0 auto; margin-bottom:2px;">
+            ДОВІДКА ПРО ЗНИЖКУ № 
+            <span style="text-transform:uppercase">{!voucher.Name}</span>
+        </div>
+               
+        <div style="position:relative; margin-top:5px; padding-bottom:1px; border-bottom:1px solid #000; width:100%">
+            <span style="display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Кому:</span>
+            <span style="text-transform:uppercase">{!voucher.FarmNameCopy__c} &nbsp;</span>
+            <span style="display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">(«Господарство»)</span>
+        </div>
+
+        <div style="position:relative; margin-top:2px; padding-bottom:1px; border-bottom:1px solid #000; width:100%">
+            <span style="color:#404040; font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Адреса:</span>
+            <span style="color:#333; text-transform:uppercase">{!voucher.AddressCopy__c} &nbsp;</span>               
+        </div>
+
+        <div style="margin-top:5px; padding-bottom:1px; border-bottom:1px solid #000; width:100%">
+            <span style="color:#404040; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Телефон, електронна пошта:</span>
+            <span style="color:#333;">{!Phones}, {!voucher.EmailCopy__c} &nbsp;</span>
+        </div>
+        
+        <div style="position:relative; color:#404040; margin-top:20px; padding-bottom:10px; width:100%;" align="justify">
+        Ця довідка підтверджує, що у разі придбання Вашим Господарством насіння кукурудзи наступного ассортименту: гібриди DKC3476, DKC4490, DKC3203, DKC440, DKC2787, DKC4685, DKC2960 (разом та кожен окремо - «
+            <span style="color:#000000">Товар
+            </span>
+            ») у будь-якого уповноваженого дистриб’ютора насіння торгової марки «Декалб» («
+            <span style="color:#000000">Дистриб’ютор
+            </span>
+            »)<sup>1</sup>  в період до 31 березня 2017 року включно, при пред’явленні цієї інформаційної довідки за юридичною адресою Дистриб’ютора, Господарству 
+            <span style="color:#000000">за кожен мішок
+            </span>
+            <sup>2</sup>  такого Товару може бути нарахована знижка у розмірі __________ 
+            <span style="color:#000000">гривень
+            </span>
+            , що становить 5 (п’ять) доларів США згідно з офіційним курсом Національного банку України на дату цієї довідки. Вказана знижка визначена як знижка від ціни без ПДВ. 
+        </div>
+
+        <div style="color:#404040; position:relative; margin-top:5px; padding-bottom:10px; width:100%">
+        Знижка може бути нарахована на обсяг фактично придбаного Товару безпосередньо Дистриб’ютором виключно після пред’явлення цієї інформаційної довідки в період до 15 червня 2017 року включно.     
+        </div>
+
+        <div style="position:relative; font-size:14px; margin-top:5px; padding-bottom:10px; width:100%">
+        ЦЯ ИНФОРМАЦІЙНА ДОВІДКА НЕ Є ОФЕРТОЮ. КІЛЬКІСТЬ ТОВАРУ ЗІ ЗНИЖКОЮ Є ОБМЕЖЕНОЮ. БУДЬ-ЛАСКА, ЗАВЖДИ ПОПЕРЕДНЬО ПЕРЕВІРЯЙТЕ НАЯВНІСТЬ ТОВАРУ ЗІ ЗНИЖКОЮ У ДИСТРИБ’ЮТОРА. 
+        </div>
+
+        <div style="color:#404040; position:relative; font-weight: bold; margin-top:40px; padding-bottom:10px; width:100%">
+            Генеральний директор ТОВ "Монсанто Україна" 
+            <span style="color:#000000">______________
+             </span>
+            Лідія Озерова
+        </div>
+
+        <div style="position:relative; margin-top:5px; padding-bottom:10px; padding-left:120px; width:100%">
+            MONSANTO
+            <span style="display:inline-block; padding-left:240px">МОНСАНТО</span>                                              
+        </div>
+
+        <div style="position:relative; font-weight: bold; margin-top:10px; padding-bottom:2px; width:100%" align="center">
+        ___________________________
+        </div>
+
+        <div style="color:#404040; position:relative; font-weight: bold; margin-top:0px; padding-bottom:10px; padding-left:40px; width:100%">
+            General Director 
+            <span style="color:#000000">__________
+            </span> 
+            Lidiia Ozerova / Генеральний директор 
+            <span style="color:#000000">_________
+            </span> 
+            Лідія Озерова 
+        </div>
+
+        <div style="position:relative; font-weight: bold; margin-top:5px; padding-bottom:10px; padding-left:120px; width:100%">
+        THE BUYER
+            <span style="display:inline-block; padding-left:239px">ПОКУПЕЦЬ</span>                                              
+        </div>
+
+        <div style="position:relative; font-weight: bold; margin-top:15px; padding-bottom:3px; width:100%" align="center">
+        ___________________________
+        </div>
+
+        <div style="position:relative; font-weight: bold; margin-top:-5px; padding-bottom:10px; width:100%" align="center">
+            <table align="center">
+                <tr>
+                    <td style="padding-left:80px" valign="middle">
+                        {!shortDate}
+                    </td>
+                    <td style="padding-left:20px" valign="middle">
+                        /
+                    </td>
+                    <td style="padding-top:10px" valign="middle">
+                        <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}">
+                        <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="60px"/>
+                        </apex:outputPanel>  
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="position:relative; font-weight: bold; margin-top:-25px; width:100%" align="center">
+        ___________________________
+        </div>
+    </body>
+
+    <footer style="position:fixed; bottom:30px; height:40px; margin:0 40px; padding-bottom:0; font-size:100%; font-size:11px; line-height:1em; font-family:Arial Unicode MS;">
+        <div style="margin-top:15px; padding-bottom:3px; width:100%">
+        ___________________________
+        </div>
+        <div style="color:#404040; margin-top:0px; width:100%">
+        <sup>1</sup> Для більш детальної інформації звертайтеся до www.dekalb.ua
+        </div>
+        <div style="color:#404040; margin-top:0px; width:100%">
+        <sup>2</sup> Мішок містить 80 000 насіння кукурудзи та має вагу брутто 35 кг максимум.
+        </div>
+
+    </footer>
+    </html>   
+</apex:page>

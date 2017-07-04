@@ -1,0 +1,237 @@
+<apex:component controller="AccountAcreageController" allowDML="true">
+    
+    <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.proto.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jQuery_chosen,'chosen.min.css')}" />
+    <apex:variable var="lt" value="{!'>'}" />
+    <script type="text/javascript">
+        var commonLoggerTab = '';
+        function commonLoggerStart(parameters){
+            //console.log(commonLoggerTab + arguments.callee.caller.name + '(' + parameters + '){');
+            commonLoggerTab += '  ';
+        }
+        function commonLoggerStop(){
+            commonLoggerTab = commonLoggerTab.slice(0,-2);
+            //console.log(commonLoggerTab + '}');
+        }
+
+        var acreageBackUp;
+        var acreageLastMode;
+        var acreageQueueNewRecord;
+        var acreageNumberOfNewRecords = 0;
+        function acreageAfterReRender(){
+            commonLoggerStart();
+            $('.chosen-select').chosen({search_contains:true,width: "100%",placeholder_text_single:"{!$Label.Default_pick_list_option}",allow_single_deselect:true}); // Converts Combos
+            $('td > div.acreageEdit > span > .required').parent().parent().contents().wrap('{!'<'}div class="requiredInput">'); // Lookups
+            $('td > div > .required').parent().contents().wrap('{!'<'}div class="requiredInput">'); // Texts
+            //$('td > .required').parent().contents().wrap('{!'<'}div class="requiredInput">');
+            $('.requiredInput').prepend('{!'<'}div class="requiredBlock">');
+            acreageHidePreloadedLines();
+            $('tr.acreageHidden').removeClass('acreageHidden');
+            acreageSwitchTo();
+            
+            commonLoggerStop();
+        }
+        function acreageSetBackUp(){
+            commonLoggerStart();
+            acreageBackUp = $('[id$=\'acreagesTable\']').clone(true,true);
+            commonLoggerStop();
+        }
+        function acreageRestoreBackUp(){
+            commonLoggerStart();
+            acreageNumberOfNewRecords = 0;
+            $('[id$=\'acreagesTable\']').replaceWith(acreageBackUp);
+            acreageSwitchTo('View');
+            acreageHidePreloadedLines();
+            commonLoggerStop();
+        }
+        function acreageHidePreloadedLines(){
+            commonLoggerStart();
+            $('.acreageNewLine').closest('tr').addClass('acreageNewLine'); // hide pre-loaded new lines
+            acreageTranslateProductGroup();
+            for(var i = 0; i < acreageNumberOfNewRecords; i++){
+                acreageDoNew(true);
+            }
+            //if(acreageQueueNewRecord)acreageDoNew();
+            commonLoggerStop();
+        }
+        function acreageCheckRequiredInfo(){
+            commonLoggerStart();
+            var returned = $("input.required:visible, select.required:visible").filter(function(){return !this.value;}).closest("td").addClass("fieldRequired").size() == 0;
+            if(!returned){
+                //$('.fieldRequired').animate({backgroundColor : ""},"slow",function(){$(this).removeClass("fieldRequired");});
+                setTimeout(function(){$(".fieldRequired").removeClass("fieldRequired");},300);
+            }
+            commonLoggerStop();
+            return returned;
+        }
+        function acreageTranslateProductGroup(){
+            commonLoggerStart();
+            var acreageProductGroupTranslations = {!translationsMap};
+            $('a[href*="/a0H"]').each(
+                function(){
+                    if(typeof acreageProductGroupTranslations[this.href.split("/").pop()] !== "undefined"){
+                        this.innerHTML = acreageProductGroupTranslations[this.href.split("/").pop()];
+                    }
+                }
+            );
+            commonLoggerStop();
+        }
+        
+        function acreageSwitchTo(mode){
+            commonLoggerStart(mode);
+            if(mode != acreageLastMode){
+                if(typeof mode !== "undefined"){
+                    //if(typeof acreageLastMode === "undefined") acreageSetBackUp();
+                    if(acreageLastMode == "Edit" && mode == "View"){
+                        acreageNumberOfNewRecords = 0;
+                    }
+                    acreageLastMode = mode;
+                    acreageAfterReRender();
+                }
+            }
+            $('.acreageEdit').css('display','none');
+            $('.acreageView').css('display','none');
+            $('.acreage' + acreageLastMode).css('display','');
+            if (mode == "Edit") {
+                $('#UndoSection').css('display','');
+            }
+            else {
+                $('#UndoSection').css('display','none');
+            }
+            //$('.acreageEdit').attr('style','display:none');
+            //$('.acreageView').attr('style','display:none');
+            //$('.acreage' + acreageLastMode).attr('style',null);
+            acreageRenderShow();
+            commonLoggerStop();
+        }
+        function acreageDoNew(skipValidation){
+            commonLoggerStart(skipValidation);
+            acreageQueueNewRecord = false;
+            if(skipValidation != true && !acreageCheckRequiredInfo()){
+                commonLoggerStop();
+                return false;
+            }else{
+                if(skipValidation != true){
+                    acreageNumberOfNewRecords++;
+                    acreageLastMode = 'Edit';
+                }
+                if($('tr.acreageNewLine').slice(0,1).size() > 0){
+                    $('tr.acreageNewLine').slice(0,1).fadeIn(500,function (){
+                        $('tr.acreageNewLine').slice(0,1).removeClass('acreageNewLine');
+                        });
+                    acreageSwitchTo();
+                    commonLoggerStop();
+                    return false;
+                }else{
+                    acreageQueueNewRecord = true;
+                    commonLoggerStop();
+                    return true;
+                }
+            }
+            
+        }
+        function acreageUndoNew(){
+            commonLoggerStart();
+            if(acreageNumberOfNewRecords > 0){
+                $('[id$="\:acreagesTable"]{!'>'}{!'>'}tr:visible').slice(-1).fadeOut(500,function(){
+                    $(this).addClass('acreageNewLine');
+                    $(this).find("select[type!=hidden],input[type!=hidden]").val('');
+                });
+                acreageNumberOfNewRecords--;
+            }
+            commonLoggerStop();
+        }
+        function acreageRenderHide(){
+            commonLoggerStart();
+            $('[id$="\:acreagesTable"]>>tr td:visible').not('.acreageNewLine').not('.headerRow').fadeTo(500,0);
+            commonLoggerStop();
+        }
+        function acreageRenderShow(){
+            commonLoggerStart();
+            $('[id$="\:acreagesTable"]>>tr td:visible').not('.acreageNewLine').not('.headerRow').fadeTo(500,1);
+            commonLoggerStop();
+        }
+    </script>
+    <style>
+        td.fieldRequired{background-color:#c00;}
+        tr.acreageNewLine{display:none}
+        .acreageCheckboxColumn{width:25px;}
+        #{!$Component.acreagesTable}>tbody{height:0px;}
+        .acreageHidden{display:none;}
+        .acreageNoCss{}
+    </style>
+    
+    <apex:form >
+        <apex:pageMessages id="acreageMessages" />
+        <apex:actionFunction name="deleteAcreages" action="{!doDelete}" status="loadingAcreages" reRender="acreagesTable,acreageMessages">
+            <apex:param name="acreagesToDelete" value="" assignTo="{!acreagesToDelete}"/>
+        </apex:actionFunction>
+        <apex:pageBlock title="{!$Label.AccountAcreageTitle}" >
+            <apex:pageBlockButtons location="both" >
+            
+                <apex:outputPanel layout="block" id="buttons">                    
+                    <apex:commandButton value="{!$Label.New}" action="{!doNew}" onClick="if(!acreageDoNew()) return false;" reRender="acreagesTable,buttons,acreageMessages" status="loadingAcreages" rendered="{!showNew}"/>                    
+                    <apex:commandButton value="{!$Label.Edit}" action="{!doEdit}" onclick="acreageSwitchTo('Edit');return false;" styleClass="acreageView" reRender="acreagesTable,buttons,acreageMessages" status="loadingAcreages" rendered="{!showEdit}"/>                    
+                    <apex:commandButton value="{!$Label.Delete}" onClick="var acreagesToDelete = ''; $('td[id*=\':acreagesTable:\'][id$=\':acreageDelete\']{!lt}input:checked').closest('td').each(function(){ acreagesToDelete+= this.id.match(/acreagesTable:(.*):acreageDelete/i)[1] + ',';}); deleteAcreages(acreagesToDelete.slice(0,-1)); return false;" styleClass="acreageView" rendered="{!showDelete}"/>
+                    <apex:commandButton value="{!$Label.Save}" action="{!doSave}" onClick="if(!acreageCheckRequiredInfo())return false;" styleClass="acreageEdit" style="display:none" reRender="acreagesTable,buttons,acreageMessages,acreageReRenderJavascript" status="loadingAcreages"/>
+                    <apex:commandButton value="{!$Label.Cancel}" action="{!doCancel}" styleClass="acreageEdit" reRender="acreagesTable,acreageMessages,acreageReRenderJavascript" status="loadingAcreages" />
+                    <apex:actionStatus id="loadingAcreages" onStart="acreageRenderHide();" onStop="acreageAfterReRender();"><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>
+                </apex:outputPanel>
+            
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockTable value="{!acreages}" var="acreage" id="acreagesTable" rowClasses="acreageHidden">
+                           
+                <apex:column id="acreageDelete" headerClass="{!IF(showDelete,'acreageView','acreageHidden')} acreageCheckboxColumn" styleClass="{!IF(ISNULL(acreage['ID']),'acreageNewLine','')} {!IF(showDelete,'acreageView','acreageHidden')}" >
+                    <apex:facet name="header">
+                        <input type="checkbox"  onClick="$('[id$=\'acreagesTable\']>>>>input:checkbox:visible').prop('checked',this.checked);" />
+                    </apex:facet>
+                    <input type="checkbox" style="{!IF(AND(acreage.AcrPrevTotalAcreages__c != null,acreage.AcrPrevTotalAcreages__c != 0),'display:none','')}" />                 
+                </apex:column>
+                                              
+                <apex:repeat value="{!fields}" var="field" id="acreageRow">
+                    <apex:column headerValue="{!field.label}" >
+                    
+                        <apex:variable var="isPYzero" value="{!IF(ISBLANK(acreage.PreviousAcreageRef__c),true,false)}"/>
+                        
+                        <div class="acreageEdit" style="display:none">
+                        
+                            
+                            <apex:inputField value="{!acreage[field.fieldPath]}" styleClass="{!IF(OR(field.required, field.dbrequired),'required','')}" rendered="{!IF(OR(AND(field != 'AcrProductGroupRef__c', field != 'AcrProductTypeRef__c',field !='AcrPrevTotalAcreages__c',isPYzero),field == 'AcrTotalAcreages__c'), true, false)}" />  
+                            <apex:outputField value="{!acreage[field.fieldPath]}" rendered="{!IF(AND(field != 'AcrTotalAcreages__c',!isPYzero), true, false)}" />                           
+                            <apex:selectList rendered="{!field = 'AcrProductGroupRef__c' && isPYzero}" value="{!acreage[field.fieldPath]}" size="1" styleClass="{!IF(OR(field.required, field.dbrequired),'required','')} chosen-select" id="ProductGroup" style="display:none">
+                                
+                            <apex:selectOptions value="{!productGroupMaping}"/>
+                            <apex:actionSupport event="onchange" reRender="acreagesTable" status="loadingAcreages">
+                               <apex:param assignTo="{!productTypeWithGroup}" value="{!null}"/>
+                               <apex:param assignTo="{!productTypeMaping}" value="{!null}"/>
+                            </apex:actionSupport>
+        
+                            </apex:selectList> 
+    
+                            <apex:selectList rendered="{!field = 'AcrProductTypeRef__c' && isPYzero}" value="{!acreage[field.fieldPath]}" size="1" styleClass="{!IF(OR(field.required, field.dbrequired),'required','')} chosen-select" style="display:none">
+                                <apex:selectOptions value="{!IF(AND(NOT(ISNULL(acreage['AcrProductGroupRef__c'])),CONTAINS(productTypeWithGroup,acreage['AcrProductGroupRef__c'])),productTypeMaping[acreage['AcrProductGroupRef__c']],null)}"/>
+                            </apex:selectList> 
+                            
+
+                        </div>
+                                        
+                        <div class="acreageView">
+                            <apex:outputField value="{!acreage[field.fieldPath]}"/>
+                        </div>
+                        
+                    </apex:column>
+                </apex:repeat>
+                
+            </apex:pageBlockTable>
+            <apex:pageBlockSection id="UndoSection" >
+                <a class="acreageEdit" style="float:left; cursor:pointer;text-decoration:none;" onClick="acreageUndoNew();">[ {!$Label.UNDO_NEW_LINE} ]</a>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:outputPanel layout="block" style="display:none" id="acreageReRenderJavascript">
+            <script type="text/javascript">acreageSwitchTo({!IF(ISNULL(mode),'',"'" + mode + "'")});</script>  
+        </apex:outputPanel>
+
+    </apex:form>
+</apex:component>

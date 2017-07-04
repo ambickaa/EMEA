@@ -1,0 +1,386 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" renderAs="pdf" applyHtmlTag="false" applyBodyTag="false" standardcontroller="Voucher__c" extensions="Voucher_BU_Corn_2017_Controller">
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <style>
+    @page {
+        size: A4 portrait;
+        border: 0;
+        margin: 0;
+        padding: 0;
+        margin-bottom: 280px;
+        background-color: rgb(37,129,181);
+      
+        @bottom-center {
+            content: element(footer);
+            width: 100%;
+        }   
+    }
+    body {
+        position: relative;
+        padding-top: 44.9mm;
+        font-size: 11px;
+        line-height: 1;
+        font-family: Arial Unicode MS, sans-serif;
+    }
+    
+    .header {
+        position: absolute;
+        top: -8px;
+        left: -8px;
+        width: 210mm;
+        z-index: 200;
+        border-spacing: 0;
+    }
+        .header > span {
+            position: absolute;
+            font-size: 2em;
+            bottom: 18px;
+            right: 47px;
+            color: rgb(212,32,18);
+        }
+    .footer {
+        position: running(footer);
+        bottom: 0;
+        width: 100%;
+        height: 100%
+        
+    }
+    .footer > tr > td {
+        color: #000;
+        padding: 1em;
+        font-size: .9em;
+        line-height:1.12em;
+        background-color: #fff;
+        vertical-align: top
+    }
+    .footer > tr > td > div {
+        background-color: rgb(198,198,198);
+        padding: .75em;
+    }
+
+    .arrow-wrapper {
+        margin-left: -8px;
+        width: 210mm;
+        overflow: hidden
+    }
+    .arrow-wrapper > div {
+        position: relative;
+        text-align: center;
+        min-height: 60px;
+        float: left;
+        width: 32%;
+        color: #fff;
+        background-color: rgb(15,69,136)
+    }
+    .arrow-wrapper > div.pulled {
+        text-indent: -25px;
+        width: 34%
+    }
+    .arrow-wrapper > div > div {
+        margin-top: 10px;
+        margin-left: 25px;
+        min-height: 12px
+    }
+    .arrow-wrapper > div.pulled > div {
+        margin-left: 45px;
+        text-indent: 0;
+    }
+    .arrow-wrapper b {
+        display: inline-block;
+        padding-top: .25em
+    }
+    .arrow {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 0;
+        z-index: 99;
+        border-top: 30px solid transparent;
+        border-bottom: 30px solid transparent;
+        border-left: 30px solid rgb(15,69,136);
+    }
+    .arrow.light {
+        z-index: 98;
+        top: -6px;
+        left: 0;
+        border-top: 36px solid transparent;
+        border-bottom: 36px solid transparent;
+        border-left: 36px solid rgb(37,129,181);
+    }
+    .square{
+        line-height: 1.12em;
+        padding: .75em 1em;
+        color: #000;
+        background-color: rgb(222,222,222);
+    }
+    .right {
+        float: right!important
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    table td {
+        vertical-align: top
+    }
+    table td.ralign {
+        text-align: right
+    }
+    .table-data .square {
+        margin-top: 7px
+    }
+
+    .square > div,
+    .square > .info td {
+        line-height: 1.5em;
+    }
+    .square.white{
+        background-color: #fff;
+        margin-bottom: 15px
+    }
+    
+    .table-data > tr > td {
+        vertical-align: top;
+        padding:0 .5em;
+    }
+    
+    .table-products{
+        width: 100%; 
+        color: #fff;
+        margin-top: 8px;
+        margin-left: 0px;
+        text-align: center;
+        background-color: transparent;
+    }
+    
+    .table-products > tr > td{
+        border: 1px solid #fff;
+        line-height: 1.5em;
+    }
+    .table-products > tr > td > span {
+        display: inline-block;
+        padding: 0 .5em
+    }
+    .table-products > tr > td.lb {
+        border-left: 1px hidden rgb(37,129,181)
+    }
+    .table-products > tr > td.white1 {
+        background-color: rgb(242,242,242);
+        border: 1px solid rgb(37,129,181) !important;
+        color: #000;
+    }
+    .table-products > tr > td.white2 {
+        background-color: rgb(242,242,242);
+        border: 1px solid rgb(37,129,181) !important;
+        color: #000;
+    }
+    .table-products > tr > td.grey {
+        background-color: rgb(191,191,191);
+        border-top: 1px solid rgb(37,129,181) !important;
+        border-left: 1px solid rgb(37,129,181) !important;
+        color: #000;
+    }
+    
+    .table-data > tr > td > .square {
+        text-align: justify;
+    }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <apex:image url="{!$Resource.Voucher_BU_Corn_2017}" width="100%"></apex:image>
+        <span style="{!if(newCust, '', 'display:none')}">&#x02713;</span>
+    </header>
+
+    <div class="arrow-wrapper">
+        <div>
+            <b>Име на ферма:</b>
+            <div class="square">{!voucher.FarmNameCopy__c}</div>
+        </div>
+        <div class="pulled">
+            <span class="arrow"></span>
+            <span class="arrow light"></span>
+            <b>Дистрибутор:</b>
+            <div class="square">{!voucher.DistributorNameCopy__c}</div>
+        </div>
+        <div class="pulled">
+            <span class="arrow"></span>
+            <span class="arrow light"></span>
+            <b>Представител на Монсанто:</b>
+            <div class="square" style="margin-right: 25px">{!voucher.Owner.Name}</div>
+        </div>
+    </div>
+
+    <table class="table-data">
+    <tr>
+        <td rowspan="2" style="width:33.33%">
+
+            <div class="square">
+                <table class="info">
+                    <tr>
+                        <td>Адрес:</td>
+                        <td class="ralign">{!voucher.AddressCopy__c}</td>
+                    </tr>
+                    <tr>
+                        <td>ПК:</td>
+                        <td class="ralign">{!PostalCode}</td>
+                    </tr>
+                    <tr>
+                        <td>контакт:</td>
+                        <td class="ralign">{!vouContactName}</td>
+                    </tr>
+                    <tr>
+                        <td>Моб:</td>
+                        <td class="ralign">{!voucher.PhoneCopy__c}</td>
+                    </tr>
+                    <tr>
+                        <td>E-мейл:</td>
+                        <td class="ralign">{!voucher.EmailCopy__c}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="square">
+                <div><b>Структура на фермата през сезон 2017</b></div>
+                <div>Царевица: <span class="right">{!Acr[0]*10} дка</span></div>
+                <div>Рапица: <span class="right">{!Acr[1]*10} дка</span></div>
+                <div>Слънчоглед: <span class="right">{!Acr[2]*10} дка</span></div>
+                <div>Зърнено-житни: <span class="right">{!Acr[3]*10} дка</span></div>
+                <div>Други: <span class="right">{!Acr[4]*10} дка</span></div>
+            </div>
+
+            <div class="square white"> Подпис:
+
+                <div style="min-height: 54px; text-align: center">
+                    <apex:outputPanel rendered="{!$CurrentPage.parameters.signature!=null}">
+                      <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="50px" style="display: inline-block; height:50px; max-height:50px"/>
+                    </apex:outputPanel>
+                </div>
+            </div>
+
+            <div style="text-align: center"><apex:image url="{!$Resource.DEKALB_OSR_Logo}" width="90%" style="display:inline-block;"></apex:image></div>
+
+        </td>
+        <td style="width:33.33%">
+            <div class="square" style="line-height: 1.16em">Фермата получава ваучера за попълване директно от екипа на Монсанто, а отстъпката - през дистрибутора, който ще достави (или е доставил) семената ДЕКАЛБ<sup>®</sup>.</div>
+
+        </td>
+        <td style="width:33.33%">
+            <div class="square">
+                <div style="position: relative; margin-bottom: 20px"><b style="font-size: 3em">Nº</b><b style="font-size: 1.5em; margin-left: 10px">{!voucher.Name}</b>
+                    <span style="color:rgb(212,32,18); font-size: 1.1em; top: 30px; left: 45px; {!if(status==1,'position: absolute;','display:none;')}">Отменен</span>
+                </div>
+                <div>ДАТА: <span class="right" style="font-size: 1.1em">{!voucherDate}</span></div>
+            </div>
+
+        </td>
+    </tr>
+    
+    <tr>
+        <td colspan="2">
+            <table class="table-products">
+                <tr>
+                    <td colspan="6" style="font-size: 1.1em">Заявено количество в торби по 80 000 семена
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 21%" colspan="2">Продуктова група</td>
+                    <td style="width: 12%">ФАО/MR</td>
+                    <td style="width: 29%">Отстъпка ЕВРО за торба</td>
+                    <td style="width: 17%">Брой торби</td>
+                    <td style="width: 21%">Обща сума ЕВРО</td>
+                </tr>
+                <tr>
+                    <td style="width: 21%; font-size: 1.1em" colspan="2" >Премиум</td>
+                    <td style="width: 12%"></td>
+                    <td style="width: 29%"></td>
+                    <td style="width: 17%"></td>
+                    <td style="width: 21%"></td>
+                </tr>
+                <apex:repeat value="{!List_PCE_Premium}" var="pce">
+                <tr>
+                    <td style="width: 21%" colspan="2">{!pce[0]}  {!pce[1]}</td>
+                    <td style="width: 12%">{!pce[2]}</td>
+                    <td style="width: 29%">{!pce[3]}</td>
+                    <td style="width: 17%">{!pce[4]}</td>
+                    <td style="width: 21%">{!pce[5]}</td>
+                </tr>
+                </apex:repeat>
+                <tr>
+                    <td style="width: 21%; font-size: 1.1em" colspan="2" >Прогрес</td>
+                    <td style="width: 12%"></td>
+                    <td style="width: 29%"></td>
+                    <td style="width: 17%"></td>
+                    <td style="width: 21%"></td>
+                </tr>
+                <apex:repeat value="{!List_PCE_Progress}" var="pce">
+                <tr>
+                    <td style="width: 21%" colspan="2">{!pce[0]}  {!pce[1]}</td>
+                    <td style="width: 12%">{!pce[2]}</td>
+                    <td style="width: 29%">{!pce[3]}</td>
+                    <td style="width: 17%">{!pce[4]}</td>
+                    <td style="width: 21%">{!pce[5]}</td>
+                </tr>
+                </apex:repeat>
+                <tr>
+                    <td style="width: 21%; font-size: 1.1em" colspan="2">Класик</td>
+                    <td style="width: 12%"></td>
+                    <td style="width: 29%"></td>
+                    <td style="width: 17%"></td>
+                    <td style="width: 21%"></td>
+                </tr>
+                <apex:repeat value="{!List_PCE_Classic}" var="pce">
+                <tr>
+                    <td style="width: 21%" colspan="2">{!pce[0]}  {!pce[1]}</td>
+                    <td style="width: 12%">{!pce[2]}</td>
+                    <td style="width: 29%">{!pce[3]}</td>
+                    <td style="width: 17%">{!pce[4]}</td>
+                    <td style="width: 21%">{!pce[5]}</td>
+                </tr>
+                </apex:repeat>
+                <tr>
+                    <td colspan="4" style="font-size: 1.1em"> ОБЩО </td>
+                    <td style="font-size: 1.1em">{!voucher.TotalBags__c}</td>
+                    <td style="font-size: 1.1em">{!totalDisc}</td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+    
+    </table>
+
+    <table class="footer">      
+        <tr>
+            <td style="width:45.5%; padding-right: .5em">
+                <div>
+                Съгласие за участие: <br/>Подписвайки този документ и предоставяйки своите лични данни, Вие позволявате на Монсанто да използва личната Ви информацията за целите, описани в този документ, и да контактува с Вас по поща, факс, имейл и други електронни средства, използвайки информация, която избирате да предоставите за маркетингови цели.<br/><br/>
+                Оттегляне на съгласието: <br/>Вие имате право да оттеглите това съгласие по всяко време. Моля, свържете се с Николай Черкезов - търговски мениджър на Монсанто за България на имейл адрес: nikolay.cherkezov@monsanto.com. Можете да се свържете с нас и на www.monsanto.com<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+                </div>
+            </td>
+            <td style="width:54.5%; padding-left: .7em">
+                <div>
+                Условия за участие:<br/>
+                Подписвайки се, упълномощеният представител на фермата се съгласява:<br/>
+                • напълно с условията на програмите и се задължава да се придържа към тях;<br/>
+                • да предостави изисканата лична и друга информация, която да бъде включена в базата данни на Монсанто и да бъде използвана за целите на директен маркетинг – информиране на фермата за продуктите и услугите, които предлага Монсанто, чрез поща, факс, е-мейл и други електронни средства;<br/>
+                • да предостави на дистрибутора копие от попълнения ваучер, включително и личните си данни не по-късно от 15.06.2017;<br/>
+                • при молба от Монсанто да предостави копия от документи по продажба (фактура, ЧМР, приемо-предавателен протокол и др.);<br/>
+                • декларира, че този ваучер е подписан от упълномощен представител на фермата и информацията предоставена на Монсанто е вярна.<br/><br/>
+
+                Подписвайки се, упълномощеният представител на фермата се съгласява че:<br/>
+                • условията за участие в програмата са окончателни и неизпълнението на някои от тях ще доведе до анулиране на ваучера за сезон 2017;<br/>
+                • Монсанто има правото, но не и задължението да прилага ваучерната програма през сезон 2017, да прекрати програмата по всякакъв начин в резултат на изчерпване на количествата от ДЕКАЛБ® хибриди, заложени за сезонa.
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>   
+</apex:page>

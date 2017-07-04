@@ -1,0 +1,193 @@
+<apex:page id="page" controller="NPSDashboardChartsController" sidebar="false" contentType="application/vnd.ms-excel#{!fileName}.xls">
+    <apex:outputText value="{!xlsHeader}"/>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">      
+         <Styles>
+             <Style ss:ID="s1">
+                 <Alignment/>
+                 <Borders/>
+                 <Font ss:Bold="1"/>
+                 <Interior/>
+                 <NumberFormat/>
+                 <Protection/>
+             </Style>
+         </Styles>
+         <!--
+         <Worksheet ss:Name="Example sheet 1(Case List)">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >NPS EXT Response ID</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Owner</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Account Name</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Contact Name</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Interview Start</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Interview End</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >NPS Result</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Case Reason</Data></Cell>                         
+                     </Row>
+                 <apex:repeat value="{!listaCasosExport}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.NPS_EXT_RESPONSEID__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.account.owner.name}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.NPS_Country__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.account.name}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.contact.name}</Data></Cell>
+                         <Cell><Data ss:Type="String"><apex:outputText value=" {!item.NPS_INTERVIEW_START__c}"/></Data></Cell>
+                         <Cell><Data ss:Type="String"><apex:outputText value=" {!item.NPS_INTERVIEW_END__c}"/></Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.NPS_RESULT_Q1__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.NPS_RESULT_Q21__c}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>  -->
+    
+         <Worksheet ss:Name="# Calls Completed">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Completed Calls</Data></Cell>                         
+                     </Row>
+                 <apex:repeat value="{!listaSurveyResults}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.numRecords}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+         <Worksheet ss:Name="Score by Country">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Score</Data></Cell>                         
+                     </Row>
+                 <apex:repeat value="{!listaScore}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.score}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+         <Worksheet ss:Name="NPS Type by Country">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Detractors</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Passives</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Promoters</Data></Cell>                         
+                     </Row>
+                 <apex:repeat value="{!listaType}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.detractors}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.passives}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.promoters}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+         <Worksheet ss:Name="Calls vs. Tasks">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Calls</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Tasks</Data></Cell>                       
+                     </Row>
+                 <apex:repeat value="{!listaCallsTasks}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.calls}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.tasks}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+         <Worksheet ss:Name="Score by Segment">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Segment</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Score</Data></Cell>                        
+                     </Row>
+                 <apex:repeat value="{!listaScoreSegment}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.Country}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.segment}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.score}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+         <Worksheet ss:Name="Score by FarmSize">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Farm Size</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Score</Data></Cell>                     
+                     </Row>
+                 <apex:repeat value="{!listaScoreFarm}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!item.segment}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.score}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+    
+         <Worksheet ss:Name="Primary Causes">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Primary Cause</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Record Count</Data></Cell>                        
+                     </Row>
+                 <apex:repeat value="{!listaCauseTable}" var="item">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!item.country}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!item.score}</Data></Cell>
+                     </Row>
+                 </apex:repeat>
+             </Table>
+         </Worksheet>
+ 
+       
+    </Workbook>    
+</apex:page>

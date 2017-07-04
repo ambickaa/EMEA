@@ -1,0 +1,231 @@
+<apex:page controller="ConsignmentRequestProcessController" sidebar="false" showheader="true" tabstyle="Consignment__c">
+<apex:includeScript value="{!$Resource.jQuery_1_9_1}"/>
+<apex:includeScript value="/soap/ajax/28.0/connection.js" />
+<apex:includeScript value="/soap/ajax/28.0/apex.js" />  
+<script src="{!URLFOR($Resource.spin_min_js)}"></script>  
+ <c:ConsignmentDetailStyle />   
+
+<style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            /* These are the 3 css properties you will need to change so the popup 
+            displays in the center of the screen. First set the width. Then set 
+            margin-left to negative half of what the width is. You can add 
+            the height property for a fixed size pop up if you want.*/
+            width: 500px;
+            margin-left: -250px;
+            top:100px;
+        }
+        .popupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .newDesc{
+        	width: 460px;
+        	
+        
+        }
+
+    </style>
+
+ <script>
+ 
+function popUp(url) {
+       fenster = window.open(url, "fenster1", "width=1200,height=500,status=yes,scrollbars=yes,resizable=yes");
+       fenster.focus();
+ }
+
+ 
+function callBackData(identifier, id, text)
+{
+     $("."+identifier+" .textField").val(text);
+     $("."+identifier+" .idField").val(id);
+} 
+
+var opts = {
+  lines: 13, // The number of lines to draw
+  length: 7, // The length of each line
+  width: 4, // The line thickness
+  radius: 10, // The radius of the inner circle
+  rotate: 0, // The rotation offset
+  color: '#000', // #rgb or #rrggbb
+  speed: 1, // Rounds per second
+  trail: 60, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: 'auto', // Top position relative to parent in px
+  left: 'auto' // Left position relative to parent in px
+};
+
+
+
+function comments()
+{
+var v = prompt("Please, enter the approval comments (if any): ", "...");
+//var v='test 123';
+alert(v);
+//var theField = document.getElementById(‘{!$Component.theField}’);
+//theField.value=v;
+doAccept();
+popupSpinner('spinerId');
+
+}
+
+
+function popupSpinner(elementId)
+{    
+    target2 = document.getElementById(elementId);
+    spinner2 = new Spinner(opts).spin(target2);     
+}
+             
+function popupSpinnerClose()
+{
+    spinner2.stop();
+}
+
+function doSave(date) {
+    paraFunction(document.getElementById(date).value);
+}
+
+</script>
+<script>
+    window.onunload = refreshParent;
+    function refreshParent() {
+        window.opener.location.reload();
+    }
+</script>
+
+    <apex:form id="theForm"> 
+       <apex:pageMessages id="messages2"  rendered="true"></apex:pageMessages>          
+       <apex:pageBlock title="Consignment" id="thePageBlock">
+       
+         <div id="selecters"  >
+           <div id="srselecter"  >
+             <apex:selectList value="{!farm.ownerId}" size="1" style="margin-left:10px" styleClass="buttonLeft" rendered="{!isRM}">
+                <apex:selectOptions value="{!optionsUser}" />
+		    </apex:selectList>
+		    <apex:commandButton id="selecter1" rendered="{!isRM}" style="margin-bottom:10px" value="Select" action="{!viewAll}" styleClass="buttonLeft"/>  
+         
+           <apex:inputField id="SalesRep" rendered="{!isAdmin}" label="Sales Rep" value="{!farm.ownerid}" required="false" styleClass="buttonLeft"/>    
+           <apex:commandButton id="selecter2" rendered="{!isAdmin}" style="margin-bottom:10px" value="Select" action="{!viewAll}" styleClass="buttonLeft"/>  
+           
+            </div>   
+            
+            <div id="viewSelecter" style="text-align:right">
+            
+            <apex:outputtext > {!$Label.ChangeViewTo}</apex:outputtext>
+            <apex:selectList value="{!optionsToChoose}" size="1" style="margin-left:10px">
+                <apex:selectOptions value="{!options}" />
+		    </apex:selectList>  
+		
+		
+       <apex:commandButton value="GO" action="{!goToView}" onclick="popupSpinner('spinerId');" rerender="{!IF(reloadPage,'messages2,detailId,theForm,thePageBlockTable','messages2,theForm,thePageBlockTable')}" oncomplete="{!IF(reloadPage,'window.location.reload(true);','popupSpinnerClose();')}" style="margin-left:10px"/> 
+            </div>  
+        </div>              
+        
+       
+       
+       <div id="spinerId"> 
+            <apex:pageBlockTable value="{!consignmentLines}" var="cons">
+                <apex:column headerValue="" styleClass="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Pending' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), 'productColumn', 'disRow productColumn')}">
+                    <apex:inputcheckbox value="{!cons.checked}" disabled="{!NOT(cons.record.Status__c=='Pending')}" rendered="{!IF(AND(OR(isAdmin,isRM),NOT(editMode)),true,false)}"/>
+                </apex:column>
+                
+                
+                <apex:variable value="{!1}" var="counterRowNum"/ >
+
+                <apex:column headerValue="Product" styleClass="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), 'productColumn', 'disRow productColumn')}"> 
+                       <apex:outputField value="{!cons.record.ProductCatalogEntryRef__r.ProductRef__r.Name}" rendered="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), false, true)}" />
+                        <c:CustomLookupField mode="Sales" accountId="001M000000UHgMi" idField="{!cons.lookupValue.id}" text="{!cons.lookupValue.text}" identifier="{!'SalesCell'&TEXT(counterRowNum)}" division="a0EM0000006T4cb" consignment="request" catalog="Regular" rendered="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), true, false)}">
+                         <apex:inputText styleClass="idField" value="{!cons.lookupValue.id}"  />  
+                        </c:CustomLookupField>
+                        <apex:variable value="{!counterRowNum + 1}" var="counterRowNum"/>                    
+                   </apex:column>
+                   <apex:column rendered="{!IF(OR(isAdmin,isRM),true, false)}"  styleClass="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), 'disField productColumn', 'disRow productColumn')}" >
+                        <a href="javascript:;" onclick="javascript:popUpStock('/{!cons.record.GlobalStockRef__c}');">{!cons.record.GlobalStockRef__r.HybridRef__r.Stockleft__c} </a> 
+                        <apex:facet name="header">Stock</apex:facet>
+                   </apex:column> 
+                   <apex:column rendered="{!IF(OR(isAdmin,isRM),false,true)}"  styleClass="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), 'disField productColumn', 'disRow productColumn')}" >
+                       <apex:outputField value="{!cons.record.GlobalStockRef__c}"/> 
+                        <apex:facet name="header">Stock</apex:facet>
+                    </apex:column> 
+                    <apex:column styleClass="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), 'cellCenter productColumn', 'disRow productColumn')}">
+                        <apex:outputField value="{!cons.record.Requested__c}" rendered="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), false, true)}" /> 
+                        <apex:inputField value="{!cons.record.Requested__c}" rendered="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), true, false)}" /> 
+                        <apex:facet name="header">Requested</apex:facet>
+                    </apex:column>  
+                    <apex:column styleClass="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), 'disField productColumn', 'disRow productColumn')}">
+                        <apex:image style="text-align:center" rendered="{!cons.record.Status__c=='Accepted'}" url="{!$Resource.tick}" width="17" />
+                         <apex:image style="text-align:center" rendered="{!cons.record.Status__c=='Rejected'}" url="{!$Resource.wrong}" width="17" />
+                          <apex:image style="text-align:center" rendered="{!cons.record.Status__c=='Pending'}" url="{!$Resource.pending}" width="17" />
+                        
+                        
+                      <!-- <apex:outputField value="{!cons.record.Status__c}"/> --> 
+                        <apex:facet name="header">Status</apex:facet>
+                    </apex:column>
+                    <apex:column styleClass="{!IF(AND(editMode,OR(AND(OR(isAdmin,isRM),OR(cons.record.Status__c=='Accepted' , cons.record.ID==null)),AND(NOT(OR(isAdmin,isRM)),cons.record.ID==null))), 'disField productColumn', 'disRow productColumn')}">
+                        <apex:outputField value="{!cons.record.LastModifiedDate}"/>
+                      
+                        <apex:facet name="header">Last Modified Date</apex:facet>
+                    </apex:column>   
+           
+                      
+            </apex:pageBlockTable>
+     </div>   
+     
+
+            <apex:pageBlockButtons > 
+                <apex:actionStatus id="loadingConsignments" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>                   
+                <apex:commandButton value="Accept Selected" action="{!showPopUpAcc}" onclick="{popupSpinner('spinerId');}" reRender="thePageBlock,messages2,tstpopup" id="addButton" rendered="{!IF( hasCampaign, true, false)}"/> 
+                <apex:commandButton value="Reject Selected" action="{!ShowPopUpRej}" id="deleteButton" onclick="{popupSpinner('spinerId');}" rerender="{!IF(reloadPage,'messages2,detailId,theForm,thePageBlockTable','messages2,theForm,thePageBlockTable,tstpopup')}" rendered="{!IF(AND(OR(isAdmin,isRM), NOT(EditMode), hasCampaign), true, false)}"/>
+                <apex:commandButton value="Accept All Pending" action="{!showPopUpAccAll}" id="acceptAllButton" onclick="{popupSpinner('spinerId');}" rerender="{!IF(reloadPage,'messages2,detailId,theForm,thePageBlockTable','messages2,theForm,thePageBlockTable,tstpopup')}" rendered="{!IF(AND(OR(isAdmin,isRM), NOT(EditMode), hasCampaign), true, false)}"/>
+                <apex:commandButton value="Reject All Pending" action="{!ShowPopUpRejAll}" id="rejectAllButton" onclick="{popupSpinner('spinerId');}" rerender="{!IF(reloadPage,'messages2,detailId,theForm,thePageBlockTable','messages2,theForm,thePageBlockTable,tstpopup')}" rendered="{!IF(AND(OR(isAdmin,isRM), NOT(EditMode), hasCampaign), true, false)}"/>
+        <!--    action="{!doAccept}"
+        		<apex:commandButton value="Save" action="{!doSave}" id="saveButton" onclick="popupSpinner('spinerId');"  rerender="{!IF(reloadPage,'messages2','messages2, theForm, thePageBlockTable')}"  oncomplete="popupSpinnerClose();"   rendered="{!IF(AND(EditMode, hasCampaign), true, false)}" />       
+                <apex:commandButton value="Cancel" action="{!doCancel}" id="cancelButton" rendered="{!IF(AND(EditMode,hasCampaign), true, false)}"/>              
+                <apex:commandButton value="Edit" action="{!doEdit}" id="editButton"  rendered="{!IF(AND(OR(isAdmin,isRM), NOT(EditMode), NOT(onlyRejected), hasCampaign), true, false)}"/>       
+                <apex:commandButton value="Show Rejected" action="{!onlyRejected}"    styleClass="buttonRight" id="rejectedButton"/> 
+                <apex:commandButton value="Show Accepted" action="{!onlyAccepted}" styleClass="buttonRight" id="acceptedButton"/>
+                <apex:commandButton value="Show Pending" action="{!onlyPending}" styleClass="buttonRight" id="pendingButton"/>      
+                <apex:commandButton value="View All" action="{!viewAll}" styleClass="buttonRight" id="viewAllButton"/>   -->  
+                
+            </apex:pageBlockButtons> 
+   
+      
+      
+        </apex:pageBlock>
+        
+          <apex:outputPanel id="tstpopup">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+                Please, insert here your approval/reject comments (if any): <br/><br/><br/>
+                <apex:inputTextarea id="newDesc" styleClass="newDesc" value="{!com}"/>
+                <br/><br/><br/>
+                <apex:commandButton value="Save" action="{!doAccept}" reRender="thePageBlock,messages2,tstpopup" rendered="{!Acc}"/>
+                <apex:commandButton value="Save" action="{!doReject}" reRender="thePageBlock,messages2,tstpopup" rendered="{!Rej}"/>
+                <apex:commandButton value="Save" action="{!doAcceptAll}" reRender="thePageBlock,messages2,tstpopup" rendered="{!AccAll}"/>
+                <apex:commandButton value="Save" action="{!doRejectAll}" reRender="thePageBlock,messages2,tstpopup" rendered="{!RejAll}"/>
+                <apex:commandButton value="Cancel" action="{!closePopUp}" reRender="thePageBlock,messages2,tstpopup" />
+                
+            </apex:outputPanel>
+            
+        </apex:outputPanel>
+        
+    </apex:form>
+    
+</apex:page>

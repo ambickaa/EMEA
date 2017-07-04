@@ -1,0 +1,307 @@
+<apex:page renderAs="pdf" language="ro" standardcontroller="Voucher__c" extensions="Voucher_RO_Corn_2017_Controller" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false">
+    <html lang="ro">
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <style>
+            @page {
+                size: A4 portrait;
+                margin: 0;
+                border: 0;
+                padding: 0in;
+            }
+            html {
+                font-size: 12.5px;
+                font-family: Arial Unicode MS, sans-serif;
+                line-height: 1.2;
+            }
+            body {
+                margin: 0;
+                border: 0;
+                padding: 0;
+            }
+            #bg, #bg2 {
+                position: fixed;
+                z-index: -1;
+                left: 0;
+                top: 0;
+            }
+            #bg2 {
+                display: none;
+            }
+            #cancelled {
+                position: absolute;
+                z-index: 9;
+                top: 342px;
+                left: 615px;
+            }
+            #wrapper {
+                height: 1122px;
+                position: fixed;
+                width: 795px;
+                z-index: 2;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                top: 0;
+            }
+            .longtext {
+                font-size: 10.25px;
+            }
+            .input {
+                position: absolute;
+                z-index: 2;
+                /*border: 1px solid red;*/
+            }
+            .input.square {
+                background: #fff;
+                padding: 2px 5px;
+                width: 135px;
+                height: 35px;
+            }
+            .input.square.right { right: 34px; }
+            .input.square.left { right: 192px; }
+            .input.number {
+                font-family: sans-serif;
+                font-weight: bold;
+            }
+            .truncate {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            .hide {
+                display: none!important;
+            }
+            .accountData {
+                width: 296px;
+                right: 40px;
+            }
+            .voucherData {
+                text-align: right;
+                width: 195px;
+                left: 195px;
+            }
+            #accountName { top: 222px; }
+            #voucherDate { top: 972px; }
+            #voucherBags { top: 747px; }
+            #selectedDist { top: 514px; }
+            #voucherOwner { top: 972px; }
+            #voucherCoupon { top: 772px; }
+            #accountAddress { top: 322px; }
+            #contactSignature { top: 514px; }
+            #accountFiscalCode { top: 272px; }
+            #accountPhone { top: 344px; width: 235px; }
+            #voucherName { top: 397px; right: 40px; width: 218px; font-size: 15px; background-color: #ffcb19; }
+            #voucherComments { top: 896px; left: 38px; width: 382px; padding: 2px 5px; line-height: 1.12; }
+            
+            .second-stage #bg { display: none; }
+            .second-stage #bg2 { display: block; }
+            
+            .second-stage #selectedDist,
+            .second-stage #contactSignature {
+                top: 769px;
+            }
+            .second-stage #voucherOwner,
+            .second-stage #voucherDate {
+                top: 1018px;
+            }
+            .second-stage #voucherCoupon { top: 1085px; }
+            .second-stage #voucherBags { top: 1060px; }
+            .second-stage #voucherComments { top: 506.5px; left: auto; width: 306px; right: 20px; }
+            .second-stage .input.square { width: 141px; }
+            .second-stage .input.square.right { right: 20px; }
+            .second-stage .input.square.left { right: 186px; }
+            
+            #contactSignature .signature {
+                height: 35px;
+                margin: 0 auto;
+                display: block;
+                width: 100%;
+            }
+            
+            #table-products {
+                position: absolute;
+                top: 375px;
+                left: 0;
+                width: 442px;
+                height: 370px;
+                background: #fff;
+                /*border: 1px solid red;*/
+            }
+            .second-stage #table-products {
+                height: 682px;
+            }
+                #table-products table {
+                    width: 100%;
+                    border-spacing: 0;
+                    border-collapse: collapse;
+                    text-align: center;
+                    font-size: .7em;
+                    line-height: 1.15em;
+                    border-bottom: 2px solid #007499;
+                }
+                #table-products table thead th {
+                    padding: 15px 4.5px 5px;
+                    width: 12.5%;
+                    font-size: .95em;
+                }
+                #table-products table thead th span {
+                    white-space: nowrap;
+                }
+                
+                #table-products table tbody td {
+                    font-family: Dialog;
+                    padding: .5em .25em;
+                    color: #444;
+                }
+                #table-products table tbody tr.startLines td {
+                    border-top: 2px solid #007499;
+                }
+                
+            .hide-on-firstStage { display: none; }
+            .second-stage .hide-on-firstStage { display: table-cell; }
+            .second-stage .hide-on-secondStage { display: none; }
+            
+            .checkmark {
+                color: #fff;
+                font-size: 1.5em;
+                position: absolute;
+                border: 1px solid #fff;
+                padding: 0 .125em;
+                bottom: 282px;
+                left: 9px;
+            }
+            
+            td.productGroup {
+                padding: .5em 2em .5em 1.15em!important;
+                font-weight: bold;
+            }
+            .hybridName {
+                position: relative;
+                display:block;
+            }
+                .hybridName i {
+                    font-style: italic;
+                }
+            .bubble-wrapper {
+                position: absolute;
+                display: block;
+                /*width: 69px;*/
+                /*margin-top: -2px;*/
+                /*left: -30px;*/
+            }
+            .fixBubbles .bubble-wrapper {
+                margin-top: -9px;
+                left: 12px;
+            }
+                .bubble-wrapper b {
+                    position: relative;
+                    float: left;
+                    display: inline-block;
+                    border-radius: 100%;
+                    border: 1px solid red;
+                    padding: 0 .25px;
+                    margin: 0 1px;
+                    line-height: 110%;
+                    font-size: 70%;
+                }
+                b.nou { color: #000; background-color: #ffe27d; border-color: #ffcb19; margin-left: -16px; }
+                b.hd { color: #FFF; background-color: #1891b8; border-color: #007499; margin-left: -11px; }
+                
+                b.nou.with_hd { margin-left: -30px; }
+                
+                .outputValue > div { border-bottom: .5px solid #777; }
+        </style>
+    </head>
+    <body class="{!IF(voucherSecondStage, 'second-stage', '')}">
+        <img src="{!$Resource.Voucher_RO_Corn_2017_1}" id="bg" height="1122px" />
+        <img src="{!$Resource.Voucher_RO_Corn_2017_2}" id="bg2" height="1122px" />
+        
+        <img src="{!$Resource.Voucher_RO_Corn_2017_3}" id="cancelled" class="{!IF(voucherStatus == 'Cancelled', '', 'hide')}" height="52px" />
+        <div id="wrapper">
+            <div class="input truncate accountData" id="accountName">{!voucher.FarmNameCopy__c}</div>
+            <div class="input truncate accountData" id="accountFiscalCode">{!voucher.FiscalCodeCopy__c}</div>
+            <div class="input truncate accountData" id="accountAddress">{!voucher.AddressCopy__c} {!voucher.AccountRef__r.County__c}</div>
+            <div class="input truncate accountData" id="accountPhone">{!voucherPhone}</div>
+            
+            <div class="input number" id="voucherName">{!voucher.Name}</div>
+            
+            <div class="input square left" id="selectedDist">{!voucher.DistributorNameCopy__c}</div>
+            <div class="input square right" id="contactSignature">
+                <apex:outputPanel rendered="{!$CurrentPage.parameters.signature!= null}">
+                    <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" class="signature" />
+                </apex:outputPanel>
+            </div>
+            
+            <div class="input square left" id="voucherOwner">{!voucher.Owner.Name}</div>
+            <div class="input square right" id="voucherDate">{!voucherDate}</div>
+            
+            <div class="input voucherData number" id="voucherBags">{!voucher.TotalBags__c}</div>
+            <div class="input voucherData number" id="voucherCoupon">
+                <apex:outputText value="{0, number, ###,##0}"><apex:param value="{!voucher.Price_Coupon__c}"/></apex:outputText> {!IF(voucher.Price_Coupon__c != NULL, 'RON', '')}
+            </div>
+            
+            <div class="input longtext" id="voucherComments"><apex:outputField value="{!voucher.TXT_NOTES__c}" /></div>
+            
+            <div id="table-products">
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th><span>Grupa de</span><br/>produse</th>
+                            <th><span>Hibrizi de</span><br/>porumb</th>
+                            <th><span>Grupa de</span><br/>maturitate</th>
+                            <th><span>Unitatea</span><br/><span>de măsura</span><br/><span>(boabe/sac)</span></th>
+                            <th class="hide-on-secondStage"><span>Pret lista valabil</span><br/><span>până la data de</span><br/><span>31 Decembrie 2016</span><br/><span>RON/sac fără TVA</span></th>
+                            <th class="hide-on-firstStage"><span>Pret lista valabil</span><br/><span>începând cu</span><br/>1.01.2017<br/><span>RON/sac fără TVA</span></th>
+                            <th>Valoare voucher fermier</th>
+                            <th class="hide-on-secondStage">Pret<br/>fermier</th>
+                            <th>Număr saci comandaţi</th>
+                        </tr>
+                    </thead>
+                    
+                    <apex:repeat value="{!ListGroups}" var="GROUP">
+                    <tbody id="{!GROUP}">
+                        <apex:variable value="{!GROUP}" var="GROUP" />
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:variable value="{!MapLines[GROUP]}" var="GROUPMAP" />
+                        <apex:variable value="{!GROUPMAP.size}" var="GROUPSIZE" />
+                        <apex:repeat value="{!MapLines[GROUP]}" var="vli">
+                        <tr class="{!IF(counter == 0, 'startLines', '')} {!IF(GROUPSIZE == 1, 'fixBubbles', '')}">
+                            <td class="{!IF(counter != 0, 'hide', '')} productGroup" rowspan="{!GROUPSIZE}">{!GROUP}</td>
+                            <apex:variable value="{!vli.LKP_ProductCatalogEntry__r.ProductRef__r.ProductHybridGroup__c}" var="GroupComplete" />
+                            <td>
+                                <b class="hybridName">
+                                <span class="bubble-wrapper">
+                                    <b class="hd {!IF(CONTAINS(GroupComplete, ' HD'), '', 'hide')}">HD</b>
+                                    <b class="nou {!IF(CONTAINS(GroupComplete, ' NOU'), '', 'hide')} {!IF(CONTAINS(GroupComplete, ' HD'), 'with_hd', '')}">NOU</b>
+                                    
+                                </span><i>{!vli.HybridName__c}</i>
+                                </b>
+                            </td>
+                            <td>{!vli.LKP_ProductCatalogEntry__r.TXT_FAO__c}</td>
+                            <td><apex:outputText value="{0, number, ###,##0}"><apex:param value="{!vli.LKP_ProductCatalogEntry__r.ProductRef__r.ProductBagSize__c * 1000}"/></apex:outputText></td>
+                            <td><apex:outputText value="{0, number, ###,##0}"><apex:param value="{!vli.Price__c}"/></apex:outputText></td>
+                            <td><apex:outputText value="{0, number, ###,##0}" rendered="{!vli.NUM_Price_Discount__c != 0}"><apex:param value="{!vli.NUM_Price_Discount__c}"/></apex:outputText>{!IF(vli.NUM_Price_Discount__c == 0, '-', '')}</td>
+                            <td class="hide-on-secondStage"><apex:outputText value="{0, number, ###,##0}"><apex:param value="{!vli.Price__c - vli.NUM_Price_Discount__c}"/></apex:outputText></td>
+                            <td class="outputValue"><div>{!vli.Bags__c}</div></td>
+                        </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                    </tbody>
+                    </apex:repeat>
+                    
+                    <tbody id="FINAL">
+                        <tr class="startLines">
+                            <td class="hide-on-secondStage"></td>
+                            <td colspan="7"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="checkmark hide-on-secondStage {!IF(voucher.Price_Coupon__c == 0, 'hide', '')}">&#10004;</div>
+        </div>
+    </body>
+    </html>
+</apex:page>

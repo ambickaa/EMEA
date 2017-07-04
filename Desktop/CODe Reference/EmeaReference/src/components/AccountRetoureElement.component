@@ -1,0 +1,141 @@
+<apex:component controller="AccountRetoureManagementListController" allowDML="true" >
+   
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    <style>
+    .notOwner{
+            background-color:#D6D6D6;
+    }
+    </style>
+
+    <div id="accID" style="color:white;font-size:0.5px">{!accountid}</div>    <!--do not delete-->
+    <apex:variable value="{!0}" var="counter"/>
+ 
+     <apex:form rendered="{!AND(isGermanView,OR(currentDivision.Name = 'Corn', currentDivision.Name = 'OSR'), isDisplay)}">
+        <apex:pageMessages id="mymsg" />
+        <apex:pageBlock >
+            <apex:pageBlockSection title="Bemerkung" rendered="{!NOT(isCpStandard)}" collapsible="false">
+                    <apex:outPutField value="{!Retoure.TXT_Bemerkung__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField value="{!Retoure.TXT_Bemerkung__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+            </apex:pageBlockSection>       
+            <apex:pageBlockSection title="Rabatt und Retoure" rendered="{!NOT(isCpStandard)}" collapsible="false">
+                    <apex:outPutField value="{!Retoure.Vorlieferant1__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField value="{!Retoure.Vorlieferant1__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+                
+                    <apex:outPutField value="{!Retoure.Retoure1__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField value="{!Retoure.Retoure1__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+                                
+                    <apex:outPutField value="{!Retoure.Vorlieferant2__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField value="{!Retoure.Vorlieferant2__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+                
+                    <apex:outPutField value="{!Retoure.Retoure2__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField value="{!Retoure.Retoure2__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+                
+                    <apex:outPutField value="{!Retoure.Vorlieferant3__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField value="{!Retoure.Vorlieferant3__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+                
+                    <apex:outPutField value="{!Retoure.Retoure3__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField value="{!Retoure.Retoure3__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+                
+            <!-- July 2016: Reorder retoure elements to remove sections. 
+                 - Comment apex pageblocksections 
+                 - Add label with field names to be displayed 
+                 - Relocate field Rücknahmegebühr 
+                 - Retoure for Corn Clemente is not included -->    
+
+            <!-- </apex:pageBlockSection> 
+            <apex:pageBlockSection title="Frühkauf " rendered="{!NOT(isCpStandard)}" collapsible="false"> -->
+                
+                    <apex:outPutField label="Frühkauf Rabatt" value="{!Retoure.FruekaufRabatt__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField label="Frühkauf Rabatt" value="{!Retoure.FruekaufRabatt__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+                
+                
+                    <apex:outPutField label="Frühkauf Rabatt Menge" value="{!Retoure.FruekaufMenge__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField label="Frühkauf Rabatt Menge" value="{!Retoure.FruekaufMenge__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+                
+            <!--</apex:pageBlockSection>            
+            <apex:pageBlockSection title="Extrarabatt" rendered="{!NOT(isCpStandard)}" collapsible="false"> -->
+
+                    <apex:outPutField label="Extrarabatt" value="{!Retoure.Extrarabatt__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                    <apex:inputField label="Extrarabatt" value="{!Retoure.Extrarabatt__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+                    
+                    <apex:outPutField label="Extrarabatt Menge" value="{!Retoure.RabattMenge__c}" rendered="{!IF(AND(mode == 'view'), true ,false)}"/>
+                    <apex:inputField label="Extrarabatt Menge" value="{!Retoure.RabattMenge__c}" rendered="{!IF(AND(mode == 'edit'), true ,false)}"/>
+
+                    <apex:outPutField label="Rücknahmegebühr Menge" value="{!Retoure.NUM_MENGE_TAX__c}" rendered="{!IF(AND(mode == 'view',NOT(isCpStandard),currentDivision.Name == 'Corn'), true ,false)}"/>
+                    <apex:inputField label="Rücknahmegebühr Menge" value="{!Retoure.NUM_MENGE_TAX__c}" rendered="{!IF(AND(mode == 'edit',NOT(isCpStandard),currentDivision.Name == 'Corn'), true ,false)}"/>
+
+                    <apex:outPutField label="DK Expansion Extrarabatt" value="{!Retoure.NUM_ExpansionRabatt__c}" rendered="{!IF(AND(mode == 'view',currentDivision.Name = 'OSR',NOT(isCpStandard)), true ,false)}"/>
+                    <apex:inputField label="DK Expansion Extrarabatt" value="{!Retoure.NUM_ExpansionRabatt__c}" rendered="{!IF(AND(mode == 'edit',currentDivision.Name = 'OSR',NOT(isCpStandard)), true ,false)}"/>       
+
+                    <apex:outPutText value="" rendered="{!IF(AND(currentDivision.Name = 'OSR',NOT(isCpStandard)), true ,false)}"/>
+
+                    <apex:outPutField label="DK Eximus Extrarabatt"  value="{!Retoure.EximusRabat__c}" rendered="{!IF(AND(mode == 'view',currentDivision.Name = 'OSR',NOT(isCpStandard)), true ,false)}"/>
+                    <apex:inputField label="DK Eximus Extrarabatt" value="{!Retoure.EximusRabat__c}" rendered="{!IF(AND(mode == 'edit',currentDivision.Name = 'OSR',NOT(isCpStandard)), true ,false)}"/>  
+
+                    <apex:outPutText value="" rendered="{!IF(AND(currentDivision.Name = 'OSR',NOT(isCpStandard)), true ,false)}"/>
+
+                    <apex:outPutField label="DK Exception Extrarabatt" value="{!Retoure.NUM_ExceptionRabatt__c}" rendered="{!IF(AND(mode == 'view',currentDivision.Name = 'OSR',NOT(isCpStandard)), true ,false)}"/>
+                    <apex:inputField label="DK Exception Extrarabatt" value="{!Retoure.NUM_ExceptionRabatt__c}" rendered="{!IF(AND(mode == 'edit',currentDivision.Name = 'OSR',NOT(isCpStandard)), true ,false)}"/>
+            </apex:pageBlockSection>
+
+            <!-- *** CR-00000416. May16 -->
+            <!-- Clemente - Extrarabatt disabled for 2015 Campaign. Just delete "%%" from the end of the next line -->
+            <!-- <apex:pageBlockSection title="{!IF((currentDivision.Name == 'Corn'), 'Clemente-Extrarabatt', (IF((currentDivision.Name == 'OSR'),'DK Expansion-Extrarabatt','')))}"  rendered="{!AND(NOT(isCpStandard),OR(currentDivision.Name == 'OSR',currentDivision.Name == 'Corn%%'))}" collapsible="false">
+                
+                    <apex:outPutField label="DK Expansion-Extrarabatt" value="{!Retoure.NUM_ExpansionRabatt__c}" rendered="{!IF(AND(mode == 'view',currentDivision.Name = 'OSR'), true ,false)}"/>
+                    <apex:inputField label="DK Expansion-Extrarabatt" value="{!Retoure.NUM_ExpansionRabatt__c}" rendered="{!IF(AND(mode == 'edit',currentDivision.Name = 'OSR'), true ,false)}"/>
+                    
+                    <apex:outPutField label="DK Clemente-Extrarabatt" value="{!Retoure.Clemente_Rabatt__c}" rendered="{!IF(AND(mode == 'view',currentDivision.Name = 'Corn'), true ,false)}"/>
+                    <apex:inputField label="DK Clemente-Extrarabatt" value="{!Retoure.Clemente_Rabatt__c}" rendered="{!IF(AND(mode == 'edit',currentDivision.Name = 'Corn'), true ,false)}"/>
+            <!-- *** End: CR-00000416 -->
+
+            <!-- </apex:pageBlockSection>
+            <apex:pageBlockSection title="Rücknahmegebühr" rendered="{!IF(AND(NOT(isCpStandard), currentDivision.Name == 'Corn'), true, false)}" collapsible="false"> 
+                
+                    <apex:outPutField label="Rücknahmegebühr Menge" value="{!Retoure.NUM_MENGE_TAX__c}" rendered="{!IF(AND(mode == 'view',NOT(isCpStandard),currentDivision.Name == 'Corn'), true ,false)}"/>
+                    <apex:inputField label="Rücknahmegebühr Menge" value="{!Retoure.NUM_MENGE_TAX__c}" rendered="{!IF(AND(mode == 'edit',NOT(isCpStandard),currentDivision.Name == 'Corn'), true ,false)}"/> 
+                
+            </apex:pageBlockSection> -->
+            
+            <!-- *** CR-00000416. May16 -->
+            <!-- <apex:pageBlockSection title="DK Eximus-Extrarabatt" rendered="{!IF(AND(NOT(isCpStandard), currentDivision.Name == 'OSR'), true, false)}" collapsible="false">
+                <apex:outPutField label="DK Eximus-Extrarabatt"  value="{!Retoure.EximusRabat__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                <apex:inputField label="DK Eximus-Extrarabatt" value="{!Retoure.EximusRabat__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+            </apex:pageBlockSection> -->
+            <!-- *** End: CR-00000416 -->
+            
+            <!-- *** CR-00000212. Marzo 15 -->
+            <!-- <apex:pageBlockSection title="DK Exception-Extrarabatt" rendered="{!IF(AND(NOT(isCpStandard), currentDivision.Name == 'OSR'), true, false)}" collapsible="false">
+                <apex:outPutField label="DK Exception-Extrarabatt" value="{!Retoure.NUM_ExceptionRabatt__c}" rendered="{!IF(mode == 'view', true ,false)}"/>
+                <apex:inputField label="DK Exception-Extrarabatt" value="{!Retoure.NUM_ExceptionRabatt__c}" rendered="{!IF(mode == 'edit', true ,false)}"/>
+            </apex:pageBlockSection> -->
+            <!-- *** End: CR-00000212 -->
+                        
+           <!--Buttons Retoure-->
+            <apex:pageBlockButtons location="bottom"> <!-- germanySTController.IsAPRegionalManager All conditions from this method are already included -->
+                <apex:commandButton action="{!saveRetoure}" id="saveButton" value="Save" rendered="{!IF(mode == 'edit', true, false)}" />
+                <!--<apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!newRecord}"/>-->
+                <apex:commandButton action="{!germanySTController.cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true ,false)}" immediate="true"/>
+                <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!germanySTController.Edit}" rendered="{!IF(mode == 'view', true ,false)}"  />
+            </apex:pageBlockButtons>
+            
+        </apex:pageBlock>
+        <script type="text/javascript">
+            $('.checkClass').each(function(i, obj) {
+                if(obj.innerHTML == '') {
+                    obj.parentNode.parentNode.setAttribute('onmouseover',''); 
+                    obj.parentNode.parentNode.style.backgroundColor = '#eee';
+                }
+            });
+        </script>
+    </apex:form>
+
+    <apex:outputPanel rendered="{!isGermanView}" >
+        <form id="downloaderForm" target="_blank" method="GET" >
+            <input type="hidden" id="downloaderForm_id" name="id" value="{!account.id}" />
+            <input type="hidden" id="downloaderForm_divisionId" name="division" value="{!currentDivision.Id}" />
+            <input type="hidden" id="downloaderForm_retoureId" name="retoureId" value="{!retoure.id}" />
+        </form>    
+    </apex:outputPanel>
+</apex:component>

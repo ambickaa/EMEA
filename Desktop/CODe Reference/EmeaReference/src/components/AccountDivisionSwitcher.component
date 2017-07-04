@@ -1,0 +1,23 @@
+<apex:component controller="AccountDivisionSwitcherController" >
+<apex:form >
+	<apex:pageBlock >
+		<div class="pageBlockSection switcher-header" id="DivisionSwitcher">
+			<apex:pageBlockSection title="{!$ObjectType.Division__c.label}" columns="1" collapsible="false"></apex:pageBlockSection>
+		</div>
+		<div class="switcher-body">
+			<apex:selectList value="{!DivisionSelected}" size="1" disabled="{!ListDivisions.size == 0}">
+				<apex:selectOption itemValue="" itemLabel="{!$Label.Not_available}" itemDisabled="true" rendered="{!ListDivisions.size == 0}" />
+				<apex:selectOptions value="{!ListDivisions}" />
+				<apex:actionSupport event="onchange" action="{!goToDivision}" reRender="out" status="loadingDivision"/>
+			</apex:selectList>
+			<apex:actionStatus id="loadingDivision">
+               	<apex:facet name="start"><apex:image value="/img/loading.gif" styleClass="loadingImg"/></apex:facet>
+           	</apex:actionStatus>
+		</div>
+	</apex:pageBlock>
+	<style type="text/css">
+		.switcher-header table {margin-bottom: 0}
+		.switcher-body select {margin: 6px 0 8px}
+	</style>
+</apex:form>
+</apex:component>

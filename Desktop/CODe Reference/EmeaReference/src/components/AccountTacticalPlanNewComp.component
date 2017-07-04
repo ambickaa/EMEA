@@ -1,0 +1,378 @@
+<apex:component controller="AccountTacticalPlanNewController" allowDML="true" >
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.proto.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jQuery_chosen,'chosen.min.css')}" />
+    <apex:variable var="lt" value="{!'<'}" />
+    <apex:variable var="gt" value="{!'>'}" />
+    <apex:variable var="amp" value="{!'&'}" />
+    <apex:variable value="{!0}" var="counter"/>
+        <script type="text/javascript">
+        $.urlParam = function(name){
+            var results = new RegExp('[\\?{!amp}]' + name + '=([^{!amp}#]*)').exec(window.location.href);
+            if (results == null){
+                return null;
+            }else {
+                return results[1];
+            }
+        }
+        function remove(arr, item) { //IE Fix
+            for(var i = arr.length; i--;) {
+                if(arr[i] === item) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+
+        sforce.connection.sessionId = '{!$Api.Session_ID}';
+        productArray = {};
+        
+        function afterRefreshActionPlan(){
+            $('.chosen-select').chosen({search_contains:true,width: "100%"});
+            $('td > span > .required').parent().parent().contents().wrap('{!'<'}div class="requiredInput">');
+            $('td > .required').parent().contents().wrap('{!'<'}div class="requiredInput">');
+            $('.requiredInput').prepend('{!'<'}div class="requiredBlock">');
+        }
+        function setCurrentFieldsDisabled(){
+            $('input.CurrentFieldDisabled').attr('disabled','disabled');
+            
+        }
+       function setFieldSetting(elementId, isCompetitor){
+            var fieldConfig = jQuery.parseJSON('{!jsonProviderField}');
+            var inputFields = $(document.getElementById(elementId)).closest("tr").find('input');
+            inputFields.each(function() {
+                var clsName = $( this ).parent().attr('class');
+                if (fieldConfig.hasOwnProperty(clsName)){
+                    var competitor = fieldConfig[clsName].DisplayTypeCompetitor;
+                    var monsanto = fieldConfig[clsName].DisplayTypeMonsanto;
+                } else {
+                    var competitor = '';
+                    var monsanto = '';
+                }
+                $(this).removeAttr('disabled');
+                $(this).removeClass('CurrentFieldDisabled');
+                if (isCompetitor == "True"){
+                    if (competitor == "D"){ //TODO
+                        $(this).val('');
+                        $(this).attr('disabled', 'disabled');
+                        $(this).addClass('CurrentFieldDisabled');
+                    }else if (competitor == "R"){
+                        $(this).attr('disabled', 'disabled');
+                        $(this).addClass('CurrentFieldDisabled');
+                    }
+                } else {
+                    if (monsanto == "D"){
+                        $(this).val('');
+                        $(this).attr('disabled', 'disabled');
+                        $(this).addClass('CurrentFieldDisabled');
+                    }else if (monsanto == "R"){
+                        $(this).attr('disabled', 'disabled');
+                        $(this).addClass('CurrentFieldDisabled');
+                    }
+                }
+    
+            });            
+        }
+        function setProductFields(elementId, val){
+            var elById = document.getElementById(elementId);
+
+            var treatment = $(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('Treatment__c')[0].children[0];
+            if ($(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('Provider__c').length != 0){
+                var provider = $(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('Provider__c')[0].children[0];
+            }
+            if ($(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('Humidity__c').length != 0){
+                var humidity = $(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('Humidity__c')[0].children[0];
+            }
+            if ($(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('POGPY__c').length !=0){
+                var pogpy = $(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('POGPY__c')[0];
+            }
+            var error = null;
+            try {
+                var listProductsJSONjsArray = null;
+                if (productArray.hasOwnProperty(val)){
+                    listProductsJSONjsArray = productArray[val];
+                } else {
+                    var accId = $.urlParam('id');
+                    var division = $.urlParam('division');
+                    listProductsJSONjsArray = sforce.apex.execute("WS_Product","getProductInjectFields",{idProd:val, accountId: accId, div:division});
+                }
+             } catch(e) {
+                error = e;
+                var errorMessage = "Fault Code: \'" + error.faultcode + "\'<br/>Message: \'" + error.faultstring + "\'";
+                //console.log('Error retrieving selected product info : '+errorMessage);
+                var fieldErrorMsg = 'Error retrieving data';
+                treatment.textContent = fieldErrorMsg;
+                provider.textContent = fieldErrorMsg;
+                humidity.textContent = fieldErrorMsg;
+            }
+                if (listProductsJSONjsArray.length > 0) {
+                    productArray[val] = listProductsJSONjsArray;
+                    var listProductsJSONjs = jQuery.parseJSON(listProductsJSONjsArray[0]);
+                    treatment.textContent = listProductsJSONjs[val]['Treatment__c'];
+                    if ($(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('Provider__c').length != 0){
+                        provider.textContent = listProductsJSONjs[val]['Provider__c'];
+                    }
+                    if ($(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('Humidity__c').length != 0){
+                        humidity.textContent = listProductsJSONjs[val]['Humidity__c'];
+                    }
+                    if ($(document.getElementById(elementId)).closest("tr")[0].getElementsByClassName('POGPY__c').length !=0){
+                        pogpy.textContent = listProductsJSONjs[val]['POGPY__c'];
+                    }
+                    setFieldSetting(elementId, listProductsJSONjs[val]["isCompetitor"]);
+                }
+
+        }
+        var commonLoggerTab = '';
+        function commonLoggerStart(parameters){
+            commonLoggerTab += '  ';
+        }
+        function commonLoggerStop(){
+            commonLoggerTab = commonLoggerTab.slice(0,-2);
+        }
+        
+        var tacticalPlanBackUp;
+        var tacticalPlanLastMode;
+        var tacticalPlanQueueNewRecord;
+        var tacticalPlanNumberOfNewRecords = 0;
+        function tacticalPlanAfterReRender(){
+            commonLoggerStart();
+            $('.chosen-select').chosen({search_contains:true,width: "100%"}); // Converts Combos
+            $('td > div.tacticalPlanEdit > span > .required').parent().parent().contents().wrap('{!'<'}div class="requiredInput">'); // Lookups
+            $('td > div > .required').parent().contents().wrap('{!'<'}div class="requiredInput">'); // Texts
+            //$('td > .required').parent().contents().wrap('{!'<'}div class="requiredInput">');
+            $('.requiredInput').prepend('{!'<'}div class="requiredBlock">');
+            tacticalPlanHidePreloadedLines();
+            tacticalPlanSwitchTo();
+            commonLoggerStop();
+        }
+        function tacticalPlanSetBackUp(){
+            commonLoggerStart();
+            tacticalPlanBackUp = $('[id$=\'tacticalPlansTable\']').clone(true,true);
+            commonLoggerStop();
+        }
+        function tacticalPlanRestoreBackUp(){
+            commonLoggerStart();
+            tacticalPlanNumberOfNewRecords = 0;
+            $('[id$=\'tacticalPlansTable\']').replaceWith(tacticalPlanBackUp);
+            tacticalPlanSwitchTo('View');
+            tacticalPlanHidePreloadedLines();
+            commonLoggerStop();
+        }
+        function tacticalPlanHidePreloadedLines(){
+            commonLoggerStart();
+            $('.tacticalPlanNewLine').closest('tr').addClass('tacticalPlanNewLine'); // hide pre-loaded new lines
+            for(var i = 0; i < tacticalPlanNumberOfNewRecords; i++){
+                tacticalPlanDoNew(true);
+            }
+            commonLoggerStop();
+        }
+        function tacticalPlanCheckRequiredInfo(){
+            commonLoggerStart();
+            var returned = $("div.requiredInput:visible").find("input.required:visible, select.required").filter(function(){return !this.value;}).closest("td").addClass("fieldRequired").size() == 0;
+            if(!returned) setTimeout(function(){$(".fieldRequired").removeClass("fieldRequired");},300);
+            commonLoggerStop();
+            return returned;
+        }
+        
+        function tacticalPlanSwitchTo(mode){
+            commonLoggerStart(mode);
+            setCurrentFieldsDisabled();
+            if(mode != tacticalPlanLastMode){
+                if(typeof mode !== "undefined"){
+                    if(tacticalPlanLastMode == "Edit" && mode == "View"){
+                        tacticalPlanNumberOfNewRecords = 0;
+                    }
+                    tacticalPlanLastMode = mode;
+                    tacticalPlanAfterReRender();
+                }
+            }
+            $('.tacticalPlanEdit').attr('style','display:none');
+            $('.tacticalPlanView').attr('style','display:none');
+            $('.tacticalPlan' + tacticalPlanLastMode).attr('style',null);
+            commonLoggerStop();
+        }
+        function tacticalPlanDoNew(skipValidation){
+            commonLoggerStart(skipValidation);
+            tacticalPlanQueueNewRecord = false;
+            if(skipValidation != true && !tacticalPlanCheckRequiredInfo()){
+                commonLoggerStop();
+                return false;
+            }else{
+                if(skipValidation != true){
+                    tacticalPlanNumberOfNewRecords++;
+                    tacticalPlanLastMode = 'Edit';
+                }
+                if($('tr.tacticalPlanNewLine').slice(0,1).size() > 0){
+                    $('tr.tacticalPlanNewLine').slice(0,1).removeClass('tacticalPlanNewLine');
+                    tacticalPlanSwitchTo();
+                    commonLoggerStop();
+                    return false;
+                }else{
+                    tacticalPlanQueueNewRecord = true;
+                    commonLoggerStop();
+                    return true;
+                }
+            }
+            
+        }
+             
+        </script>
+    <style>
+        td.fieldRequired{background-color:#c00;}
+        tr.tacticalPlanNewLine{display:none}
+        .tacticalPlanCheckboxColumn{width:25px;}
+        input.disableByProvider{disabled:true}
+    </style> 
+    <apex:form > 
+        <apex:pageMessages id="tacticalPlanmessages" />
+        <apex:actionFunction name="deleteTacticalPlans" action="{!doDelete}" status="loadingActionPlan" reRender="tacticalPlansTable, tacticalPlanmessages">
+            <apex:param name="tacticalPlansToDelete" value="" assignTo="{!tacticalPlansToDelete}"/>
+        </apex:actionFunction>
+        <apex:pageBlock >
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >{!$Label.SelectedCampaignDivision}</apex:outputLabel>
+                    <apex:outputText value="{!currentDivision.name}"/> 
+                </apex:pageBlockSectionItem>
+                <apex:outputText ></apex:outputText>
+                <apex:outputField value="{!currentCampain.TotalCampaignBudget__c}"/>
+                <apex:outputField value="{!currentCampain.TotalCampaignBudgetFOC__c}"/>
+                <apex:outputField value="{!currentCampain.TotalPendingForecastBudget__c}"/>
+                <apex:outputField value="{!currentCampain.FRML_Total_Forecasted__c}"/>
+                <apex:outputField value="{!currentCampain.TotalPendingAgreedBudget__c}"/>
+                <apex:outputField value="{!currentCampain.FRML_Total_Agreed__c}"/>
+                <apex:outputField value="{!currentCampain.TotalPendingPoGBudget__c}"/>
+                <apex:outputField value="{!currentCampain.FRML_Total_POG__c}"/>
+            </apex:pageBlockSection>
+            
+            
+            <apex:pageBlockSection columns="1" title="{!$Label.TacticalPlan}">
+                <apex:pageBlockTable value="{!tacticalPlans}" var="tacticalPlan" id="tacticalPlansTable" >
+                    
+                    <apex:column id="tacticalPlanDelete" headerClass="tacticalPlanCheckboxColumn" styleClass="{!IF(ISNULL(tacticalPlan['ID']),'tacticalPlanNewLine','')} smallTable" >
+                        <apex:facet name="header">
+                            <apex:variable var="isOwner" value="{!IF(OR($User.Id = tacticalPlan.ownerID,ISNULL(tacticalPlan.ownerID),editPermission[tacticalPlan.Id]==true),true,false)}" />
+                            <input type="checkbox"  onClick="$('[id$=\'tacticalPlansTable\']>>>>>input:checkbox:visible').prop('checked',this.checked);" style="{!IF($User.Id = tacticalPlan.ownerID,'','display:none')}"/>
+                        </apex:facet>
+                        <div class="tacticalPlanView">
+                            <apex:variable var="isOwner" value="{!IF(OR($User.Id = tacticalPlan.ownerID,ISNULL(tacticalPlan.ownerID),editPermission[tacticalPlan.Id]==true),true,false)}" />
+                            <input type="checkbox" style="{!IF(OR($User.Id = tacticalPlan.ownerID,editPermission[tacticalPlan.id]==true),'','display:none')}"/>
+                        </div>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label}">
+                    <apex:variable var="isCurrentProduct" value="{!AND(OR(tacticalPlan.ProductCatalogEntryRef__c!=null, ISNULL(tacticalPlan.ownerID)), tacticalPlan.POGPY__c==null)  }"/>
+                        <div class="tacticalPlanEdit smallTable"  style="display:none"> 
+                            <apex:selectList value="{!tacticalPlan.ProductRef__c}" size="1" rendered="{!IF(AND(OR($User.Id = tacticalPlan.ownerID,ISNULL(tacticalPlan.ownerID),editPermission[tacticalPlan.Id]==true), isCurrentProduct), true, false)}" styleClass="required chosen-select" id="Product" onChange="setProductFields('{!$Component.Product}', this.value);return false;"> 
+                                <apex:selectOptions value="{!optProducts[0]}"/>
+                                <apex:selectOptions value="{!optProducts[1]}" />
+                                <apex:selectOptions value="{!optProducts[2]}" />
+                                <apex:selectOptions value="{!optProducts[3]}" />
+                                <apex:selectOptions value="{!optProducts[4]}" />
+                                <apex:selectOptions value="{!optProducts[5]}" />
+                            </apex:selectList>   
+                        </div>
+                        
+                        <div class="tacticalPlanView smallTable">
+                            <apex:outputField value="{!tacticalPlan.ProductRef__r.ProductDisplayName__c}" />
+                        </div>
+                        <div class="tacticalPlanEdit smallTable">
+                            <apex:variable var="isCurrentProduct" value="{!AND(OR(tacticalPlan.ProductCatalogEntryRef__c!=null, ISNULL(tacticalPlan.ownerID)), tacticalPlan.POGPY__c==null)  }"/>
+                            <apex:outputField value="{!tacticalPlan.ProductRef__r.ProductDisplayName__c}" rendered="{!IF(AND(OR($User.Id = tacticalPlan.ownerID,ISNULL(tacticalPlan.ownerID),editPermission[tacticalPlan.Id]==true), isCurrentProduct ), false, true)}"/>
+                        </div>
+                        <span class="record.Id" style="display:none;"><apex:outputField value="{!tacticalPlan.Id}" /></span>
+                    </apex:column>
+                    
+                    <!--  Change Generic -->
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.Treatment__c.label}" rendered="{!isFarmAccount && isCountriesEast}">
+                        <div class="smallTable"  >
+                                <apex:outputText value="{!tacticalPlan.Treatment__c}"/>   
+                        </div>
+                    </apex:column>
+                    <!--  Change Generic --> 
+                    
+                    <apex:column headerValue="{!$ObjectType.Product2.fields.ProductTypeRef__c.label}" rendered="{!IsFrenchTacticalPlan}">
+                        <div class="smallTable"  >
+                                <apex:outputText value="{!tacticalPlan.ProductRef__r.ProductTypeRef__r.name}"/>   
+                        </div>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$Label.POGPY}" rendered="{!isFarmAccount && NOT(isCountriesEast)}">
+                        <div class="smallTable"  >
+                            <span class="POGPY__c ">
+                                <apex:outputText value="{!IF(tacticalPlan.ProductRef__c != null,IF(ISNULL(mapProdPOGPY[tacticalPlan.ProductRef__c]),0,mapProdPOGPY[tacticalPlan.ProductRef__c]), 0)}"/>   
+                            </span>
+                        </div>
+                    </apex:column>
+                    <apex:repeat var="f" value="{!TacticalPlanFields}" id="tacticalPlanRow">
+                        <apex:column headerValue="{!f.label}">
+
+                            <div class="tacticalPlanEdit smallTable" style="display:none" > 
+                           
+                           <apex:variable var="isRequired" value="{!f.fieldPath=='Type__c'}"/>
+                           <apex:variable var="isCurrentProduct" value="{!AND(OR(tacticalPlan.ProductCatalogEntryRef__c!=null, ISNULL(tacticalPlan.ownerID)), OR(AND(tacticalPlan.POGPY__c!=null,f.fieldPath!='Type__c' ), AND(tacticalPlan.POGPY__c==null )  ))}"/>
+                           <span class="{!f.fieldPath}">
+                                <apex:inputField value="{!tacticalPlan[f.fieldPath]}" rendered="{!IF(AND(f.fieldPath != 'Inventory__c', OR($User.Id = tacticalPlan.ownerID,ISNULL(tacticalPlan.ownerID),editPermission[tacticalPlan.Id]==true), isCurrentProduct), true, false)}"    StyleClass="{!IF(ISNULL(tacticalPlan.Id),IF(isRequired,'required',''), IF(ISNULL(mapFieldConfig[tacticalPlan.ProductRef__c]), IF(isRequired,'required',''), IF( mapFieldConfig[tacticalPlan.ProductRef__c][f.fieldPath]== 'True', 'CurrentFieldDisabled',IF(isRequired,'required',''))))}"  /></span>
+                                <!--<span class="{!f.fieldPath}"><apex:outputField value="{!tacticalPlan[f.fieldPath]}" rendered="{!IF(OR($User.Id = tacticalPlan.ownerID,ISNULL(tacticalPlan.ownerID)), false, true)}"/></span>-->
+                                
+                                <!--<span class="{!f.fieldPath}"><apex:inputField value="{!tacticalPlan[f.fieldPath]}" rendered="{!f.fieldPath != 'ProductRef__c' && f.fieldPath != 'Inventory__c'}" required="{!OR(f.required, f.dbrequired)}" StyleClass="{!IF(ISNULL(tacticalPlan.Id),'',IF(ISNULL(mapFieldConfig[tacticalPlan.ProductRef__c]), '',IF( mapFieldConfig[tacticalPlan.ProductRef__c][f.fieldPath]== 'True', 'CurrentFieldDisabled','')))}" /></span>-->
+                                <!-- {0,number,#,##0} -->
+                               <apex:outputField value="{!tacticalPlan[f.fieldPath]}" rendered="{!OR(AND(f.fieldPath != 'ProductRef__c', f.fieldPath != 'Inventory__c', $User.Id != tacticalPlan.ownerID, tacticalPlan.ownerID!=null ,editPermission[tacticalPlan.Id]!=true), AND(f.fieldPath != 'ProductRef__c', f.fieldPath != 'Inventory__c',NOT(isCurrentProduct)))}" /> 
+                              <apex:outputText value="{0,number,#,##0}" rendered="{!AND(f.fieldPath == 'Inventory__c', OR($User.Id != tacticalPlan.ownerID, NOT(isCurrentProduct)))}">
+                                     <apex:param value="{!tacticalPlan[f.fieldPath]}"/> 
+                                </apex:outputText>
+                               
+                            </div>
+                            
+                           <div class="tacticalPlanView smallTable">
+                                <apex:outputField value="{!tacticalPlan[f.fieldPath]}" rendered="{!f.fieldPath != 'ProductRef__c' && f.fieldPath != 'Inventory__c'}"/>
+                                <apex:outputText value="{0,number,#,##0}" rendered="{!f.fieldPath == 'Inventory__c'}">
+                                     <apex:param value="{!tacticalPlan[f.fieldPath]}"/>
+                                </apex:outputText>
+                            </div>
+                            
+      
+                            <apex:facet name="footer" >{!IF(mapTPSumFields[f.fieldPath] == 0 , '', mapTPSumFields[f.fieldPath])}</apex:facet>   
+                        </apex:column>
+                    </apex:repeat>
+
+                </apex:pageBlockTable>
+
+                <style>
+                    .distributor
+                    {
+                        display:none;
+                    }
+                </style>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockButtons location="bottom"  Rendered="{!showNew}">
+                <apex:outputPanel layout="block" id="tacticalPlanButtons" >
+                    <apex:commandButton value="{!$Label.New}" action="{!doNew}" onClick="if(!tacticalPlanDoNew()) return false;" reRender="tacticalPlansTable, tacticalPlanButtons, tacticalPlanmessages" status="loadingActionPlan"/>
+                    <apex:commandButton value="{!$Label.Edit}" action="{!doEdit}" onClick="tacticalPlanSwitchTo('Edit');return false;" styleClass="tacticalPlanView" reRender="tacticalPlansTable, tacticalPlanButtons, tacticalPlanmessages" status="loadingActionPlan" />
+                    <apex:commandButton value="{!$Label.Cancel}" action="{!doCancel}" styleClass="tacticalPlanEdit" reRender="tacticalPlansTable, tacticalPlanButtons, tacticalPlanmessages, tacticalPlanReRenderJavascript" status="loadingActionPlan" />
+                    <apex:commandButton value="{!$Label.Save}" action="{!doSave}" onClick="if(!tacticalPlanCheckRequiredInfo())return false;" styleClass="tacticalPlanEdit" style="display:none" reRender="tacticalPlansTable, tacticalPlanButtons, tacticalPlanmessages, tacticalPlanReRenderJavascript" status="loadingActionPlan"/>
+                    <apex:commandButton value="{!$Label.Delete}" onClick="var tacticalPlansToDelete = ''; $('td[id*=\':tacticalPlansTable:\'][id$=\':tacticalPlanDelete\']{!gt}{!gt}input:checked').closest('td').each(function(){ tacticalPlansToDelete+= this.id.match(/tacticalPlansTable:(.*):tacticalPlanDelete/i)[1] + ',';}); deleteTacticalPlans(tacticalPlansToDelete.slice(0,-1)); return false;" styleClass="tacticalPlanView" />
+                    <apex:commandButton value="{!$Label.ButtonAddMultipleLines}" action="{!doAddMultipleLines}" styleClass="tacticalPlanView" />
+
+                    <apex:actionStatus id="loadingActionPlan" onStop="tacticalPlanAfterReRender();"><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>
+
+                </apex:outputPanel>
+            </apex:pageBlockButtons>
+
+        </apex:pageBlock>
+        <apex:outputPanel layout="block" style="display:none" id="tacticalPlanReRenderJavascript">
+            <script type="text/javascript">
+                tacticalPlanSwitchTo({!IF(ISNULL(mode),'',"'" + mode + "'")});
+                setCurrentFieldsDisabled();
+            </script>  
+        </apex:outputPanel>
+    <script type="text/javascript">
+            $('.checkClass').each(function(i, obj) {
+                if(obj.innerHTML == '') {
+                    obj.parentNode.parentNode.setAttribute('onmouseover',''); 
+                    obj.parentNode.parentNode.style.backgroundColor = '#eee';
+                }
+            });
+        </script>
+    </apex:form>
+</apex:component>

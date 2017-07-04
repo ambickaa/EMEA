@@ -1,0 +1,25 @@
+<apex:page controller="CampaignCorrectorController" tabStyle="Campaign">
+    <apex:sectionHeader title="{!$ObjectType.Campaign.label}"/>
+    <apex:form >
+    <apex:repeat value="{!duplicateCampaigns}" var="d">
+        <apex:pageBlock >
+            <apex:pageBlockSection >
+                <apex:outputField value="{!d.FirstCampaign.OwnerId}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockTable value="{!d.campaigns}" var="c">
+                <apex:column >
+                    <apex:facet name="header">Action</apex:facet>
+                    <a href="/{!c.record.id}">edit</a>
+                </apex:column>
+                <apex:repeat var="f" value="{!fieldSetManager.managedFieldSetMembers}">
+                   <apex:column >
+                        <apex:facet name="header" >{!f.label}</apex:facet>
+                        <apex:outputfield value="{!c.record[f.fieldPath]}"/>
+                        
+                    </apex:column> 
+                </apex:repeat>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:repeat>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,200 @@
+<apex:page controller="AllocationManagerController" >
+    <apex:includeScript value="{!$Resource.jQuery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.jquery.min.js')}" />
+    <apex:includeScript value="{!$Resource.jquery_ui_js}"/>
+     <apex:stylesheet value="{!$Resource.jquery_ui_baseTheme_css}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jQuery_chosen, 'chosen.css')}"/>
+   
+ 
+    <style>
+        .quarterwith{
+        width:25%;
+        display: flex;
+        }
+        
+    </style> 
+    <!-- Se ha añadido el tema de  CSS de juquery ui necesario para el popup -->
+    <!-- Se ha añadido la version 1.12.1 jquery UI para el popup-->
+    <!-- se ha añadido en un label el mensaje del popup -->
+    <!-- Se ha añadido el label del boton seleccionar -->
+    <!-- se ha añadido labels para las columnas de final -->
+    
+    <apex:form id="form">
+        
+        
+        <apex:pageBlock >   
+            <div id="dialog" title="{!$Label.OE2_0_AllocationPopupTitle}" class="message warningM3">
+                <div ><apex:outputLabel value="{!$Label.OE2_0_AllocationPopup}" ></apex:outputLabel></div>
+            </div>
+            <div class="quarterwith">
+                <apex:selectList multiselect="false" styleClass="applyStyle" style="width:100px;" size="1" value="{!productIdentifier}">
+                    <apex:selectOptions value="{!items}"/>
+                </apex:selectList>
+                <apex:commandButton action="{!loadList}" rerender="mainBlock" oncomplete="totalizer();" style="margin-left:5px; padding: 0px 5px 0px 5px;"  value="{!$Label.Select}"/>  
+            </div>                    
+            <br/>
+            <apex:pageMessages id="messages" escape="false"/>
+            <apex:outputPanel id="mainBlock">
+                <apex:pageBlockTable rendered="{!renderedBool}" id="mainTable" value="{!allocationWrapperList}" var="allocationWrapper">
+                    <apex:column value="{!allocationWrapper.allocation.LKP_User_Name__c}" />
+                    <apex:column styleClass="allocationUnits" footerValue="{!allocationTotal}"  value="{!allocationWrapper.allocation.NUM_Allocation_Units__c}" ></apex:column>
+                    <apex:column styleClass="consumedUnits" footerValue="{!consumedTotal}" value="{!allocationWrapper.allocation.NUM_Consumed_ROLL__c}" />
+                    <apex:column styleClass="avalaibleUnits" footerClass="previousAvailable" footerValue="{!avalaibleTotal}"  value="{!allocationWrapper.allocation.FRML_Avalaible_Units__c}" ></apex:column>
+                    <apex:column headerValue="{!$Label.OE2_0_changesAllocation}" footerClass="calcValue" footerValue="0">
+                       
+                        <apex:inputText styleClass="changeContent validate" rendered="{!regionalManagerBool}" onkeyup="totalizer();validationPopUp();"  value="{!allocationWrapper.allocationUnitsChange}"/>
+                        <apex:inputText styleClass="changeContent" rendered="{!NOT(regionalManagerBool)}" onkeyup="totalizer()"   value="{!allocationWrapper.allocationUnitsChange}"/>
+                    </apex:column>
+                    <apex:column styleClass="finalAllocation" footerClass="finalAllocationSuma" headerValue="{!$Label.OE2_O_FinalAllocation}" />
+                    <apex:column styleClass="finalConsumed" footerClass="finalAvalaibleSuma" headerValue="{!$Label.OE2_O_FinalAvailable}" />
+                    <!--<apex:column value="{!allocationWrapper.allocation.LKP_Fiscal_Year__c}" />
+<apex:column value="{!allocationWrapper.allocation.TXT_External_ID__c}" />--> 
+                </apex:pageBlockTable>
+                <!-- EXTERNAL ID : user.id + productCode + fiscal year  -->
+                <apex:commandButton id="btnGuardar" styleClass="btonSave"   rendered="{!renderedBool}" action="{!saveAllocationChanges}" oncomplete="totalizer()" rerender="mainTable , messages" style="margin-top:5px; padding: 5px 10px 5px 10px;"  value="{!$Label.Save}"/>      
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+        
+    <script>
+  
+    $(document).ready(function() 
+                      {
+                          chargePickStyle();
+                          //changeHeader();
+                          //configuracion para la visualizacion
+                          $( "#dialog" ).dialog({
+                              autoOpen: false,
+                              show: {
+                                  effect: "blind",
+                                  duration: 300
+                              },
+                              hide: {
+                                  effect: "blind",
+                                  duration: 300
+                              }
+                          });
+                          
+                          
+                      });
+    
+    //en caso de querer sumar el input y una columna
+    function cellInputAdder($jqueryRowSelected,firstCellClass,$cellInput){ 
+        //el replace solo se usa para limpiar puntos y comas al recoger los valores  , se asume que las alocation son numeros enteros
+        val1=$jqueryRowSelected.children(firstCellClass).text()?+$jqueryRowSelected.children(firstCellClass).text().replace(/([\.\,])/, ""):0;
+        val2=$cellInput.val()?+$cellInput.val().replace(/([\.\,])/,""):0;
+        
+        return val1+val2;
+        
+    } 
+    
+    //en caso de querer restar el input y una columna
+    function cellInputSubstractor($jqueryRowSelected,firstCellClass,$cellInput){ 
+        
+        val1=$jqueryRowSelected.children(firstCellClass).text()?+$jqueryRowSelected.children(firstCellClass).text().replace(/([\.\,])/,""):0;
+        val2=$cellInput.val()?+$cellInput.val().replace(/([\.\,])/,""):0;
+        
+        return val1-val2;
+        
+    } 
+    
+    function totalizer(){
+        var changeSumatory=0;
+        var finalAllocSumatory=0;
+        var finalAvalaibleSumatory=0;
+        
+        $('.changeContent').each(function(index){
+            
+            //console.log( index + ": " + $( this ).val() );
+            
+            if($( this ).val()){
+                //console.log($( this ).parents().parents('.dataRow'));
+                $dataRow=$( this ).parents().parents('.dataRow');
+                $finalAllocationCell=$dataRow.children('.finalAllocation'); 
+                $finalConsumed=$dataRow.children('.finalConsumed');   	
+                //$finalAllocationCell.css("background-color","red");
+                //$finalConsumed.css("background-color","blue");
+                finalAllocCellValue=cellInputAdder($dataRow,".allocationUnits",$( this ));
+                finalAvalaibleCellValue=cellInputAdder($dataRow,".avalaibleUnits",$( this ));   
+                $finalAllocationCell.text(finalAllocCellValue);
+                $finalConsumed.text(finalAvalaibleCellValue);
+                finalAllocSumatory=finalAllocSumatory+finalAllocCellValue;   
+                finalAvalaibleSumatory=finalAvalaibleSumatory+finalAvalaibleCellValue;   
+                changeSumatory=changeSumatory+parseInt($( this ).val()); 
+                
+            } 
+        });
+        
+        $('.calcValue').text(changeSumatory);
+        $('.finalAllocationSuma').text(finalAllocSumatory);
+        $('.finalAvalaibleSuma').text(finalAvalaibleSumatory);
+        //availablePreviousTotal= +$('.previousAvailable').text().replace(/([\.\,])/, "");
+        //console.log('prev Total: '+availablePreviousTotal);
+        
+        //changeTotal=+$('.calcValue').text().replace(/([\.\,])/, "");
+        if(changeSumatory!=0 && $('.changeContent').hasClass('validate')){
+            //console.log('desactivando ');
+            //console.log('boolean total : ' + ($('.changeContent').hasClass('validate')));
+            $('.btonSave').prop('disabled','true');
+            $('.btonSave').addClass('btnDisabled');
+        }else{
+            //console.log('activando boton');
+            //console.log('boolean total : ' + ($('.changeContent').hasClass('validate')));
+            $('.btonSave').removeClass('btnDisabled');
+            $('.btonSave').prop('disabled',false);
+        }
+        
+        
+        
+        
+    }
+    
+    //comprobacion de que se cumplen los requisitos
+    function validationPopUp(){
+        if(parseInt($('.calcValue').text()) ==0){
+            $('.finalAllocation').each(function(index){
+                //falta comprobar que no se pasen del avalaible
+                if(parseInt($( this ).text())<0 ){
+                    $( "#dialog" ).dialog( "open" );
+                    $('.btonSave').prop('disabled','true');
+            		$('.btonSave').addClass('btnDisabled');
+                    return false;
+                    //esta puesto el return porque queria usarlo en el onsubmit del form de apex pero no funciona
+                }
+            });
+            
+            $('.finalConsumed').each(function(index){
+                
+                if(parseInt($( this ).text())<0){
+                    $( "#dialog" ).dialog( "open" );
+                    $('.btonSave').prop('disabled','true');
+            		$('.btonSave').addClass('btnDisabled');
+                    return false;
+                }
+            });
+            
+        }
+        return true;
+    }
+    /** function resetChangeInput(){
+        //devolvemos a  0 el valor de los cambios
+     $('.changeContent').each(function (){ 
+         $(this).val(0);
+     }
+     );
+    
+        
+    }**/
+    
+    
+    
+    function chargePickStyle()
+    {         
+        setTimeout(function (){
+            $('.applyStyle').chosen({search_contains:true,width: "100%",placeholder_text_single:"{!$Label.Default_pick_list_option}",allow_single_deselect:true}); 
+        }, 150); //Evitar bloqueo del desplegable 
+    }
+    
+    
+    </script>    
+</apex:page>

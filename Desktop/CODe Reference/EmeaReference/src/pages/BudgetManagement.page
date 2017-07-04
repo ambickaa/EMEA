@@ -1,0 +1,121 @@
+<apex:page controller="BudgetManagementController">
+
+    <apex:sectionHeader title="Budget Allocation "/>
+
+	<style>
+		
+       .bPageBlock th.vfLabelColTextWrap 
+       {
+		white-space: nowrap;
+		}
+        
+     
+	</style>
+
+
+    <apex:form >
+ 
+        <apex:pageMessages id="messages"/>
+        <!-- Filters to search budgets -->
+        <apex:pageBlock title="Filters" id="filters" tabStyle="Product2">
+            <apex:pageBlockSection >
+                <apex:inputField value="{!budgetFilter.ProductRef__c}" />
+                <apex:inputField value="{!budgetFilter.SalesRep__c}"/> 
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Search" action="{!searchBudget}" reRender="filters, budgetTable,otpNav2,  messages" status="loadingSearchBudget"/>
+                <apex:actionStatus id="loadingSearchBudget" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        <!-- Block to add new budgets -->
+        <apex:pageBlock title="New Budget" id="budgetTableNew">
+            <apex:pageBlockButtons id="budgetNewButtons" >
+                <apex:commandButton action="{!doNew}" value="New" reRender="newProdSearch, budgetTableNew, messages" rendered="{!NOT(isBudgetNew)}" status="loadingNewBudget"/>
+                <apex:commandButton action="{!doSaveNew}" value="Save New Record" reRender="newProdSearch, budgetTable, budgetTableNew, otpNav2, messages" rendered="{!showDelLast}" status="loadingNewBudget"/>
+                <apex:commandButton action="{!doCancelNew}" value="Cancel" reRender="newProdSearch, budgetTableNew, messages" rendered="{!isBudgetNew}" status="loadingNewBudget"/>
+                <apex:actionStatus id="loadingNewBudget" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            </apex:pageBlockButtons>
+            
+            <!-- Search by Product -->
+            <apex:pageBlockSection Id="newProdSearch" rendered="{!isBudgetNew}" columns="2">
+            	<apex:pageBlockSectionItem >
+	            	<apex:pageBlockSectionItem >
+	            		<apex:outputLabel value="{!$ObjectType.ProductCatalogEntry__c.fields.ProductRef__c.label} "/>
+	            		<apex:inputField style="width:200px" value="{!budgetNewFilter.ProductRef__c}"/>
+	            	</apex:pageBlockSectionItem>
+	            	
+	            	<apex:commandButton value="Add" action="{!searchPCE}" reRender="newBudgetEntry, newProdSearch, budgetTable, budgetTableNew, filters, messages" status="loadingNewBudget"/>
+            	</apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <!-- Tables for Product Catalog Entry Search and New budget -->
+	        <apex:pageBlockSection id="newBudgetEntry" columns="1">
+	        
+            	<!-- New budget Table -->
+					<apex:pageBlockTable value="{!budgetListNew}" var="budgetNew" rendered="{!isBudgetNew}">
+		                <apex:repeat value="{!budgetFields}" var="fieldNew">
+		                    <apex:column headerValue="{!fieldNew.label}" style="width:75%">
+		                        <apex:inputField value="{!budgetNew[fieldNew.fieldPath]}"  rendered="{!AND(fieldNew.fieldPath != 'ProductRef__c', fieldNew.fieldPath != 'SalesRep__c')}" style="width:5em"/>
+		                        <apex:inputField value="{!budgetNew[fieldNew.fieldPath]}"  rendered="{!fieldNew.fieldPath == 'SalesRep__c'}" />
+
+		                        <apex:outputField value="{!budgetNew[fieldNew.fieldPath]}" rendered="{!fieldNew.fieldPath == 'ProductRef__c'}" />
+		                        
+		                    </apex:column>
+		                </apex:repeat>
+		            </apex:pageBlockTable>
+
+		            <!-- Buttons for Adding and Deleting lines -->
+		            
+                        <apex:commandButton action="{!delLastNew}" value=" - " rendered="{!showDelLast}" reRender="newBudgetEntry, budgetNewButtons, newProdSearch, budgetTableNew" style="background-image:none;;float:left;"/>
+
+    			
+            </apex:pageBlockSection>
+
+        </apex:pageBlock>
+        <apex:pageBlock title="Budgets" mode="inlineEdit" >
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!doSave}" id="saveButton" value="Save" reRender="budgetTable, otpNav2, messages" status="loadingButtonBudget"/>
+                <apex:actionStatus id="loadingButtonBudget" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockTable value="{!budgetList}" var="budget" id="budgetTable" >
+                <apex:column headerValue="Action" styleClass="smallTable">
+                    <apex:commandLink action="javascript:if (window.confirm('Are you sure?')) DeleteBudget('{!budget.Id}');" value="Del" reRender="otpNav2, budgetTable, messages"/>
+                </apex:column>
+                <apex:repeat value="{!budgetFields}" var="field">
+                    <apex:column headerValue="{!field.label}">
+                        <apex:outputField value="{!budget[field.fieldPath]}" rendered="{!AND(field.fieldPath != 'ProductRef__c', field.fieldPath != 'SalesRep__c')}"> 
+                        	<apex:inlineEditSupport showOnEdit="saveButton, cancelButton" event="ondblclick" 
+                                changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        </apex:outputField>
+
+                        <apex:outputField value="{!budget[field.fieldPath]}" rendered="{!OR(field.fieldPath == 'ProductRef__c', field.fieldPath == 'SalesRep__c')}">
+							<apex:inlineEditSupport disabled="True"/>
+                        </apex:outputField>
+
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+<!-- BEGIN -->
+                <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="otpNav2">  
+              Total Records Found: <apex:outputText rendered="{!IF(ssc.resultSize==10000,true,false)}">10000 +</apex:outputText><apex:outputText rendered="{!IF(ssc.resultSize < 10000,true,false)}">{!ssc.resultSize}</apex:outputText>  
+                  <apex:image url="/img/search_prevarrow_disabled.gif" styleClass="prevArrow" rendered="{!NOT(ssc.HasPrevious)}"/>  
+                  <apex:image url="/img/search_prevarrow.gif" title="Previous Page" styleClass="prevArrow" rendered="{!ssc.HasPrevious}"/>  
+                  <apex:commandLink action="{!Previous}" title="Previous Page" value="Previous Page" reRender="otpNav2, budgetTable" rendered="{!ssc.HasPrevious}" status="loadingBudgets"/>  
+                  <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(ssc.HasPrevious)}">Previous Page</apex:outputPanel>           
+                  &nbsp;({!IF(ssc.PageNumber == 1,1,((ssc.PageNumber -1) * ssc.PageSize)+1)}-{!IF(ssc.resultSize < ssc.PageSize,ssc.resultSize,ssc.PageNumber * ssc.pageSize)})&nbsp;  
+                  <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(ssc.HasNext)}">Next Page</apex:outputPanel>           
+                  <apex:commandLink title="Next Page" value="Next Page" rendered="{!ssc.HasNext}" action="{!Next}" reRender="otpNav2, budgetTable" status="loadingBudgets"/>&nbsp;  
+                  <apex:image url="/img/search_nextarrow.gif" title="Next Page" styleClass="nextArrow" rendered="{!ssc.HasNext}"/>  
+                  <apex:image url="/img/search_nextarrow_disabled.gif" rendered="{!NOT(ssc.HasNext)}"/>   
+                  <apex:actionStatus id="loadingBudgets" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+              </apex:outputPanel>
+<!-- END -->
+        </apex:pageBlock>
+        <apex:actionFunction action="{!doDelete}" name="DeleteBudget" reRender="otpNav2, budgetTable, messages" >
+            <apex:param name="budgetid" value="" assignTo="{!SelectedBudgetId}"/>
+        </apex:actionFunction>
+
+    </apex:form>
+</apex:page>

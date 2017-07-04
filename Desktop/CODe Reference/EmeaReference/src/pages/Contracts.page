@@ -1,0 +1,139 @@
+<apex:page standardController="Account" extensions="ContractsController">
+        <style>
+            li{
+                display: inline;
+                margin: 5px 10px;
+                padding: 5px;
+            }
+            span.txt{
+                margin-right: 5px;
+                font-weight: bold;
+            }
+        </style>
+        <style>
+    #spinner{
+        display: none;
+        width:200px;
+        height: 70px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        text-align:center;
+        padding:10px;
+        font:normal 16px Tahoma, Geneva, sans-serif;
+        margin-left: -100px;
+        margin-top: -65px;
+        z-index:2;
+        overflow: auto;
+        border:1px solid #CCC;
+        background-color:white;
+        z-index:100;
+        padding:5px;
+        line-height:20px;
+     }
+     #opaque {
+         position: fixed;
+         top: 0px;
+         left: 0px;
+         width: 100%;
+         height: 100%;
+         z-index: 1;
+         display: none;
+         background-color: gray;
+         filter: alpha(opacity=30);
+         opacity: 0.3;
+         -moz-opacity:0.3;
+         -khtml-opacity:0.3
+     }
+     * html #opaque {
+         position: absolute;
+     }
+  </style>
+        <apex:pageBlock >
+            <apex:form >
+                <ul style="list-style-type: none">
+                    <li>
+                        <span class="txt">Division Code</span>
+                        <apex:selectList size="1" value="{!division}">
+                            <apex:selectOptions value="{!lstDivisionCode}"/>
+                        </apex:selectList>
+                    </li>
+                    <li>
+                        <span class="txt">Sales Org</span>
+                        <apex:selectList size="1" value="{!salesOrg}">
+                            <apex:selectOptions value="{!lstSalesOrg}"/>
+                        </apex:selectList>
+                    </li>
+                    <li>
+                        <span class="txt">Fiscal Year</span>
+                        <apex:selectList size="1" value="{!fiscalYear}">
+                            <apex:selectOptions value="{!lstFiscalYears}"/>
+                        </apex:selectList>
+                    </li>
+                    <li>
+                        <apex:actionStatus id="actStatusId" >
+                          <apex:facet name="start" >
+                              <img src="/img/loading.gif" />                    
+                          </apex:facet>
+                        </apex:actionStatus>
+                        &nbsp;
+                        <apex:commandButton action="{!search}" value="Search" rerender="recordSectionContract" onclick="showSpinner()" oncomplete="stopspinner()" />                
+                    </li>
+                    <li style="float: right">
+                        <apex:commandLink value="View Report" onclick="fnOpenSubtab('{!oReport.Id}?pv0={!LEFT(accountId,15)}&pv1=','{!oReport.Name}'); return false;"/>
+                    </li>
+                </ul>
+                
+                <apex:pageBlockSection collapsible="false" columns="1" id="recordSectionContract">
+                    <apex:pageBlockSectionItem rendered="{!IF(lstContracts.size==0,true,false)}">No records to display</apex:pageBlockSectionItem>
+                    <apex:outputPanel rendered="{!IF(lstContracts.size==0,false,true)}">
+                        <apex:pageBlockTable value="{!lstContracts}" var="contract" id="tblResultsContracts">
+                            <apex:column headerValue="SAP Contract Number">
+                                <apex:commandLink value="{!contract.GC_Integration_Key__c}" onclick="fnOpenSubtab('{!contract.Id}','{!contract.ContractNumber}'); return false;"/>
+                            </apex:column>
+                            <apex:column value="{!contract.ShipToParty_Name_Text__c}" />
+                            <apex:column value="{!contract.PO_Number_Text__c}" />                
+                            <apex:column value="{!contract.Document_Date__c}" />
+                            <apex:column value="{!contract.Total_Contract_Qty__c}" />
+                            <apex:column value="{!contract.CalledOff_Contract_Qty__c}" />
+                            <apex:column value="{!contract.OutStanding_Contract_Qty__c}" />
+                            <apex:column value="{!contract.LastModifiedDate}" />
+                        </apex:pageBlockTable>
+                        
+                        <apex:panelGrid columns="4" id="navLinksContracts" style="float:left;margin-top:8px">                                     
+                            <apex:commandLink value="«Previous" action="{!previous}" rendered="{!hasPrevious}" reRender="tblResultsContracts,navLinksContracts"/>
+                            <apex:outputText value="«Previous" rendered="{!NOT(hasPrevious)}"/>
+                            <span>|</span>
+                            <apex:commandLink value="Next»" action="{!next}" rendered="{!hasNext}" reRender="tblResultsContracts,navLinksContracts"/>
+                            <apex:outputText value="Next»" rendered="{!NOT(hasNext)}"/>
+                        </apex:panelGrid>
+                        <apex:outputText value="Total records ({!totalRecords})" style="float: right;margin-top: 8px"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+            </apex:form>
+        </apex:pageBlock>
+        
+        <c:ODICommonJSComp />
+           <div id="opaque"/>
+   <div id="spinner">
+        <p align="center" style='{font-family:"Arial", Helvetica, sans-serif; font-size:20px;}'><apex:image value="/img/loading.gif"/>&nbsp;&nbsp;&nbsp;Searching...</p>
+   </div>
+   
+     <script>
+    function showSpinner()
+    {
+       document.getElementById('opaque').style.display='block';
+       var popUp = document.getElementById('spinner');
+      
+       popUp.style.display = 'block';
+    } 
+    
+    function stopspinner()
+    {
+       document.getElementById('opaque').style.display='none';
+       var popUp = document.getElementById('spinner');
+      
+       popUp.style.display = 'none';
+    }
+   </script>
+    </apex:page>

@@ -1,0 +1,5 @@
+<apex:component >
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="account" type="Account" description="TODO: Describe me"/>
+    
+</apex:component>

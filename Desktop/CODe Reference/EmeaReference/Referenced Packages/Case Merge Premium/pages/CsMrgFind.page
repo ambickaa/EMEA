@@ -1,0 +1,652 @@
+<apex:page title="{!IF(SET_DUPE_CRIT, 'Duplicate Criteria', 'Find Duplicates')}" controller="csmrgp.CsMrgFindCtrl" tabStyle="Case_Merge_Premium__tab">
+    <apex:includeScript value="/support/console/28.0/integration.js"/>
+    <script type="text/javascript">       
+        function toggleElementDisplay(divID) {
+           var div = document.getElementById(divID);
+           if (div.style.display == 'block')
+               div.style.display = 'none';
+           else
+               div.style.display = 'block';
+        }       
+
+        function toggleInputType(boxID, inputID){
+            var inputField = document.getElementById(inputID);
+            var checkBox = document.getElementById(boxID);
+            if (inputField && checkBox){
+                if (checkBox.checked) {
+                    inputField.style.backgroundColor = "rgb(196, 196, 196)";
+                    inputField.style.color = "rgb(89, 89, 89)";
+                    inputField.disabled = true; //Disable the field when the box is checked
+                } else {
+                    inputField.style.backgroundColor = null;
+                    inputField.style.color = null;
+                    inputField.disabled = false;    //Enable the field when the box is unchecked
+                }
+            }
+        }
+        
+        function selectText(elemID){
+            if (document.selection){
+                var range = document.body.createTextRange();
+                range.moveToElementText(document.getElementById(elemID));
+                range.select();
+            } else if (window.getSelection) {
+                var range = document.createRange();
+                range.selectNode(document.getElementById(elemID));
+                window.getSelection().addRange(range);
+            }
+        }
+        
+        function setTextValue(inputID, data){
+            var elem = document.getElementById(inputID);
+            if (elem)
+                elem.value = data;
+            return false;    
+        }
+
+        function validateFormula(critFormulaID, type){    //Validate the criteria formula. Return a helpful error message if its invalid. Return "true" if it passes.
+            var elem = document.getElementById(critFormulaID);
+            if (!elem){
+                type == "dupe" ? sendCritResult("true") : sendAutoResult("true");
+                return false;
+            }
+            var formula = elem.value;
+            //var result;   //The apex:param value to send to the actionFunction
+            
+            if (formula != null)
+                formula = formula.trim();
+            if (!formula || formula.length === 0){  //Empty is okay
+                type == "dupe" ? sendCritResult("true") : sendAutoResult("true");
+                return false;
+            }
+            
+            formula = formula.toLowerCase();    //To make it easier to search for substrings
+            if (formula.indexOf("and") === -1 && formula.indexOf("or") === -1 && formula.match(/\d/g).length > 1){
+                type == "dupe" ? sendCritResult("No logical operators (AND or OR) were found") : sendAutoResult("No logical operators (AND or OR) were found");
+                return false;
+            }
+            if (formula.indexOf("or") != -1 && formula.indexOf("and") != -1 && formula.indexOf("(") === -1 && formula.indexOf(")") === -1){
+                type == "dupe" ? sendCritResult("Parentheses are required for grouping OR clauses.") : sendAutoResult("Parentheses are required for grouping OR clauses.");
+                return false;
+            }
+            if (formula.indexOf("&&") != -1 || formula.indexOf("||") != -1 || formula.indexOf("&") != -1 || formula.indexOf("|") != -1){
+                type == "dupe" ? sendCritResult("Please use AND and OR as operators instead of other symbols like && and ||.") : sendAutoResult("Please use AND and OR as operators instead of other symbols like && and ||.");
+                return false;
+            }
+            
+            //Replace the AND and OR operators with && and ||
+            var re = new RegExp("and", "g");
+            formula = formula.replace(re, "&&");
+            re = new RegExp("or", "g");
+            formula = formula.replace(re, "||");
+            var charArr = formula.split("");
+            var ch;         
+            for (var i = 0; i < charArr.length; i++){
+                ch = charArr[i];
+                re = new RegExp("\\s"); //whitespace
+                if ((isNaN(parseFloat(ch)) || !isFinite(ch)) && ch != "(" && ch != ")" && ch != "|" && ch != "&" && ch.search(re) == -1){
+                    type == "dupe" ? sendCritResult("Found unexpected non-numerical character: " + ch) : sendAutoResult("Found unexpected non-numerical character: " + ch);
+                    return false;
+                }
+            }
+            
+            //Now replace all the criteria numbers with "true" so that Javascript can evaluate the boolean statement
+            re = new RegExp("\\d+", "g");
+            formula = formula.replace(re, "true")
+            
+            try {
+                eval("var bool = (" + formula + ");"); 
+            } catch (e) {
+                type == "dupe" ? sendCritResult("Found a syntax error in logical expression. (Check that each parenthese is closed).") : sendAutoResult("Found a syntax error in logical expression. (Check that each parenthese is closed).");
+                return false;
+            }
+            
+            //At this point, we know the formula is logically sound. The criteria-centric validation will be done in Apex
+            type == "dupe" ? sendCritResult("true") : sendAutoResult("true");
+            return false;
+        }
+    </script>
+    
+    <style>
+        div[id="j_id0:j_id2:searchFilter:refSection"] > div[class="pbSubsection"] { 
+            background-color:#EDEDFC;
+            border:1px solid #8C9FBF;
+            box-shadow: 0px -5px 6px -2px #8C9FBF;
+            -webkit-box-shadow: 0px -5px 6px -2px #8C9FBF;
+        }  
+        .activeTab { background-color:#8C9FBF; font-weight:bold; background-image:none }
+        .inactiveTab { background-color:#AFC2E3; font-weight:normal; background-image:none }
+    </style>
+    
+    <apex:form >        
+        <apex:pageBlock title="{!IF(SET_DUPE_CRIT, 'Configure Duplicate Case Criteria', 'Find Cases')}" id="searchFilter">  <!--rendered="{!!caseNumberEntry}"-->
+            <apex:pageBlockButtons >
+                <apex:commandButton rendered="{!NOT(SET_DUPE_CRIT)}" value="Find" onclick="validateFormula('{!$Component.editCritFormula}', 'dupe');return false;"/>
+                <!--<apex:commandButton rendered="{!AND(!SET_DUPE_CRIT, !CASE_ID_FOUND)}" value="Find" action="{!find}" rerender="opResults" status="findStatus" />-->
+                <apex:commandButton value="Save Criteria" onclick="validateFormula('{!$Component.setCritFormula}', 'dupe');return false;"/>
+                <apex:commandButton value="Reset" action="{!cancel}" rerender="searchFilter, searchResult"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageMessages id="page_msg"/>
+            <apex:actionFunction name="sendCritResult" action="{!continueCritFormula}" rerender="page_msg, opResults, editFormula, setFormula" status="findStatus">
+                <apex:param name="jsCritResult" value="{!validityResult}" assignTo="{!validityResult}" />
+            </apex:actionFunction>
+            <apex:actionFunction name="sendAutoResult" action="{!continueAutoFormula}" rerender="page_msg, opResults, setAutoFormula">
+                <apex:param name="jsAutoResult" value="{!validityResult}" assignTo="{!validityResult}" />
+            </apex:actionFunction>
+            
+            <apex:pageBlockSection title="Directions" columns="1" collapsible="false" rendered="{!SET_DUPE_CRIT}">
+               <apex:outputPanel id="opDirections">
+                    <ul>
+                        <li>Enter the default criteria for finding duplicate cases. To always use a specific value, enter it in the Value field. To use the value from the case you are searching against, mark the Use Case Value check box.   Do not enter both a Value and check the Use Case Value box for the same Field.</li>
+                        <li>Cases must meet ALL specified default criteria to be found on the initial search.  Users may alter the search criteria after the initial search using the default criteria.  To supply additional default criteria, click the Add Row button.</li>
+                        <li>To find cases that have virtually the same Subject, in the Field Picklist below, choose Subject Conversation, which is a formula field. The field trims common email prefixes (Re, Fwd, etc.) from the subject.</li>
+                        <li>Click the "Save Criteria" button when finished.</li>
+                    </ul>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Set Criteria" columns="1" collapsible="false" rendered="{!SET_DUPE_CRIT}">
+                <apex:outputPanel id="opExamples">
+                    <ul>
+                        <font>Examples:</font>
+                        <li>To find cases associated with the same Account as the case where you clicked Find Duplicates, select "Account ID" for Field, "equals" for Operator, leave Value blank, and check Use Case Value.</li>
+                        <li>To find only cases that are not closed, select "Closed" for Field, "equals" for Operator, enter "false" for Value, and leave Use Case Value unchecked.</li>
+                    </ul>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <apex:outputPanel rendered="{!NOT(SET_DUPE_CRIT)}" style="margin-left:15px;">
+                <apex:commandLink onclick="toggleElementDisplay('searchOptionsDiv');return false;" style="color:#0F0763" value="Show/Hide Search Options" rendered="{!NOT(SET_DUPE_CRIT)}"/>
+            </apex:outputPanel>    
+            <div id="searchOptionsDiv" style="display:{!IF(CASE_ID_FOUND, 'none', 'block')}">        
+            <table>
+                <td style="vertical-align:top; text-align:left">
+                    <apex:pageBlockSection id="setCriteriaSection" columns="1">
+                        <apex:outputpanel id="opCriteria">
+                            <table cellspacing="5" style="min-height:80px">
+                                <tr>
+                                    <td></td>
+                                    <td width="5px"></td>
+                                    <td style="font-weight:bold">Field</td>
+                                    <td style="font-weight:bold;" width="135px">Operator</td>
+                                    <td style="font-weight:bold">Value</td>
+                                    <td style="font-weight:bold"><apex:outputText rendered="{!SET_DUPE_CRIT}">Use Case Value</apex:outputText></td>
+                                    <td width="100px"></td>
+                                </tr>
+                                
+                                <apex:repeat value="{!criteria}" var="cr" id="rptCriteria">
+                                <tr>
+                                    <td style="vertical-align:bottom">
+                                        <input type="button" class="btn" onclick="javascript: this.disabled=true; this.style.color='#9A9A9C';DeleteRow('{!cr.numID}');" value="X" style="color:#800000" />
+                                    </td>
+                                    <td style="vertical-align:bottom"><apex:outputText value="{!cr.numID}."/></td>
+                                    <td>
+                                        <apex:selectList value="{!cr.field}" size="1">
+                                            <apex:selectOptions value="{!fields}"/>
+                                            <apex:actionSupport event="onchange" action="{!cr.refreshOps}" rerender="opOprs" status="refStat" />
+                                        </apex:selectList>
+                                    </td>
+                                    <td width="135px">
+                                        <apex:outputPanel id="opOprs">
+                                            <apex:actionStatus id="refStat">
+                                                <apex:facet name="start">
+                                                    <apex:outputtext value="(loading operators...)"/> 
+                                                </apex:facet>
+                                                <apex:facet name="stop">
+                                                    <apex:selectList value="{!cr.operator}" size="1">
+                                                        <apex:selectOptions value="{!cr.opers}"/>
+                                                    </apex:selectList>
+                                                </apex:facet>
+                                            </apex:actionStatus>
+                                        </apex:outputPanel>
+                                    </td>
+                                    <td><apex:inputText value="{!cr.inputValue}" id="itValue" /></td>
+                                    <td><apex:inputCheckbox value="{!cr.useCaseValue}" id="ckUseCase" rendered="{!SET_DUPE_CRIT}" onClick="toggleInputType('{!$Component.ckUseCase}', '{!$Component.itValue}');" /></td>
+                                    <td><apex:outputText value="AND" rendered="false"/></td>
+                                </tr>
+                                </apex:repeat>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <apex:actionStatus id="addingRow">
+                                            <apex:facet name="stop">
+                                                <apex:commandbutton value="Add Row" action="{!Add}" rerender="opCriteria, page_msg" status="addingRow" onComplete="setDisabledFields('dupe');" />
+                                            </apex:facet>  
+                                            <apex:facet name="start">
+                                                <apex:commandButton value="Adding..." disabled="true" status="addingRow" />
+                                            </apex:facet>
+                                        </apex:actionStatus>
+                                    </td>
+                                    <td width="135px">&nbsp;</td>
+                                    <td><apex:outputText value="Date format is m/d/yy" style="font-style:italic; font-size:95%;"/></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </apex:pageBlockSection>
+                    
+                    <apex:actionFunction action="{!RemoveDupeCriterion}" name="DeleteRow" onComplete="setDisabledFields('dupe');" reRender="opCriteria, editFormula, setFormula, page_msg">
+                        <apex:param name="rowNum" value="" assignTo="{!deleteCritNum}"/>
+                    </apex:actionFunction>
+                    
+                    <apex:panelGrid id="setFormula" rendered="{!SET_DUPE_CRIT}" columns="1" cellspacing="2" cellpadding="2" style="border:none; margin-left:15px;">
+                        <apex:outputText value="Logic Formula (optional)" style="font-weight:bold" />
+                        <font style="font-style:italic">Example: 1 AND (2 OR (3 AND 4))</font>   
+                        <apex:outputPanel >
+                            <apex:inputText value="{!critFormula}" id="setCritFormula" size="60" />
+                            <!--<apex:commandButton value="Save Criteria" onclick="validateFormula('{!$Component.setCritFormula}', 'dupe');return false;" style="margin-left:5px"/>-->
+                        </apex:outputPanel>
+                        <apex:image url="/img/report_boolean_filter.gif" />
+                    </apex:panelGrid>
+                    
+                    <apex:panelGrid id="editFormula" rendered="{!NOT(SET_DUPE_CRIT)}" columns="1" cellspacing="2" cellpadding="2" style="border:none; margin-left:6px;">
+                        <apex:commandLink action="{!toggleEditFormula}" style="color:#0F0763" rerender="editFormula" value="{!IF(editFormulaDisplay, 'Hide Formula Logic', 'Show Formula Logic')}" />
+                        <apex:inputText value="{!critFormula}" id="editCritFormula" size="60" style="display:{!IF(editFormulaDisplay, 'block', 'none')}"/>
+                        <apex:image url="/img/report_boolean_filter.gif" style="display:{!IF(editFormulaDisplay, 'block', 'none')}"/>
+                    </apex:panelGrid>
+                    
+                    <!-- MD 2015-01-05  removed because custom setting now controlls this -->
+                    <!--apex:pageBlockSection rendered="{!NOT(SET_DUPE_CRIT)}">
+                        <apex:outputPanel style="margin-bottom:20px">
+                            <apex:outputLabel value="Number of results " style="font-weight:normal; margin-right:3px;"/>
+                            <apex:selectList value="{!recordLimit}" size="1">
+                                <apex:selectOption itemLabel="10" itemValue="10"/>
+                                <apex:selectOption itemLabel="25" itemValue="25"/>
+                                <apex:selectOption itemLabel="50" itemValue="50"/>
+                                <apex:selectOption itemLabel="100" itemValue="100"/>
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:pageBlockSection-->
+                </td>
+                
+                <td width="466px" style="vertical-align:top; text-align:left">
+                    <apex:pageBlockSection id="refSection" title="Input Assistance" columns="1" collapsible="true" rendered="{!NOT(SET_DUPE_CRIT)}">
+                        <apex:tabPanel switchType="client" selectedTab="caseTab" tabClass="activeTab" inactiveTabClass="inactiveTab" headerSpacing="2">
+                            <apex:tab label="Find Case Number and ID" name="caseTab">
+                                <apex:outputPanel >
+                                    <apex:outputText value="Contains Case Subject:" style="font-weight:bold; font-size:90%; color:#4E4E59; margin-right:5px;" />
+                                    <apex:inputText size="20" value="{!searchSubject}" />
+                                    <apex:actionStatus id="lookupCasesStatus">
+                                        <apex:facet name="stop">
+                                            <apex:commandButton value="Search" action="{!lookupCaseReferences}" rerender="lookupResultsTable, hideCaseResults" style="margin-left:3px" status="lookupCasesStatus"/>
+                                        </apex:facet>
+                                        <apex:facet name="start">
+                                            <apex:commandButton value="Search" disabled="true" style="margin-left:3px" status="lookupCasesStatus"/>
+                                        </apex:facet>
+                                    </apex:actionStatus>
+                                    <apex:outputText value="Limit 5 results" style="font-style:italic; font-size:95%; margin-left:5px;" />
+                                </apex:outputPanel>
+                                <div style="margin-top:5px;">
+                                    <apex:pageBlockTable value="{!lookupCases}" var="case" id="lookupResultsTable" styleClass="tableClass" style="max-width:430px; border:1px solid #B3B2B8; display:{!IF(lookupCases.empty, 'none', 'inline-table')}">
+                                        <apex:column >
+                                            <apex:actionSupport event="onclick" onsubmit="selectText('{!$Component.caseIdResult}'); return false;" />
+                                            <apex:facet name="header">ID</apex:facet>
+                                            <apex:outputText id="caseIdResult" value="{!case.ID}" />
+                                        </apex:column>
+                                        <apex:column >
+                                            <apex:actionSupport event="onclick" onsubmit="selectText('{!$Component.caseNumResult}'); return false;" />
+                                            <apex:facet name="header">Case Number</apex:facet>
+                                            <apex:outputText id="caseNumResult" value="{!case.CaseNumber}" />
+                                        </apex:column>
+                                        <apex:column >
+                                            <apex:actionSupport event="onclick" onsubmit="selectText('{!$Component.caseAcctResult}'); return false;" />
+                                            <apex:facet name="header">Account</apex:facet>
+                                            <apex:outputText id="caseAcctResult" value="{!case.Account.Name}" />
+                                        </apex:column>
+                                        <apex:column >
+                                            <apex:actionSupport event="onclick" onsubmit="selectText('{!$Component.caseSubjResult}'); return false;" />
+                                            <apex:facet name="header">Subject</apex:facet>
+                                            <apex:outputText id="caseSubjResult" value="{!case.Subject}"/>
+                                        </apex:column>
+                                        <apex:column >
+                                            <apex:facet name="header"></apex:facet>
+                                            <apex:outputLink value="{!$Site.CustomWebAddress + '/' + case.ID}" target="_blank" style="font-size:90%; color:#1B0E5C;">View</apex:outputLink>
+                                        </apex:column>
+                                    </apex:pageBlockTable>
+                                    <apex:commandLink id="hideCaseResults" value="Hide table" style="font-style:italic; color:#4E4E59; display:{!IF(lookupCases.empty, 'none', 'block')}" action="{!deleteCaseResults}" rerender="lookupResultsTable, hideCaseResults" />
+                                </div>
+                            </apex:tab>
+                            <apex:tab label="Available Picklist Field Values" name="picklistTab" styleClass="picklistTabContent">
+                                <apex:panelGrid columns="2" cellspacing="2" cellpadding="2" style="border:none; margin-left:15px">
+                                    <apex:outputText style="font-weight:bold" value="Fields" />
+                                    <apex:outputText style="font-weight:bold" value="Possible Values" />
+                                    <apex:selectList value="{!selectedPicklist}" multiselect="false" size="{!IF(picklistFields.size < 9, picklistFields.size+1, '9')}" title="Available picklists" style="width:180px">
+                                        <apex:selectOptions value="{!picklistFields}"/>
+                                        <apex:actionSupport event="onchange" oncomplete="setTextValue('picklistValueText', '')" rerender="viewPicklistValues" status="picklistStatus"/>
+                                    </apex:selectList>
+                                    <apex:actionStatus id="picklistStatus">
+                                        <apex:facet name="stop">
+                                            <apex:selectList size="{!IF(picklistFields.size < 9, picklistFields.size+1, '9')}" title="Available input values" id="viewPicklistValues" style="width:200px" onclick="setTextValue('picklistValueText', this.value); if (document.getElementById('picklistValueText')) document.getElementById('picklistValueText').select();">
+                                                <apex:selectOptions value="{!picklistValues}"/>
+                                            </apex:selectList>
+                                        </apex:facet>
+                                        <apex:facet name="start">
+                                            <apex:selectList size="{!IF(picklistFields.size < 9, picklistFields.size+1, '9')}" disabled="true" style="width:200px">
+                                                <apex:selectOption itemValue="Refreshing..." itemDisabled="true" />
+                                            </apex:selectList>
+                                        </apex:facet>
+                                    </apex:actionStatus>
+                                    <apex:facet name="footer">
+                                        <font style="font-weight:bold; font-size:90%; color:#4E4E59; margin-right:5px;">Selected Value:</font><input type="text" id="picklistValueText" style="width:200px" onfocus="this.select();"/>
+                                    </apex:facet>
+                                </apex:panelGrid> 
+                            </apex:tab>
+                        </apex:tabPanel>
+                    </apex:pageBlockSection>
+                </td>
+                
+            </table>
+            </div>
+            
+            <!--<apex:pageBlockSection title="Set Auto-Merge Criteria" columns="1" collapsible="false" rendered="{!AND(SET_DUPE_CRIT, AUTO_MERGE_ENABLED)}">
+                <p style="width:60%">
+                    This secondary set of criteria will catch cases for automatic merging.  This auto-merge definition should be more selective than
+                    the regular duplicate criteria, since it will assume that that the cases it finds will be duplicates, without user confirmation.
+                </p>
+            </apex:pageBlockSection>
+            
+            <div id="autoCriteriaDiv">        
+                <apex:pageBlockSection id="setAutoCriteriaSection" columns="1" rendered="{!AND(SET_DUPE_CRIT, AUTO_MERGE_ENABLED)}">
+                    <apex:outputpanel id="opAuto">
+                        <table cellspacing="5" style="min-height:80px">
+                            <tr>
+                                <td></td>
+                                <td width="5px"></td>
+                                <td style="font-weight:bold">Field</td>
+                                <td style="font-weight:bold;" width="135px">Operator</td>
+                                <td style="font-weight:bold">Value</td>
+                                <td style="font-weight:bold">Use Case Value</td>
+                                <td width="100px"></td>
+                            </tr>
+                            
+                            <apex:repeat value="{!autoCriteria}" var="cr" id="rptAutoCriteria">
+                            <tr>
+                                <td style="vertical-align:bottom">
+                                    <input type="button" class="btn" onclick="javascript: this.disabled=true; this.style.color='#9A9A9C'; DeleteAutoRow('{!cr.numID}');" value="X" style="color:#800000" />
+                                </td>
+                                <td style="vertical-align:bottom"><apex:outputText value="{!cr.numID}."/></td>
+                                <td>
+                                    <apex:selectList value="{!cr.field}" size="1">
+                                        <apex:selectOptions value="{!fields}"/>
+                                        <apex:actionSupport event="onchange" action="{!cr.refreshOps}" rerender="autoOprs" status="autoRefStat"/>
+                                    </apex:selectList>
+                                </td>
+                                <td width="135px">
+                                    <apex:outputPanel id="autoOprs">
+                                        <apex:actionStatus id="autoRefStat">
+                                            <apex:facet name="start">
+                                                <apex:outputText value="(loading operators...)"/> 
+                                            </apex:facet>
+                                            <apex:facet name="stop">
+                                                <apex:selectList value="{!cr.operator}" size="1">
+                                                    <apex:selectOptions value="{!cr.opers}"/>
+                                                </apex:selectList>
+                                            </apex:facet>
+                                        </apex:actionStatus>
+                                    </apex:outputPanel>
+                                </td>
+                                <td><apex:inputText value="{!cr.inputValue}" id="autoInputValue" /></td>
+                                <td><apex:inputCheckbox value="{!cr.useCaseValue}" id="autoCkUseCase" rendered="{!SET_DUPE_CRIT}" onClick="toggleInputType('{!$Component.autoCkUseCase}', '{!$Component.autoInputValue}');" /></td>
+                                <td></td>
+                            </tr>
+                            </apex:repeat>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <apex:actionStatus id="addingAutoRow">
+                                        <apex:facet name="stop">
+                                            <apex:commandbutton value="Add Row" action="{!AddAuto}" rerender="opAuto, page_msg" status="addingAutoRow" onComplete="setDisabledFields('auto');" />
+                                        </apex:facet>  
+                                        <apex:facet name="start">
+                                            <apex:commandButton value="Adding..." disabled="true" status="addingAutoRow" />
+                                        </apex:facet>
+                                    </apex:actionStatus>
+                                </td>
+                                <td width="135px">&nbsp;</td>
+                                <td><apex:outputText value="Date format is m/d/yy" style="font-style:italic; font-size:95%;"/></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </apex:outputpanel>
+                </apex:pageBlockSection>
+                
+                <apex:actionFunction action="{!RemoveAutoCriterion}" name="DeleteAutoRow" onComplete="setDisabledFields('auto');" reRender="opAuto, setAutoFormula, page_msg">
+                    <apex:param name="autoRowNum" value="" assignTo="{!deleteAutoCritNum}"/>
+                </apex:actionFunction>
+                
+                <apex:panelGrid id="setAutoFormula" rendered="{!AND(SET_DUPE_CRIT, AUTO_MERGE_ENABLED)}" columns="1" cellspacing="2" cellpadding="2" style="border:none; margin-left:15px;">
+                    <apex:outputText value="Logic Formula (optional)" style="font-weight:bold" />
+                    <font style="font-style:italic">Example: 1 AND (2 OR (3 AND 4))</font>   
+                    <apex:outputPanel >
+                        <apex:inputText value="{!autoFormula}" id="setAutoCritFormula" size="60" />
+                        <apex:commandButton value="Save Criteria" onclick="validateFormula('{!$Component.setAutoCritFormula}', 'auto');return false;" style="margin-left:5px"/>
+                    </apex:outputPanel>
+                </apex:panelGrid>
+            </div>-->
+        </apex:pageBlock>
+    </apex:form>
+    
+    <apex:form >
+        <apex:outputPanel id="consoleSupport" style="display:none">
+            <script>
+                function consoleNavigate() {
+                    sforce.console.getEnclosingPrimaryTabId(reopenTab);
+                }
+                var reopenTab = function reopenTab(result) {
+                    sforce.console.openPrimaryTab(result.id, '{!JSENCODE(cancelURL)}', true);
+                };
+
+                if('{!JSENCODE(cancelURL)}') consoleNavigate();
+                
+                
+                //subtab
+                function CloseMergeTab() {
+                    sforce.console.getEnclosingPrimaryTabId(refreshTab);
+                }
+                
+                var refreshTab = function refreshTab(result){
+                    sforce.console.refreshPrimaryTabById(result.id, false, sforce.console.getEnclosingTabId(closeSubtab));
+                }
+                
+                var closeSubtab = function closeSubtab(result) {
+                    var tabId = result.id;
+                    sforce.console.closeTab(tabId);
+                };
+
+            </script>
+        </apex:outputPanel>
+        
+        <apex:outputpanel id="opResults">
+            <apex:pageBlock title="{!IF(showResults, 'Matching Cases', 'Enter Case Numbers to Merge')}" id="searchResult" rendered="{!NOT(SET_DUPE_CRIT)}">  <!--rendered="{!showResults && !caseNumberEntry}"-->
+                <apex:pageBlockButtons id="resultsButtons">
+                    <apex:commandButton value="Merge Selected" action="{!mergeCases}" rendered="{!currentPageResults.size != 0}"/>
+                    <apex:commandButton id="goToCase" value="Back to Case" action="{!cancelMerge}" rendered="{!CASE_ID_FOUND}" onclick="if (sforce.console.isInConsole()){ CloseMergeTab();}"/>
+                </apex:pageBlockButtons>
+            
+                <apex:pageBlockSection columns="1">
+                    <apex:outputPanel rendered="{!showResults}">
+                        <apex:outputPanel style="margin-right:25px;">
+                            <apex:actionStatus id="findStatus_1">
+                                <apex:facet name="start">
+                                    <apex:outputtext value="(searching . . . )" style="font-weight:bold"/> 
+                                </apex:facet>
+                                <apex:facet name="stop">
+                                    <!--apex:outputText value="Displaying {!resultsCount} of {!trueCount} record{!IF(results.size == 1,'','s')} found" style="color:red"/-->
+                                    <apex:outputText value="{!Displaying}" style="{!displayingCSS}" />
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+
+                        <!-- this margin-right is hackey and I don't like it -->
+                        <apex:outputPanel style="margin-bottom:20px;">
+                            <apex:outputLabel value="Results Per Page " style="font-weight:normal; margin-right:3px;"/>
+                            <apex:selectList value="{!recordLimit}" size="1">
+                                <apex:actionSupport event="onchange" action="{!changePageSize}" reRender="opResults" status="findStatus" />
+                                <apex:selectOption itemLabel="10" itemValue="10"/>
+                                <apex:selectOption itemLabel="25" itemValue="25"/>
+                                <apex:selectOption itemLabel="50" itemValue="50"/>
+                                <apex:selectOption itemLabel="100" itemValue="100"/>
+                            </apex:selectList>
+                        </apex:outputPanel>
+
+                        <apex:outputPanel style="margin-left:10%; margin-right:25px;">
+                            <apex:commandButton id="firstPage" value=" << " action="{!setPageFirst}" reRender="opResults" disabled="{!currentPage == 1}" status="findStatus" />
+                            <apex:commandButton id="prevPage" value=" < " action="{!setPagePrev}" reRender="opResults" disabled="{!currentPage == 1}" status="findStatus" />
+                            <apex:outputLabel value="{!PageInfo}" style="font-weight:normal; margin-right:3px; margin-left:3px;"/>
+                            <apex:commandButton id="nextPage" value=" > " action="{!setPageNext}" reRender="opResults" disabled="{!(currentPage * recordLimit) >= totalRecords || (currentPage * recordLimit) >= (2000 - recordLimit)}" status="findStatus" />
+                            <apex:commandButton id="lastPage" value=" >> " action="{!setPageLast}" reRender="opResults" disabled="{!!(currentPage < MaxPage)}" status="findStatus" />
+                            <!--apex:commandButton id="lastPage" value=" >> " action="{!setPageLast}" reRender="opResults" disabled="{!currentPage == MaxPage || results.size < totalRecords}" status="findStatus" /-->
+                        </apex:outputPanel>
+
+                        <apex:actionStatus id="findStatus">
+                            <apex:facet name="start">
+                                <img src="http://free-121d5f44d20-121d603d1c5-121ee2b8103.force.com/img/loading32.gif" height="15px" width="15px" />
+                            </apex:facet>
+                            <apex:facet name="stop">
+                                <!--apex:outputText value="{!Displaying}" /-->
+                            </apex:facet>
+                        </apex:actionStatus>
+
+                        <apex:outputPanel style="float:right;">
+                            <apex:outputLabel id="selectedString" value="{!SelectedString}" style="margin-right:5px;" />
+                            <apex:commandButton id="clearSelected" value="Clear" action="{!clearSelected}" reRender="opResults" status="findStatus" />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    <apex:outputText value="Please select the records that you wish to merge into one." style="font-weight:bold" rendered="{!currentPageResults.size != 0}"/>
+                </apex:pageBlockSection>
+    
+                <apex:pageBlockSection columns="1">
+                    <apex:actionFunction name="removeDeselected" action="{!removeInputtedCase}" rerender="opResults">
+                        <apex:param name="removeCaseNum" value="{!removeCaseNum}" assignTo="{!removeCaseNum}" />
+                    </apex:actionFunction>
+                    
+                    <!--apex:pageBlockTable styleClass="tableClass" value="{!results}" var="r" rendered="{!results.size != 0}" width="100%"-->
+                    <apex:pageBlockTable styleClass="tableClass" value="{!currentPageResults}" var="r" rendered="{!currentPageResults.size != 0}" width="100%">
+                        <apex:column style="{!IF(r.isManual, 'background-color:#E3CABE', '')}">
+                            <apex:facet name="header">Select</apex:facet>
+                            <apex:inputCheckbox value="{!r.selected}" rendered="{!NOT(r.isManual)}">
+                                <apex:actionSupport event="onchange" reRender="selectedString"/>
+                            </apex:inputCheckbox>
+                            <apex:inputCheckbox value="{!r.selected}" onclick="if (!this.checked){ removeDeselected('{!JSENCODE(r.cs.CaseNumber)}'); return false; }" rendered="{!r.isManual}">
+                                <apex:actionSupport event="onchange" reRender="selectedString"/>
+                            </apex:inputCheckbox>
+                        </apex:column>
+                        
+                        <apex:repeat value="{!$ObjectType.Case.FieldSets.csmrgp__Case_Merge_Find}" var="f">
+                            <apex:column rendered="{!f != 'CaseNumber'}" style="{!IF(r.isManual, 'background-color:#E3CABE', '')}">
+                                <apex:facet name="header">
+                                    <apex:outputPanel >
+                                        <apex:outputText rendered="{!CONTAINS(f,'.')}" value="{!f}" />
+                                        <apex:outputText rendered="{!NOT(CONTAINS(f,'.'))}" value="{!$ObjectType['Case'].Fields[f].label}" />
+                                    </apex:outputPanel>
+                                </apex:facet>
+                                <apex:outputField value="{!r.cs[f]}"/>
+                            </apex:column>
+                            
+                            <apex:column rendered="{!f = 'CaseNumber'}" style="{!IF(r.isManual, 'background-color:#E3CABE', '')}"> 
+                                <apex:facet name="header">Case Number</apex:facet>
+                                <apex:outputLink value="/{!r.cs.id}">{!r.cs.CaseNumber}</apex:outputLink>
+                            </apex:column>
+                        </apex:repeat>    
+                    </apex:pageBlockTable>
+                    
+                    <apex:outputPanel >
+                        <apex:outputLabel value="Lookup Case: " style="font-weight:bold; font-size:90%; color:#4E4E59;"/>
+                        <apex:inputField value="{!dummyCase.ParentID}"/>
+                        <apex:commandButton value="Add to Merge List" action="{!addCaseToResults}" rerender="opResults"/>
+                        <apex:outputText value="You may not add any more cases." rendered="{!showLimitMessage}" style="margin-left:10px; font-weight:bold; color:red" />
+                        <apex:outputText value="You cannot add this case twice." rendered="{!showDupMessage}" style="margin-left:10px; font-weight:bold; color:red" />
+                    </apex:outputPanel>
+                    
+                    <!--apex:outputPanel title="Manually Added Cases" id="manuallyAddedCases" >
+                        <apex:pageBlockTable styleClass="tableClass" value="{!manuallyAddedCases}" var="r" rendered="{!results.size != 0}" width="100%">
+                            <apex:column style="{!IF(r.isManual, 'background-color:#E3CABE', '')}">
+                                <apex:facet name="header">Select</apex:facet>
+                                <apex:inputCheckbox value="{!r.selected}" rendered="{!NOT(r.isManual)}">
+                                    <apex:actionSupport event="onchange" reRender="selectedString"/>
+                                </apex:inputCheckbox>
+                                <apex:inputCheckbox value="{!r.selected}" onclick="if (!this.checked){ removeDeselected('{!JSENCODE(r.cs.CaseNumber)}'); return false; }" rendered="{!r.isManual}">
+                                    <apex:actionSupport event="onchange" reRender="selectedString"/>
+                                </apex:inputCheckbox>
+                            </apex:column>
+                            <apex:repeat value="{!$ObjectType.Case.FieldSets.csmrgp__Case_Merge_Find}" var="f">
+                                <apex:column rendered="{!f != 'CaseNumber'}" style="{!IF(r.isManual, 'background-color:#E3CABE', '')}">
+                                    <apex:facet name="header">
+                                        <apex:outputPanel >
+                                            <apex:outputText rendered="{!CONTAINS(f,'.')}" value="{!f}" />
+                                            <apex:outputText rendered="{!NOT(CONTAINS(f,'.'))}" value="{!$ObjectType['Case'].Fields[f].label}" />
+                                        </apex:outputPanel>
+                                    </apex:facet>
+                                    <apex:outputField value="{!r.cs[f]}"/>
+                                </apex:column>
+                                <apex:column rendered="{!f = 'CaseNumber'}" style="{!IF(r.isManual, 'background-color:#E3CABE', '')}"> 
+                                    <apex:facet name="header">Case Number</apex:facet>
+                                    <apex:outputLink value="/{!r.cs.id}">{!r.cs.CaseNumber}</apex:outputLink>
+                                </apex:column>
+                            </apex:repeat>    
+                        </apex:pageBlockTable>
+                    </apex:outputPanel-->
+                    
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputpanel>
+    </apex:form>
+    
+    <script type="text/javascript">
+        sforce.console.setTabTitle('Find Cases - Case Merge Premium');
+        
+        try {
+            setDisabledFields('dupe');    //On page load, gray out the text input fields that are in the same rows as selected checkboxes
+            setDisabledFields('auto');
+        } catch(e) {}
+
+        function setDisabledFields(type){
+            var checkBoxRegex;
+            if (type == "dupe")
+                checkBoxRegex = new RegExp(/"[^ ]*rptCriteria:\d+:ckUseCase"/gi);
+            else 
+                checkBoxRegex = new RegExp(/"[^ ]*rptAutoCriteria:\d+:autoCkUseCase"/gi);
+            var cbSearch = document.body.innerHTML.match(checkBoxRegex);    //Apply the global regex search to the document body
+            if (!cbSearch)
+                return false;
+            var inputTextRegex;
+            var itSearch;
+            var cbID;
+            var itID;
+            var rowNum;
+            for (var i = 0; i < cbSearch.length; i++){
+                cbID = cbSearch[i].split(" ")[0];   //Get the first occurrence of the ID in the match
+                cbID = cbID.substring(1, cbID.length-1);    //Trim the quotes
+                if (type == "dupe")
+                    rowNum = parseInt(cbID.match(/\d+(?=:ckUseCase)/));
+                else 
+                    rowNum = parseInt(cbID.match(/\d+(?=:autoCkUseCase)/));
+                if (document.getElementById(cbID)){
+                    if (document.getElementById(cbID).checked){     //The checkbox with this ID is checked. Disable the text field next to it.
+                        if (type == "dupe")
+                            inputTextRegex = '"[^ ]*rptCriteria:' + rowNum + ':itValue"';
+                        else 
+                            inputTextRegex = '"[^ ]*rptAutoCriteria:' + rowNum + ':autoInputValue"';
+                        itSearch = document.body.innerHTML.match(inputTextRegex);
+                        itID = itSearch[0].split(" ")[0];
+                        itID = itID.substring(1, itID.length-1);
+                        disableTextInput(itID);     //Gray out this textbox on load
+                    }
+                }
+            }
+        }
+        
+        function disableTextInput(inputID){
+            var inputField = document.getElementById(inputID);
+            if (inputField){
+                inputField.style.backgroundColor = "rgb(196, 196, 196)";
+                inputField.style.color = "rgb(89, 89, 89)";
+                inputField.disabled = true;
+            }  
+        }
+        
+    </script>
+</apex:page>

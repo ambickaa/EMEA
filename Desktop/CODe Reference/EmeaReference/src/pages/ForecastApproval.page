@@ -1,0 +1,40 @@
+<apex:page tabStyle="Forecast_Approval__tab" controller="forecastApprovalController">
+  <apex:sectionHeader title="Forecast Approval"/>
+  <apex:form >
+    <apex:pageMessages id="messages"/>
+    <apex:pageBlock id="mainDetail" mode="mainDetail">
+      <apex:pageBlockSection showHeader="false" columns="2">
+        <apex:pageBlockSection title="Select any forecast to display its details" columns="1" collapsible="false">
+          <apex:pageBlockTable value="{!MyTeamCampaigns}" var="myTeamCampaign">
+            <apex:column headerValue="{!$ObjectType.User.fields.Name.Label}">
+              <apex:commandLink value="{!myTeamCampaign.Owner.Name}" reRender="detailBlock,messages">
+                <apex:param name="-" assignTo="{!userSelected}" value="{!myTeamCampaign.OwnerID}"/>
+              </apex:commandLink>
+            </apex:column>
+            <apex:column value="{!myTeamCampaign.LastModifiedDate}"/>
+            <apex:column headerValue="Allocated Budget" value="{!myTeamCampaign.TotalCampaignBudget__c}"/>
+            <apex:column headerValue="Status"><apex:repeat value="{!myTeamCampaign.ProcessInstances}" var="status">{!IF(OR(ISNULL(status),ISNULL(status.status),status.Status==''),'Not submitted',status.Status)}</apex:repeat><apex:outputText value="Not submitted" rendered="{!myTeamCampaign.ProcessInstances.size == 0}"/></apex:column>
+            
+          </apex:pageBlockTable>
+        </apex:pageBlockSection>
+          
+        <apex:outputPanel id="detailBlock" layout="block" >
+          <apex:pageBlockSection />
+          <apex:pageBlockSection columns="1" collapsible="false" title="Details ({!currentForecast.Name})" rendered="{!NOT(ISNULL(currentForecast.Name))}">
+            <apex:pageBlockTable value="{!ForecastDetail.items}" var="forecastLineDetail" >
+              <apex:column headerValue="Product" value="{!forecastLineDetail.product}"/>
+              <apex:column headerValue="Kernel Size" value="{!forecastLineDetail.kernel}"/>
+              <apex:column headerValue="Treatment" value="{!forecastLineDetail.treatment}" footerValue="SUM"/>
+              <apex:column headerValue="Number of Bags" value="{!forecastLineDetail.bags}" footerValue="{!ForecastDetail.aggregateSUM}"/>
+            </apex:pageBlockTable>
+            <apex:outputPanel layout="block" style="text-align:center;" rendered="{!currentForecast.ApprovalStatus_RSA__c == 'Submitted'}">
+              <apex:commandButton value="Approve" action="{!doApprove}" reRender="mainDetail"/>&nbsp;&nbsp;
+              <apex:commandButton value="Reject" action="{!doReject}" reRender="mainDetail"/>
+            </apex:outputPanel>
+          </apex:pageBlockSection>
+        </apex:outputPanel>
+          
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

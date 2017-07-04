@@ -1,0 +1,10 @@
+<apex:page standardController="Account"  extensions="AccountViewDispatcher" action="{!accountRedirect}">
+<!-- 	 <script type="text/javascript" >
+	 window.onload = function(){
+		//action="{!accountRedirect}"
+	     var achorElement = window.location.hash.substring(1);
+	     document.location.href = '{!accountRedirect}' + achorElement; //invoke action function
+	 };
+	 </script>
+ -->
+</apex:page>

@@ -1,0 +1,148 @@
+<apex:page standardController="case" extensions="listComplaintProcessController" >
+    
+    
+    <apex:form id="CustomList">
+        <apex:includeScript value="{!$Resource.jQuery}"/>
+        <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.jquery.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen, 'chosen.jquery.js')}"/>
+        <apex:includeScript id="a" value="https://www.google.com/jsapi" />
+        <apex:stylesheet value="{!URLFOR($Resource.jQuery_chosen, 'chosen.css')}"/>
+        <style type="text/css">
+            body .bPageBlock .detailList table.black-borders tr td{ border-color: #000; }
+            
+            .ct{
+            text-align:center;
+            }
+            .bPageBlock .detailList .labelCol {
+            width: 22%;
+            }
+            .loadingImg {
+            position: absolute;
+            margin-top: .25rem;
+            margin-left: -1.25rem;
+            }
+            .hide {
+            display: none!important
+            }
+            .action-col {
+                width: 1px!important;
+                padding-right: 5px!important
+            }
+        </style>
+       
+        
+        <div  id="contentLoading"  style="display:none;">
+            <div style="text-align: center;"> 
+                <img src="/img/loading.gif" alt="Loading graphic" />
+            </div>
+        </div>   
+        
+        <div id="contentLoaded">
+        
+            <apex:pageblock >
+               
+                 <apex:pageMessages /> 
+                <apex:pageblocktable value="{!listcProcess}" var="Pr"  id="table"  rendered="{!IF(mode == 'view', true, false)}" styleClass="{!IF(mode == 'edit', '', 'hide')}" >
+                     <apex:column headerValue="Action" headerClass="action-col">
+                        <apex:inputCheckbox value="{!Pr.selected}" />
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.Complaint_Process__c.fields.PCK_Process__c.label}">
+                        <apex:outputLink target="_blank" value="/{!Pr.comProc.id}">{!Pr.comProc.PCK_Process__c}</apex:outputLink>  
+                    </apex:column>                    
+                    <apex:column value="{!Pr.comProc.PCK_Status__c}" headerValue="{!$ObjectType.Complaint_Process__c.fields.PCK_Status__c.label}" />
+                    <apex:column value="{!Pr.comProc.NUM_Dosis_HA__c}" headerValue="{!$ObjectType.Complaint_Process__c.fields.NUM_Dosis_HA__c.label}" />
+                    <apex:column value="{!Pr.comProc.TXT_Stage__c}" headerValue="{!$ObjectType.Complaint_Process__c.fields.TXT_Stage__c.label}" />
+                    <apex:column value="{!Pr.comProc.DAT_Date__c}" headerValue="{!$ObjectType.Complaint_Process__c.fields.DAT_Date__c.label}" />
+                </apex:pageblocktable>
+                
+            <!--Edit table-->
+                <apex:pageblocktable value="{!listcProcess}" var="Pr2" id="editTable"  rendered="{!IF(mode == 'edit', true, false)}" styleClass="{!IF(mode == 'view', '', 'hide')}">
+                    
+                    <apex:column headerValue="{!$ObjectType.Complaint_Process__c.fields.PCK_Process__c.label}">
+                        <apex:selectList value="{!Pr2.comProc.PCK_Process__c}" styleClass="applyStyle" title="no">                    
+                            <apex:selectOptions value="{!Processes}"/>
+                        </apex:selectList>                    
+                    </apex:column>
+                                        
+                    <apex:column headerValue="{!$ObjectType.Complaint_Process__c.fields.PCK_Status__c.label}">
+                        <apex:selectList value="{!Pr2.comProc.PCK_Status__c}" styleClass="applyStyle" title="no" >                    
+                            <apex:selectOptions value="{!Status}"/>
+                        </apex:selectList>                    
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.Complaint_Process__c.fields.NUM_Dosis_HA__c.label}">
+                        <apex:inputField value="{!Pr2.comProc.NUM_Dosis_HA__c}" />
+                        
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.Complaint_Process__c.fields.TXT_Stage__c.label}">
+                        <apex:inputField value="{!Pr2.comProc.TXT_Stage__c}" />
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.Complaint_Process__c.fields.DAT_Date__c.label}">
+                        <apex:inputField value="{!Pr2.comProc.DAT_Date__c}" onfocus="DatePicker.pickDate(false, this, false)"/>
+                    </apex:column>
+               </apex:pageblocktable>
+                
+                <apex:pageBlockButtons dir="" id="buttons"  rendered="true">
+                    
+                    <apex:actionStatus id="loadingAction">
+                        <apex:facet name="start"><apex:image value="/img/loading.gif" styleClass="loadingImg"/></apex:facet>
+                    </apex:actionStatus>
+                    
+                    <apex:commandButton id="newButton" value="New line" status="loadingAction" action="{!newRow}" onclick="editMode();" oncomplete="chargePickStyle();" reRender="CustomList" rendered="{!IF(mode == 'view', true, false)}" />
+                    <apex:CommandButton id="SaveButton" value="Save" status="loadingAction" action="{!save}" oncomplete="chargePickStyle();" reRender="CustomList" rendered="{!IF(mode == 'edit', true, false)}" />
+                    <apex:commandButton id="CancelButton" value="Cancel" status="loadingAction" action="{!cancel}" oncomplete="chargePickStyle();" reRender="CustomList" rendered="{!IF(mode == 'edit', true, false)}" />
+                    <apex:commandButton id="EditButton" value="Edit lines" status="loadingAction" action="{!edit}" onclick="editMode();" oncomplete="chargePickStyle();" reRender="CustomList" rendered="{!IF(mode == 'view', true, false)}"/>
+                    <apex:commandButton id="DelButton" value="Delete" status="loadingAction" action="{!del}" oncomplete="chargePickStyle();"  reRender="CustomList" rendered="{!IF(mode == 'view', true, false)}"/>
+               
+                </apex:pageBlockButtons>
+            </apex:pageblock>
+        </div>
+        
+        <script>
+        $(document).ready(function() 
+                          {
+                              chargePickStyle();
+                          });
+        function chargePickStyle()
+        {
+            $('.applyStyle').chosen({
+                allow_single_deselect:true,
+                search_contains:true,
+                width: "100%",
+                placeholder_text_single:"{!$Label.Default_pick_list_option}"                    
+            });
+            
+            
+            
+            // -------------------
+            // It makes the dropdown actually drop up when the page edge breaks the dropdown list
+            // -------------------
+            $('.applyStyle').on('chosen:showing_dropdown', function(event, params) {
+                var chosen_container = $( event.target ).next( '.chosen-container' );
+                var dropdown = chosen_container.find( '.chosen-drop' );
+                var dropdown_top = dropdown.offset().top - $(window).scrollTop();
+                var dropdown_height = dropdown.height();
+                var viewport_height = $(window).height();
+                
+                if ( dropdown_top + dropdown_height > viewport_height ) {
+                    chosen_container.addClass('chosen-drop-up');
+                }
+                
+            });
+            
+            $('.applyStyle').on('chosen:hiding_dropdown', function(event, params) {
+                $( event.target ).next( '.chosen-container' ).removeClass( 'chosen-drop-up' );
+            });
+        }
+        function editMode() {
+            
+            $('#table').addClass('hide');
+            $('#editTable').removeClass('hide');
+        }
+        </script>
+    </apex:form>
+    
+
+</apex:page>

@@ -1,0 +1,5 @@
+<apex:page standardController="Account" extensions="AccountViewExtensionError"> 
+
+<apex:pageMessages escape="false"/>
+
+</apex:page>

@@ -1,0 +1,161 @@
+<apex:page controller="csmrgp.CsMrgSelectCtrl" title="Merge Cases" tabStyle="Case_Merge_Premium__tab" id="pg">
+    <apex:includeScript value="/support/console/28.0/integration.js"/>
+    <apex:form id="selectCasesF">
+        <apex:pageBlock title="Merge Cases" id="mergeCasesPB">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Merge" action="{!csmerge}" disabled="{!DISABLE_MERGE}" onclick="return window.confirm('Merging cannot be undone. Are you sure you want to proceed with the case merge?');" />
+                <button onclick="goToPreviousPage(); return false;" class="btn">Cancel</button>
+            </apex:pageBlockButtons>
+
+            <apex:pageMessages escape="false"/>
+            
+            <apex:pageBlockSection columns="1">
+                <apex:outputText value="Select the master case."/>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" id="mergeCaseTablePBS">
+                <apex:pageBlockTable styleClass="tableClass" var="f" value="{!$ObjectType.Case.FieldSets.csmrgp__Case_Merge_Select}" rules="row" width="100%" id="mergeCaseTable">
+                
+                    <apex:column style="width:6%; background-color:#D1D1FF">
+                        <apex:facet name="header"></apex:facet>
+                        <apex:outputPanel >
+                            <apex:outputText rendered="{!CONTAINS(f,'.')}" value="{!f}" style="font-style:italic"/>
+                            <apex:outputText rendered="{!NOT(CONTAINS(f,'.'))}" value="{!$ObjectType['Case'].Fields[f].label}" style="font-style:italic"/>
+                        </apex:outputPanel>
+                    </apex:column>
+                    
+                    <apex:repeat value="{!mergeCases}" var="m">
+                        <apex:column style="width:{!100/(CASECOUNT+1)}%;" id="col">
+                            <apex:facet name="header">
+                                <apex:outputpanel id="colHead">
+                                    <apex:inputCheckbox id="checkCase" value="{!m.selected}" onClick="updateChecks('{!$Component.checkCase}', '{!$Component.mergeCaseTable}');" />
+                                    <apex:outputLabel value="{!m.cs.casenumber}" for="checkCase"/>
+                                </apex:outputPanel>
+                            </apex:facet> 
+                            <apex:outputField value="{!m.cs[f]}" />
+                        </apex:column>
+                    </apex:repeat>
+                
+                </apex:pageBlockTable>    
+            </apex:pageBlockSection>
+            
+            <div style="margin-top:20px" />
+            
+            <apex:outputPanel style="margin-bottom:10px; display:{!JSENCODE(DISPLAY_CLEAN_MERGE)}">
+                <apex:pageBlockSection >
+                    <apex:pageBlockSectionItem helpText="Enable this option to close each child case as a duplicate without cloning any objects or fields. Nothing will be transferred to the master case.">
+                        <apex:outputText value="Clean Merge" />
+                        <apex:inputCheckbox value="{!CLEAN_MERGE}" id="cleanMrgBox" >
+                            <apex:actionSupport event="onclick" action="{!deselectObjects}" rerender="objPrefsSection" />
+                        </apex:inputCheckbox>  
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+            
+            <!--apex:outputPanel style="display:{!JSENCODE(DISPLAY_AD_HOC_PREFS)}"-->
+            <apex:outputPanel rendered="{!displayOptions}">
+                <apex:pageBlockSection title="Choose which objects will be cloned to the parent case" id="objPrefsSection">
+                    <apex:repeat value="{!prefList}" var="pref">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="{!pref.label}"/>
+                            <apex:inputCheckbox value="{!pref.enabled}" selected="true" disabled="{!CLEAN_MERGE}"/>  
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+            
+            <!-- MD - overlay -->
+            <apex:outputPanel style="background-color:rgba(0, 0, 0, 0.15); width:100%; height:100%; position:absolute; left:0px; top:0px; z-index:1;" rendered="{!JSENCODE(tabURL)}" >
+                <br/><br/><br/><br/>
+                <center>
+                    <span style="font-size: 200%;">Please wait...</span>
+                    <br />
+                    <!-- spinner loading32.gif -->
+                    <img src="/img/spinner.gif" style="position:relative; top:200px; " />
+                </center>
+            </apex:outputPanel>
+            
+        </apex:pageBlock>
+    </apex:form>
+
+    <script language="javascript">
+        sforce.console.setTabTitle('Merge Cases - Case Merge Premium');
+        try {
+            var firstCaseRegex = new RegExp(/"[^ ]*mergeCaseTablePBS:mergeCaseTable:j_id36:0:checkCase"/gi);
+            var searchCheckbox = document.body.innerHTML.match(firstCaseRegex); //Apply the global regex search to the document body
+            var firstCaseID = searchCheckbox[0].substring(1, searchCheckbox[0].length-1);
+        
+            var tableRegex = new RegExp(/"[^ ]*mergeCaseTablePBS:mergeCaseTable"/gi);
+            var searchTable = document.body.innerHTML.match(tableRegex);
+            var tableID = searchTable[0].substring(1, searchTable[0].length-1);
+        } catch(err) {}
+        
+        updateChecks(firstCaseID, tableID);
+
+        function updateChecks(checkCaseID, tableID){
+            try {
+                var checkCase = document.getElementById(checkCaseID);
+                var getColRegex = new RegExp(/:\d+:/);
+                var searchColNum = checkCaseID.match(getColRegex);
+                var colNum = searchColNum[0].substring(1, searchColNum[0].length-1);
+            
+                checkCase.checked = true;
+                var table = document.getElementById(tableID);
+                var caseCheckBoxes = table.getElementsByTagName("input");
+                for (var i = 0; i < caseCheckBoxes.length; i++){
+                    if (caseCheckBoxes[i].type == "checkbox"){
+                        if (caseCheckBoxes[i].id != checkCaseID)
+                            caseCheckBoxes[i].checked = false;
+                    }
+                }
+                shadeColumns(colNum, "#FFFFCC");
+            } catch(err) {}
+        }
+ 
+        function shadeColumns(selCol, color){
+            var regexStr = '"[^ ]*mergeCaseTablePBS:mergeCaseTable:\\d+:j_id36:[^\\D' + selCol + ']+:col"';    //Match all the unselected columns
+            var colsRegex = new RegExp(regexStr, "gi");
+            var searchCols = document.body.innerHTML.match(colsRegex);
+            for (var i = 0; i < searchCols.length ; i++){
+                var col = document.getElementById(searchCols[i].substring(1, searchCols[i].length-1));
+                col.style.backgroundColor = "white";
+            }
+            regexStr = '"[^ ]*mergeCaseTablePBS:mergeCaseTable:\\d+:j_id36:' + selCol + ':col"';    //Match the selected column
+            colsRegex = new RegExp(regexStr, "gi");
+            searchCols = document.body.innerHTML.match(colsRegex);
+            for (var i = 0; i < searchCols.length ; i++){
+                var col = document.getElementById(searchCols[i].substring(1, searchCols[i].length-1));
+                col.style.backgroundColor = color;
+            } 
+        }
+        
+        function goToPreviousPage(){
+            if (sforce.console.isInConsole()){
+                sforce.console.getEnclosingPrimaryTabId(reopenTab);
+            } else {
+                window.history.back();
+            }
+        }
+        
+        //Previous page    
+        var reopenTab = function reopenTab(result) {
+            sforce.console.openSubtab(result.id, '{!JSENCODE(tabURL)}', true, sforce.console.getEnclosingPrimaryTabId(refreshOriginalTab));
+        };
+        var refreshOriginalTab = function refreshOriginalTab(result){
+            sforce.console.refreshPrimaryTabById(result.id, false, sforce.console.getEnclosingTabId(closeFocusedTab));
+        };
+        
+        var openUrl = function openUrl(result) {
+            sforce.console.openConsoleUrl(null, result.consoleUrl, true, '', '', sforce.console.getFocusedSubtabId(closeFocusedTab));
+        };
+        
+        var closeFocusedTab = function closeFocusedTab(result) {
+            sforce.console.closeTab(result.id);
+        };
+        
+        if ('{!JSENCODE(tabURL)}')
+            sforce.console.generateConsoleUrl(['{!JSENCODE(tabURL)}'],openUrl);
+        
+    </script>
+    
+</apex:page>

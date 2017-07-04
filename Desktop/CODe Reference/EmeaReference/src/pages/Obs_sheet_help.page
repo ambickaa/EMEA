@@ -1,0 +1,21 @@
+<apex:page >
+<h1> Sales Effectiveness Overview </h1>
+<p>In today's tough sales environment it is important that our sales people  position ourselves as  expert advisors working with our customers to create value for them as well as ourselves.
+Modern customers have a world of options literally at their fingertips, so selling products - or even solutions - requires 
+us to understand our customers needs and demonstrate how we can help meet them.
+The purpose of this observation sheet is to help a Coach and Coachee understand how the Coachee can be more effective in this process.</p> 
+<p>At the end of the coaching session the The Coach and Coachee should agree a SMART goal or goals to aid the Coachee in his/her Continuing  Professional Development (CPD)</p>
+<h1>S.M.A.R.T. Goals</h1> 
+<p>1. Specific. What will the goal accomplish? How and why will it be accomplished? </p> 
+<p>2. Measurable. How will you measure whether or not the goal has been reached (list at least two 
+indicators)? </p> 
+<p>3. Achievable. Is it possible? Have others done it successfully? Do you have the necessary knowledge, 
+skills, abilities, and resources to accomplish the goal? Will meeting the goal challenge you without 
+defeating you? </p> 
+<p>4. Results-focused. What is the reason, purpose, or benefit of accomplishing the goal? What is the 
+result (not activities leading up to the result) of the goal? </p> 
+<p>5. Time-bound. What is the established completion date and does that completion date create a practical 
+sense of urgency? </p> 
+
+  
+</apex:page>

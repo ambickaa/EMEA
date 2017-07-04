@@ -1,0 +1,559 @@
+<apex:page title="Case Merge Premium Configuration" controller="csmrgp.CsMrgConfigCtrl" action="{!loadPreferences}" tabStyle="Settings__tab">
+    <apex:sectionHeader title="Case Merge Premium" subtitle="Preferences Configuration" help="http://kb.internetcreations.com/pkb_Home?c=Products%3ACase_Merge_Premium"/>
+    <apex:includeScript value="/support/console/28.0/integration.js"/>
+    <script type="text/javascript">
+        function toggleDisableCheckbox(cloneID, deleteID){
+            var cloneBox = document.getElementById(cloneID);
+            var deleteBox = document.getElementById(deleteID);
+            if (!cloneBox.checked) {    //Disable the delete box when the clone box is not checked
+                deleteBox.checked = false;
+                deleteBox.disabled = true;
+            } else if (cloneBox.checked && deleteBox.disabled){ //Enable the delete box once the clone box is checked
+               deleteBox.disabled = false;
+            } else {}
+        }
+        
+        /*function toggleAutoMergeSettings(controlSetting, statusID, timespanID){
+            try {
+                var statusElem = document.getElementById(statusID);
+                var timespanElem = document.getElementById(timespanID);
+                if (controlSetting.checked){
+                    statusElem.disabled = false;
+                    timespanElem.disabled = false;
+                } else {
+                    statusElem.disabled = true;
+                    timespanElem.disabled = true;
+                }
+            } catch (err){
+                console.log(err.message);
+            }
+        }*/
+        
+        function mask(elem, funct) {
+            setTimeout(function () {
+                var v = funct(elem.value);
+                if (v != elem.value) {
+                    elem.value = v;
+                }
+            }, 1);
+        }
+         
+         function maskNum(val){
+             var r = val.replace(/[^0-9]/g, "");    //Only decimals allowed as input
+             if (r.length > 4)
+                 r = r.substring(0, 5);
+             return r;
+        }
+    </script>
+    <style type="text/css">
+        fieldset {border:0; display:inline; padding:10px; vertical-align:top;}
+        .primaryPalette {background-color:#D36D00 !important;}
+        .brdPalette, .secondaryPalette {border-top-color:#D36D00 !important;}
+        .pbSubheader {
+            background: #e96e25 !important; /* Fallback to solid color for older browsers */
+            background-image: linear-gradient(to top, #b95e15, #f97e35) !important;
+            border-radius: 4px;
+            text-shadow: -1px 0 #b95e15, 0 1px #b95e15,1px 0 #b95e15, 0 -1px #b95e15;
+        }
+    </style>
+    <apex:form >
+        <apex:actionFunction name="collapse" action="{!changeCollapsed}"/>
+        
+        <apex:pageBlock rendered="{!!collapsed}">
+            <apex:facet name="header">
+                <div style="padding:10px;margin:0 12px;">
+                    <span><h1>New! Search Your Organization for Duplicates</h1></span>
+                    <a style="float:right;cursor:pointer;" onclick="collapse();"><h1>Collapse</h1></a>
+                </div>
+            </apex:facet>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:outputPanel layout="block" style="width:800px;">
+                    <div style="float:left;width:400px;">
+                    Case Merge Premium can retroactively scan for duplicate cases.
+                    <br/><br/>
+                    <apex:outputLink style="text-decoration:none;color:black;" styleClass="btn" value="/apex/csmrgp__CsMrgSetup2" target="_blank">Get Started</apex:outputLink>
+                    </div>
+                    <!--<apex:image style="float:left;" value="{!URLFOR($Resource.wiz11)}"/>-->
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <apex:outputPanel style="padding:5px;" rendered="{!collapsed}">
+            <span>New! Search Your Organization for Duplicates</span>
+            <a style="float:right;cursor:pointer;" onclick="collapse();">Show Banner</a>
+        </apex:outputPanel>
+        
+        <!-- <apex:pageMessages showDetail="false" /> -->
+        <apex:pageBlock title="Merge Options {!TYPE_LABEL}">
+        
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!backToWizard}" value="Back to Setup Wizard" />
+                <apex:actionStatus id="quickStatus">
+                    <apex:facet name="start">
+                        <apex:outputPanel >
+                            <div style="z-index:99; position:absolute; top:0px; left:0px; width:100%; height:100%; background-color:silver; opacity:.30; filter: alpha(opacity = 30);"></div>
+                            <apex:commandButton value="Saving..." disabled="true"/>
+                        </apex:outputPanel>
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton action="{!save}" value="Save" rerender="quickStatus" status="quickStatus"/> <!--autoMergeLabel-->
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="Set the label that will be used on the inline duplicate alert when one or more duplicates are found."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Duplicates Label"/>
+                    <apex:inputText value="{!duplicatesLabel}"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="Select the Case Status you created in step 1 on the setup page (ordinarily Closed as Duplicate) to use for merged cases.  If any Emails, Comments or Attachments are added to a case with this status, they will be re-associated to the master (parent) case if one is specified."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Merged Case Status" />
+                    <apex:selectList value="{!mergedCaseStatus}" multiselect="false" size="1" title="Status" id="status_Select" required="true">
+                        <apex:selectOptions value="{!statusItems}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="Select a picklist field of your choice for which to set a specific value on the merged cases.  (For example, you could choose to set a Reason on a merged case that may better describe it after it's been closed as a duplicate)."/>
+                </apex:pageBlockSectionItem>
+             
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Set Field on Merged Case" />
+                    <apex:outputPanel >
+                        <apex:selectList value="{!mergedPicklistFld}" multiselect="false" size="1" title="Picklist fields" id="selectPicklistField">
+                            <apex:selectOptions value="{!picklistFields}"/>
+                            <apex:actionSupport event="onchange" rerender="selectPicklistValue" status="picklistStatus"/>
+                        </apex:selectList>
+                        <span style="margin-right:10px" />
+                        <apex:actionStatus id="picklistStatus">
+                            <apex:facet name="stop">
+                                <apex:selectList value="{!mergedPicklistVal}" size="1" title="Set field value" id="selectPicklistValue">
+                                    <apex:selectOptions value="{!fieldPicklistValues}"/>
+                                </apex:selectList>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:selectList size="1" disabled="true">
+                                    <apex:selectOption itemValue="Refreshing..." itemDisabled="true" />
+                                </apex:selectList>
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="Only allow cases of the same record type to be merged.  This setting will be automatically disabled if no record types for Case are found in this org."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+                 
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Restrict by Record Type" for="recordTypeRestrict"/>
+                    <apex:outputPanel >
+                        <apex:inputCheckbox value="{!restrictByRecordtype}" id="recordTypeRestrict" disabled="{!DISABLE_RT_BOX}"/>
+                        <apex:outputText value="Not Applicable" style="margin-left:5px; font-weight:bold; font-style:italic; font-size:90%;" rendered="{!DISABLE_RT_BOX}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Case Merge Limit" for="caseMergeNum"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!caseMergeLimit}" multiselect="false" size="1" id="caseMergeNum">
+                            <apex:selectOption itemLabel="2" itemValue="2"/>
+                            <apex:selectOption itemLabel="3" itemValue="3"/>
+                            <apex:selectOption itemLabel="4" itemValue="4"/>
+                            <apex:selectOption itemLabel="5" itemValue="5"/>
+                            <apex:selectOption itemLabel="6" itemValue="6"/>
+                            <apex:selectOption itemLabel="7" itemValue="7"/>
+                            <apex:selectOption itemLabel="8" itemValue="8"/>
+                            <apex:selectOption itemLabel="9" itemValue="9"/>
+                        </apex:selectList>
+                        <apex:outputText value="Cases may be merged at a time" style="margin-left:5px" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="The text in the Description field of merged cases may either be added as a case comment, merged into the Description, or added as a Chatter post on the master case."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Duplicate Case Description(s)"/>
+                    <apex:selectList value="{!mergeBodyAsComment}" size="1" multiselect="false">
+                        <apex:selectOption itemLabel="Add as Private Comment on Master" itemValue="true,private"/>
+                        <apex:selectOption itemLabel="Add as Public Comment on Master" itemValue="true,public"/>
+                        <apex:selectOption itemLabel="Append to Description Field on Master" itemValue="false,append"/>
+                        <apex:selectOption itemLabel="Add as Chatter Post on Master" itemValue="false,chatter"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+   
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value=""/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+             
+            <apex:pageBlockSection columns="1" collapsible="false" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Custom Merge Options" />
+                    <apex:outputPanel >
+                        <table width="60%">
+                            <td width="25%">
+                                <apex:inputCheckbox value="{!enableCleanMerge}" /><apex:outputText value="Enable Clean Merge" style="margin-left:5px; font-weight:bold"/>
+                                <apex:outputText value="Provide the option of merging cases without cloning their fields and child objects. A Clean Merge will simply close duplicate cases and relate them to the master case without merging any data." style="display:block"/>
+                            </td>
+                            <td width="1%"></td>
+                            <td width="25%">
+                                <apex:inputCheckbox value="{!enableAdHocObjPrefs}" /><apex:outputText value="Enable Object Cloning Selection" style="margin-left:5px; font-weight:bold"/>
+                                <apex:outputText value="Allow the user to specify child objects of Case (such as Task and Event) to include or exclude from the merge." style="display:block" />
+                            </td>
+                        </table>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+   
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="If you would like to define the default behavior of the Find Duplicates button and inline Dupe Alert, you will need to set the criteria it uses to search."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+             
+            <!-- MD 2015-01-05 -->
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Duplicate Criteria"/>
+                    <apex:outputLink target="_new" value="/apex/CsMrgFind?sdc=1">Click here to configure</apex:outputLink>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value=""/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Maximum Number of Results"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!maxResults}" multiselect="false" size="1" id="maxResults">
+                            <apex:selectOption itemLabel="10" itemValue="10"/>
+                            <apex:selectOption itemLabel="25" itemValue="25"/>
+                            <apex:selectOption itemLabel="50" itemValue="50"/>
+                            <apex:selectOption itemLabel="100" itemValue="100"/>
+                        </apex:selectList>
+                        <apex:outputText value="Cases will be displayed when searching for duplicates" style="margin-left:5px" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="Case Merge Premium uses Salesforce Field Sets to allow you to select which fields are displayed in the Find and Select pages." />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+                
+            <apex:pageBlockSection columns="1" collapsible="false">
+            
+                <apex:pageBlockSectionItem id="ConfigureFieldSet">
+                    <apex:outputLabel value="Fields to Display in Case Pages" />
+                    <a href="/p/setup/custent/FieldSetListUI/d?tableEnumOrId=Case&setupid=CaseFieldSets" target="_blank" >Edit fieldsets for Find and Select pages</a>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="If you have a private sharing model for any object(s) related to Case, this setting will give Case Merge Premium visibility to your data."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Bypass Sharing and Security" for="enableBypassSharing"/>
+                    <apex:inputCheckbox value="{!bypassSharing}" id="enableBypassSharing" />
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="Select which error level should halt a merge. If halted, the errors will be displayed on the Merge page rather than added as a comment on the case."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Show Errors When Merging" for="errorHandling"/>
+                    <apex:selectList value="{!errorHandling}" id="errorHandling" size="1">
+                        <apex:selectOption itemLabel="Never Halt" itemValue="never"/>
+                        <apex:selectOption itemLabel="Halt on Validation Error" itemValue="validation"/>
+                        <apex:selectOption itemLabel="Halt on Any Error" itemValue="always"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="These settings affect the handling of child objects on merged cases.  Select the appropriate options for each object.  If 'Clone' is checked, the object will be cloned to the master case from the other merged cases.  If 'Delete Original' is checked, the object will be deleted from the non-master cases upon merge.  If 'Ignore Insert Errors' is checked, errors regarding prohibited duplicates (e.g. Case Team Members) will be suppressed."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem id="StandardObjects">
+                    <apex:outputlabel style="text-align:right" value="Standard Objects"/>
+                    <apex:outputPanel id="StandardObj_EditPanel">
+                        <table cellspacing="2">
+                            <tr>
+                                <td width="215"><apex:outputText value="Child Object" style="font-weight:bold;" /></td>
+                                <td width="100" align="center"><apex:outputText value="Clone" style="font-weight:bold;" /></td>
+                                <td width="100" align="center"><apex:outputText value="Delete Original" style="font-weight:bold;" /></td>
+                                <td width="150" align="center"><apex:outputText value="Ignore Insert Errors" style="font-weight:bold;" /></td>
+                            </tr>
+                            
+                            <tr><td colspan="4"><apex:outputText rendered="{!standardObjPrefs.size == 0}" value="There are no standardobjects related to cases." /></td></tr>
+                            
+                            <apex:repeat value="{!standardObjPrefs}" var="std_pref" id="rptChildObjects">
+                                <tr>
+                                    <td><apex:outputText value="{!std_pref.objLabel}" /></td>
+                                    <td align="center"><apex:inputCheckbox id="CLONE_OBJECT_checkbox" required="false" value="{!std_pref.cDef.reParent}" onClick="toggleDisableCheckbox('{!$Component.CLONE_OBJECT_checkbox}', '{!$Component.DELETE_ORIGINAL_checkbox}');" /></td>
+                                    <td align="center"><apex:inputCheckbox id="DELETE_ORIGINAL_checkbox" required="false" value="{!std_pref.cDef.deleteOrig}" /></td>
+                                    <td align="center"><apex:inputCheckbox id="IGNORE_INS_ERRS_checkbox" required="false" value="{!std_pref.cDef.ignoreInsErrs}" /></td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:PageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem id="CustomObjects">
+                    <apex:outputlabel style="text-align:right" value="Custom Objects"/>
+                    <apex:outputPanel id="CustomObj_EditPanel">
+                        <table cellspacing="2">
+                            <tr>
+                                <td width="215"><apex:outputText value="Child Object" style="font-weight:bold;" /></td>
+                                <td width="100" align="center"><apex:outputText value="Clone" style="font-weight:bold;" /></td>
+                                <td width="100" align="center"><apex:outputText value="Delete Original" style="font-weight:bold;" /></td>
+                                <td width="150" align="center"><apex:outputText value="Ignore Insert Errors" style="font-weight:bold;" /></td>
+                            </tr>
+                            
+                            <tr><td colspan="4"><apex:outputText rendered="{!customObjPrefs.size == 0}" value="There are no custom objects related to cases." /></td></tr>
+                            
+                            <apex:repeat value="{!customObjPrefs}" var="cust_pref" id="rptChildObjects">
+                                <tr>
+                                    <td><apex:outputText value="{!cust_pref.objLabel}" /></td>
+                                    <td align="center"><apex:inputCheckbox id="CLONE_OBJECT_checkbox" required="false" value="{!cust_pref.cDef.reParent}" onClick="toggleDisableCheckbox('{!$Component.CLONE_OBJECT_checkbox}', '{!$Component.DELETE_ORIGINAL_checkbox}');" /></td>
+                                    <td align="center"><apex:inputCheckbox id="DELETE_ORIGINAL_checkbox" required="false" value="{!cust_pref.cDef.deleteOrig}" /></td>
+                                    <td align="center"><apex:inputCheckbox id="IGNORE_INS_ERRS_checkbox" required="false" value="{!cust_pref.cDef.ignoreInsErrs}" /></td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Duplicate Tracking">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!backToWizard}" value="Back to Setup Wizard" />
+                <apex:actionStatus id="quickStatus">
+                    <apex:facet name="start">
+                        <apex:outputPanel >
+                            <div style="z-index:99; position:absolute; top:0px; left:0px; width:100%; height:100%; background-color:silver; opacity:.30; filter: alpha(opacity = 30);"></div>
+                            <apex:commandButton value="Saving..." disabled="true"/>
+                        </apex:outputPanel>
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton action="{!save}" value="Save" rerender="quickStatus" status="quickStatus"/>
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="Enable this feature to automatically track duplicate case creation for reporting with the included reports and dashboard."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="enable-groups" value="Enable Duplicate Tracking"/>
+                    <apex:inputCheckbox id="enable-groups" value="{!enableDuplicateGroups}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <!--<apex:pageBlock title="Auto-Merging">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!backToWizard}" value="Back to Setup Wizard" />
+                <apex:actionStatus id="quickStatus">
+                    <apex:facet name="start">
+                        <apex:outputPanel >
+                            <div style="z-index:99; position:absolute; top:0px; left:0px; width:100%; height:100%; background-color:silver; opacity:.30; filter: alpha(opacity = 30);"></div>
+                            <apex:commandButton value="Saving..." disabled="true"/>
+                        </apex:outputPanel>
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton action="{!save}" value="Save" rerender="quickStatus, autoMergeLabel" status="quickStatus"/>
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection columns="1" collapsible="false" id="autoMergeLabel">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputPanel >
+                        <apex:outputPanel rendered="{!enableAutoMerge}">
+                            Enable this feature to automatically merge cases that fit a secondary criteria defined&nbsp;<apex:outputLink target="_new" value="/apex/CsMrgFind?sdc=1">here</apex:outputLink>.
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!NOT(enableAutoMerge)}">
+                            Enable this feature to automatically merge cases that fit a secondary criteria.
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        
+            <apex:pageBlockSection columns="1" id="enableAutoMergeSection">
+                <apex:pageBlockSectionItem id="enableAutoMergeSectionItem">
+                    <apex:outputLabel for="enableAutoMerge" value="Enable auto-merging"/>
+                    <apex:outputPanel >
+                        <apex:inputCheckbox id="enableAutoMerge" value="{!enableAutoMerge}" onchange="toggleAutoMergeSettings(this, '{!$Component.autoStatusSection.autoStatusSectionItem.autoStatusSelect}', '{!$Component.timeRangeSection.timeRangeSectionItem.autoMergeTimespan}'); return false;"/>
+                        <apex:outputText value="No auto-merge criteria defined. Setting will be disabled until criteria are saved." style="margin-left:5px; font-weight:bold; font-style:italic; font-size:90%; color:#B40404" rendered="{!NOT(AUTO_MERGE_CRITS_FOUND)}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="Select which Case Status to set to the auto-merged cases."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false" id="autoStatusSection">
+                 <apex:pageBlockSectionItem id="autoStatusSectionItem">
+                    <apex:outputLabel value="Auto-Merged Case Status" />
+                    <apex:selectList value="{!autoCaseStatus}" multiselect="false" size="1" title="Auto-Merge Status" id="autoStatusSelect" required="false" >
+                        <apex:selectOptions value="{!statusItems}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value=""/>
+                    <apex:outputText value="Matching cases will be auto-merged only if their created dates fall within this range."/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" collapsible="false" id="timeRangeSection">
+                <apex:pageBlockSectionItem id="timeRangeSectionItem">
+                    <apex:outputLabel value="Created Within Timespan" />
+                    <apex:outputPanel >
+                        <apex:inputText id="autoMergeTimespan" value="{!autoMergeTimeRange}" size="5" onkeypress="mask(this, maskNum);"/>
+                        <apex:outputText value="(0 will set an infinite range)" style="margin-left:5px"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <script>
+                try {
+                    var autoMergeCheckbox = document.getElementById("{!$Component.enableAutoMergeSection.enableAutoMergeSectionItem.enableAutoMerge}");
+                    var autoMergeStatus = document.getElementById("{!$Component.autoStatusSection.autoStatusSectionItem.autoStatusSelect}");
+                    var autoMergeTimespan = document.getElementById("{!$Component.timeRangeSection.timeRangeSectionItem.autoMergeTimespan}");
+                    if (autoMergeCheckbox.checked){
+                        autoMergeStatus.disabled = false;
+                        autoMergeTimespan.disabled = false;
+                    } else {
+                        autoMergeStatus.disabled = true;
+                        autoMergeTimespan.disabled = true;
+                    }
+                } catch (e){}
+            </script>
+        </apex:pageBlock>-->
+        
+    </apex:form>
+    
+    <script>
+    sforce.console.setTabTitle('Configuration - Case Merge Premium');
+    
+    //overwrite help
+    var hlinks = getElementsByClassName('links')[0];
+    hlinks.innerHTML = '<a href="http://ic.force.com/cmpdocs" target="_new">Documentation</a> | <a href="http://kb.internetcreations.com/pkb_Home?c=Products%3ACase_Merge_Premium" target="_new">Knowledge Base</a> | <a href="mailto:casemergepremium@internetcreations.com">casemergepremium@internetcreations.com</a> <img src="/s.gif" alt="Help" class="helpIcon" title="Help">';
+    // hlinks.innerHTML += '<br/><div style="font-size:smaller">Free implementation assistance is available.</div>';
+    
+    hlinks.style.fontSize = 'larger';
+    hlinks.style.position = 'absolute';
+    hlinks.style.float  = 'right';
+    hlinks.style.right = '0%';
+    
+    //elements by CSS style
+    function getElementsByClassName(className) {
+        var hasClassName = new RegExp("(?:^|\\s)" + className + "(?:$|\\s)");
+        var allElements = document.getElementsByTagName("*");
+        var results = [];
+    
+        var element;
+        for (var i = 0; (element = allElements[i]) != null; i++) {
+            var elementClass = element.className;
+            if (elementClass && elementClass.indexOf(className) != -1 && hasClassName.test(elementClass))
+                results.push(element);
+        }
+    
+        return results;
+    }
+    
+    //On page load, disable any "delete original" checkboxes wherever the "clone" checkbox in its row is not checked
+    try {
+        var stdCloneRegex = new RegExp(/"[^ ]*StandardObjects:rptChildObjects:\d+:CLONE_OBJECT_checkbox"/gi);
+        var cloneSearch = document.body.innerHTML.match(stdCloneRegex); //Apply the global regex search to the document body
+        var cloneResults = cloneSearch.filter(function(elem, pos, self) {
+                                                  return self.indexOf(elem) == pos;}) //Filter out the duplicates (both id and name were matched)
+        setDisabledCheckboxes(cloneResults, 'StandardObjects');
+        
+        var customCloneRegex = new RegExp(/"[^ ]*CustomObjects:rptChildObjects:\d+:CLONE_OBJECT_checkbox"/gi);
+        cloneSearch = document.body.innerHTML.match(customCloneRegex);
+        cloneResults = cloneSearch.filter(function(elem, pos, self) {
+                                              return self.indexOf(elem) == pos;})
+        setDisabledCheckboxes(cloneResults, 'CustomObjects');
+    } catch(e) {}
+    
+    function setDisabledCheckboxes(cloneSearch, objType){
+        var deleteRegex;
+        var deleteSearch;
+        var cloneID;
+        var deleteID;
+        var rowNum;
+        for (var i = 0; i < cloneSearch.length; i++){
+            cloneID = cloneSearch[i].substring(1, cloneSearch[i].length-1); //Trim the quotes
+            rowNum = parseInt(cloneID.match(/\d+(?=:CLONE_OBJECT_checkbox)/));
+            if (!document.getElementById(cloneID).checked){     //This "clone" checkbox is NOT checked. Disable the "delete" checkbox next to it.
+                deleteRegex = '"[^ ]*' + objType + ':rptChildObjects:' + rowNum + ':DELETE_ORIGINAL_checkbox"';
+                deleteSearch = document.body.innerHTML.match(deleteRegex);
+                deleteID = deleteSearch[0].substring(1, deleteSearch[0].length-1);
+                document.getElementById(deleteID).checked = false;
+                document.getElementById(deleteID).disabled = true;
+            }
+        }
+    }
+    setFocusOnLoad = null;
+    </script>
+</apex:page>

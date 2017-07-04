@@ -1,0 +1,374 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="Case_Rating_Controller">
+<html>
+  <head>
+  <!-- Static Resources for CSS -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <link type="text/css" href="{!URLFOR($Resource.materialize_v0970, 'materialize/css/materialize.min.css')}" rel="stylesheet" media="screen,projection"/>
+  
+  <!-- Static Resources for JS -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+  <script type="text/javascript" src="{!URLFOR($Resource.materialize_v0970, 'materialize/js/materialize.min.js')}"/>
+  
+  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.2/material.blue-indigo.min.css"/>
+  <script src="https://storage.googleapis.com/code.getmdl.io/1.0.2/material.min.js"></script>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+  <body class="grey lighten-5">
+  
+<style>
+  body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+  main {
+    flex: 1 0 auto;
+    padding: 10px 0;
+  }
+  .toast {
+    background-color: rgba(0,0,0,.62);
+    box-shadow: none;
+  }
+  .mdl-spinner {
+    vertical-align: middle;
+    margin-left: 15px;
+  }
+  
+  .card-content {
+    padding-top: 15px;
+  }
+  .case-info {
+    margin-top: 0;
+    padding: 5px 10px;
+    background-color: #F2F2F2;
+  }  
+  .rating.submitted::after,
+  .rating-ie.submitted::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    background: rgba(255,255,255,.45);
+    z-index: 100;
+  }
+  
+  .rating {
+    unicode-bidi: bidi-override;
+    direction: rtl;
+    position: relative;
+    text-align: center;
+    zoom: 1.2;
+    margin: 10px 0;
+    padding: 5px 0;
+    background: #F2F2F2;
+  }
+  .rating > a {
+    display: inline-block;
+    position: relative;
+    width: 1.25em;
+    color: #757575;
+    cursor: pointer;
+    outline: 0;
+    direction: ltr;
+  }
+  .rating > a:hover,
+  .rating > a:hover ~ span {
+    color: transparent;
+  }
+  .rating > a:hover i:before,
+  .rating > a:hover ~ a i:before,
+  .rating > a.active i:before,
+  .rating > a.active ~ a i:before {
+     content: "star";
+     position: absolute;
+     color: #0091EA;
+  }
+  .rating.rated > a:not(.active):hover i:before,
+  .rating.rated > a:not(.active):hover ~ a i:before {
+    color: #00B0FF;
+  }
+  .rating.rated > a.active {
+    cursor: default;
+  }
+  h4.card-title-h4 {
+    margin: 0;
+    padding: 10px 20px 3px;
+  }
+  h5.card-title-h5 {
+    margin: 0;
+    padding: 3px 20px 15px;
+  }
+  #comments-wrapper {
+    display: none;
+  }
+  /* label color */
+  .input-field label {
+    color: rgba(0,0,0,.87);
+  }
+  /* label focus color */
+  .input-field textarea:focus + label {
+    color: #0091EA!important;
+  }
+  /* label underline focus color */
+  .input-field textarea:focus {
+    border-bottom: 1px solid #0091EA!important;
+    box-shadow: 0 1px 0 0 #0091EA!important;
+  }   
+  
+  .rating-ie {
+    display: none;
+    position: relative;
+    margin: 10px 0;
+    padding: 5px;
+    background: #F2F2F2;
+  }
+  .message-ie {
+    display: none;
+  }
+</style>
+
+<!--[if lt IE 11]>
+<style type="text/css">
+  body { display: block; min-height: 0; }
+  .rating { display: none; }
+  .rating-ie { display: block; }
+  .message-ie { display: inline; margin-left: 5px; }
+  input[type="radio"].with-gap:checked + label { color: #222!important }
+  input[type="radio"].with-gap:checked + label:before { border-color: #0091EA!important; }
+  input[type="radio"].with-gap:checked + label:after { border-color: #0091EA!important; background-color: #0091EA!important; }
+</style>
+<![endif]-->
+
+
+<header></header>
+<main class="valign-wrapper grey lighten-5">
+
+<div class="container">
+
+<div class="row">
+  <div class="col s12 m8 offset-m2 l6 offset-l3">
+  
+  <div class="card">
+  <div class="blue lighten-1">
+    <h4 class="card-title-h4 blue-text text-darken-2 truncate">{!caseObject.CaseNumber}</h4>
+    <h5 class="card-title-h5 white-text truncate">{!caseObject.Subject}</h5>
+  
+  </div>
+  <!-- EMPTY -->
+  <div class="card-content {!if(Empty != true,'hide','')}">
+    <p class="grey-text text-darken-1">
+    <!-- Icon button -->
+    <button class="mdl-button mdl-js-button mdl-button--icon" disabled="disabled">
+      <i class="material-icons grey-text text-darken-1">mood_bad</i>
+    </button>
+    There is no reference to any case.
+    </p>
+  </div>
+  <!-- DENIED -->
+  <div class="card-content {!if(Denied != true,'hide','')}">
+    <p class="red-text text-darken-1">
+    <!-- Icon button -->
+    <button class="mdl-button mdl-js-button mdl-button--icon" disabled="disabled">
+      <i class="material-icons red-text text-darken-1">not_interested</i>
+    </button>
+    You do not have access to this record or it may have been deleted.
+    </p>
+  </div>
+  <!-- NOT CLOSED -->
+  <div class="card-content {!if(NotClosed != true,'hide','')}">
+    <p class="red-text text-darken-1">
+    <!-- Icon button -->
+    <button class="mdl-button mdl-js-button mdl-button--icon" disabled="disabled">
+      <i class="material-icons red-text text-darken-1">not_interested</i>
+    </button>
+    This case is not closed and we are still working on it.
+    </p>
+  </div>
+  <!-- ALREADY SUBMITTED -->
+  <div class="card-content {!if(or(Submitted == false,Denied == true,Empty == true,NotClosed == true),'hide','')}">
+    <p class="grey-text text-darken-1">
+    <!-- Icon button -->
+    <button class="mdl-button mdl-js-button mdl-button--icon" disabled="disabled">
+      <i class="material-icons grey-text text-darken-1">done</i>
+    </button>
+    This case has been already rated as <b>{!caseObject.PICK_RATING__c}</b> by <b>{!caseObject.LKP_RATING_BY__r.Name}</b>.
+    </p>
+  </div>
+  <!-- TO SUBMIT -->
+  <div class="card-content {!if(or(Submitted == true,Denied == true,Empty == true,NotClosed == true),'hide','')}">
+  
+  <ul class="case-info">
+    <li><span class="deep-orange-text text-darken-3">Created date:</span> {!CreatedDate}</li>
+    <li><span class="deep-orange-text text-darken-3"> Closed date:</span> {!ClosedDate}</li>
+  </ul>
+  
+  <p>Please, rate the solution of this case from Poor to Excellent. Help us to improve the support processes writting down the reason of your rating.</p>
+   
+  <div class="rating {!if(Submitted == true,'submitted','')}">
+    <a id="tt1" alt="Excellent" class="rate-item"><i class="material-icons">star_border</i></a>
+      <div class="mdl-tooltip" for="tt1">Excellent</div>
+    <a id="tt2" alt="Very Good" class="rate-item"><i class="material-icons">star_border</i></a>
+      <div class="mdl-tooltip" for="tt2">Very Good</div>
+    <a id="tt3" alt="Good" class="rate-item"><i class="material-icons">star_border</i></a>
+      <div class="mdl-tooltip" for="tt3">Good</div>
+    <a id="tt4" alt="Average" class="rate-item"><i class="material-icons">star_border</i></a>
+      <div class="mdl-tooltip" for="tt4">Average</div>
+    <a id="tt5" alt="Poor" class="rate-item"><i class="material-icons">star_border</i></a>
+      <div class="mdl-tooltip" for="tt5">Poor</div>
+  </div>
+  
+  <div class="rating-ie {!if(Submitted == true,'submitted','')}">
+    <p><input name="rating-radio" type="radio" class="rate-item with-gap" alt="Excellent" id="Excellent"/><label for="Excellent">Excellent</label></p>
+    <p><input name="rating-radio" type="radio" class="rate-item with-gap" alt="Very Good" id="Very_Good"/><label for="Very_Good">Very Good</label></p>
+    <p><input name="rating-radio" type="radio" class="rate-item with-gap" alt="Good" id="Good"/><label for="Good">Good</label></p>
+    <p><input name="rating-radio" type="radio" class="rate-item with-gap" alt="Average" id="Average"/><label for="Average">Average</label></p>
+    <p><input name="rating-radio" type="radio" class="rate-item with-gap" alt="Poor" id="Poor"/><label for="Poor">Poor</label></p>
+  </div>
+
+  <form id="comments-wrapper">
+    <div class="row">
+      <div class="input-field col s12">
+        <textarea id="comments" class="materialize-textarea" length="120"></textarea>
+        <label for="comments">Comments <i class="comments-text1">(optional)</i><i class="comments-text2">(min. 15 characters)</i></label>
+      </div>
+    </div>
+      
+    <!-- Raised button with ripple -->
+    <button type="button" onclick="$('.mdl-spinner').removeClass('hide');" disabled="disabled" id="comments-submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Submit</button>
+    <span class="message-ie"></span>
+  </form>
+  
+  </div>
+  </div>
+  
+  </div>
+</div>
+
+</div>
+</main>
+
+<footer></footer>
+<!-- Force.com connection -->
+  <script type="text/javascript">
+    try {
+      var __sfdcSessionId = '{!GETSESSIONID()}';
+      if(__sfdcSessionId == null)
+        throw new Exception(e);
+    } catch(e) {
+      Materialize.toast('<span class="red-text text-lighten-3">Your session has expired. Refresh the page.</span>',6000);
+    }
+  </script>
+  <script src="/soap/ajax/34.0/connection.js" type="text/javascript"></script>
+  <script src="/soap/ajax/34.0/apex.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+    
+      $('.rate-item').click(function() {
+        if(!$(this).hasClass('active')) {
+          
+          $('.rating, .rating-ie').addClass('rated');
+          $('.rate-item').removeClass('active');
+          $(this).addClass('active');
+          $('#comments-wrapper').slideDown('fast');
+          if($(this).attr('alt') == 'Excellent') {
+            $('#comments-submit').prop('disabled', false);
+            $('.comments-text1').removeClass('hide');
+            $('.comments-text2').addClass('hide');
+            if($('#comments').val().length <= 120) {
+              $('#comments').removeClass('invalid');
+              $('#comments-submit').prop('disabled', false);
+            } else {
+              $('#comments').addClass('invalid');
+              $('#comments-submit').attr('disabled','disabled');
+            }
+          } else {
+            $('.comments-text1').addClass('hide');
+            $('.comments-text2').removeClass('hide');
+            
+            if($('#comments').val().length < 15 || $('#comments').val().length > 120 ) {
+              if($('#comments').val().length != 0)
+                $('#comments').addClass('invalid');
+              $('#comments-submit').attr('disabled','disabled');
+            } else {
+              if(!$.trim($('#comments').val())) {
+                $('#comments').addClass('invalid');
+                $('#comments-submit').attr('disabled','disabled');
+              } else {
+                $('#comments').removeClass('invalid');
+                $('#comments-submit').prop('disabled', false);
+              }
+            }
+          }
+        }
+      });
+      
+      $('#comments').on( 'keyup', function() {
+        if($(this).val().length < 15 || $(this).val().length > 120 ) {
+          if($('.active').attr('alt') != 'Excellent') {
+            $('#comments-submit').attr('disabled','disabled');
+            if($(this).val().length != 0)
+              $(this).addClass('invalid');
+            else
+              $(this).removeClass('invalid');
+          }
+          if($('.active').attr('alt') == 'Excellent' && $(this).val().length > 120) {
+            $('#comments-submit').attr('disabled','disabled');
+            $(this).addClass('invalid');
+          }
+        }
+        else {
+          if(!$.trim($('#comments').val())) {
+            $('#comments-submit').prop('disabled', 'disabled');
+            $(this).addClass('invalid');
+          } else {
+            $('#comments-submit').prop('disabled', false);
+            $(this).removeClass('invalid');
+          }
+        }
+      });
+      
+      $('button').click(function() {
+        if((($('#comments').val().length <= 120 && $('#comments').val().length >= 15) || $('.active').attr('alt') == 'Excellent' ) && {!Submitted} == false) {
+          try{
+            var sv = new sforce.SObject("Case");
+            sv.Id = '{!caseObject.Id}';
+            sv.PICK_RATING__c = $('.active').attr('alt');
+            sv.LKP_RATING_BY__c = '{!currentUser.Id}';
+            sv.TXT_RATING_COMMENTS__c = $('#comments').val() + ' ';
+            result = sforce.connection.update([sv]);
+            //Checking if browser is IE to show or hide the toasts
+              var UA = window.navigator.userAgent;
+              var IsIE = UA.indexOf("MSIE ");
+
+            if(result[0].getBoolean("success")) {
+              $('.rating, .rating-ie').addClass('submitted');
+              $('#comments-submit, #comments').attr('disabled','disabled');          
+              if(IsIE > 0) {
+                $('.message-ie').html('<b>Thanks! Your rating has been submitted.</b>');
+              } else {
+                $('.toast').hide();
+                Materialize.toast('Thanks! Your rating has been submitted.',3000);
+              }
+            } else {
+              throw new Exception(e);
+            }
+            
+          } catch(e) {
+            if(IsIE > 0) {
+              $('.message-ie').html('<b class="red-text text-darken-1">Some error may occur. Please, refresh the page and try again.</b>');
+            } else {
+              $('.toast').hide();
+              Materialize.toast('<span class="red-text text-lighten-3">Some error may occur. Please, refresh the page and try again.</span>',6000);
+            }
+          }
+        }
+
+      });
+      
+    });
+  </script>
+  </body>
+</html>
+</apex:page>

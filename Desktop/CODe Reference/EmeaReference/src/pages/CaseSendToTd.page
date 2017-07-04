@@ -1,0 +1,11 @@
+<apex:page controller="CaseSendToTdController" action="{!processCase}">
+	<apex:form >
+		<apex:pageBlock title="Case {!currentCase.record.CaseNumber}">
+			<apex:pageMessages ></apex:pageMessages>
+			<apex:pageBlockButtons >
+				<apex:commandButton action="{!returnToCase}" value="Return to Case"/>
+				<apex:commandButton action="{!returnToAccount}" value="Return to Account"/>
+			</apex:pageBlockButtons>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

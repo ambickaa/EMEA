@@ -1,0 +1,59 @@
+<apex:page controller="AccountSharingController" tabStyle="Account">
+    <apex:sectionHeader title="{!Account.name}" subtitle="{!$Label.Account_sharing}">
+        <script id="sectionHeaderScript">document.getElementById('sectionHeaderScript').previousSibling.previousSibling.innerHTML += '<div class="ptBreadcrumb"><a onClick="history.go(-1);" ><span>\u2190</span>{!$Label.Go_Back}</a></div>';</script>
+    </apex:sectionHeader>
+    <style>
+    	.ptBreadcrumb a {
+    		cursor: pointer;
+    	}
+        .ptBreadcrumb a span {
+        	font-size: 1.2em;
+        	margin-right: 5px;
+        }
+    </style>
+    <apex:pageMessages id="messages" />
+    <apex:pageBlock id="pageBlock" rendered="{!NOT(ISNULL(Account))}">
+        <apex:form >
+            <apex:pageBlockSection >
+                
+                <apex:pageBlockSection collapsible="false" columns="1">
+                
+                    <apex:outputPanel >
+	                    <h3><apex:outputText value="{!$Label.Available_Users}"/></h3>
+	                    <apex:commandButton value="{!$Label.Add_user}" action="{!add}" reRender="pageBlock,messages" style="float:right" status="loadingAdd"/>
+						<apex:actionStatus id="loadingAdd">
+							<apex:facet name="start"><apex:image value="/img/loading.gif" style="float:right; margin-right: 5px; margin-top: 4px"/></apex:facet>
+						</apex:actionStatus>
+                    </apex:outputPanel>
+    
+                    <apex:pageBlockTable value="{!possibleUsers}" var="possibleUser">
+                        <apex:column headerValue="{!$Label.HeaderSelect}" style="width: 20px"><apex:inputCheckbox value="{!possibleUser.selected}" /></apex:column>
+                        <apex:column value="{!possibleUser.user.Name}"/>
+                        <apex:column value="{!possibleUser.user.Division}"/>
+                        <apex:column value="{!possibleUser.user.StandardDivision__c}"/>
+                        <apex:column value="{!possibleUser.access}" headerValue="{!$ObjectType.AccountShare.fields.AccountAccessLevel.label}"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection collapsible="false" columns="1">
+                
+                    <apex:outputPanel >
+	                    <h3><apex:outputText value="{!$Label.Users_with_access}"/></h3>
+	                    <apex:commandButton value="{!$Label.Save_changes}" action="{!save}" reRender="pageBlock,messages" style="float:right" status="loadingAction"/>
+						<apex:actionStatus id="loadingAction">
+							<apex:facet name="start"><apex:image value="/img/loading.gif" style="float:right; margin-right: 5px; margin-top: 4px"/></apex:facet>
+						</apex:actionStatus>
+                    </apex:outputPanel>
+                    
+                    <apex:pageBlockTable value="{!sharedUsers}" var="sharedUser">
+                        <apex:column value="{!sharedUser.user.Name}"/>
+                        <apex:column value="{!sharedUser.user.Division}"/>
+                        <apex:column value="{!sharedUser.user.StandardDivision__c}"/>
+                        <apex:column value="{!sharedUser.access}" headerValue="{!$ObjectType.AccountShare.fields.AccountAccessLevel.label}"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+
+            </apex:pageBlockSection>
+        </apex:form>
+    </apex:pageBlock>
+</apex:page>

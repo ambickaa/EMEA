@@ -1,0 +1,19 @@
+<apex:component controller="AccountMarketingCampaignListController">
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    <apex:form >
+        <apex:Pageblock >
+            <apex:pageBlockSection title="{!$Label.MarketingCampaigns}" columns="1">
+                <apex:pageblockTable value="{!campaigns}" var="campaign">
+                    <apex:repeat var="f" value="{!fieldSetManager.managedFieldSetMembers}">
+                        <apex:column >
+                            <apex:facet name="header">{!f.label}</apex:facet>
+                            <apex:outputField value="{!campaign.record[f.fieldPath]}" rendered="{!IF(mode == 'view', true, false)}" />
+                            <apex:inputField value="{!campaign.record[f.fieldPath]}" rendered="{!IF(mode == 'edit', true, false)}" required="{!f.required}" />
+                        </apex:column> 
+                    </apex:repeat>
+                </apex:pageblockTable>
+            </apex:pageBlockSection>
+        </apex:Pageblock>
+    </apex:form>
+</apex:component>

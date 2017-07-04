@@ -1,0 +1,113 @@
+<apex:page id="page" controller="NPSDashboardChartsController" sidebar="false" contentType="application/vnd.ms-excel#{!fileName}.xls" readOnly="true">
+
+    <apex:dataTable value="{!listaCasosExport}" var="item" rendered="{!listaCasosExport.size >0}">
+    
+        <apex:column >
+            <apex:facet name="header">NPS EXT Response ID</apex:facet>
+            <apex:outputText value="{!item.NPS_EXT_RESPONSEID__c}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Owner</apex:facet>
+            <apex:outputText value="{!item.account.owner.name}"/>
+        </apex:column>        
+           
+        <apex:column >
+            <apex:facet name="header">Country</apex:facet>
+            <apex:outputText value="{!item.NPS_Country__c}"/>
+        </apex:column>
+        
+         <apex:column >
+            <apex:facet name="header">Account Name</apex:facet>
+            <apex:outputText value="{!item.account.name}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Contact Name</apex:facet>
+            <apex:outputText value="{!item.contact.name}"/>
+        </apex:column>
+                
+        <apex:column >
+            <apex:facet name="header">Interview Start</apex:facet>
+            <apex:outputText value="{!item.NPS_INTERVIEW_START__c}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Interview End</apex:facet>
+            <apex:outputText value="{!item.NPS_INTERVIEW_END__c}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">NPS Result</apex:facet>
+            <apex:outputText value="{!item.NPS_RESULT_Q1__c}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Case Reason</apex:facet>
+            <apex:outputText value="{!item.NPS_RESULT_Q21__c}"/>
+        </apex:column>   
+        
+        <apex:column >
+            <apex:facet name="header">Detractor</apex:facet>
+            <apex:outputText value="{!item.FRML_Is_Detractor__c}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Passive</apex:facet>
+            <apex:outputText value="{!item.FRML_Is_Passive__c}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Promoter</apex:facet>
+            <apex:outputText value="{!item.FRML_Is_Promoter__c}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Tasks Generated_counter</apex:facet>
+            <apex:outputText value="{!item.FRML_Tasks_generated_counter__c}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Segment</apex:facet>
+            <apex:outputText value="{!item.NPS_Campaign__r.TXT_Local_segment__c}"/>
+        </apex:column>   
+        
+        <apex:column >
+            <apex:facet name="header">Farm Size</apex:facet>
+            <apex:outputText value="{!item.NPS_Campaign__r.TXT_Farm_Size__c}"/>
+        </apex:column>   
+          </apex:dataTable>
+
+        
+    <apex:dataTable value="{!listaTasksExport}" var="item" rendered="{!listaTasksExport.size >0}">
+    
+        <apex:column >
+            <apex:facet name="header">NPS EXT Response ID</apex:facet>
+            <apex:outputText value="{!item.LKP_NPS_Case__r.NPS_EXT_RESPONSEID__c}"/>
+        </apex:column>
+    
+        <apex:column >
+            <apex:facet name="header">NPS Country</apex:facet>
+            <apex:outputText value="{!item.LKP_NPS_Case__r.NPS_Country__c}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Status</apex:facet>
+            <apex:outputText value="{!item.status}"/>
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Days to close</apex:facet>
+            <apex:outputText value="{!item.FRML_DAYS_TO_CLOSE__c}"/>
+        </apex:column>
+        
+               
+        <apex:column >
+            <apex:facet name="header">Activity Date</apex:facet>
+            <apex:outputText value="{!item.ActivityDate}"/>
+        </apex:column>
+        
+        </apex:dataTable>
+
+        
+</apex:page>

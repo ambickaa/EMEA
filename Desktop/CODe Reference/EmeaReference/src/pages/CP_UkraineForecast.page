@@ -1,0 +1,705 @@
+<apex:page controller="CP_UkraineForecastController">
+    <style type="text/css"> 
+        .inlineEditWriteOn{background:url(/img/func_icons/util/pencil12.gif) no-repeat right 2px}
+        .inlineEditDiv input[type=text]{max-width: 50px}
+    </style>
+    <apex:form >
+
+      <div>
+          
+         <apex:pageBlock >
+            <apex:actionStatus onstart="loading(true)" onstop="loading(false)" id="loadStatus"/>
+            <div>
+               <apex:outputLabel value="{!$Label.CP_Fiscal_Year}" style="font-weight:bold; "/>
+               <!-- Selector de Product y Distributor -->
+               <apex:pageblockSection id="productsSelected" columns="2">   
+                            <c:MultiselectPicklist leftLabel="{!$Label.Available_Products}"
+                            leftOptions="{!allProducts}"
+                            rightLabel="{!$Label.Seleced_Products}"
+                            rightOptions="{!selectedProducts}"
+                            size="10"
+                            width="300px"/>
+                        
+                            <c:MultiselectPicklist leftLabel="{!$Label.Available_Distributors}"
+                            leftOptions="{!allDistributors}"
+                            rightLabel="{!$Label.Selected_Distributors}"
+                            rightOptions="{!selectedDistributors}"
+                            size="10"
+                            width="350px"/>
+                    </apex:pageblockSection>
+                <div style="margin-top:30px; text-align:center">
+                        <hr/>
+                        <div style="display:inline; margin: 0 auto; width:150px">
+                    <!--    <apex:commandButton value="{!$Label.Distribute_Forecast}" action="{!generateForecastPreview}" onclick="distributeLoaded(true)" oncomplete="distributeLoaded(false)" reRender="panelEditable" />      -->
+                            <apex:commandButton value="{!$Label.Get_Forecast}" action="{!getData}" onclick="forecastLoaded(true)" oncomplete="forecastLoaded(false)" reRender="panelPreview, panelEditable"/>
+                        </div>                                                                 <!-- "forecastLoaded(true)"    oncomplete "forecastLoaded(false)"     forecastPreview, forecastEditable      -->
+                    </div>
+                <!-- END Selector de Product y Distributor -->
+                <apex:inputField value="{!aplFY.PICK_Forecast_Fiscal_Year__c}" required="true">
+                    <!-- <apex:actionSupport event="onchange" action="{!getData}" onsubmit="loading(true)" oncomplete="loading(false)" reRender="contentLoaded, contentPreview"/> -->
+                </apex:inputField>
+             </div>
+         </apex:pageBlock>
+         
+         
+         
+         <apex:outputPanel id="panelPreview">
+         <div id="contentPreviewLoading" style="display:none;">
+            <div style="text-align: center;">
+               <img src="/img/loading.gif" alt="Loading graphic" />
+            </div>
+         </div>
+         <div id="forecastPreview">
+            <apex:pageBlock mode="detail" id="forecastPreview" title="{!$Label.Forecast_actual_distribution}" rendered="{!forecastpreview.size>0 && country.Units_of_Measurement__c == 'Basic Units'}" > <!--   -->
+               <div style="text-align:right" >
+                  <apex:pageBlockTable value="{!listaPintarForecast}" var="item" >
+                     <apex:column headerValue="SKU" width="500" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{!IF(item.total==false, item.elemForecast.product, item.name)}" />
+                    </apex:column>
+                    <apex:column headerValue="Distributor" width="500" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{!IF(item.total==false, item.elemForecast.dist, '')}" />
+                    </apex:column>
+                     <apex:column headerValue="{!previousFY}-09" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastSeptember.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastSeptember.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-10" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastOctober.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastOctober.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-11" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastNovember.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastNovember.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-12" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastDecember.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastDecember.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-01" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastJanuary.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastJanuary.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-02" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastFebruary.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastFebruary.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-03" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastMarch.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastMarch.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-04" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastApril.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastApril.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-05" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastMay.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastMay.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-06" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastJune.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastJune.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-07" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastJuly.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastJuly.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-08" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputField value="{!item.elemForecast.forecastAugust.NUM_Forecast__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastAugust.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!$Label.Forecast_Total_Units}" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{0, number, ###,##0}" >
+                            <apex:param value="{!ROUND(item.elemForecast.totalForecastUnits, 0)}" />
+                        </apex:outputText>
+                            <!-- <apex:param value="{!item.elemForecast.totalForecastUnits}" />  {!SUBSTITUTE(TEXT(ROUND(opp.NumberField__c, 0)), ",", ".")} 
+                        </apex:outputText> -->
+                     </apex:column>
+                     <apex:column headerValue="{!$Label.Forecast_Total_Rels}" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{0, number, ###,##0}" >
+                            <apex:param value="{!ROUND(item.elemForecast.totalForecastRels, 0)}" />
+                        </apex:outputText>
+                     </apex:column>
+                  </apex:pageBlockTable>
+               </div>
+            </apex:pageBlock>
+            
+            <apex:pageBlock mode="detail" id="forecastPreview2" title="{!$Label.Forecast_actual_distribution_Rel}" rendered="{!forecastpreview.size>0 && country.Units_of_Measurement__c == 'Rels'}">
+               <div style="text-align:right" >
+                  <apex:pageBlockTable value="{!listaPintarForecast}" var="item">
+                     <apex:column headerValue="SKU" width="500" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputText value="{!IF(item.total==false, item.elemForecast.product, item.name)}" />
+                    </apex:column>
+                    <apex:column headerValue="Distributor" width="500" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{!IF(item.total==false, item.elemForecast.dist, '')}" />
+                    </apex:column>
+                     <apex:column headerValue="{!previousFY}-09" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastSeptember.NUM_Forecast_Rel__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastSeptember.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-10" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastOctober.NUM_Forecast_Rel__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastOctober.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-11" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastNovember.NUM_Forecast_Rel__c}" rendered="{!item.total==false}"/>
+                        <apex:outputField value="{!item.elemForecast.forecastNovember.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-12" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastDecember.NUM_Forecast_Rel__c}" rendered="{!item.total==false}" />
+                        <apex:outputField value="{!item.elemForecast.forecastDecember.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <!-- Refer?ncia gener -->
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-01" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastJanuary.NUM_Forecast_Rel__c}" rendered="{!item.total==false}" />
+                        <apex:outputField value="{!item.elemForecast.forecastJanuary.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-02" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastFebruary.NUM_Forecast_Rel__c}" rendered="{!item.total==false}" />
+                        <apex:outputField value="{!item.elemForecast.forecastFebruary.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-03" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastMarch.NUM_Forecast_Rel__c}" rendered="{!item.total==false}" />
+                        <apex:outputField value="{!item.elemForecast.forecastMarch.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-04" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastApril.NUM_Forecast_Rel__c}" rendered="{!item.total==false}" />
+                        <apex:outputField value="{!item.elemForecast.forecastApril.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-05" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastMay.NUM_Forecast_Rel__c}" rendered="{!item.total==false}" />
+                        <apex:outputField value="{!item.elemForecast.forecastMay.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-06" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastJune.NUM_Forecast_Rel__c}" rendered="{!item.total==false}" />
+                        <apex:outputField value="{!item.elemForecast.forecastJune.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-07" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastJuly.NUM_Forecast_Rel__c}" rendered="{!item.total==false}" />
+                        <apex:outputField value="{!item.elemForecast.forecastJuly.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-08" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputField value="{!item.elemForecast.forecastAugust.NUM_Forecast_Rel__c}" rendered="{!item.total==false}" />
+                        <apex:outputField value="{!item.elemForecast.forecastAugust.NUM_Sell_In__c}" rendered="{!item.total==true}"/>
+                     </apex:column>
+                     <apex:column headerValue="{!$Label.Forecast_Total_Units}" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{0, number, ###,##0}" >
+                            <apex:param value="{!ROUND(item.elemForecast.totalForecastUnits, 0)}" />
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!$Label.Forecast_Total_Rels}" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{0, number, ###,##0}" >
+                            <apex:param value="{!ROUND(item.elemForecast.totalForecastRels, 0)}" />
+                        </apex:outputText>
+                     </apex:column>
+                  </apex:pageBlockTable>
+               </div>
+            </apex:pageBlock>            
+         </div>
+         </apex:outputPanel>
+         
+         
+         
+         
+         
+         
+         
+         <apex:outputPanel id="panelEditable">
+         <!-- <div id="contentPreview"> -->
+            <div id="editableLoaded" style="text-align:right">
+                <apex:pageBlock mode="inlineEdit" id="forecastEditable" title="{!$Label.Closed_sales} {!IF(day(Today())>VALUE($Label.CP_day), DATE(IF(month(Today())=12, Year(Today())+1, Year(Today())), IF(month(Today())=12, 1, month(Today())+1), 1), DATE(Year(Today()), month(Today()),1))} {!$Label.Forecast_distribution_preview}" rendered="{!forecastEditable.size > 0 && country.Units_of_Measurement__c == 'Basic Units'}">
+                   <div id="editableLoading" style="display:none;">
+                      <div style="text-align: center;">
+                         <img src="/img/loading.gif" alt="Loading graphic" />
+                      </div>
+                   </div>
+                    <div id="contentLoadedPreview1">
+                  <apex:detail inlineEdit="true"/>
+                  <apex:pageBlockTable id="forecastEditablePreview1" value="{!listaPintarForecast}" var="item">
+                     <apex:column headerValue="SKU"  width="500" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputText value="{!IF(item.total==false, item.elemForecast.product, item.name)}" />
+                    </apex:column>
+                    <apex:column headerValue="Distributor" width="500" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{!IF(item.total==false, item.elemForecast.dist, '')}" />
+                    </apex:column>
+                    <!-- Primera columna (setembre) -->
+                     <apex:column headerValue="{!previousFY}-09" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>9 || (MONTH(TODAY())=9 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <!-- Introducci? dels valors dels camps de sota el t?tol, tant per Device(iPad) com noDevice -->
+                        <apex:outputField value="{!item.elemForecast.forecastSeptember.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastSeptember.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true , false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <!-- Repetim les dues ?ltimes columnes per diferenciar entre les files 'normals' i les de recompte Total per familia de producte -->
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastSeptember.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <!-- Es repeteix la columna unaltre cop per canviarli el format en el moment en el que passa a formar part del passat -->
+                     <apex:column headerValue="{!previousFY}-09" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>9 || (MONTH(TODAY())=9&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastSeptember.NUM_Forecast__c,item.elemForecast.forecastSeptember.NUM_Delivered__c), 0)}"  rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     <apex:column headerValue="{!previousFY}-10" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>10 || (MONTH(TODAY())=10 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastOctober.NUM_Forecast__c}"  rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastOctober.NUM_Forecast__c}"  rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true , false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastOctober.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>                  
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-10" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>10 || (MONTH(TODAY())=10&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastOctober.NUM_Forecast__c,item.elemForecast.forecastOctober.NUM_Delivered__c), 0)}" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     <apex:column headerValue="{!previousFY}-11" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>11 || (MONTH(TODAY())=11 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastNovember.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastNovember.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastNovember.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-11" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>11 || (MONTH(TODAY())=11&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastNovember.NUM_Forecast__c,item.elemForecast.forecastNovember.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!previousFY}-12" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>12 || (MONTH(TODAY())=12 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastDecember.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastDecember.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastDecember.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-12" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>12 || (MONTH(TODAY())=12&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastDecember.NUM_Forecast__c,item.elemForecast.forecastDecember.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-01" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>1 || (MONTH(TODAY())=1 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastJanuary.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastJanuary.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastJanuary.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-01" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" width="75" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>1 || (MONTH(TODAY())=1&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastJanuary.NUM_Forecast__c,item.elemForecast.forecastJanuary.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-02" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>2 || (MONTH(TODAY())=2 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastFebruary.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastFebruary.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastFebruary.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-02" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>2 || (MONTH(TODAY())=2&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastFebruary.NUM_Forecast__c,item.elemForecast.forecastFebruary.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-03" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>3 || (MONTH(TODAY())=3 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastMarch.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>                        
+                        <apex:outputField value="{!item.elemForecast.forecastMarch.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastMarch.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-03" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>3 || (MONTH(TODAY())=3&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastMarch.NUM_Forecast__c,item.elemForecast.forecastMarch.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-04" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>4 || (MONTH(TODAY())=4 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastApril.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastApril.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastApril.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-04" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>4 || (MONTH(TODAY())=4&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastApril.NUM_Forecast__c,item.elemForecast.forecastApril.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-05" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>5 || (MONTH(TODAY())=5 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastMay.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastMay.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastMay.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-05" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>5 || (MONTH(TODAY())=5&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastMay.NUM_Forecast__c,item.elemForecast.forecastMay.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-06" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>6 || (MONTH(TODAY())=6 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastJune.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastJune.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastJune.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-06" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>6 || (MONTH(TODAY())=6&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastJune.NUM_Forecast__c,item.elemForecast.forecastJune.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-07" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>7 || (MONTH(TODAY())=7 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastJuly.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastJuly.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastJuly.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-07" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>7 || (MONTH(TODAY())=7&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastJuly.NUM_Forecast__c,item.elemForecast.forecastJuly.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-08" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>8 || (MONTH(TODAY())=8 &&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastAugust.NUM_Forecast__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastAugust.NUM_Forecast__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Basic Units' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastAugust.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-08" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>8 || (MONTH(TODAY())=8&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastAugust.NUM_Forecast__c,item.elemForecast.forecastAugust.NUM_Delivered__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Basic Units', true, false)}" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!$Label.Forecast_Total_Units}" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{!ROUND(item.elemForecast.totalUnits, 0)}" />
+                     </apex:column>
+                     <apex:column headerValue="{!$Label.Forecast_Total_Rels}" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{!ROUND(item.elemForecast.totalRels, 0)}" />
+                     </apex:column>
+                  </apex:pageBlockTable>
+                 </div>
+                </apex:PageBlock>               
+            </div>          
+              <div id="contentLoadingPreview" style="display:none;">
+                  <div style="text-align: center;">
+                     <img src="/img/loading.gif" alt="Loading graphic" />
+                  </div>
+               </div>        
+             <apex:pageBlock mode="inlineEdit" id="forecastEditable2" title="{!$Label.Forecast_actual_distribution_Rel}" rendered="{!forecastEditable.size > 0 && country.Units_of_Measurement__c == 'Rels'}">
+               
+               <div id="contentLoadedPreview2" style="text-align:right">
+                  <apex:detail inlineEdit="true"/>
+                  <apex:pageBlockTable id="forecastEditablePreview2" value="{!listaPintarForecast}" var="item">
+                     <apex:column headerValue="SKU"  width="500" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                        <apex:outputText value="{!IF(item.total==false, item.elemForecast.product, item.name)}" />
+                    </apex:column>
+                    <apex:column headerValue="Distributor" width="500" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{!IF(item.total==false, item.elemForecast.dist, '')}" />
+                    </apex:column>
+                    <!-- Primera columna (setembre) -->
+                     <apex:column headerValue="{!previousFY}-09" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>9 || (MONTH(TODAY())=9&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <!-- Introducci? dels valors dels camps de sota el t?tol, tant per Device(iPad) com noDevice -->
+                        <apex:outputField value="{!item.elemForecast.forecastSeptember.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastSeptember.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true , false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <!-- Repetim les dues ?ltimes columnes per diferenciar entre les files 'normals' i les de recompte Total per familia de producte -->
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastSeptember.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <!-- Es repeteix la columna unaltre cop per canviarli el format en el moment en el que passa a formar part del passat -->
+                     <apex:column headerValue="{!previousFY}-09" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>9 || (MONTH(TODAY())=9&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastSeptember.NUM_Forecast__c,item.elemForecast.forecastSeptember.NUM_Sell_In__c), 0)}"  rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     <apex:column headerValue="{!previousFY}-10" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>10 || (MONTH(TODAY())=10&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastOctober.NUM_Forecast_Rel__c}"  rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastOctober.NUM_Forecast_Rel__c}"  rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true , false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastOctober.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>                  
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-10" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>10 || (MONTH(TODAY())=10&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastOctober.NUM_Forecast__c,item.elemForecast.forecastOctober.NUM_Sell_In__c), 0)}" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     <apex:column headerValue="{!previousFY}-11" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>11 || (MONTH(TODAY())=10&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastNovember.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastNovember.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastNovember.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-11" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>11 || (MONTH(TODAY())=11&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastNovember.NUM_Forecast__c,item.elemForecast.forecastNovember.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!previousFY}-12" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>12 || (MONTH(TODAY())=12&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastDecember.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastDecember.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastDecember.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!previousFY}-12" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(TEXT(YEAR(TODAY()))!=previousFY || (TEXT(YEAR(TODAY()))=previousFY&& (MONTH(TODAY())>12 || (MONTH(TODAY())=12&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastDecember.NUM_Forecast__c,item.elemForecast.forecastDecember.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-01" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>1 || (MONTH(TODAY())=1&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastJanuary.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastJanuary.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastJanuary.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-01" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" width="75" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>1 || (MONTH(TODAY())=1&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastJanuary.NUM_Forecast__c,item.elemForecast.forecastJanuary.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-02" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>2 || (MONTH(TODAY())=2&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastFebruary.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastFebruary.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastFebruary.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-02" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>2 || (MONTH(TODAY())=2&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastFebruary.NUM_Forecast__c,item.elemForecast.forecastFebruary.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-03" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>3 || (MONTH(TODAY())=3&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastMarch.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>                        
+                        <apex:outputField value="{!item.elemForecast.forecastMarch.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastMarch.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-03" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>3 || (MONTH(TODAY())=3&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastMarch.NUM_Forecast__c,item.elemForecast.forecastMarch.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-04" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>4 || (MONTH(TODAY())=4&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastApril.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastApril.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastApril.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-04" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>4 || (MONTH(TODAY())=4&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastApril.NUM_Forecast__c,item.elemForecast.forecastApril.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-05" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>5 || (MONTH(TODAY())=5&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastMay.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastMay.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastMay.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-05" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>5 || (MONTH(TODAY())=5&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastMay.NUM_Forecast__c,item.elemForecast.forecastMay.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-06" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>6 || (MONTH(TODAY())=6&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastJune.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastJune.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastJune.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-06" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>6 || (MONTH(TODAY())=6&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastJune.NUM_Forecast__c,item.elemForecast.forecastJune.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-07" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>7 || (MONTH(TODAY())=7&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastJuly.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastJuly.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastJuly.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-07" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>7 || (MONTH(TODAY())=7&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastJuly.NUM_Forecast__c,item.elemForecast.forecastJuly.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-08" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>8 || (MONTH(TODAY())=8&&DAY(TODAY())>VALUE($Label.CP_day)))), false, true)}">
+                        <apex:outputField value="{!item.elemForecast.forecastAugust.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'false' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="ondblclick"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!item.elemForecast.forecastAugust.NUM_Forecast_Rel__c}" rendered="{!IF(isDevice == 'true' && country.Units_of_Measurement__c == 'Rels' && item.total == false, true, false)}" >
+                           <apex:inlineEditSupport event="onmouseover"/>
+                        </apex:outputField>
+                        <apex:outputText value="{!ROUND(item.elemForecast.forecastAugust.NUM_Forecast__c, 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels' && item.total == true, true, false)}" >
+                        </apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-08" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" rendered="{!IF(((MONTH(TODAY())>=9 && TEXT(YEAR(TODAY()))!=previousFY ) ||(MONTH(TODAY())<9 && TEXT(YEAR(TODAY()))!=aplFY.PICK_Forecast_Fiscal_Year__c )) || (TEXT(YEAR(TODAY()))=aplFY.PICK_Forecast_Fiscal_Year__c&& (MONTH(TODAY())>8 || (MONTH(TODAY())=8&&DAY(TODAY())>VALUE($Label.CP_day)))), true, false)}">
+                        <apex:outputText value="{!ROUND(IF(item.total == true,item.elemForecast.forecastAugust.NUM_Forecast__c,item.elemForecast.forecastAugust.NUM_Sell_In__c), 0)}" rendered="{!IF(country.Units_of_Measurement__c == 'Rels', true, false)}" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','background-color:#f2f3f3')}" />
+                     </apex:column>
+                     
+                     
+                     <apex:column headerValue="{!$Label.Forecast_Total_Units}" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{!ROUND(item.elemForecast.totalUnits, 0)}" />
+                     </apex:column>
+                     <apex:column headerValue="{!$Label.Forecast_Total_Rels}" width="75" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}" >
+                        <apex:outputText value="{!ROUND(item.elemForecast.totalRels, 0)}" />
+                     </apex:column>
+                  </apex:pageBlockTable>
+                 </div>
+               </apex:pageBlock>
+               <div style="margin-top:30px; text-align:center">
+                  <hr/>
+                  <div style="margin: 0 auto; width:150px">
+                     <apex:commandButton value="{!$Label.Save_Forecast}" action="{!saveForecastSKU}" reRender="forecastEditablePreview1,forecastEditablePreview2" onclick="if(!confirm('{!$Label.CP_Save_Alert}')){return};loadingPreview(true);" oncomplete="loadingPreview(false);"/>
+                  </div>
+               </div>
+            
+         <!-- </div> -->
+         </apex:outputPanel>
+      </div>
+   </apex:form>
+   
+    <script type="text/javascript">
+    function loading(val) {
+        if(val) {
+            document.getElementById('contentLoading').style.display = 'block';
+            document.getElementById('contentLoaded').style.display = 'none';
+            
+        }
+        else 
+        {
+            document.getElementById('contentLoading').style.display = 'none';
+            document.getElementById('contentLoaded').style.display = 'block';
+        }
+    }
+    function forecastLoaded(val) {
+        if(val)
+        {
+            document.getElementById('contentPreviewLoading').style.display = 'block';
+           document.getElementById('forecastPreview').style.display = 'none';
+           document.getElementById('editableLoaded').style.display = 'none'; 
+        }
+        else
+        {
+            document.getElementById('contentPreviewLoading').style.display = 'none';
+            document.getElementById('forecastPreview').style.display = 'block';
+            document.getElementById('editableLoaded').style.display = 'block';   
+        }
+    }
+    function distributeLoaded(val) {
+        if(val)
+        {
+           document.getElementById('editableLoading').style.display = 'block';
+           document.getElementById('editableLoaded').style.display = 'none'; 
+        }
+        else
+        {
+            document.getElementById('editableLoading').style.display = 'none';
+            document.getElementById('editableLoaded').style.display = 'block';   
+        }
+    }
+    function reload(val) {
+        if(val) {
+            document.getElementById('editableLoading').style.display = 'block';
+            document.getElementById('editableLoaded').style.display = 'none';
+        }
+        else
+        {
+            document.getElementById('editableLoading').style.display = 'none';
+            document.getElementById('editableLoaded').style.display = 'block';
+        }
+    }
+    function loadingPreview(val)
+      {
+          if(val)
+          {
+              document.getElementById('contentLoadingPreview').style.display = 'block';
+              if('{!country.Units_of_Measurement__c}' == 'Basic Units') document.getElementById('contentLoadedPreview1').style.display = 'none';
+                  else document.getElementById('contentLoadedPreview2').style.display = 'none';
+                          
+          }
+          else
+          {
+              document.getElementById('contentLoadingPreview').style.display = 'none';
+              if('{!country.Units_of_Measurement__c}' == 'Basic Units') document.getElementById('contentLoadedPreview1').style.display = 'block';
+                  else document.getElementById('contentLoadedPreview2').style.display = 'block';
+              
+          }
+      }
+    </script>
+   
+   
+</apex:page>

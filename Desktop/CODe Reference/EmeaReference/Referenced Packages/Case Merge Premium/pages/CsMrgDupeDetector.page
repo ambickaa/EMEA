@@ -1,0 +1,50 @@
+<apex:page id="pg" standardcontroller="Case" extensions="csmrgp.CsMrgDupeDetectorCtrl" showHeader="false" standardStylesheets="true" >
+
+    <apex:includeScript value="/support/console/28.0/integration.js"/>
+
+    <script type="text/javascript">
+        function triggerQuery(){
+            startQuery();
+            return false;
+        }
+    </script>
+
+    <apex:form id="frm">
+        <body onload="triggerQuery()">
+            <apex:actionFunction name="startQuery" action="{!runCaseSearch}" rerender="lblPanel" />
+            <apex:outputPanel id="lblPanel">
+                <script>
+                    function openCMP(){
+                        sforce.console.getEnclosingPrimaryTabId(navCMP);
+                    }
+
+                    var navCMP = function navCMP(result) {
+                        var primaryTabId = result.id;
+                        sforce.console.openSubtab(primaryTabId , "{!linkUrl}", true);
+                    };
+                </script>
+
+                <!-- MD: 2015-09-23 - The standard a tags are the fix for Lightning Experience in Firefox -->
+
+                <!-- <apex:outputLink id="lblFoundConsole" value="#" onclick="openCMP();" style="background-color:gold; display:{!IF(dupesFound, 'block', 'none')}">{!linkText}</apex:outputLink>
+                <apex:outputLink id="lblFound" value="{!linkUrl}" target="_parent" style="background-color:gold; display:{!IF(dupesFound, 'block', 'none')}">{!linkText}</apex:outputLink> -->
+                <a id="lblFoundConsole" href="#" onclick="openCMP();" style="background-color:gold; display:{!IF(dupesFound, 'block', 'none')}">{!linkText}</a>
+                <a id="lblFound" href="{!linkUrl}" target="_parent" style="background-color:gold; display:{!IF(dupesFound, 'block', 'none')}">{!linkText}</a>
+                <apex:outputText id="lblNone" style="display:{!IF(dupesFound, 'none', 'block')}" value="{!IF(queryRunning, 'Searching...', 'None')}"/>
+
+               <script>
+                    if(sforce.console.isInConsole()){
+                        // document.getElementById('pg:frm:lblFound').style.display = 'none';
+                        document.getElementById('lblFound').style.display = 'none';
+                    }
+                    else{
+                        // document.getElementById('pg:frm:lblFoundConsole').style.display = 'none';
+                        document.getElementById('lblFoundConsole').style.display = 'none';
+                    }
+                </script>
+
+            </apex:outputPanel>
+        </body>
+    </apex:form>
+
+</apex:page> <!-- 15px height -->

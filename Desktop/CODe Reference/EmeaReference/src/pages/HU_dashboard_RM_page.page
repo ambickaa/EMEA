@@ -1,0 +1,128 @@
+<apex:page controller="HU_BarChartController" sidebar="false">
+
+<apex:pageBlock title="Regional Manager Sales Summary" rendered="{!IF(UserProfile= '00eD00000012lvr' || UserProfile= '00eD00000012mRz' || UserProfile= '00eD00000012mS4' || UserProfile= '00eD00000012mS9',true,false)}">
+
+ <!-- Google API inclusion -->
+
+ <apex:includeScript id="a" value="https://www.google.com/jsapi" />
+
+
+ <!-- Google Charts will be drawn in this DIV -->
+
+ <div id="chartBlock" />
+
+ <script type="text/javascript">
+
+     // Load the Visualization API and the piechart package.
+
+     google.load('visualization', '1', {'packages':['gauge']});
+
+     // Set a callback to run when the Google Visualization API is loaded.
+
+    google.setOnLoadCallback(drawCharts);
+    function drawCharts() {         
+          // Following the usual Remoting syntax
+          // [<namespace>.]<controller>.<method>([params...,] <callbackFunction>(result, event) {...}
+          // controller : GoogleChartsController
+          // method : loadOpps
+        HU_BarChartController.getDataVolume(
+        
+        function(result1, event1){
+                   // load Column chart
+            var visualization1 = new google.visualization.Gauge(document.getElementById('chart_div1'));
+                   // Prepare table model for chart with columns
+            visualization1.draw(data1, options1);
+            var options1 = {
+                    title:'Volume - Actuals vs Target',
+                    width: 500, height: 300,
+                    redFrom: {!dataVolume[0].Chart1Min}, redTo: {!dataVolume[0].Chart1BP1},
+                    yellowFrom: {!dataVolume[0].Chart1BP1}, yellowTo: {!dataVolume[0].Chart1BP2},
+                    greenFrom: {!dataVolume[0].Chart1BP2}, greenTo: {!dataVolume[0].Chart1Max},
+                    min: {!dataVolume[0].Chart1Min},
+                    max: {!dataVolume[0].Chart1Max},
+                    minorTicks: 5,
+                };
+            
+            var data1 = google.visualization.arrayToDataTable([
+                ['Label', 'name'],
+                ['Bags', {!dataVolume[0].actuals}]
+                ]);
+            // all done, lets draw the chart with some options to make it look nice.
+            visualization1.draw(data1, options1);
+            
+            
+            var visualization2 = new google.visualization.Gauge(document.getElementById('chart_div2'));
+                   // Prepare table model for chart with columns
+            //visualization2.draw(data2, options2);
+
+            visualization2.draw(data2, options2);
+            
+            var options2 = {
+                title:'CL Penetration',
+                width: 500, height: 300,
+                    redFrom: {!dataVolume[0].Chart2Min}, redTo: {!dataVolume[0].Chart2BP1},
+                    yellowFrom: {!dataVolume[0].Chart2BP1}, yellowTo: {!dataVolume[0].Chart2BP2},
+                    greenFrom: {!dataVolume[0].Chart2BP2}, greenTo: {!dataVolume[0].Chart2Max},
+                    min: {!dataVolume[0].Chart2Min},
+                    max: {!dataVolume[0].Chart2Max},
+                minorTicks: 5,
+            };
+            
+            var data2 = google.visualization.arrayToDataTable([
+                ['Label', 'name'],
+                ['Bags', {!dataVolume[0].penetration}]
+                ]);
+            
+            // all done, lets draw the chart with some options to make it look nice.
+            visualization2.draw(data2, options2);
+            
+            var visualization3 = new google.visualization.Gauge(document.getElementById('chart_div3'));
+                   // Prepare table model for chart with columns
+            //visualization2.draw(data3, options3);
+
+            visualization3.draw(data3, options3);
+            
+            var options3 = {
+                title:'Others',
+                width: 500, height: 300,
+                    redFrom: {!dataVolume[0].Chart3Min}, redTo: {!dataVolume[0].Chart3BP1},
+                    yellowFrom: {!dataVolume[0].Chart3BP1}, yellowTo: {!dataVolume[0].Chart3BP2},
+                    greenFrom: {!dataVolume[0].Chart3BP2}, greenTo: {!dataVolume[0].Chart3Max},
+                    min: {!dataVolume[0].Chart3Min},
+                    max: {!dataVolume[0].Chart3Max},
+                minorTicks: 5,
+            };
+            
+            var data3 = google.visualization.arrayToDataTable([
+                ['Label', 'name'],
+                ['Bags', {!dataVolume[0].others}]
+                ]);
+            
+            // all done, lets draw the chart with some options to make it look nice.
+            visualization3.draw(data3, options3);               
+        }, {escape:true});  
+    } 
+   
+ </script>
+<div id="chart_div1" class="chart_panel" title="Volume - Actuals vs Target"></div>
+<div id="chart_div2" class="chart_panel" title="CL Penetration"></div>
+<div id="chart_div3" class="chart_panel" title="Others"></div>
+<style type="text/css">
+  .chart_panel {
+      display: inline-block;
+      width: 33%;
+  }
+  .chart_panel::before {
+      content: attr(title);
+      position: relative;
+      font-size: 2em;
+      text-align: center;
+      display: block;
+  }
+  .chart_panel > table {
+      margin: 0 auto!important;
+      text-align: center;
+  }
+</style>
+    </apex:pageBlock>
+</apex:page>

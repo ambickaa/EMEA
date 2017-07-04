@@ -1,0 +1,278 @@
+<apex:page sidebar="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="bu" standardcontroller="Voucher__c" extensions="Voucher_BU_OSR_2016_Controller" applyHtmlTag="false" applyBodyTag="false">
+<html lang="bu">
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: .14in .16in .14in .14in;
+      padding: 0;
+      border: 0;
+    }
+    body {
+      margin:0;
+      padding:0;
+      border:0;
+      position:relative;
+      min-height:1080px;
+      font-weight:normal;
+      font-style:normal;
+      font-size:100%;
+      font-size:11.5px;
+      vertical-align:baseline;
+      text-decoration:none;
+      line-height:1;
+      font-family:Arial Unicode MS, sans-serif;
+    }
+    .ralign { text-align:right!important; }
+    .lalign { text-align: left!important; }
+    .calign { text-align: center!important; }
+    .output { font-family: sans-serif; }
+      .output > span { font-family:Arial Unicode MS, sans-serif; }
+    .header-table, .products-table, .signature-table {
+      width:100%;
+      border-collapse:collapse;
+      vertical-align:middle;
+    }
+      .header-table tr, .products-table tr, .signature-table tr {}
+        .header-table tr td:first-child, .products-table tr td, .products-table tr th, .signature-table tr td, .signature-table tr th {
+          border:1px solid #000;
+          padding:0 1em;
+          width:120px;
+          line-height:1.75em;
+          background:rgb(0,86,116);
+          color:#FFF;
+        }
+        .products-table tr td, .products-table tr th {
+          line-height:1.2em;
+          padding:.36em .42em;
+        }
+        .products-table tfoot tr td {
+          padding:.36em .42em;
+        }
+        .products-table tbody tr td.output {
+          color: #000;
+          text-align:center;
+        }
+        .header-table tr td.output, .products-table tr td.output {
+          border:1px solid #000;
+          padding:0 1em;
+          background:#FFF;
+          line-height:1.75em;
+        }
+    
+    .signature-table { 
+        margin-top:5px; 
+        position:absolute;
+        bottom:0;
+    }
+    .signature-table tr td, .signature-table tr th {
+      text-align: center;
+    }
+    .signature-table tbody tr td {
+      padding:1px!important;
+      color: #000;
+      background: #FFF;
+    }
+    .signature-table .signature-data td {
+      height: 44px;
+    }
+    .signature-table td > table tr td {
+      border:0;
+    }
+    
+    .products-table { margin-top:15px; }
+    .products-table tr td, .products-table tr th {
+      text-align: center;
+    }
+    .products-table tbody tr td {
+      padding:1px!important;
+      color: #000;
+      background: #FFF;
+    }
+    .products-table .products-data td {
+      height: 20px;
+    }
+    .products-table td > table tr td {
+      border:0;
+    }
+        
+    .notes {    
+      padding: .4em .2em .5em .9em;
+      font-size:86%;
+      line-height:1.2em
+    }
+
+    .yellow-box {    
+      background:rgb(250,230,5);
+      padding: .4em .2em .5em .9em;
+      margin: 4.5px 0;
+      font-size:86%;
+    }
+      .yellow-box p {
+        margin:0;
+        line-height:1.2em;
+      }
+      .yellow-box ul {
+        margin:0;
+        padding:0;
+        list-style: none;
+      }
+        .yellow-box ul li {
+          line-height:1.2em;
+        }
+
+    .truncate {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  </style>
+  </head>
+<body>
+
+<apex:image url="{!$Resource.Voucher_BU_OSR_2016_HEADER}" width="100%" style="margin:0; padding:0; border:0;"></apex:image>
+
+<table style="width:100%; border-collapse:collapse; margin-top: 10px;">
+<tr>
+  <td style="width:60%; vertical-align:top">
+
+    <table class="header-table">
+      <tr><td style="width:110px">Фирма</td> <td class="output truncate">{!voucher.FarmNameCopy__c}</td></tr>
+      <tr><td>Адрес</td> <td class="output truncate">{!voucher.AccountRef__r.Street__c} {!voucher.AccountRef__r.City__c} {!voucher.AccountRef__r.StateProvince__c}</td></tr>
+      <tr><td>ПК</td> <td class="output truncate">{!PostalCode}</td></tr>
+      <tr><td>Представител</td> <td class="output truncate">{!vouContactName}</td></tr>
+      <tr><td>Тел. номер</td> <td class="output truncate">{!voucher.PhoneCopy__c}</td></tr>
+      <tr><td>Имейл</td> <td class="output truncate">{!voucher.EmailCopy__c}</td></tr>
+    </table>
+    <div style="position:relative; top:4px; width:100%; height:18px; color:#CC0000">
+        <div style="{!if(status==1,'position: absolute;','display:none;')}; left:0;bottom:-2px;padding:1px 2px 4px 4px; background#FFF;font-size:20px;">Отменен</div>
+    </div>
+  </td>
+  
+  <td style="width:1.8%; vertical-align:top"></td>
+  
+  <td style="width:38.2%; vertical-align:top">
+
+    <table class="header-table">
+      <tr><td colspan="2" style="padding:0 1em; line-height:1.6em;">Структура на фермата през 2016/2017 г.</td></tr>
+      <tr><td style="width:120px">Царевица</td> <td class="output ralign">{!Acr[0]*10} <span>дка</span></td></tr>
+      <tr><td>Рапица</td> <td class="output ralign">{!Acr[1]*10} <span>дка</span></td></tr>
+      <tr><td>Слънчоглед</td> <td class="output ralign">{!Acr[2]*10} <span>дка</span></td></tr>
+      <tr><td>Зърнено житни</td> <td class="output ralign">{!Acr[3]*10} <span>дка</span></td></tr>
+      <tr><td>Други</td> <td class="output ralign">{!Acr[4]*10} <span>дка</span></td></tr>
+    </table>
+    
+    <div style="position:relative; top:4px; width:100%; height:18px; border-bottom:1px dotted #000">
+      <div style="position:absolute; left:0; bottom:-2px; padding:1px 2px 4px 0; background:#FFF;">СЕРИЕН НОМЕР</div>
+      <div class="output ralign" style="padding:0; margin:0; padding-left:110px; padding-right:1px; line-height:1.6em;">{!voucher.Name}</div>
+    </div>
+  </td>
+</tr>
+</table>
+
+<div class="yellow-box" style="padding: .4em .9em .5em; margin: 14px 0 10px;">
+  <p>Подписвайки този документ и предоставяйки своите лични данни, Вие позволявате на Монсанто да използва личната Ви информацията за целите, описани в този документ, и да контактува с Вас по поща, факс, имейл и други електронни средства (използвайки информация, която избирате да предоставите) за маркетингови цели.</p>
+  <p>Оттегляне на съгласието - Вие имате правото да оттеглите това съгласие по всяко време. Моля, свържете се с г-н Николай Черкезов на имейл адрес:</p>
+  <p><b style="font-family:sans-serif;">nikolay.cherkezov@monsanto.com</b> за всякакви въпроси и притеснения в това отношение. Допълнителни данни за контакт можете да намерите на нашия
+интернет адрес: <b style="font-family:sans-serif;">www.monsanto.com</b></p>
+</div>
+
+<div class="yellow-box" style="margin: 10px 0 5px;">
+  <p style="font-size:20px;padding-left:15px">100% застраховани срещу суша!</p>
+  <p style="padding-left:15px;">Участниците в програмата се задължават:</p>
+  <p style="padding-left:15px;padding-top:8px">- да подпишат това споразумение не по-късно от 31 Юли 2016 г.;</p>
+  <p style="padding-left:15px">- да получат семената до 31 Август 2016 г.;</p>
+  <p style="padding-left:15px">- да засеят семената не по-късно от 15 Септември 2016 г.;</p>
+  <p style="padding-left:15px">- да посочат землище и номер на местност, на които ще бъде засята рапицата.</p>
+  <p style="padding-left:15px;padding-top:8px">В случай на непоникване на семената в резултат на суша, заплатената за тях сума се възстановява, чрез издаване на кредитно известие от дистрибутора,</p>
+  <p style="padding-bottom:5px">който ги е доставил. Участникът в програмата се задължава до 31 Октомври 2016 г. да уведоми за случая представител на Монсанто, за да посети полето за
+потвърждение.</p>
+</div>
+
+<table class="products-table">
+  <thead>
+    <tr>
+      <th style="width:50%">Хибрид</th>
+      <th style="width:50%">Торби по хибриди</th>
+    </tr>
+  </thead>
+  <tbody>
+    <apex:repeat value="{!ListVli}" var="vli">
+    <tr class="products-data">
+      <td style="width:50%">{!vli}</td>
+      <td style="width:50%">{!MapVliBags[vli]}</td>
+    </tr>
+    </apex:repeat>
+    <tr>
+      <th>Общо торби</th>
+      <td>{!TotalBags}</td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="products-table">
+  <thead>
+    <tr>
+      <th style="text-align:left;">Землище и номер на местност, където ще бъде засята рапицата: </th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr class="products-data">
+        <td class="output notes" style="text-align:left;"><apex:outputfield value="{!voucher.TXT_NOTES__c}"></apex:outputfield></td>        
+      </tr>
+  </tbody>
+</table>
+
+<table class="signature-table">
+  <thead>
+    <tr>
+      <th style="width:33.3%">Фермер</th>
+      <th style="width:33.3%">Дистрибутор</th>
+      <th style="width:33.3%">Монсанто</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="signature-data">
+      <td>
+        <table style="border-collapse:collapse; width:100%;">
+          <tr>
+            <td class="output" style="width:33.3%; line-height:1.12em">{!if(vouContactName!='',vouContactName,voucher.FarmNameCopy__c)}</td>
+            <td class="output calign" style="width:33.3%; line-height:1.12em">
+              <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature!=null}">
+                <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="40px" style="height:40px; max-height:40px"/>
+              </apex:outputPanel>
+            </td>
+            <td class="output" style="width:33.3%; line-height:1.12em">{!voucherDate}</td>
+          </tr>
+        </table>
+      </td>
+      <td>
+        <table style="border-collapse:collapse; width:100%;">
+          <tr>
+            <td class="output" style="width:33.3%; line-height:1.12em">{!voucher.DistributorNameCopy__c}</td>
+            <td class="output" style="width:33.3%; line-height:1.12em"></td>
+            <td class="output" style="width:33.3%; line-height:1.12em"></td>
+          </tr>
+        </table>
+      </td>
+      <td>
+        <table style="border-collapse:collapse; width:100%;">
+          <tr>
+            <td class="output" style="width:33.3%; line-height:1.12em">{!voucher.Owner.Name}</td>
+            <td class="output" style="width:33.3%; line-height:1.12em"></td>
+            <td class="output" style="width:33.3%; line-height:1.12em">{!voucherDate}</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td><table style="border-collapse:collapse; width:100%;"><tr><td class="output"><span>Име</span></td><td class="output"><span>Подпис</span></td><td class="output"><span>Дата</span></td></tr></table></td>
+      <td><table style="border-collapse:collapse; width:100%;"><tr><td class="output"><span>Име</span></td><td class="output"><span>Подпис</span></td><td class="output"><span>Дата</span></td></tr></table></td>
+      <td><table style="border-collapse:collapse; width:100%;"><tr><td class="output"><span>Име</span></td><td class="output"><span>Подпис</span></td><td class="output"><span>Дата</span></td></tr></table></td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>   
+</apex:page>

@@ -1,0 +1,106 @@
+<apex:page standardController="Case" extensions="VFC_ManualApproval" >
+<apex:pageMessages ></apex:pageMessages>
+ <apex:outputText rendered="{!!hide}">
+ Approvers can only be manually chosen if Approval Type is Manual. 
+ 
+ </apex:outputText>
+ <apex:form id="frm" rendered="{!hide}">
+     
+ 
+ 
+ <apex:pageBlock id="pb1">
+      <apex:pageblockButtons >
+         
+         <apex:commandButton value="Edit" action="{!Edit}" rendered="{!EditButton}"/>
+          <apex:commandButton value="Save"  rendered="{!inputblock}" onComplete="onComplete1()"  />
+           <apex:inputHidden value="{!inputblock}" id="hasError"/>  
+          <apex:actionFunction action="{!SaveFinal}" name="SaveAp" />
+          
+          <!--oncomplete="window.top.location='/{!cEdit.id}'; return false"  />-->
+       <apex:commandButton value="Cancel" action="{!Cancel}" rendered="{!inputblock}" />
+     </apex:pageblockButtons>
+      
+      <apex:pageBlockSection id="pbs1" title="Manual Approvers selection" columns="2" rendered="{!inputblock}">
+          <apex:inputField value="{!cEdit.Parallel_Sequential__c}" />
+          <apex:outputLabel ></apex:outputLabel>
+          <apex:inputField value="{!cEdit.Approver1__c}" id="Ap1" />
+          <apex:inputField value="{!cEdit.Approver6__c}"/>
+          <apex:inputField value="{!cEdit.Approver2__c}"/>
+          <apex:inputField value="{!cEdit.Approver7__c}"/>
+          <apex:inputField value="{!cEdit.Approver3__c}"/>
+          <apex:inputField value="{!cEdit.Approver8__c}"/>
+          <apex:inputField value="{!cEdit.Approver4__c}"/>
+          <apex:inputField value="{!cEdit.Approver9__c}"/>
+          <apex:inputField value="{!cEdit.Approver5__c}"/>
+          <apex:inputField value="{!cEdit.Approver10__c}"/>
+          
+       </APEX:PAGEBlockSection> 
+      
+      <apex:pageBlockSection title="Manual Approvers selection" columns="2" rendered="{!outputblock}">
+          <apex:outputField value="{!cEdit.Parallel_Sequential__c}"/>
+          <apex:outputLabel ></apex:outputLabel>
+          <apex:outputField value="{!cEdit.Approver1__c}"/>
+          <apex:outputField value="{!cEdit.Approver6__c}"/>
+          <apex:outputField value="{!cEdit.Approver2__c}"/>
+          <apex:outputField value="{!cEdit.Approver7__c}"/>
+          <apex:outputField value="{!cEdit.Approver3__c}"/>
+          <apex:outputField value="{!cEdit.Approver8__c}"/>
+          <apex:outputField value="{!cEdit.Approver4__c}"/>
+          <apex:outputField value="{!cEdit.Approver9__c}"/>
+          <apex:outputField value="{!cEdit.Approver5__c}"/>
+          <apex:outputField value="{!cEdit.Approver10__c}"/>
+          
+          
+      </APEX:PAGEBlockSection> 
+         
+  </apex:pageBlock>
+ 
+
+	<apex:includeScript value="/support/console/30.0/integration.js"/>
+<script   type="text/javascript">
+    function onComplete1()
+	{
+		var hasErrorElement = document.getElementById("{!$Component.frm.pb1.pbs1.Ap1}");
+       // alert(hasErrorElement);
+        if(hasErrorElement.value == "") 
+        {
+         SaveAp();
+        }
+        else
+        {
+         SaveAp();
+         window.top.location='/console';
+            // alert('Inside IF');
+            //sforce.console.getEnclosingTabId(refreshSubTab);
+            //doPrimaryTabRefresh();
+        }
+    }
+    var refreshSubTab = function refreshSubTab(result)
+    {
+      alert("Got the id - "+result);
+      var subTabId = result.id;
+      sforce.console.refreshSubtabById(subTabId, true);
+    }
+    
+    function onKeyup_TxtFieldcom(e)
+    {
+        var keynum;
+        if(window.event) // IE
+        {
+            keynum = e.keyCode;
+        }
+        // alert(keynum);
+        if(keynum == 13) 
+        {  
+           onComplete1();
+            return false; 
+        } 
+    }
+  window.onkeypress=onKeyup_TxtFieldcom;
+    
+   
+     </script>
+   
+    </apex:form>     
+
+</apex:page>

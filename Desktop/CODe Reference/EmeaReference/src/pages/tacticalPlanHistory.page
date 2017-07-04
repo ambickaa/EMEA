@@ -1,0 +1,16 @@
+<apex:page showHeader="false" sidebar="false" controller="tacticalPlanHistoryController">
+  <apex:form >
+      <apex:pageBlock title="Quantity history">
+        <apex:pageBlockSection columns="3" >
+      
+            <apex:outputField value="{!oli.Forecast_FOC__c}" rendered="{!oli.Type__c == 'Free of Charge'}"/>
+            <apex:outputField value="{!oli.Forecast__c}" rendered="{!oli.Type__c != 'Free of Charge'}"/>
+            <apex:outputField value="{!oli.Agreed_FOC__c}" rendered="{!oli.Type__c == 'Free of Charge'}"/>
+            <apex:outputField value="{!oli.Forecast_50__c}" rendered="{!oli.Type__c != 'Free of Charge'}"/>
+            <apex:outputField value="{!oli.POG_FOC__c}" rendered="{!oli.Type__c == 'Free of Charge'}"/>
+            <apex:outputField value="{!oli.Confirmed_Sales__c}" rendered="{!oli.Type__c != 'Free of Charge'}"/>
+        </apex:pageBlockSection>    
+      </apex:pageBlock>
+  
+  </apex:form>
+</apex:page>

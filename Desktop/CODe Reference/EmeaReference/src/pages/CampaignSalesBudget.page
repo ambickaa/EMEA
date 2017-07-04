@@ -1,0 +1,19 @@
+<apex:page standardController="Campaign" extensions="CampaignSalesBudgetController">
+    <apex:pageMessages ID="message"/>
+    <apex:detail inlineEdit="false" relatedList="false" subject="{!Campaign.Id}"/>
+    <apex:form >
+       <apex:pageBlock >
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!doSave}" value="{!$Label.SaveTPManager}" rendered="{!IsOwner}"/>
+                <apex:commandButton action="{!doCancel}" value="{!$Label.BackToCampaign}"/>
+                <apex:commandButton action="{!doSendNotifications}" value="{!$Label.NotifyYourTeam}" rendered="{!AND(isOwner, campaignManager.IsAllocatedAndSaved)}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!campaignManager.childrenCampaigns}" var="childCamp" rendered="{!IsOwner}">
+                <apex:column value="{!childCamp.Name}"/>
+                <apex:column headerValue="{!$Label.SplitBudget}">
+                    <apex:inputText value="{!childCamp.TotalCampaignBudget__c}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

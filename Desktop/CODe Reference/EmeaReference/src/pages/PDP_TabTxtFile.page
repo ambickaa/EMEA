@@ -1,0 +1,5 @@
+<apex:page contentType="application/txt#{!filename}" controller="PDP_TabTxtFileController" showHeader="false" cache="true">
+    <apex:repeat value="{!hierarchyLineItemList}" var="hli" id="theRepeat">  
+    <apex:outputText value="{!hli.outputData__c}"  />  
+    </apex:repeat>
+</apex:page>

@@ -1,0 +1,125 @@
+<!--
+Created By: Abhinav Sharma
+Organization: Accenture
+Email Id: abhinav.l.sharma@accenture.com
+Associated Class: PartnerFunctionRelatedListExtension
+-->
+
+<apex:page StandardController="Account" extensions="PartnerFunctionRelatedListExtension" tabstyle="Account">
+
+    <apex:includeScript value="/support/console/30.0/integration.js"/>
+    
+    <script type="text/javascript">           
+        var preRecordId;
+        var preRecordName;
+        function fnOpenSubtab(id, name) {
+            preRecordId= id;
+            preRecordName=name;
+
+            if (sforce.console.isInConsole()){
+               sforce.console.getEnclosingPrimaryTabId(openSubtab);
+            }else{
+                window.open('/' + id,'_blank');
+            }
+        }
+        
+        var openSubtab = function openSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/'+ preRecordId , true,preRecordName, null,'salesforceSubtab'); 
+        };    
+    </script>
+    
+    <apex:form >
+        <apex:pageBlock id="mainBlock">
+            <apex:pageMessages id="theMessages" />
+            <apex:pageBlockSection collapsible="false" columns="1">
+                <apex:outputPanel >              
+                                    
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    
+                    <h1>Mark for Deletion</h1>
+                    &nbsp;
+
+                    <apex:selectList value="{!lstMarkDelete}" size="1" id="Mvalues">
+                        <apex:selectOptions value="{!MarkDelete}"/>
+                    </apex:selectList>
+                    
+                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        
+                    <h1>Partner Functions Description</h1>
+                    &nbsp;
+                    <apex:selectList value="{!lstPartnerFunctionName}" size="1" id="Rvalues">
+                        <apex:selectOptions value="{!PartnerFunctionName}"/>
+                    </apex:selectList>
+                    
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        
+                    <h1>Sales Area</h1>
+                    &nbsp;
+                    <apex:selectList value="{!lstSalesArea}" size="1" id="Svalues">
+                        <apex:selectOptions value="{!SalesArea}"/>
+                    </apex:selectList>                
+                        
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    
+                    <apex:commandButton value="Search" action="{!Datalist}" reRender="Ppage,mainBlock"/>
+                    &nbsp;
+                    <apex:commandLink value="Partner Functions" onclick="fnOpenSubtab('{!ReportID}?pv0={!RecID_trim}','{!ReportName}'); return false;"/>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <apex:outputPanel id="AllPpage">
+            <apex:pageBlock rendered="{!AllBolRender}">
+                <apex:pageBlockSection collapsible="false" columns="1" title="Partner Functions Detail">
+ 
+                    <apex:outputPanel rendered="{!IF(AllPRecords.size==0,true,false)}">No Record to Display</apex:outputPanel> 
+                                                                                   
+                    <apex:pageBlockTable value="{!AllPRecords}" var="o" rendered="{!IF(AllPRecords.size==0,false,true)}">                                                     
+                        <apex:column headerValue="Partner Functions Name">
+                            <apex:commandLink value="{!o.Name}" onclick="fnOpenSubtab('{!o.id}','{!o.Name}'); return false;"/>
+                        </apex:column>
+                        <apex:column headerValue="Partner Functions Description" value="{!o.Partner_Function_Descr__c}"/>
+                        <apex:column headerValue="Partner SAP ID" value="{!o.Partner_SAP_ID__c}"/>
+                        <apex:column headerValue="Sales Area" value="{!o.Sales_Area_Integration_Key__r.Name}"/>
+                        <apex:column headerValue="Mark for Deletion" value="{!o.is_Marked_For_Del__c}"/>                                
+                    </apex:pageblocktable>
+                    
+                  <apex:panelGrid columns="2">
+                      <apex:commandLink value="Previous" action="{!Allprvbtn}" rendered="{!nxt}" reRender="AllPpage"/>  
+                      <apex:commandLink value="Next" action="{!Allnextbtn}" rendered="{!IF(AllPRecords.size!=5,false,true)}" reRender="AllPpage"/>                 
+                  </apex:panelGrid>
+                      
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            </apex:outputPanel>
+        
+        
+            <apex:outputPanel id="Ppage">
+            <apex:pageBlock rendered="{!BolRender}">
+                <apex:pageBlockSection collapsible="false" columns="1" title="Partner Functions Detail" rendered="{!(lstSalesArea != null && lstSalesArea != '')
+                        || ( lstPartnerFunctionName != null && lstPartnerFunctionName != '')}">
+ 
+                    <apex:outputPanel rendered="{!IF(PRecords.size==0,true,false)}">No Record to Display</apex:outputPanel> 
+                                                                                   
+                    <apex:pageBlockTable value="{!PRecords}" var="o" rendered="{!IF(PRecords.size==0,false,true)}">                                                     
+                        <apex:column headerValue="Partner Functions Name">
+                            <apex:commandLink value="{!o.Name}" onclick="fnOpenSubtab('{!o.id}','{!o.Name}'); return false;"/>
+                        </apex:column>
+                        <apex:column headerValue="Partner Functions Description" value="{!o.Partner_Function_Descr__c}"/>
+                        <apex:column headerValue="Partner SAP ID" value="{!o.Partner_SAP_ID__c}"/>
+                        <apex:column headerValue="Sales Area" value="{!o.Sales_Area_Integration_Key__r.Name}"/>
+                        <apex:column headerValue="Mark for Deletion" value="{!o.is_Marked_For_Del__c}"/>                                
+                    </apex:pageblocktable>
+                    
+                  <apex:panelGrid columns="2">
+                      <apex:commandLink value="Previous" action="{!prvbtn}" rendered="{!nxt}" reRender="Ppage"/>  
+                      <apex:commandLink value="Next" action="{!nextbtn}" rendered="{!IF(PRecords.size!=5,false,true)}" reRender="Ppage"/>                 
+                  </apex:panelGrid>
+                      
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

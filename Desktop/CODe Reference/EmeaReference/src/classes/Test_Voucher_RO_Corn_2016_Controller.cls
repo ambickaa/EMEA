@@ -1,0 +1,2 @@
+@isTest
+private class Test_Voucher_RO_Corn_2016_Controller{}

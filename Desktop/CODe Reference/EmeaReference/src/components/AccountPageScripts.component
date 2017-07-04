@@ -1,0 +1,750 @@
+<apex:component >
+
+    <script type="text/javascript">
+        var __sfdcSessionId = '{!GETSESSIONID()}';
+    </script>
+    <script src="/soap/ajax/39.0/connection.js"></script>
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js" />
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" />
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js" />
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js" />
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/2.5.1/jquery-confirm.min.js" />
+ 
+    <script type="text/javascript">
+//--------------------------------------------------
+// Spinner - Page Loader
+//----------------------------------------------
+        var opts = {
+              scale: 0.25
+            , radius: 42
+            , length: 28
+            , width: 14
+            , lines: 13
+            , corners: 1
+            , color: '#000'
+            , opacity: 0.25
+            , direction: 1
+            , rotate: 0
+            , trail: 60
+            , speed: 1
+            , fps: 20
+            , zIndex: 2e9
+            , className: 'spinner-custom'
+            , top: '50%'
+            , left: '50%'
+            , shadow: false
+            , hwaccel: false
+            , position: 'relative'
+        }
+        var target = document.getElementById('PageLoader')
+        var spinner = new Spinner(opts).spin(target);
+
+//--------------------------------------------------
+// Functions called when the DOM (page structure and components) is ready
+//--------------------------------------------------
+        $(document).ready(function()
+        {
+            getLocale();
+            iniEditAll();
+            iniIframe();
+            iniRLists();
+            iniShared();
+        });
+
+//--------------------------------------------------
+// Functions called when the whole page (with images, etc.) is loaded
+//--------------------------------------------------
+        $(window).load(function()
+        {
+            iniSortable();
+            hideLoader();
+        });
+
+//--------------------------------------------------
+// Functions called when a Visualforce section reRenders
+//--------------------------------------------------
+        function iniAll()
+        {
+            iniSortable();
+            iniNewLines();
+            iniDisabled();
+            iniChosen();
+            iniEditAll();
+            iniIframe();
+            requiredFields();
+            hideLoader();
+            
+            outMessages();
+        }
+
+        var Browsr_Num = 1000.10;
+        var Locale_Num = 1000.10;
+
+//--------------------------------------------------
+// getLocale - It gets the thousands and decimal separators
+//             based on the locale configuration of the current user
+//--------------------------------------------------
+        function getLocale()
+        {
+            Locale_Num = $('.PageLocale span').text();
+            Browsr_Num = Browsr_Num.toLocaleString();
+
+			console.log(' Number to test Locale format: ' + Locale_Num + '\n Number to test Browsr format: ' + Browsr_Num);
+            console.log('Thousands separator\n Locale: ' + Locale_Num.substring(1,2) + '\n Browsr: ' + Browsr_Num.substring(1,2));
+            console.log('Decimals separator\n Locale: ' + Locale_Num.substring(5,6) + '\n Browsr: ' + Browsr_Num.substring(5,6));
+        }
+        
+//--------------------------------------------------
+// iniShared - It converts the Shared users field in a white space
+//             separate array to avoid horizontal scrolling
+//--------------------------------------------------
+		function iniShared()
+		{
+            $('#PageDetail td.dataCol div').each(function()
+            {
+            	if($(this).text().length > 100 && $(this).text().split(',').length > 20)
+            	{
+            		var sharedText = '';
+            		var sharedAlias = $(this).text().split(',');
+            		
+            		for($i = 0; $i < sharedAlias.length; $i++)
+            			sharedText += ($i < (sharedAlias.length - 1)) ? sharedAlias[$i] + ' ' : sharedAlias[$i];
+            		
+            		if(sharedAlias[sharedAlias.length - 1].length < 3 && sharedAlias[sharedAlias.length - 1] != '')
+            			sharedText += '...';
+            		
+            		$(this).text(sharedText);
+            	}
+            });
+		}
+		
+//--------------------------------------------------
+// iniEditAll - It disables the "Edit all" button if there are
+//              no lines in the component
+//--------------------------------------------------
+        function iniEditAll()
+        {
+            $('.btn-all').each(function() {
+                if($(this).closest('.accountBlock').find('td.col-flag:visible').length == 0)
+                    $(this).prop('disabled', true).addClass('btnDisabled').removeClass('btn');
+            });
+        }
+
+//--------------------------------------------------
+// iniRLists - It moves the related lists located in the PageDetail
+//             section to the bottom of the page, in the RelatedLists section
+//--------------------------------------------------
+        function iniRLists()
+        {
+            $('#RelatedLists').empty();
+            
+            $('.bRelatedList, .fewerMore').each(function() {
+                var title = $(this).find('.pbTitle > h3').text();
+                if(title.indexOf('CampaignLineItem') == -1 && title.indexOf('Acreage') == -1)
+                {
+                    $(this).detach().appendTo('#RelatedLists');
+                } else {
+                    $(this).remove();
+                }
+            });
+            
+            $("#PageDetail").on("DOMSubtreeModified", function() {
+                $('#PageDetail .bRelatedList, #PageDetail .fewerMore').remove();
+            });
+        }
+
+//--------------------------------------------------
+// iniIframe - It resizes the iframes wrapping Visualforce pages added to
+//             the page layouts, in oder to avoid innecessary white spaces
+//--------------------------------------------------
+        function iniIframe()
+        {
+            $('iframe').each(function()
+            {
+                $(this).load(function()
+                {
+                    $(this).height( $(this).contents().find('body').height() + 10);
+                });
+            });
+        }
+
+//--------------------------------------------------
+// outMessages - It gives a smart behaviour to page messages, that fade out
+//               after 5 seconds and remain on page when the mouse is over them
+//--------------------------------------------------
+        function outMessages()
+        {
+            $('.component-messages .message').prepend('<a class="dismiss-message">&#10006;</a>');
+            $('.dismiss-message').click(function() {
+                $(this).parent('.message').css({'visibility':'hidden', 'display':'block'}).slideUp(200);
+            });
+            
+            $('.component-messages .message').delay(5000).fadeOut(5000, function() {
+                    $(this).css({'visibility':'hidden', 'display':'block'}).slideUp(200);
+                });
+            
+            $('.component-messages .message').mouseover(function()
+            {
+                $(this).stop(true).css({opacity: 1});
+            }).mouseout(function()
+            {
+                $(this).delay(2800).fadeOut(5000, function() {
+                    $(this).css({'visibility':'hidden', 'display':'block'}).slideUp(200);
+                });
+            });
+        }
+
+//--------------------------------------------------
+// iniDisabled - It disables all elements with the class .isDisabled
+//--------------------------------------------------
+        function iniDisabled()
+        {
+            $('.isDisabled').each(function() {
+                $(this).prop('disabled', true);
+                $(this).siblings('a, .closeIcon').hide();
+            });
+        }
+
+//--------------------------------------------------
+// iniNewLines - It hides all those lines with the class .hiddenLines (new lines)
+//--------------------------------------------------
+        function iniNewLines()
+        {
+            $('.hiddenLines').each(function() {
+                var i = 0;
+                $(this).find('.newLine:not(.newLineAdded)').each(function() {
+                    if(i != 0) $(this).hide();
+                    i++;
+                });
+            });
+        }
+
+//--------------------------------------------------
+// addNewLine - It shows a new line (the first of the hidden lines) to be inserted
+//--------------------------------------------------
+        function addNewLine(a)
+        {
+            if($(a).hasClass('btnNewLines'))
+            {
+                $(a).closest('td').find('.newLine:hidden').first().show().addClass('newLineAdded');
+                if($(a).closest('td').find('.newLine:hidden').length == 0)
+                    $(a).prop('disabled', true).addClass('btnDisabled').removeClass('btn');
+            } else {
+                $(a).closest('.accountBlock').find('.sortable tbody .newLine:hidden').first().show().addClass('newLineAdded');
+                if($(a).closest('.accountBlock').find('.sortable tbody .newLine:hidden').length == 0)
+                    $(a).prop('disabled', true).addClass('btnDisabled').removeClass('btn');
+            }
+        }
+
+//--------------------------------------------------
+// iniChosen - It gives select elements the properties of the Chosen jquery script
+//--------------------------------------------------
+        function iniChosen()
+        {
+            $('.chosen-select:not(.hidden)').chosen({allow_single_deselect: true, disable_search_threshold: 8, search_contains: true, max_selected_options: 8, no_results_text: "{!$Label.AccountPage_picklist_no_results}"});
+            $('.chosen-drop').css({'width': 'auto', 'minWidth': '100%', 'white-space': 'nowrap'});
+            
+            $('.chosen-select.disabled').prop('disabled', true).trigger('chosen:updated');
+
+            $('.chosen-default > span').text("{!$Label.AccountPage_picklist_default_text}");
+        }
+
+//--------------------------------------------------
+// iniSortable - It gives tables the properties of the DataTable jquery script
+//--------------------------------------------------
+        function iniSortable()
+        {
+            $('.sortable').DataTable({
+                retrieve: true,
+                'pagingType': 'full_numbers',
+                'lengthMenu': [[-1, 10, 25, 50, 100], ["{!$Label.AccountPage_table_all}", 10, 25, 50, 100]],
+                'bSort': false,
+                'autoWidth': false,
+                'language': {
+                    'decimal': Locale_Num.substring(5,6),
+                    'thousands': Locale_Num.substring(1,2),
+                    'zeroRecords': "{!$Label.AccountPage_table_no_records_found}",
+                    'sInfoFiltered': "{!$Label.AccountPage_table_info_filter}",
+                    'sInfo': "{!$Label.AccountPage_table_info}",
+                    'sInfoEmpty': "{!$Label.AccountPage_table_info_empty}",
+                    'sLengthMenu': "{!$Label.AccountPage_table_length_menu}",
+                    'sLoadingRecords': "{!$Label.AccountPage_table_loading}",
+                    'sProcessing': "{!$Label.AccountPage_table_processing}",
+                    'sSearch': "{!$Label.AccountPage_table_search}",
+                    'oPaginate': {
+                        'sFirst':    "{!$Label.AccountPage_table_first}",
+                        'sLast':     "{!$Label.AccountPage_table_last}",
+                        'sNext':     "{!$Label.AccountPage_table_next}",
+                        'sPrevious': "{!$Label.AccountPage_table_previous}"
+                    }
+                },
+                'initComplete': function() {
+                    sumTableFooter($(this)); // To be reviewed
+                    iniCheckbox($(this));
+                },
+                'drawCallback': function() {
+                    sumTableFooter($(this)); // To be reviewed
+                }
+            });
+
+            //--------------------------------------------------
+            // For tables with .sortable-features-off, simpler tables are built
+            //--------------------------------------------------
+            $('.sortable-features-off').DataTable({
+                retrieve: true,
+                'autoWidth': false,
+                'paging': false,
+                'bFilter': false,
+                'bSort': false,
+                'info': false
+            });
+
+            $('.dataTables_empty').closest('.dataTable').removeClass('hover');
+        }
+    // Fixing IE browser Issue - Cognizant Team
+    	function fIsNaN(o)
+  		{
+    		return typeof(o) === 'number' && isNaN(o);
+  		}		
+//--------------------------------------------------
+// sumTableFooter - It provides the sum of the column quantities at the footer cells
+//--------------------------------------------------
+        function sumTableFooter(a)
+        {
+            $(a).find('th.double').each(function()
+            {
+                var $this = $(this);
+                var $class = $(this).attr('class').replace('double ', '');
+                var $sum = 0;
+                $(this).closest('table').find('td.' + $class + ':visible').each(function()
+                {
+                    var n = $(this).children('span').text().replace(Locale_Num.substring(1,2), '');
+                    n = n.replace(/\s+/, '');
+                    
+                    var nToParse = n;
+                    
+	                if(Locale_Num.substring(1,2) != '0')
+	                {
+	                    nToParse = nToParse.replace(Locale_Num.substring(1,2), 'x');
+	                    nToParse = nToParse.replace(Locale_Num.substring(5,6), 'y');
+	                } else {
+	                    nToParse = nToParse.replace(Locale_Num.substring(4,5), 'y');
+	                }
+	                nToParse = nToParse.replace('x', '');
+	                nToParse = nToParse.replace('y', '.');
+					
+					if(!fIsNaN(parseFloat(nToParse)) && parseFloat(nToParse) != 0)
+                 		$sum += parseFloat(nToParse);
+                   
+                });
+                
+                $sum = $sum == 0 ? '' : $sum;
+
+                var $sumFoot = $sum.toLocaleString();
+                
+                if(Browsr_Num.substring(1,2) != '0')
+                {
+                    $sumFoot = $sumFoot.replace(Browsr_Num.substring(1,2), 'x');
+                    $sumFoot = $sumFoot.replace(Browsr_Num.substring(5,6), 'y');
+                } else {
+                    $sumFoot = $sumFoot.replace(Browsr_Num.substring(4,5), 'y');
+                }
+                $sumFoot = $sumFoot.replace('x', Locale_Num.substring(1,2));
+                $sumFoot = $sumFoot.replace('y', Locale_Num.substring(5,6));
+
+                $this.text($sumFoot);
+            });
+        }
+
+//--------------------------------------------------
+// iniCheckbox - It gives a smart behaviour to checkboxes in tables,
+//               enables the possibility to check/uncheck all rows
+//               at once and also makes the rows selectable
+//--------------------------------------------------
+        function iniCheckbox(a)
+        {
+            $('.chkDisabled').prop('disabled', true);
+            
+            $(a).find('th.col-flag :checkbox').change(function()
+            {
+                var checkboxes = $(this).closest('table').find('tr:visible :checkbox:visible').not(':disabled');
+                if($(this).is(':checked')) {
+                    checkboxes.prop('checked', true);
+                    checkboxes.closest('tr').addClass('row-selected');
+                } else {
+                    checkboxes.prop('checked', false);
+                    checkboxes.closest('tr').removeClass('row-selected');
+                }
+            checkboxAll($(this));
+            });
+    
+            $(a).find('td.col-flag :checkbox').change(function()
+            {
+                var row = $(this).closest('tr');
+                if($(this).is(':checked'))
+                    row.addClass('row-selected');
+                else
+                    row.removeClass('row-selected');
+                checkboxAll($(this));
+            });
+    
+            $(a).find('td.col-flag :checkbox').click(function()
+            {
+                if($(this).is(':checked'))
+                    $(this).prop('checked', false);
+                else
+                    $(this).prop('checked', true);
+            });
+            
+            rowSelection(a);
+        }
+
+//--------------------------------------------------
+// checkboxAll - It enables the possibility to check/uncheck all rows
+//               and implements all the complex logic to make it possible
+//--------------------------------------------------
+        function checkboxAll(a)
+        {
+            var selected_newlines = $(a).closest('.accountBlock').find('td.col-flag.record-parent :checkbox:visible:checked');
+            var unselected = $(a).closest('table').find('td.col-flag :checkbox:visible').not(':checked');
+            var selected = $(a).closest('table').find('td.col-flag :checkbox:visible:checked');
+            var flagAll = $(a).closest('table').find('th.col-flag :checkbox:visible');
+            var flagParent = false;
+            if(flagAll.length == 0)
+            {
+                flagAll = $(a).closest('table').closest('td').siblings('td.col-flag').find(':checkbox:visible');
+                flagParent = true;
+            }
+            var button_newlines = $('.apex_tri .btn-newlines');
+            var buttons = $(a).closest('.accountBlock').find('.btn-rows');
+            if(selected.length > 0) {
+                buttons.prop('disabled', false).addClass('btn').removeClass('btnDisabled');
+                if(unselected.length == 0)
+                {
+                    flagAll.prop('checked', true);
+                    if(flagParent)
+                    {
+                        $(flagAll).closest('tr').addClass('row-selected');
+                        if($(flagAll).closest('table').find('td.col-flag :checkbox:visible').not(':checked').length == 0)
+                            $(flagAll).closest('table').find('th.col-flag :checkbox:visible').prop('checked', true);
+                            
+                        selected_newlines = $(a).closest('.accountBlock').find('td.col-flag.record-parent :checkbox:visible:checked');
+                    }
+                }
+            } else {
+                buttons.prop('disabled', true).addClass('btnDisabled').removeClass('btn');
+                flagAll.prop('checked', false);
+                if(flagParent)
+                {
+                    $(flagAll).closest('tr').removeClass('row-selected');
+                    if($(flagAll).closest('table').find('td.col-flag :checkbox:visible:checked').length == 0)
+                        $(flagAll).closest('table').find('th.col-flag :checkbox:visible').prop('checked', false);
+                        
+                    selected_newlines = $(a).closest('.accountBlock').find('td.col-flag.record-parent :checkbox:visible:checked');
+                }
+            }
+            
+            if(selected_newlines.length > 0)
+                button_newlines.prop('disabled', false).addClass('btn').removeClass('btnDisabled');
+            else
+                button_newlines.prop('disabled', true).addClass('btnDisabled').removeClass('btn');
+        }
+
+//--------------------------------------------------
+// rowSelection - It enables the possibility to check/uncheck the table rows
+//                by clicking in any part of the row, and not only in the checkbox
+//--------------------------------------------------
+        function rowSelection(a)
+        {
+            $(a).find('td').click(function(e)
+            {
+                e.stopPropagation();
+                var flag = $(this).parent('tr').find('.col-flag :checkbox:visible');
+                if(!flag.is(':disabled'))
+                {
+                    if(flag.is(':checked'))
+                        flag.prop('checked',false);
+                    else
+                        flag.prop('checked',true);
+                flag.trigger('change');
+                }
+            });
+        }
+
+//--------------------------------------------------
+// hideLoader - It hides the spinner page loader and enables the scrollbar in the page
+//--------------------------------------------------
+        function hideLoader()
+        {
+            $('#PageLoader').hide();
+            $('body').removeClass('scroll-disabled');
+        }
+
+//--------------------------------------------------
+// showLoader - It shows the spinner page loader and disables the scrollbar in the page
+//--------------------------------------------------
+        function showLoader()
+        {
+            $('#PageLoader').show();
+            $('body').addClass('scroll-disabled');
+            $('.component-messages .message').hide();
+        }
+
+//--------------------------------------------------
+// isIE - It determines if the browser in use is Internet Explorer
+//--------------------------------------------------
+        function isIE()
+        {
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+            if(msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))
+            {
+                console.log(parseInt(ua.substring(msie + 5, ua.indexOf(".", msie))));
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+//--------------------------------------------------
+// xConfirm - Function to show confirm messages before submitting
+//            apex functions, and including different actions:
+//            Save, Cancel and Delete
+//
+//            (For Internet Explorer, confirm messages are alerts)
+//--------------------------------------------------
+        function xConfirm(a, action, f)
+        {
+            if(action == 'delete')
+            {
+                if(isIE())
+                {
+                    if(confirm('{!$Label.AccountPage_popup_confirm_delete}'))
+                    {
+                        showLoader();
+                        var RowsParents = [];
+                        var Rows = [];
+                        var $flags_parents = $(a).closest('.accountBlock').find('.sortable tbody .col-flag.record-parent input');
+                        var $flags = $(a).closest('.accountBlock').find('.sortable tbody .col-flag:not(.record-parent) input');
+                        $flags_parents.each(function()
+                        {
+                            if($(this).is(':checked'))
+                                RowsParents.push($(this).attr('record-id'));
+                        });
+                        $flags.each(function()
+                        {
+                            if($(this).is(':checked'))
+                                Rows.push($(this).attr('record-id'));
+                        });
+                        f(Rows.toString(), RowsParents.toString());
+                    }
+                } else {
+                    $.confirm({
+                        title: false,
+                        content: "{!$Label.AccountPage_popup_confirm_delete}",
+                        backgroundDismiss: false,
+                        keyboardEnabled: true,
+                        confirmButton: "{!$Label.AccountPage_btn_delete}",
+                        cancelButton: "{!$Label.AccountPage_btn_cancel}",
+                        confirmButtonClass: 'btn-danger',
+                        cancelButtonClass: 'btn-cancel',
+                        confirm: function() {
+
+                            showLoader();
+                            var RowsParents = [];
+                            var Rows = [];
+                            var $flags_parents = $(a).closest('.accountBlock').find('.sortable tbody .col-flag.record-parent input');
+                            var $flags = $(a).closest('.accountBlock').find('.sortable tbody .col-flag:not(.record-parent) input');
+                            $flags_parents.each(function()
+                            {
+                                if($(this).is(':checked'))
+                                    RowsParents.push($(this).attr('record-id'));
+                            });
+                            $flags.each(function()
+                            {
+                                if($(this).is(':checked'))
+                                    Rows.push($(this).attr('record-id'));
+                            });
+                            f(Rows.toString(), RowsParents.toString());
+                        }
+                    });
+                }
+            }
+            
+            if(action == 'cancel')
+            {
+                if(isIE())
+                {
+                    if(confirm('{!$Label.AccountPage_popup_confirm_discard}'))
+                    {
+                        showLoader();
+                        f();
+                    }
+                } else {
+                    $.confirm({
+                        title: false,
+                        content: "{!$Label.AccountPage_popup_confirm_discard}",
+                        backgroundDismiss: false,
+                        keyboardEnabled: true,
+                        confirmButton: "{!$Label.AccountPage_btn_discard}",
+                        cancelButton: "{!$Label.AccountPage_btn_cancel}",
+                        confirmButtonClass: 'btn-danger',
+                        cancelButtonClass: 'btn-cancel',
+                        confirm: function() {
+                            
+                            showLoader();                   
+                            f();
+                        }
+                    });
+                }
+            }
+
+            if(action == 'save')
+            {
+                showLoader();
+                getTypes();
+                f(stringTypes);
+            }
+        }
+
+//--------------------------------------------------
+// rowsAdd - Function to add all products selected
+//           in product pickers to the edition panels
+//--------------------------------------------------
+        function rowsAdd(a, f)
+        {
+            showLoader();
+            
+            var Rows = [];
+            var $options = $(a).closest('.accountBlock').find('.chosen-product-picker option:selected');
+            $options.each(function()
+            {
+                Rows.push($(this).val());
+            });
+            
+            f(Rows.toString());
+        }
+
+//--------------------------------------------------
+// rowsEdit - It sends for edition all rows selected
+//--------------------------------------------------
+        function rowsEdit(a, f)
+        {
+            showLoader();
+
+            var RowsParents = [];
+            var Rows = [];
+            var $flags_parents = $(a).closest('.accountBlock').find('.sortable tbody .col-flag.record-parent input');
+            var $flags = $(a).closest('.accountBlock').find('.sortable tbody .col-flag:not(.record-parent) input');
+            $flags_parents.each(function()
+            {
+                if($(this).is(':checked'))
+                    RowsParents.push($(this).attr('record-id'));
+            });
+            $flags.each(function()
+            {
+                if($(this).is(':checked'))
+                    Rows.push($(this).attr('record-id'));
+            });
+                
+            f(Rows.toString(), RowsParents.toString());
+        }
+
+//--------------------------------------------------
+// rowsEditAll - It sends for edition all rows
+//--------------------------------------------------
+        function rowsEditAll(a, f)
+        {
+            $(a).closest('.accountBlock').find('.sortable th.col-flag :checkbox').click();
+            rowsEdit(a, f);
+        }
+
+//--------------------------------------------------
+// rowsNewLines - It sends all new lines selected to be filled
+//--------------------------------------------------
+        function rowsNewLines(a, f)
+        {
+            showLoader();
+
+            var RowsParents = [];
+            var Rows = [];
+            var $flags_parents = $(a).closest('.accountBlock').find('.sortable tbody .col-flag.record-parent input');
+            $flags_parents.each(function()
+            {
+                if($(this).is(':checked'))
+                    RowsParents.push($(this).attr('record-id'));
+            });
+                
+            f(Rows.toString(), RowsParents.toString());
+        }
+
+//--------------------------------------------------
+// modeAdd - It enables the "Add" mode
+//--------------------------------------------------
+        function modeAdd(a, f)
+        {
+            showLoader();
+            f();
+        }
+
+//--------------------------------------------------
+// modeNew - It enables the "New" mode
+//--------------------------------------------------
+        function modeNew(a, f)
+        {
+            showLoader();
+            f();
+        }
+
+//--------------------------------------------------
+// requiredFields - It sets as required all selects
+//                  and inputs with the class .required
+//--------------------------------------------------
+        function requiredFields()
+        {
+            $('select.required, input.required').parent().wrapInner('<div class="requiredInput">');
+            $('.requiredInput').prepend('<div class="requiredBlock">');
+        }
+
+//--------------------------------------------------
+// requiredCheck - It prevents to submit Apex functions
+//                 when there are some required field empty
+//--------------------------------------------------
+        function requiredCheck(a)
+        {
+            var result = $(a).closest('.accountBlock').find('div.requiredInput:visible').find('input.required:visible, input.required, select.required').filter(function() {
+                return !this.value;
+            }).closest('td').addClass('fieldRequired').size() == 0;
+            if(!result)
+            {
+                setTimeout(function() {
+                    $('.fieldRequired').removeClass('fieldRequired');
+                }, 600);
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+//--------------------------------------------------
+// getTypes - It gets the relationship for each row in the Sales Plan table
+//            to its corresponding selected type (Charged/Free of charge)
+//--------------------------------------------------
+        function getTypes()
+        {
+        	window.stringTypes = '';
+        	$('#SalesPlanTable tbody tr:not(.row-disabled):visible').each(function()
+        	{
+        		if(typeof $(this).find('.Type__c .chosen-select').val() !== 'undefined')
+        		{
+	        		if(stringTypes != '')
+	        			stringTypes += '-';
+	        		
+	        		stringTypes += $(this).find('.col-flag input[type=checkbox]').attr('record-id');
+	        		stringTypes += ':' + $(this).find('.Type__c .chosen-select').val();
+        		}
+        	});
+        }
+    </script>
+
+</apex:component>

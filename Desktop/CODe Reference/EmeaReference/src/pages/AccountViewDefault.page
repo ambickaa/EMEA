@@ -1,0 +1,217 @@
+<apex:page standardController="Account"  extensions="AccountViewExtension" sidebar="false"> 
+<apex:includeScript value="{!$Resource.jQuery_1_9_1}"/>
+<!-- <apex:includeScript value="{!$Resource.RSA_visualHandlings}"/> -->
+<apex:includeScript value="/soap/ajax/28.0/connection.js" />
+<apex:includeScript value="/soap/ajax/28.0/apex.js" />
+<!-- <apex:includeScript value="{!$Resource.prodGroupTrans}"/> -->
+<script src="{!URLFOR($Resource.spin_min_js)}"></script>
+
+<meta name="viewport" content="width=1600" />
+
+<script>   
+
+window.name = 'AccountVisualForce';
+        $(document).ready(function()
+        {
+        
+            resizeiframe();
+        
+            var anchor = '{!anchor}';
+            if (anchor != null && anchor != '') 
+            {
+                document.location.href='#{!anchor}';
+            }
+            
+           // changeProdGroupNames('{!GETSESSIONID()}');
+        });
+
+    function resizeiframe() {
+        $("iframe").each(function() {
+            $(this).load(function() {
+                $(this).height( $(this).contents().find("body").height() + 10 );
+            });
+        });
+    }
+    
+
+    </script>
+
+<script>
+    var opts = {
+  lines: 13, // The number of lines to draw
+  length: 7, // The length of each line
+  width: 4, // The line thickness
+  radius: 10, // The radius of the inner circle
+  rotate: 0, // The rotation offset
+  color: '#000', // #rgb or #rrggbb
+  speed: 1, // Rounds per second
+  trail: 60, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner-custom', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: 200, // Top position relative to parent in px
+  left: 'auto' // Left position relative to parent in px
+};
+
+var target = document.getElementById("contentWrapper");
+var spinner = new Spinner(opts).spin(target);
+
+$(document).ready(function(){
+    spinner.stop();
+});
+//
+</script>
+ 
+<style>
+    .accountTab .secondaryPalette, .individualPalette .accountBlock .secondaryPalette
+    {
+        border-color: {!divisionColor};
+    }
+    
+</style>
+  <apex:pageMessages id="messages"  rendered="{!viewLog}"></apex:pageMessages>
+    <apex:detail relatedList="false" showChatter="false" inlineEdit="true"/>
+    <c:AccountDetail account="{!account}" />
+     
+        <span style="display:{!IF(OR(account.RecordType.name == 'Group/Farm/Site', account.RecordType.name = 'Dist./Ret./PoS'), '', 'none')}">
+         
+         <!-- ACREAGE -->  
+            <a id="AccountAcreageList" name="AccountAcreageList"></a>
+            
+            <!--<c:AccountAcreages accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='acreageEdit','edit', 'view')}" rendered="{!AND(NOT(isAutoCreateAcreages),NOT(isRSAView),NOT(isFrenchAcreages),NOT(IsGenericAcreages), isGermanyAcreages, NOT(AND(account.RecordType.name = 'Dist./Ret./PoS', $User.Country == 'United Kingdom')))}"/>-->
+            
+            <!-- Generic Change -->
+            <apex:outputPanel rendered="{!ISNULL($CurrentPage.parameters.render) || CONTAINS($CurrentPage.parameters.render,'acreage')}">
+                <span style="{!IF(IsGenericAcreages || isFrenchAcreages,'','display:none')}">
+                    <c:AccountAcreagesEnhanced />
+                </span>
+            </apex:outputPanel>
+            <!-- Generic Change -->
+            
+            <a id="AccountAcreageProductList" name="AccountAcreageProductList"></a>
+            
+            <c:AccountProductAcreages accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='acreageProductEdit','edit', 'view')}" rendered="{!NOT(isFrenchAcreages)}" />
+         <!-- ACREAGE -->
+            
+         <!-- ACTION PLAN -->
+            <apex:pageBlock mode="mainDetail" rendered="{!isGermanCPView}"><apex:pageBlockSection title="{!$Label.CP_AP_Campaign}" collapsible="false" /></apex:pageBlock>
+            
+            <!--   <script type="text/javascript"> 
+           alert('SWITCHER?? rendered +++ {!AND(NOT(isCpStandard),NOT(isRSAView))} ///  isCpStandard +++ {!isCpStandard}  \n  isRSAView +++ {!isRSAView}')</script>  -->
+            
+            <c:AccountDivisionSwitcher rendered="{!AND(NOT(isRSAView),IsMoreThanOneCampaign)}"></c:AccountDivisionSwitcher>
+            
+            <a id="tacticalPlanList" name="tacticalPlanList"></a>
+
+            <span style="{!IF(OR(AND(NOT(IsFrenchTacticalPlan),NOT(IsGenericTacticalPlan)), AND(OR(IsFrenchTacticalPlan,IsGenericTacticalPlan),isCpUser)),'','display:none')}"> <!-- rendered="{!AND(NOT(IsFrenchTacticalPlan),IF(account.IsCreateCampaignLineItem__c == TRUE, FALSE, TRUE))}" -->
+                <c:AccountTacticalPlanElement accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='tacticalEdit','edit', 'view')}" /> 
+            </span>  
+
+            <!-- START new AP for Distributors -->
+            <!--<apex:outputPanel rendered="{!AND(IsFrenchTacticalPlan,IsDist)}">         
+                <c:AccountActionPlan accountId="{!account.Id}" /> 
+            </apex:outputPanel>-->          
+            <!-- END new AP for Distributors --> 
+            
+            <!-- Generic Change -->
+            <apex:outputPanel rendered="{!AND(OR(IsGenericTacticalPlan,AND(NOT(IsDist),IsFrenchTacticalPlan)),NOT(isCpUser))}">
+                <c:AccountTacticalPlanNewComp accountId="{!account.Id}" /> 
+            </apex:outputPanel>
+            <!-- Generic Change -->
+
+         <!-- ACTION PLAN -->
+         <!--Retoure-->
+        <span style="{!IF(AND(NOT(IsFrenchTacticalPlan),NOT(IsGenericTacticalPlan)),'','display:none')}"> <!-- rendered="{!AND(NOT(IsFrenchTacticalPlan),IF(account.IsCreateCampaignLineItem__c == TRUE, FALSE, TRUE))}" -->
+            <c:AccountRetoureElement accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='retoureEdit','edit', 'view')}" /> 
+        </span>  
+       <!--  Retoure-->
+         
+            <span style="{!IF(NOT(isRSAView),'display:none','')}">
+                <a id="AccountFreeOfCharge" name="AccountFreeOfCharge"></a>
+                <c:AccountFreeOfCharge accountId="{!account.Id}" /> <!-- rendered="{!isRSAView}"/> -->
+                
+                <a id="AccountListOfOrders_RSA" name="AccountListOfOrders_RSA"></a>
+                <c:AccountListOfOrders_RSA accountId="{!account.Id}" />
+            </span>           
+            
+            <!--Hide List of Vouchers and Trials in AP for Distributors -->
+            <!--<a id="AccountListOfVouchers" name="AccountListOfVouchers"></a>
+            <span style="{!IF(OR(IsStandardTrial, isRSAView, AND(IsFrenchTacticalPlan,IsDist)),'display:none','')}">
+                <c:AccountListOfVouchers accountId="{!account.Id}" rendered="{!IsVoucherEnabled}"/>
+            </span>-->
+            
+            <a id="AccountTrialList" name="AccountTrialList"></a>
+            <!--<span style="{!IF(OR(IsStandardTrial, isRSAView, AND(IsFrenchTacticalPlan,IsDist)),'display:none','')}">
+                <c:AccountTrial accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='trailEdit','edit', 'view')}" />
+            </span>-->   
+            
+            <a id="AccountMarketingCampaignList" name="AccountGiveAways"></a>
+            <!--<span style="{!IF(OR(isRSAView, AND(IsFrenchTacticalPlan,IsDist)),'display:none','')}">
+            <c:AccountGiveAways accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='merchandiseManagementEdit','edit', 'view')}" ></c:AccountGiveAways>
+            </span>-->
+      
+<!--            <a id="AccountMarketingCampaignList" name="AccountMarketingCampaignList"></a>
+<!--            <span style="{!IF(isRSAView,'display:none','')}">
+<!--            <c:AccountMarketingCampaignList accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='222','edit', 'view')}" rendered="{!Or(true,NOT(isRSAView))}"></c:AccountMarketingCampaignList> -->
+<!--            <c:AccountMarketingCampaignList accountId="{!account.Id}" mode="edit" rendered="{!Or(true,NOT(isRSAView))}"></c:AccountMarketingCampaignList> 
+<!--            </span>
+            
+            <a id="AccountContactList" name="AccountContactList" ></a>
+            <c:AccountContactList accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='contactEdit','edit', 'view')}" rendered="{isGermanView}"/>
+
+            <apex:outputText rendered="{!IsStandardTrial}"> 
+                <apex:relatedList list="Trials__r" subject="{!$CurrentPage.parameters.id}" pageSize="500" /> 
+            </apex:outputText>
+
+            <a id="AccountComplaintList" name="AccountComplaintList"></a>
+           <apex:relatedList list="Complaints__r" rendered="{!AND(NOT(isRSAView),IF(account.name == 'SG Test XYZ',TRUE,FALSE))}"/> 
+<!--           <apex:relatedList list="Complaints__r" rendered="{!NOT(isRSAView)}"/> -->
+<!--             <apex:relatedList list="Cases" rendered="{!NOT(isRSAView)}"/> -->
+<!--        <apex:outputText rendered="{OR(!account.RecordType.name == 'Competitor',!isGermanView)}"> -->
+        <apex:outputText rendered="TRUE"> 
+            <apex:relatedList list="Contacts"/>
+        </apex:outputText>
+            <apex:relatedList list="Account_Plans__r" />
+            <apex:relatedList list="NotesAndAttachments" />
+            <apex:relatedList list="OpenActivities" />
+            <apex:relatedList list="ActivityHistories" />
+            <!--Hide Complaints List for Distributors -->
+            <apex:relatedList list="Cases" rendered="{!NOT(isDist)}" />
+        </span>
+        
+       <span style="display:{!IF(account.RecordType.name == 'Competitor',IF(isGermanView,'', 'none'),'none')}">
+          <apex:outputText rendered="TRUE"> 
+            <apex:relatedList list="Contacts"/>
+          </apex:outputText>
+       </span>
+       
+       <span style="display:{!IF(account.RecordType.name == 'Competitor','', 'none')}">       
+          <apex:outputText rendered="TRUE">
+            <apex:relatedList list="NotesAndAttachments"/>
+          </apex:outputText>
+       </span>
+
+       
+       <span style="display:{!IF(account.RecordType.name == 'Others', '', 'none')}">
+           <apex:outputText rendered="TRUE"> 
+            <apex:relatedList list="Contacts"/>
+          </apex:outputText>         
+           
+          <apex:relatedList list="NotesAndAttachments" />
+          <apex:relatedList list="OpenActivities" />
+          <apex:relatedList list="ActivityHistories" />
+          <apex:relatedList list="Cases" />
+       </span>
+       
+              
+          <apex:relatedList list="Campaign_Accounts__r" rendered="{!AND(NOT(isRSAView),IF(OR($User.Country == 'Hungary', $User.Country == 'Romania'),TRUE,FALSE))}"/> 
+          <apex:relatedList list="AccountContactRoles" rendered="{!AND(NOT(isRSAView),IF($User.Country == 'Hungary',TRUE,FALSE))}"/>
+          <apex:relatedList list="Account_Plans__r" rendered="{!AND(NOT(isRSAView),IF($User.Country == 'Hungary',TRUE,FALSE))}"/>                
+          <apex:relatedList list="Observation_Sheets__r" rendered="{!AND(NOT(isRSAView),IF($User.Country == 'Hungary',TRUE,FALSE))}"/>         
+  
+        
+    <c:AccountStyle /> 
+   
+    <script src="/apex/TacticalPlanPermission?id={!account.Id}&division={!divisionId}&core.apexpages.devmode.url=1"></script> 
+</apex:page>

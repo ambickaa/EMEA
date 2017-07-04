@@ -1,0 +1,104 @@
+<apex:page renderAs="pdf" standardStylesheets="false">
+<head>
+
+<style>
+
+@page {
+    margin :6cm 1.5cm 1.5cm 1.5cm;
+    @top-center {
+    height: 5cm;
+        content : element(header);
+     }
+
+    @bottom-left {
+        content : element(footer);
+    }
+    
+}
+
+div.header {
+    position : running(header) ;
+}
+
+div.footer {
+    position : running(footer) ;
+}
+
+body
+{
+    color: #555;
+    font:15px arial,sans-serif;
+    font-size: 11px;
+}
+.text p
+{
+    text-align: center;
+}
+
+.bPageBlock .detailList th, .bPageBlock .detailList td
+{
+    vertical-align: top;
+}
+
+.detailList
+{
+    width:100%;
+}
+
+.dataCol
+{
+    width: 32%;
+}
+.labelCol
+{
+    width: 18%;
+}
+
+
+
+</style>
+
+</head>
+
+<div class="header">
+    <div><apex:image value="{!URLFOR($Resource.dekalb_for_pdf_png)}" width="120px" /></div>
+    <div class="text"><p><strong>MONSANTO SA (PTY) LTD<br/>
+SEED ORDER / SALE / TECHNOLOGY / STEWARDSHIP AGREEMENT ('the agreement')</strong></p><p>entered into by and between:
+'seller' : Monsanto South Africa (Pty) Ltd, Reg. No.1968/001485/07, Registered Credit Provider No. NCRCP3032 of:</p></div>
+</div>
+
+<div class="footer">
+    Footer Text
+</div>
+
+
+<apex:pageblock >
+    <apex:pageBlockSection >
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel >ABC</apex:outputLabel>
+        <apex:outputText >Test</apex:outputText>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputText >
+                Building nr 4, Fourways Office Park, Cnr Roos St<br />
+                Fourways Boulevard, Fourways, South Africa,Tel: (011) 790 8200  <br />
+                (seller s legal address)<br />
+                <br />
+                Springs Distribution centre: <br />   
+                Tel: (011) 818 2277  Fax: (011) 818 2404<br />
+                </apex:outputText>
+        </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+</apex:pageblock>
+
+
+
+<apex:pageBlock >
+    Test Page 1
+    <div style="page-break-after:always"/>
+    Test Page 2
+    <div style="page-break-after:always"/>
+    Test Page 3
+</apex:pageBlock>
+
+</apex:page>

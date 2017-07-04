@@ -1,0 +1,7 @@
+<apex:component selfClosing="true" >
+  <apex:attribute name="value" description="Boolean value that states whether the checkbox should be rendered as marked or not" type="Boolean" required="true"/>
+
+  <apex:image id="checked" url="/img/checkbox_checked.gif" rendered="{!value}" title="Checked" alt="Checked"/>
+  <apex:image id="unchecked" url="/img/checkbox_unchecked.gif" rendered="{!!value}" title="Unchecked" alt="Unchecked" />
+
+</apex:component>

@@ -1,0 +1,357 @@
+<apex:page sidebar="false" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" showHeader="false" language="pl" renderAs="pdf" standardcontroller="Voucher__c" extensions="Voucher_PL_Corn_2017_Controller">
+    <html>
+        <head>
+            <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+            <style>
+                @page {
+                    size: A4 portrait;
+                    border: 0;
+                    margin: 0;
+                    padding: 0;
+                    margin-top: 372px;
+                    margin-bottom: 111.5px;
+                    
+                    @top-center {
+                        content: element(header);
+                        width: 100%;
+                    }
+                    @bottom-left {
+                        content: element(footer);
+                        width: 100%;
+                    }
+                }
+                body {
+                    border:0;
+                    margin:0;
+                    padding:0;
+                    font-weight:normal;
+                    line-height:1.25;
+                    font-size:10px; 
+                    font-family: Arial Unicode MS, sans-serif;
+                }
+                #page {
+                    position:relative;
+                    background: url({!$Resource.Voucher_PL_CORN_2017_GRADIENT});
+                    background-repeat: repeat;
+                    background-size: 100%;
+                    height: 639px;
+                }
+                #container {
+                    position: relative; 
+                    margin: 0px 30px;
+                }   
+                .header {
+                    position: running(header);
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    border-spacing: 0;
+                }
+                .footer {
+                    position: running(footer);
+                    bottom: 0;
+                    right: 0;
+                    left: 0;
+                    width: 100%;
+                    border-spacing: 0;
+                }
+                .asterisk {
+                    color: #D2232B;
+                }
+                .hide { display: none!important }
+                .center-align { text-align: center!important}
+                .right-align { text-align: right!important}
+                .left-align { text-align: left!important}
+                table.accountData {
+                    width: 100%;
+                }
+                    table.accountData tr {}
+                        table.accountData tr td {
+                            white-space:nowrap;
+                            color:#000;
+                            font-style:normal;
+                        }
+                        table.accountData tr td.fieldValue {
+                            border-bottom:1px dotted #000;
+                            font-size:12px;
+                            color:#000;
+                            padding-left: 9px;
+                        }
+                        table.accountData tr td.fieldLabel {}
+
+                div.consent {
+                    width:100%;
+                    margin-top:2%;
+                    margin-bottom:2%;
+                }
+                    div.consent p {
+                        margin-bottom:2px;
+                        margin-top:2px; 
+                        text-align:justify;
+                        margin-left:1.5px;
+                        color:#000;
+                   }
+
+                .products {
+                    position: relative;
+                    top: 20px;
+                }
+                .bagImage {
+                    position: absolute;
+                    right: 0;
+                    top: 12px;
+                    font-size: 12px;
+                }
+                    .priceCouponLabel {
+                        margin-top: 65px;
+                        margin-bottom: 2px;
+                    }
+                    .priceCoupon {
+                        display: inline-block;
+                        float: right;
+                        font-size: 14px;
+                        line-height: 1.75;
+                        padding: 2px 6px;
+                        background: #fff;
+                        border: 1px dotted #000;
+                    }
+                    .productBox {
+                        width: 560px;
+                        padding: 10px 20px;
+                        margin-top: 16px;
+                    }
+                    #Rabat { background: #FFE192; }
+                    #noRabat { background: transparent; width: 640px; }
+                    .productBox ul, .productBox li{
+                        list-style-type: none;
+                    }
+                    .productBox ul {
+                        display:inline-block;
+                        vertical-align: top;
+                        width: 33%;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    #Rabat ul {
+                        width: 49%;
+                    }
+                    .productBox h4 {
+                        margin: 0;
+                        padding: 0;
+                        padding-bottom: 5px;
+                        line-height: 1.40;
+                        font-size: 14px;
+                        font-family: sans-serif;
+                        font-weight: bold;
+                    }
+                
+                b { font-family: Arial Unicode MS }
+                .fieldValue {
+                    border-bottom:1px dotted #000;
+                    font-size:12px;
+                    color:#000;
+                    min-width: 30px;
+                }
+                .fieldValue.fieldBags {
+                    display: inline-block;
+                    padding: .28em 0;
+                    width: 18px;
+                    text-align: center;
+                }
+                .checkbox {
+                    display: inline-block;
+                    padding: .05em .2em;
+                    margin-right: 5px;
+                    border: 1px solid #000;
+                }
+                .newPr2 {
+                    width: 42px;
+                    margin-left: 4px;
+                }
+                .pr2Name {
+                    color: #07A3DF;
+                    font-family: sans-serif;
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+                
+                #voucherName {
+                    position: absolute;
+                    right: 27px;
+                    border: 0!important;
+                }
+                table.signature {
+                    width: 100%;
+                    margin-top: 5px;
+                }
+                    table.signature tr td.fieldValue {
+                        border-bottom: 1px dotted #000;
+                        font-size: 12px;
+                        color: #000;
+                    }
+                td.signature {
+                    position: relative;
+                    border-bottom: 0!important;
+                }
+                img.signature {
+                    border: 1px dotted #000;
+                    background: #fff;
+                    margin-top: 4px;
+                    padding: 1px;
+                }
+                .signatureBox {
+                    position: absolute;
+                    top: -19px;
+                    right: 0;
+                }
+                #cancelled {
+                    position: absolute;
+                    z-index: 9;
+                    top: 10px;
+                    right: 0;
+                }
+            </style>
+        
+        </head>
+
+        <body> 
+            <div id="page">
+            
+                <div class="header">
+                    <apex:image url="{!$Resource.Voucher_PL_CORN_2017_HEADER2}" width="100%" rendered="{!NOT(isVATPayer)}"/>
+                    <apex:image url="{!$Resource.Voucher_PL_CORN_2017_HEADER1}" width="100%" rendered="{!isVATPayer}" />
+                </div>
+                
+                <div class="footer">
+                    <apex:image url="{!$Resource.Voucher_PL_CORN_2017_FOOTER2}" width="100%" rendered="{!NOT(isVATPayer)}"></apex:image>
+                    <apex:image url="{!$Resource.Voucher_PL_CORN_2017_FOOTER1}" width="100%" rendered="{!isVATPayer}"></apex:image>
+                </div>
+                
+                <div id="container">
+                    <div id="voucherName" class="fieldValue">{!voucher.Name}</div>
+                    
+                    <img src="{!$Resource.Voucher_PL_Corn_2017_CANCELLED}" id="cancelled" class="{!IF(voucherStatus == 'Cancelled', '', 'hide')}" height="52px" />
+                    
+                    <table class="accountData">
+                        <tbody>
+                            <tr>                   
+                                <td colspan='1'>{!IF(NOT(isVATPayer),"Imię i nazwisko","Nazwa firmy")}<b class="asterisk"> *</b></td>
+                                <td colspan='6' class="fieldValue">{!voucher.FarmNameCopy__c}&nbsp;</td>
+                            </tr>   
+                            <tr>                   
+                                <td colspan='1'>Adres<b class="asterisk"> *</b></td>
+                                <td colspan='6' class="fieldValue">{!farmAddress}</td>
+                            </tr>   
+                            <tr >                   
+                                <td colspan='1'>Kod i poczta<b class="asterisk"> *</b></td>
+                                <td colspan='3' class="fieldValue">{!voucher.AccountRef__r.DE_Territory_Key__r.DE_CP__c}</td>
+                                <td colspan='1' style="width:12%;">Adres e-mail<b class="asterisk"> *</b></td>
+                                <td colspan='2' class="fieldValue"> {!voucher.EmailCopy__c}</td>
+
+                            </tr>   
+                            <tr>                   
+                                <td colspan='1'>Numer telefonu<b class="asterisk"> *</b></td>
+                                <td colspan='3' class="fieldValue">{!voucher.PhoneCopy__c}</td>
+                                <td colspan='1'>NIP<b class="asterisk"> *</b> </td>
+                                <td colspan='2' class="fieldValue">{!voucher.FiscalCodeCopy__c}</td>
+                            </tr>    
+                            <tr>                   
+                                <td colspan='1'>Numer konta <br/>bankowego<b class="asterisk"> *</b></td>
+                                <td colspan='4' class="fieldValue">{!voucher.AccountRef__r.GC_Bank_Account_Number__c}</td>
+                                <td colspan='1'>Nazwa banku<b class="asterisk"> *</b> </td>
+                                <td colspan='1' class="fieldValue">{!voucher.AccountRef__r.GC_Bank_Name__c}</td>
+                            </tr>    
+                            <tr>                   
+                                <td colspan='1'>Adres banku<b class="asterisk"> *</b></td>
+                                <td colspan='4' class="fieldValue" >{!voucher.AccountRef__r.TXT_BANK_ADDRESS__c}</td>
+                                <td colspan='1' style="width:8%">SWIFT<b class="asterisk"> *</b> </td>
+                                <td colspan='1' class="fieldValue"><!-- voucher.AccountRef__r.DE_TEMP_BANK_SWIFT__c --></td>
+                            </tr>   
+                            <tr>                   
+                                <td colspan='1' style="width:12%">FCPA<b class="asterisk"> *</b></td>
+                                <td colspan='1' style="width:10%" class="fieldValue">{!voucher.AccountRef__r.FCPArelevant__c}</td>
+                                <td colspan='1' style="width:8%">{!IF(NOT(isVATPayer),"PESEL","Źródło zakupu")}<b class="asterisk"> *</b></td>
+                                <td colspan='{!IF(isVATPayer,"4","2")}' class="fieldValue"><apex:outputText value="{!IF(isVATPayer, voucher.DistributorNameCopy__c, voucher.AccountRef__r.FiscalCode__c)}" /></td>
+                                <td colspan='1' class="{!IF(isVATPayer,"hide","")}" style="width:12%">Urząd Skarbowy<b class="asterisk"> *</b> </td>
+                                <td colspan='1' class="{!IF(isVATPayer,"hide","")} fieldValue">{!voucher.AccountRef__r.TXT_TAX_OFFICE_NAME__c}</td>
+                            </tr>
+                            <tr class='{!IF(isVATPayer,"hide","")}'>
+                                <td colspan='1'>Źródło zakupu<b class="asterisk"> *</b></td>
+                                <td colspan='6' class="fieldValue">{!voucher.DistributorNameCopy__c}</td>                  
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="consent">
+                        <p>Oświadczam, że jestem pełnoletni/a i wyrażam dobrowolnie zgodę na przetwarzanie moich danych osobowych przez Monsanto Polska Sp. z o.o. z siedzibą w Warszawie (02-672) przy ul. Domaniewskiej 49, w celach związanych z niniejszym Programem. Zostałem/am poinformowany/a, że podanie moich danych jest dobrowolne oraz, że przysługuje mi prawo dostępu do treści swoich danych osobowych oraz ich poprawiania.</p>
+                    </div>
+
+                    <table class="signature">    
+                        <tr>                   
+                            <td><b class="asterisk">* </b>pola obowiązkowe</td>
+                            <td></td> 
+                            <td class="right-align">data<b class="asterisk"> *</b></td> 
+                            <td class="fieldValue" width="80px">{!voucherDate}</td>
+                            <td width="20px"></td>
+                            <td class="fieldValue signature">
+                                <div class="signatureBox">
+                                    <div class="right-align">podpis<b class="asterisk"> *</b></div>
+                                    <div>
+                                    <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}">
+                                        <img class="signature" src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" width="125px"/>
+                                    </apex:outputPanel>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>                                            
+                    </table>
+
+                    <div class="products">
+                        <h2>Zaznacz krzy<b>&#380;</b>ykiem pole przy wybranej odmianie i wpisz ilo<b>&#347;</b><b>&#263;</b> zamówionych worków<br/> (minimum 60 worków dowolnej odmiany kukurydzy DEKALB®<b>{!IF(NOT(isVATPayer)," **"," *")}</b>):</h2> 
+
+                        <div class="bagImage">
+                            <div><apex:image url="{!$Resource.Voucher_PL_CORN_2016_BAG}" width="110px" /></div>
+                            <div class="right-align priceCouponLabel">Ca<b>&#322;</b>kowity rabat</div>
+                            <div class="center-align priceCoupon"><apex:outputText value="{0, number, ##0.00}"><apex:param value="{!voucher.Price_Coupon__c}"/></apex:outputText> z<b>&#322;</b></div>
+                        </div>
+
+                        <div class="productBox {!IF(List_Premium_1.size == 0, 'hide', '')}" id="Rabat">
+                            <ul>
+                                <li><h4>Odmiany Premium (super rabat):</h4></li>
+                                <apex:repeat value="{!List_Premium_1}" var="pr2">
+                                    <li><div class="checkbox">&#10004;</div><b class="fieldValue fieldBags">{!pr2.Bags__c}</b> worków <span class="pr2Name">{!pr2.HybridName__c}</span> FAO {!pr2.LKP_ProductCatalogEntry__r.TXT_FAO__c} <apex:image url="{!$Resource.PL_Voucher2016_NewProduct}" styleClass="newPr2 {!if(pr2.LKP_ProductCatalogEntry__r.NewProduct__c, '','hide')}"/> </li>
+                                </apex:repeat>
+                            </ul>
+                            <ul>
+                                <apex:repeat value="{!List_Premium_2}" var="pr2">
+                                      <li><div class="checkbox">&#10004;</div><b class="fieldValue fieldBags">{!pr2.Bags__c}</b> worków <span class="pr2Name">{!pr2.HybridName__c}</span> FAO {!pr2.LKP_ProductCatalogEntry__r.TXT_FAO__c} <apex:image url="{!$Resource.PL_Voucher2016_NewProduct}" styleClass="newPr2 {!if(pr2.LKP_ProductCatalogEntry__r.NewProduct__c, '','hide')}"/> </li>
+                                </apex:repeat>
+                            </ul>
+                        </div>
+
+                        <div class="productBox {!IF(List_NOTPremium_1.size == 0, 'hide', '')}" id="noRabat">
+                            <ul>
+                                <li><h4>Odmiany pozostałe<br/>(bez rabatu):</h4></li>
+                                <apex:repeat value="{!List_NOTPremium_1}" var="pr2">
+                                    <li><div class="checkbox">&#10004;</div><b class="fieldValue fieldBags">{!pr2.Bags__c}</b> worków <span class="pr2Name">{!pr2.HybridName__c}</span> <apex:image url="{!$Resource.PL_Voucher2016_NewProduct}" styleClass="newPr2 {!if(pr2.LKP_ProductCatalogEntry__r.NewProduct__c, '','hide')}"/> </li>
+                                </apex:repeat>
+                            </ul>
+                            <ul>
+                                <apex:repeat value="{!List_NOTPremium_2}" var="pr2">
+                                    <li><div class="checkbox">&#10004;</div><b class="fieldValue fieldBags">{!pr2.Bags__c}</b> worków <span class="pr2Name">{!pr2.HybridName__c}</span> <apex:image url="{!$Resource.PL_Voucher2016_NewProduct}" styleClass="newPr2 {!if(pr2.LKP_ProductCatalogEntry__r.NewProduct__c, '','hide')}"/> </li>
+                                </apex:repeat>
+                            </ul>
+                            <ul>
+                                <apex:repeat value="{!List_NOTPremium_3}" var="pr2">
+                                    <li><div class="checkbox">&#10004;</div><b class="fieldValue fieldBags">{!pr2.Bags__c}</b> worków <span class="pr2Name">{!pr2.HybridName__c}</span> <apex:image url="{!$Resource.PL_Voucher2016_NewProduct}" styleClass="newPr2 {!if(pr2.LKP_ProductCatalogEntry__r.NewProduct__c, '','hide')}"/> </li>
+                                </apex:repeat>
+                            </ul>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>
+</apex:page>

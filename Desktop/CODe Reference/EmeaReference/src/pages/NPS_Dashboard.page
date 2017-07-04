@@ -1,0 +1,609 @@
+<apex:page id="page" controller="NPSDashboardChartsController" sidebar="false" docType="html-5.0" tabStyle="Account">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+  
+      <apex:includeScript id="a" value="https://www.google.com/jsapi" />
+    <apex:form id="form">
+        
+        <apex:panelGrid columns="10" id="Filters" cellspacing="10" bgcolor="#F5F5F5">
+            
+            <apex:outputText value=" Filter by: " style="font-style:arial; font-size: 15pt">
+            </apex:outputText>
+        
+            <apex:outputText style="font-style:arial" value=" Year: ">
+            </apex:outputText>        
+            <apex:selectList title="Year" id="yearPick" value="{!selYear}" label="Year" style="width:200px;" size="1">
+                <apex:selectOptions value="{!YRoptions}"/>
+            </apex:selectList>
+            
+            
+            <apex:outputText style="font-style:arial" value=" Division: ">
+            </apex:outputText>
+             <apex:selectList title="Division" id="divPick" value="{!selDiv}" label="Division" style="width:200px;" size="1">
+                <apex:selectOptions value="{!DVoptions}"/>
+            </apex:selectList> 
+            
+            <apex:outputText style="font-style:arial" value=" Touchpoint: ">
+            </apex:outputText>
+            <apex:selectList title="Touchpoint" id="touchPick" value="{!selTouch}" label="Touchpoint" style="width:200px;" size="1">
+                <apex:selectOptions value="{!TCoptions}"/>
+            </apex:selectList>          
+            
+            <apex:outputText style="font-style:arial" value=" Country: ">
+            </apex:outputText>
+            <apex:selectList title="Country" id="countryPick" value="{!selCountry}" label="Country" style="width:200px;" size="1">
+                <apex:selectOptions value="{!CTRoptions}"/>
+            </apex:selectList>
+            
+            <apex:outputText style="font-style:arial" value=" "/>
+            <apex:outputText style="font-style:arial" value=" "/>
+                                    
+             <apex:outputText style="font-style:arial" value=" Start date: "/>
+             <input type="text" style="font-style:arial" value="{!selStartDate}" id="startDatePick"/>   
+             
+             <apex:outputText style="font-style:arial" value=" End date: "/>
+             <input type="text" style="font-style:arial" value="{!selEndDate}" id="endDatePick"/>                                        
+        </apex:panelGrid>
+
+    </apex:form>
+    
+ <button onclick="initCharts()">Refresh</button>
+    
+    <script>
+        function myFunction() {
+            location.reload();
+        }
+    </script>
+    
+    <apex:pageBlock id="block">
+    
+    <apex:pageBlockSection columns="2" title="Download Raw Data" >
+        
+       <apex:pageBlockSectionItem >
+             <apex:image id="theImage" value="{!$Resource.excelicon}" title="Download Survey Results" width="25" height="25" onclick="window.open('/apex/NPS_Dashboard_Export2?paramDash=1'+getUrlParams());"/> Download Survey Results
+       </apex:pageBlockSectionitem>
+       <apex:pageBlockSectionItem >
+             <apex:image id="theImage" value="{!$Resource.excelicon}" title="Download Follow-up calls" width="25" height="25" onclick="window.open('/apex/NPS_Dashboard_TaskExport2?paramDash=2'+getUrlParams());"/> Download Follow-up calls  
+       </apex:pageBlockSectionitem>
+       </apex:pageBlockSection>
+      
+         
+        <apex:pageBlockSection columns="3">
+        
+       
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock"/>
+        </apex:pageBlockSectionitem>  
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock2"/>
+        </apex:pageBlockSectionitem> 
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock3"/>
+        </apex:pageBlockSectionitem> 
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock4"/>
+        </apex:pageBlockSectionitem>
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock5"/>
+        </apex:pageBlockSectionitem> 
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock6"/>
+        </apex:pageBlockSectionitem>
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock7"/>
+        </apex:pageBlockSectionitem>
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock8"/>
+        </apex:pageBlockSectionitem>
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock9"/>
+        </apex:pageBlockSectionitem>
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock10"/>
+        </apex:pageBlockSectionitem>
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock11"/>
+        </apex:pageBlockSectionitem>
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock12"/>
+        </apex:pageBlockSectionitem>
+        <apex:pageBlockSectionItem >
+            <div id="chartBlock13"/>
+        </apex:pageBlockSectionitem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+    
+    <script type="text/javascript">
+        // Load the Visualization API and the piechart package.
+        google.load('visualization', '1.0', {'packages':['corechart', 'table', 'bar','line']});
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.setOnLoadCallback(initCharts);
+    
+    // Functions that link every chart in the dashboard with his report.    
+    function getUrlParams()
+    {
+        return '&paramExcel=1&paramYear='+document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text+'&paramDivision='+ document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text+'&paramCountry='+ document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text+'&paramTouch='+document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text+'&paramstartDate='+document.getElementById("startDatePick").value+'&paramendDate='+document.getElementById("endDatePick").value;
+    }
+        function surveyResultsLink(e){
+            window.open('/00OD0000006OTvS');
+        }
+        function scoreLink(e){
+            window.open('/00OD0000006OTw1');
+        }
+        function typeLink(e){
+            window.open('/00OD0000006OTxJ');
+        }
+        function callsTasksLink(e){
+            window.open('/00OD0000006OTxY');
+        }
+        function scoreSegmentLink(e){
+            window.open('/00OD0000006OU7J');
+        }
+        function scoreFarmLink(e){
+            window.open('/00OD0000006OU7T');
+        }
+        function callsStatusLink(e){
+            window.open('/00OD0000006OU45');
+        }
+        function daysCloseLink(e){
+            window.open('/00OD0000006OU58');
+        }
+        function daysClosePercLink(e){
+            window.open('/00OD0000006OU5h');
+        }
+        function avgDaysOpenLink(e){
+            window.open('/00OD0000006OU5r');
+        }
+        function surveyResultsCauseTableLink(e){
+            window.open('/00O25000000LTCy');
+        } 
+    
+    
+        function initCharts() {   
+       // alert('Entra al initCharts');    
+          // Following the usual Remoting syntax
+          // [<namespace>.]<controller>.<method>([params...,] <callbackFunction>(result, event) {...}
+          // controller : GoogleChartsController
+          // method : loadOpps
+          
+          NPSDashboardChartsController.surveyResults(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 {!act.activityDate}
+                 function(result, event){ 
+                     // load Column chart
+                     var visualization = new google.visualization.ColumnChart(document.getElementById('chartBlock'));
+                     // Prepare table model for chart with columns
+                     var data = new google.visualization.DataTable();
+                     data.addColumn('string', 'Country');
+                     data.addColumn('number', 'Record Count');
+                     data.addColumn({type: 'string', role: 'annotation'});
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data.addRow([r.country, r.numRecords, '' + r.numRecords]);
+                      }
+                    // all done, lets draw the chart with some options to make it look nice.
+                   visualization.draw(data, {legend : {position: 'bottom', textStyle: {color: 'blue', fontSize: 12}}, title: "# of completed calls", width:500, height:500,vAxis:{ textStyle:{fontSize: 14}},hAxis:{title: "Country", textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization, 'select', surveyResultsLink);
+                 }, {escape:true});
+             
+            NPSDashboardChartsController.score(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){
+                     // load Column chart
+                     var visualization = new google.visualization.ColumnChart(document.getElementById('chartBlock2'));
+                     // Prepare table model for chart with columns
+                     var data = new google.visualization.DataTable();
+                     data.addColumn('string', 'Country');
+                     data.addColumn('number', 'Score');
+                     data.addColumn({type: 'string', role: 'annotation'});
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data.addRow([r.country, r.score, '' + r.score]);
+                      }
+                    // all done, lets draw the chart with some options to make it look nice.
+                   visualization.draw(data, {legend : {position: 'top', textStyle: {color: 'blue', fontSize: 12}}, title: "NPS Score by country", width:500, height:500,vAxis:{textStyle:{fontSize: 12}},hAxis:{textStyle:{fontSize: 12},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization, 'select', scoreLink);
+                 }, {escape:true});
+              
+          NPSDashboardChartsController.type(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){ 
+                     // load Column chart
+                     var visualization2 = new google.visualization.BarChart(document.getElementById('chartBlock3'));
+                     // Prepare table model for chart with columns
+                     var data2 = new google.visualization.DataTable();
+                     data2.addColumn('string', 'Country');
+                     data2.addColumn('number', 'Detractors');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     data2.addColumn('number', 'Passives');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     data2.addColumn('number', 'Promoters');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data2.addRow([r.country, r.detractors,''+r.detractors, r.passives,''+r.passives, r.promoters, ''+r.promoters]);
+                      }
+                    // all done, lets draw the chart with some options to make it look nice.
+                   visualization2.draw(data2, {legend : {position: 'top', textStyle: {color: 'blue', fontSize: 12}}, title: "NPS Type by country", width:500, height:500,vAxis:{textStyle:{fontSize: 14}},hAxis:{textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization2, 'select', typeLink);
+                 }, {escape:true});
+              
+                   NPSDashboardChartsController.callsTasks(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){ 
+                     // load Column chart
+                     var visualization = new google.visualization.BarChart(document.getElementById('chartBlock4'));
+                     // Prepare table model for chart with columns
+                     var data = new google.visualization.DataTable();
+                     data.addColumn('string', 'Country');
+                     data.addColumn('number', 'Calls');
+                     data.addColumn({type: 'string', role: 'annotation'});
+                     data.addColumn('number', 'Tasks');
+                     data.addColumn({type: 'string', role: 'annotation'});
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data.addRow([r.country, r.calls, ''+r.calls, r.tasks, ''+r.tasks]);
+                      }
+                    // all done, lets draw the chart with some options to make it look nice.
+                   visualization.draw(data, {legend : {position: 'top', textStyle: {color: 'blue', fontSize: 12}}, title: "Calls vs Tasks", width:500, height:500, vAxis:{textStyle:{fontSize: 14}},hAxis:{textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization, 'select', callsTasksLink);
+                 }, {escape:true});
+              
+                 NPSDashboardChartsController.scoreSegment(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){ 
+                     // load Column chart
+                     var visualization = new google.visualization.BarChart(document.getElementById('chartBlock5')); 
+                     // Prepare table model for chart with columns
+                     var data = new google.visualization.DataTable();
+                     data.addColumn('string', 'scoreSegment');
+                     data.addColumn('number', 'Score');
+                     data.addColumn({type: 'string', role: 'annotation'});
+                     data.addColumn({type: 'string', role: 'style'});
+                    var styleA='#0b6fce';
+                    var styleB='#78c953';
+                    var tempStyle = styleA;
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        
+                        if(i>0)
+                        {
+                            var previous = result[i-1];
+                            if(previous.segment != r.segment)
+                            {
+                                data.addRow();
+                                if(tempStyle==styleA)
+                                    tempStyle=styleB;
+                                else
+                                    tempStyle=StyleA;
+                             }
+                        }
+                        if(r.segment==undefined)
+                            data.addRow([r.country, r.score, r.country + ': '+r.score, tempStyle]);
+                        else
+                            data.addRow([r.segment + '-' +r.country, r.score, r.country + ': '+r.score, tempStyle]);
+                      }
+
+var visualization = new google.visualization.BarChart(document.getElementById('chartBlock5'));
+visualization.draw(data, {legend : {position: 'none'}, title: "Score by segment & country", width:500, height:500, vAxis:{textStyle:{fontSize: 14}},hAxis:{textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization, 'select', scoreSegmentLink);
+          } 
+          , {escape:true});
+          
+                      
+                 NPSDashboardChartsController.scoreFarm(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){ 
+                     // load Column chart
+                     var visualization = new google.visualization.BarChart(document.getElementById('chartBlock6')); 
+                     // Prepare table model for chart with columns
+                     var data = new google.visualization.DataTable();
+                     data.addColumn('string', 'scoreFarm');
+                     data.addColumn('number', 'Score');
+                     data.addColumn({type: 'string', role: 'annotation'});
+                     data.addColumn({type: 'string', role: 'style'});
+                    var styleA='#0b6fce';
+                    var styleB='#78c953';
+                    var tempStyle = styleA;
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        
+                        if(i>0)
+                        {
+                            var previous = result[i-1];
+                            if(previous.size != r.size)
+                            {
+                                data.addRow();
+                                if(tempStyle==styleA)
+                                    tempStyle=styleB;
+                                else
+                                    tempStyle=styleA;
+                             }
+                        }
+                        if(r.size==undefined)
+                            data.addRow([r.country, r.score, r.country + ': '+r.score, tempStyle]);
+                        else
+                            data.addRow([r.size + '-' +r.country, r.score, r.country + ': '+r.score, tempStyle]);
+                      }
+
+var visualization = new google.visualization.BarChart(document.getElementById('chartBlock6'));
+visualization.draw(data, {legend : {position: 'none'}, title: "Score by farm size & country", width:500, height:500, vAxis:{textStyle:{fontSize: 14}},hAxis:{textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization, 'select', scoreFarmLink);
+          } 
+          , {escape:true});
+          
+          
+          NPSDashboardChartsController.callsStatus(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){
+                 // Load column chart
+                     var visualization = new google.visualization.BarChart(document.getElementById('chartBlock7'));
+                 // Prepare table model for chart with columns
+                     var data = new google.visualization.DataTable();
+                     data.addColumn('string', 'Country');
+                     data.addColumn('number', 'Not started');
+                     data.addColumn({type: 'string', role: 'annotation'});
+                     data.addColumn('number', 'Completed');
+                     data.addColumn({type: 'string', role: 'annotation'});
+                 // Add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data.addRow([r.country, r.calls,''+r.calls, r.tasks, ''+r.tasks]);
+                      }
+                 // All done, lets draw the chart with some options to make it look nice.
+                     var visualization = new google.visualization.ColumnChart(document.getElementById('chartBlock7'));
+                     visualization.draw(data, {legend : {position: 'top', textStyle: {color: 'blue', fontSize: 12}}, title: "NPS Follow-Up Calls by Status", width:500, height:500, vAxis:{textStyle:{fontSize: 14}},hAxis:{textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization, 'select', callsStatusLink);
+                 }, {escape:true});            
+            
+            NPSDashboardChartsController.daysClose(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){ 
+                     // load Column chart
+                     var visualization2 = new google.visualization.BarChart(document.getElementById('chartBlock8'));
+                     // Prepare table model for chart with columns
+                     var data2 = new google.visualization.DataTable();
+                     data2.addColumn('string', 'Country');
+                     data2.addColumn('number', '0-5');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     data2.addColumn('number', '5-10');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     data2.addColumn('number', '>10');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data2.addRow([r.country, r.detractors,''+r.detractors, r.promoters,''+r.promoters, r.passives,''+r.passives]);
+                      }
+                    // all done, lets draw the chart with some options to make it look nice.
+                   visualization2.draw(data2, {legend : {position: 'top', textStyle: {color: 'blue', fontSize: 12}}, title: "Days to Close by Country", width:500, height:500,vAxis:{textStyle:{fontSize: 14}},hAxis:{textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization2, 'select', daysCloseLink);
+                 }, {escape:true});
+            
+            NPSDashboardChartsController.daysClosePerc(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){ 
+                     // load Column chart
+                     var visualization2 = new google.visualization.BarChart(document.getElementById('chartBlock9'));
+                     // Prepare table model for chart with columns
+                     var data2 = new google.visualization.DataTable();
+                     data2.addColumn('string', 'Country');
+                     data2.addColumn('number', '0-5 (%)');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     data2.addColumn('number', '5-10 (%)');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     data2.addColumn('number', '>10 (%)');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data2.addRow([r.country, r.detractors,''+r.detractors, r.promoters,''+r.promoters, r.passives,''+r.passives]);
+                      }
+                    // all done, lets draw the chart with some options to make it look nice.
+                   visualization2.draw(data2, {legend : {position: 'top', textStyle: {color: 'blue', fontSize: 12}}, title: "% Days to Close by Country", width:500, height:500,vAxis:{textStyle:{fontSize: 14}},hAxis:{textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization2, 'select', daysClosePercLink);
+                 }, {escape:true});
+            
+            NPSDashboardChartsController.avgDaysOpen(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){ 
+                     // load Column chart
+                     var visualization2 = new google.visualization.ColumnChart(document.getElementById('chartBlock10'));
+                     // Prepare table model for chart with columns
+                     var data2 = new google.visualization.DataTable();
+                     data2.addColumn('string', 'Country');
+                     data2.addColumn('number', 'Avg. Open Days');
+                     data2.addColumn({type: 'string', role: 'annotation'});
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data2.addRow([r.country, r.score, ''+r.score]);
+                      }
+                    // all done, lets draw the chart with some options to make it look nice.
+                   visualization2.draw(data2, {legend : {position: 'top', textStyle: {color: 'blue', fontSize: 12}}, title: "Average Days for Open Tasks by Country", width:500, height:500,vAxis:{textStyle:{fontSize: 14}},hAxis:{textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                    google.visualization.events.addListener(visualization2, 'select', avgDaysOpenLink);
+                 }, {escape:true});
+            
+            NPSDashboardChartsController.surveyResultsCauseTable(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){ 
+                     // load Column chart
+                     var visualization2 = new google.visualization.Table(document.getElementById('chartBlock11'));
+                     // Prepare table model for chart with columns
+                     var data2 = new google.visualization.DataTable();
+                     data2.addColumn('string', 'Primary Cause');
+                     data2.addColumn('number', 'Record Count');
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data2.addRow([r.country, r.score]);
+                      }
+                    // all done, lets draw the chart with some options to make it look nice.
+                     visualization2.draw(data2, {showRowNumber: false, width:500, height:500, sortColumn: 1, sortAscending: false});
+                    google.visualization.events.addListener(visualization2, 'select', surveyResultsCauseTableLink);
+                 }, {escape:true}); 
+                 
+                 //SECONDARY CAUSE
+                 // ORIOL 05/04/2016 START
+                 
+            NPSDashboardChartsController.surveyResultsSecCauseTable(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){
+                     // load Column chart
+                     var visualization2 = new google.visualization.Table(document.getElementById('chartBlock12'));
+                     // Prepare table model for chart with columns
+                     var data2 = new google.visualization.DataTable();
+                     data2.addColumn('string', 'Secondary Cause');
+                     data2.addColumn('number', 'Record Count');
+                     // add rows from the remoting results
+                     for(var i =0; i<result.length;i++){
+                        var r = result[i];
+                        data2.addRow([r.country, r.score]);
+                      }
+                    // all done, lets draw the chart with some options to make it look nice.
+                     visualization2.draw(data2, {showRowNumber: false, width:500, height:500, sortColumn: 1, sortAscending: false});
+                    google.visualization.events.addListener(visualization2, 'select', surveyResultsCauseTableLink);
+                 }, {escape:true}); 
+                 
+            NPSDashboardChartsController.ScorePerYear(
+                 document.getElementById("page:form:yearPick").options[document.getElementById("page:form:yearPick").selectedIndex].text,
+                 document.getElementById("page:form:divPick").options[document.getElementById("page:form:divPick").selectedIndex].text,
+                 document.getElementById("page:form:countryPick").options[document.getElementById("page:form:countryPick").selectedIndex].text,
+                 document.getElementById("page:form:touchPick").options[document.getElementById("page:form:touchPick").selectedIndex].text,
+                 document.getElementById("startDatePick").value,
+                 document.getElementById("endDatePick").value,
+                 function(result, event){
+                 
+
+                     // load Column chart
+                     var visualization = new google.visualization.LineChart(document.getElementById('chartBlock13'));
+                     // Prepare table model for chart with columns
+                     var data = new google.visualization.DataTable();
+
+                    var r = result[0];
+                    console.dir(r);
+                
+                    // Columns
+                    data.addColumn('string','Year');
+                    for (var i = 0; i< r.Set_Country.length; i++){
+                        var c = r.Set_Country[i];
+                        data.addColumn('number', c);
+                    }
+
+                    // Rows
+                    for (var i = 0; i < r.Set_year.length; i++){
+                        var y = r.Set_year[i];
+                        console.dir(y);
+                        var ys = new Array();
+                        ys.push(y);
+                        var k = r.Map_Score[y];
+                        var s = new Array();
+                        for (var j = 0; j < k.length; j++){
+                            if (k[j] == 0){
+                                s.push(null);
+                            }
+                            else{
+                                s.push(k[j]);
+                            }
+                        }
+                        var d = Array.prototype.concat.call(ys,s);
+                        console.dir(d);
+                        data.addRows([d]);
+                    }
+                      
+                     var options = {
+                        legend : {position: 'top', textStyle: {color: 'blue', fontSize: 12}},
+                        title: "Evolution of NPS Score",
+                        width:500,
+                        height:500,
+                        vAxis:{textStyle:{fontSize: 12}, title:"Score"},
+                        hAxis:{textStyle:{fontSize: 12},showTextEvery:1,slantedText:true, slantedTextAngle:45, title: "Year"}
+                        //curveType:'function'
+                     };
+                     
+                    // all done, lets draw the chart with some options to make it look nice.
+                   visualization.draw(data, options);
+                   //google.visualization.events.addListener(visualization, 'select', scoreLink);
+                 }, {escape:true});
+                 
+                // ORIOL 05/04/2016 END 
+          }
+    </script>
+    <script>
+  $(function() {
+      $( "#startDatePick" ).datepicker();
+      $( "#startDatePick" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+      $( "#endDatePick" ).datepicker();
+      $( "#endDatePick" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+  });
+  </script>
+</apex:page>

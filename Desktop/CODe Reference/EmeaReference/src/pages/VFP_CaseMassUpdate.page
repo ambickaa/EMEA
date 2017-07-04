@@ -1,0 +1,43 @@
+<apex:page standardController="Case" extensions="VFC_CaseMassUpdate" recordSetVar="cases">
+    <apex:form id="frm1">
+        <apex:pageMessage summary="Number of Records Selected: {!mySelectedSize}" severity="info"/>
+        <apex:pageMessages id="err" ></apex:pageMessages>
+        <apex:pageBlock rendered="{!enabled}" id="pb1">
+        
+            <apex:pageBlockSection title="Account Details" id="pbs1" columns="2" collapsible="false" >
+                <apex:inputField value="{!Case.AccountId}" required="false"/>
+                <apex:inputField value="{!Case.GC_Sales_Org_Descr__c}" required="false"/>
+                <apex:inputField value="{!Case.GC_Sales_District_Descr__c}" required="true"/>
+                <apex:inputField value="{!Case.GC_Division_Descr__c}" required="false"/>
+                <apex:inputField value="{!Case.GC_Prdt_Group_Descr__c}" required="true"/>
+                <apex:inputField value="{!Case.GC_Cut_Off_Hours_Descr__c}" required="false"/>
+                <apex:inputCheckbox value="{!Case.GC_IsUnread_Email__c}" required="false"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Case Details" id="pbs2" columns="2" collapsible="false" >
+                <apex:inputField value="{!Case.OwnerId}" required="false"/>
+                <apex:inputField value="{!Case.Priority}" required="false"/>
+                <apex:inputField value="{!Case.Origin}" required="false"/>
+                <apex:inputField value="{!Case.Status}" id="stat" onchange="mypicklist();" required="false"/>
+                <apex:inputField value="{!Case.GC_Primary_Srvc_Agent_SFID__c}" required="false"/>
+                <apex:inputField value="{!Case.Reason}" required="false"/>
+                <apex:inputField value="{!Case.GC_Secondary_Reason_Descr__c}" required="true"/>
+                <apex:inputField value="{!Case.GC_Other_Reason_Text__c}" required="false"/>
+            </apex:pageBlockSection>            
+            <apex:pageBlockButtons >             
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}"/>              
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+        function mypicklist()
+        {
+            var myvalueElement = document.getElementById('{!$Component.frm1.pb1.pbs2.stat}');
+            var myPicklistValue = myvalueElement.options[myvalueElement.selectedIndex].value;
+            if(myPicklistValue == 'Closed')
+            {
+                alert('Warning: Please note that you are mass closing several cases; please make sure that all mandatory fields are filled out before closing them.');
+            }
+        }
+    </script>
+</apex:page>

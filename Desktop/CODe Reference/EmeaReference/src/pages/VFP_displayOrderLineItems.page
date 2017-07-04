@@ -1,0 +1,90 @@
+<apex:page standardcontroller="case" extensions="VFC_Delivery"  showheader="false" sidebar="false">
+    <apex:includeScript value="/support/console/30.0/integration.js"/>
+    <apex:includeScript value="/soap/ajax/30.0/connection.js"/>
+    
+    <apeX:form >
+    <script type="text/javascript">
+
+    var preRecordId;
+    function testOpenSubtab(id,name) 
+        {
+            preRecordId= id;
+           tabname= name;
+
+            if (sforce.console.isInConsole())
+               sforce.console.getEnclosingPrimaryTabId(openSubtab);
+            else
+            {
+                window.open('/' + id,'_blank');
+            }
+        }
+        
+        function testOpenSubtabnew(id, name) 
+        {
+            preRecordId= id;
+            tabname= name;
+            if (sforce.console.isInConsole())
+               sforce.console.getEnclosingPrimaryTabId(openSubtabnew);
+            else
+            {
+                window.open('/' + id,'_blank');
+            }
+        }
+        
+        var openSubtab = function openSubtab(result){
+            sforce.console.getFocusedPrimaryTabId(OpenSubtabAlt);
+        }
+        var OpenSubtabAlt = function OpenSubtabAlt(result) 
+        {
+            var primaryTabId = result.id;         
+            sforce.console.openSubtab(primaryTabId ,'/'+preRecordId , true,tabname, null );
+           
+
+        };
+        
+        var openSubtabnew = function openSubtabnew (result){
+            sforce.console.getFocusedPrimaryTabId(OpenSubtabnewAlt);
+        }
+        var OpenSubtabnewAlt= function OpenSubtabnewAlt(result) 
+        {
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/'+ preRecordId , true, 
+                tabname, null  );           
+        }
+     
+
+          
+     </script>
+    <apex:pageBlock >
+      <apex:pageBlockTable value="{!orderselection}" var="oi" id="dttable" >
+           <apex:column >
+           <apex:facet name="header">Action</apex:facet>
+           <apex:commandLink action="{!removecon}" reRender="dttable" >
+           <apex:param assignTo="{!conid}" value="{!oi.id}" name="assignvalue" /> Remove</apex:commandLink> 
+           </apex:column> 
+          <apex:column headerValue="SAP Order Number" > 
+              <apex:outputLink value="{!oi.OrderRecordId__c}" onclick="testOpenSubtab('{!oi.OrderRecordId__c}','{!oi.Order_Number_Text__c}'); return false;" > {!oi.Order_Number_Text__c}</apex:outputLink> 
+           </apex:column>
+          <!-- <apex:column headerValue="Order Comments" value="{!oi.Order_Comments_Text__c}"/> --->
+           <apex:column headerValue="Ship To Party" value="{!oi.Ship_To_Party_Text__c}"/> 
+           <apex:column headerValue="Ship to Party Description" value="{!oi.Ship_To_Party_Descr_Text__c}"/>
+           <apex:column headerValue="Currency Description" value="{!oi.Order_Currency_Descr__c}"/>
+           <apex:column headerValue="Net Value" value="{!oi.Net_Value_Curncy__c}"/> 
+           <apex:column headerValue="PO Number" value="{!oi.PO_Number_Text__c}"/> 
+           <apex:column headerValue="Document Type" value="{!oi.Document_Type_Text__c}"/> 
+          <apex:column headerValue="Product Code" >
+              <apex:outputLink value="{!oi.OrderLine_Item_Id_Text__c}" onclick="testOpenSubtabnew('{!oi.OrderLine_Item_Id_Text__c}','{!oi.OrderLineItem_Number_Text__c}'); return false;" > {!oi.OrderLineItem_Number_Text__c}</apex:outputLink> 
+           </apex:column>
+           <apex:column headerValue="SAP Item Line" value="{!oi.SAP_Item_Line__c}"/> 
+           
+           <!--<apex:column headerValue="Order Product Comments" value="{!oi.Order_Product_Comments_Text__c}"/> -->
+           <apex:column headerValue="Product Description" value="{!oi.Material_Description_Text__c}"/> 
+           <apex:column headerValue="Quantity" value="{!oi.Quantity_Nbr__c}"/>   
+                     
+           <apex:column headerValue="Sales UoM" value="{!oi.Sales_UoM_Text__c}"/> 
+           <apex:column headerValue="Net Unit Price" value="{!oi.Net_Unit_Price_Curncy__c}"/>  
+           <apex:column headerValue="Last Modified Date" value="{!oi.Last_Modified_Date__c}"/>
+      </apex:pageBlockTable>
+  </apex:pageBlock>
+</apeX:form>
+</apex:page>

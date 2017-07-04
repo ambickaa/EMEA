@@ -1,0 +1,167 @@
+<apex:page standardController="Account"  extensions="AccountViewExtension" sidebar="false">
+<apex:includeScript value="{!$Resource.jQuery_1_9_1}"/>
+<apex:includeScript value="/soap/ajax/28.0/connection.js" />
+<apex:includeScript value="/soap/ajax/28.0/apex.js" />
+<script src="{!URLFOR($Resource.spin_min_js)}"></script>
+
+<meta name="viewport" content="width=1600" /> 
+
+<script>   
+
+window.name = 'AccountVisualForce';
+        $(document).ready(function()
+        {   
+        
+            resizeiframe();
+            
+            var anchor = '{!anchor}';
+            if (anchor != null && anchor != '') 
+            {
+                document.location.href='#{!anchor}';
+            }
+        });
+
+        function resizeiframe() {
+            $("iframe").each(function() {
+                $(this).load(function() {
+                    $(this).height( $(this).contents().find("body").height() + 10 );
+                });
+            });
+        }
+</script>
+<script>
+    var opts = {
+  lines: 13, // The number of lines to draw
+  length: 7, // The length of each line
+  width: 4, // The line thickness
+  radius: 10, // The radius of the inner circle
+  rotate: 0, // The rotation offset
+  color: '#000', // #rgb or #rrggbb
+  speed: 1, // Rounds per second
+  trail: 60, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner-custom', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: 200, // Top position relative to parent in px
+  left: 'auto' // Left position relative to parent in px
+};
+
+var target = document.getElementById("contentWrapper");
+var spinner = new Spinner(opts).spin(target);
+
+$(document).ready(function(){
+    spinner.stop();
+});
+</script>
+ 
+<style>
+    .accountTab .secondaryPalette, .individualPalette .accountBlock .secondaryPalette
+    {
+        border-color: {!divisionColor};
+    }
+    
+</style>
+<!-- ------------------------------------------------  Message Panel  -------------------------------------------------------------------- -->
+    <apex:pageMessages id="messages"  rendered="{!viewLog}"></apex:pageMessages>
+    
+<!-- ----------------------------------  Account View for Group/Farm/Site && Dist/Ret/Pos  --------------------------------------------------------------------- -->
+    <apex:detail relatedList="false" showChatter="false" inlineEdit="true"/>
+    <c:AccountDetail account="{!account}" />
+    <span style="display:{!IF(OR(account.RecordType.name == 'Group/Farm/Site', account.RecordType.name = 'Dist./Ret./PoS'), '', 'none')}"> 
+    
+<!-- --------------------------------------------------  Acreages  ----------------------------------------------------------------------- -->
+            <a id="AccountAcreageList" name="AccountAcreageList"></a>
+            
+            <c:AccountAcreages accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='acreageEdit','edit', 'view')}" rendered="{!NOT(IsGenericAcreages)}"/>
+            
+            <apex:outputPanel rendered="{!ISNULL($CurrentPage.parameters.render) || CONTAINS($CurrentPage.parameters.render,'acreage')}">
+                <span style="{!IF(IsGenericAcreages,'','display:none')}">
+                    <c:AccountAcreagesEnhanced />
+                </span>
+            </apex:outputPanel>
+            
+            <a id="AccountAcreageProductList" name="AccountAcreageProductList"></a>
+            
+            <c:AccountProductAcreages accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='acreageProductEdit','edit', 'view')}" />
+
+          <apex:pageBlock mode="mainDetail" rendered="{!isGermanCPView}"><apex:pageBlockSection title="{!$Label.CP_AP_Campaign}" collapsible="false" /></apex:pageBlock>
+<!-- ------------------------------------------------  Division Switcher  --------------------------------------------------------------------- -->            
+            <c:AccountDivisionSwitcher rendered="{!IsMoreThanOneCampaign}"></c:AccountDivisionSwitcher> 
+
+<!-- ------------------------------------------------  Action Plan  --------------------------------------------------------------------- -->
+            <a id="tacticalPlanList" name="tacticalPlanList"></a>
+            
+            <span style="{!IF((isCpUser),'','display:none')}">
+                <c:AccountTacticalPlanElement accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='tacticalEdit','edit', 'view')}" /> 
+            </span>
+
+            <!-- New Distributor Action Plan -->
+            <apex:outputPanel rendered="{!AND(IsFrenchTacticalPlan,IsDist,NOT(isCpUser))}">         
+                <c:AccountActionPlan accountId="{!account.Id}" /> 
+            </apex:outputPanel>
+                         
+            <!-- Generic Change -->
+            <apex:outputPanel rendered="{!NOT(AND(IsFrenchTacticalPlan,IsDist,NOT(isCpUser)))}">         
+                <c:AccountTacticalPlanNewComp accountId="{!account.Id}" /> 
+            </apex:outputPanel> 
+            <!-- New Distributor Action Plan -->     
+
+<!-- --------------------------------------------------  Vouchers  ------------------------------------------------------------------------ -->
+            <a id="AccountListOfVouchers" name="AccountListOfVouchers"></a>
+            <span style="{!IF(IsDist,'display:none','')}">
+                <c:AccountListOfVouchers accountId="{!account.Id}" rendered="{!IsVoucherEnabled}"/>
+            </span>
+            
+<!-- --------------------------------------------------  Trials  ------------------------------------------------------------------------ -->
+            <a id="AccountTrialList" name="AccountTrialList"></a>
+            <span style="{!IF(IsDist,'display:none','')}">
+                <c:AccountTrial accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='trailEdit','edit', 'view')}" />
+            </span>
+            
+<!-- -------------------------------------------------  Give Aways  ------------------------------------------------------------------------ -->
+            <a id="AccountMarketingCampaignList" name="AccountGiveAways"></a>
+            <span style="{!IF(IsDist,'display:none','')}">
+            <c:AccountGiveAways accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='merchandiseManagementEdit','edit', 'view')}" ></c:AccountGiveAways>
+            </span>
+<!-- -------------------------------------------------  Contacts ------------------------------------------------------------------------ -->
+            <apex:outputText > 
+            <apex:relatedList list="Contacts"/> 
+            </apex:outputText>
+            
+<!-- -------------------------------------------------  Related Lists ------------------------------------------------------------------------ -->
+            <apex:relatedList list="NotesAndAttachments" />
+            <apex:relatedList list="OpenActivities" />
+            <apex:relatedList list="ActivityHistories" />
+            <apex:relatedList list="Cases" />
+        </span>
+
+        
+<!-- -------------------------------------------------  Account View for Competitor && Others ------------------------------------------------------------------------ -->
+
+<!-- ------------------------------------------------------ACCOUNT COMPETITOR------------------------------------------------------------------------>
+  <span style="display:{!IF(account.RecordType.name == 'Competitor', '', 'none')}">
+           <apex:relatedList list="NotesAndAttachments" />
+       </span>
+
+<!-- -------------------------------------------------  Contacts for Other Accounts ------------------------------------------------------------------------ -->
+       <span style="display:{!IF(account.RecordType.name == 'Others', '', 'none')}">
+           <apex:outputText > 
+            <apex:relatedList list="Contacts"/>
+          </apex:outputText>         
+<!-- -------------------------------------------------  Related Lists ------------------------------------------------------------------------ -->
+          <apex:relatedList list="NotesAndAttachments" />
+          <apex:relatedList list="OpenActivities" />
+          <apex:relatedList list="ActivityHistories" />
+       </span>
+       
+<!-- -------------------------------------------------  Campaign Accounts ------------------------------------------------------------------------ -->
+           <apex:relatedList list="Campaign_Accounts__r" rendered="{!IF($User.Country == 'Romania',TRUE,FALSE)}"/> 
+  
+<!-- -------------------------------------------------  Observation Sheets ------------------------------------------------------------------------ -->
+<!-- -----------------------------------Activated for CZ,SK,RO,BU,TR,RU on 17/02/2015-------------------------------------------------------------- -->
+          <apex:relatedList list="Observation_Sheets__r"/>             
+  
+    <c:AccountStyle />
+    <script src="/apex/TacticalPlanPermission?id={!account.Id}&division={!divisionId}&core.apexpages.devmode.url=1"></script> 
+</apex:page>

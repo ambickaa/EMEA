@@ -1,0 +1,661 @@
+<apex:component allowDML="true" controller="AccountActionPlan_Controller">
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+<apex:attribute name="accountId" type="String" description="Current Account Id" assignTo="{!Id_current_account}"/>
+<!-- INCLUDING STYLESHEETS -->
+<link rel="stylesheet" href="{!URLFOR($Resource.jquery_Chosen_package,'chosen.min.css')}"/>
+<!-- INCLUDING CSS STYLES -->
+<style type="text/css">
+body .pbBody .pbSubheader {
+    background-color: #8a9ebe;
+    border-color: #8a9ebe;
+    margin-top: 0;
+}
+body .pbBody .pbSubheader.pbSubheader_tmp {
+    background-color: #20b2aa;
+    border-color: #20b2aa;
+}
+body .pbBody table tr.dataRow:not(.disabled):not(.ghostline) td.selectable,
+body .pbBody table tr.dataRow:not(.disabled):not(.ghostline) td.checkable,
+body .pbBody table tr.headerRow:not(.disabled):not(.ghostline) .row_select_all,
+body .pbBody table tr.dataRow:not(.disabled):not(.ghostline) .row_selector {
+    cursor: pointer;
+}
+body .pbBody table.list tr.dataRow:hover td {
+    background-color: #fafafa;
+}
+body .pbBody table.list tr.dataRow:not(.disabled):not(.ghostline):hover th,
+body .pbBody table.list tr.dataRow:not(.disabled):not(.ghostline):hover td.selectable,
+body .pbBody table.list tr.dataRow.isSelected:not(.disabled):not(.ghostline) td.selectable,
+body .pbBody table.list tr.dataRow:not(.disabled):not(.ghostline):hover td.checkable,
+body .pbBody table.list tr.dataRow.isSelected:not(.disabled):not(.ghostline) td.checkable {
+    background-color: #e3f3ff;
+}
+body .pbBody table.list tr td.dataCell input[type="text"] {
+    max-width: 80px;
+}
+body .pbBody table.list.buttons_footer {
+    margin-bottom: 5px;
+}
+body .pbBody table tr.dataRow.disabled td,
+body .pbBody table tr.dataRow.disabled td * {
+    color: #9c9c9c;
+}
+body .pbBody table tr.dataRow.disabled input,
+body .pbBody table tr.dataRow.disabled select {
+    color: #9c9c9c;
+}
+body .pbBody table tr.dataRow.ghostline td,
+body .pbBody table tr.dataRow.ghostline td * {
+    color: #9c9c9c;
+    background-color: #fafafa;
+}
+body #AP_Top .pbBody table.list tr th {
+    white-space: normal!important
+}
+body #AP_Top .pbBody table.list tr td {
+    white-space: nowrap!important
+}
+#search_input {
+    padding: .5em .25em;
+    width: 100%;
+    font-size: 98%;
+    line-height: 1;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.btn_wrapper {
+    padding: 2px 0 8px;
+}
+.chosen-select {
+    min-width: 100%;
+}
+#product_picker > div {
+    margin-bottom: 8px;
+}
+.section_wrapper,
+#product_picker {
+    margin: 0;
+    padding: 8px 6px;
+    background-color: #eaeaea;
+}
+input.row_selector {
+    z-index:2;
+}
+.submit__btn {
+    margin-right: 3px!important;
+}
+.loadingImg {
+    position: relative;
+    top: 5px; left: 2px;
+}
+.ActionPlanSection .bPageBlock .message {
+    position: fixed;
+    z-index: 999;
+    top: 10px;
+    left: 0;
+    right: 0;
+    margin: 0 20px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    box-shadow: 0 4px 10px rgba(0,0,0,.18);
+}
+</style>
+
+<div class="apexp ActionPlanSection" id="AP_Top">
+<div class="bPageBlock apexDefaultPageBlock">
+
+<!-- START: CURRENT CAMPAIGN INFO -->
+<div class="pbBody">
+    <div class="pbSubheader"><h3>{!$Label.TacticalPlan}</h3></div>
+    <apex:outputPanel id="Campaign_Totals">
+    <div class="pbSubsection">
+        <table class="detailList" border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+          <th class="labelCol vfLabelColTextWrap" scope="row"></th>
+            <td class="dataCol" colspan="2"></td>
+          </tr>
+        <tr>
+          <th class="labelCol vfLabelColTextWrap  first" scope="row"><label>{!$Label.SelectedCampaignDivision}</label></th>
+                <td class="dataCol first">{!currentDivision.Name}</td>
+                <td class="dataCol first" colspan="2"></td>
+        </tr>
+        <tr>
+          <th class="labelCol vfLabelColTextWrap" scope="row">{!IF(AND(isDistAccount, NOT(isFrench)), $ObjectType.Campaign.fields.NUM_TotalCampaignBudgetDist__c.Label, $ObjectType.Campaign.fields.TotalCampaignBudget__c.Label)}</th>
+          <td class="dataCol">{!IF(AND(isDistAccount, NOT(isFrench)), currentCampaign.NUM_TotalCampaignBudgetDist__c, currentCampaign.TotalCampaignBudget__c)}</td>
+          <td class="dataCol" colspan="2"></td>
+          <!-- <th class="labelCol vfLabelColTextWrap" scope="row">{!$ObjectType.Campaign.fields.TotalCampaignBudgetFOC__c.Label}</th> -->
+           <!-- <td class="dataCol">{!currentCampaign.TotalCampaignBudgetFOC__c}</td> -->
+        </tr>
+        <tr>
+          <th class="labelCol vfLabelColTextWrap" scope="row">{!IF(AND(isDistAccount, NOT(isFrench)), $ObjectType.Campaign.fields.NUM_TotalForecastDist__c.Label, $ObjectType.Campaign.fields.FRML_Total_Forecasted__c.Label)}</th>
+          <td class="dataCol">{!IF(AND(isDistAccount, NOT(isFrench)), currentCampaign.NUM_TotalForecastDist__c, currentCampaign.FRML_Total_Forecasted__c)}</td>
+          <th class="labelCol vfLabelColTextWrap" scope="row">{!IF(AND(isDistAccount, NOT(isFrench)), $ObjectType.Campaign.fields.FRML_TotalPendingForecastDist__c.Label, $ObjectType.Campaign.fields.TotalPendingForecastBudget__c.Label)}</th>
+          <td class="dataCol">{!IF(AND(isDistAccount, NOT(isFrench)), currentCampaign.FRML_TotalPendingForecastDist__c, currentCampaign.TotalPendingForecastBudget__c)}</td>
+        </tr>
+        <tr>
+          <th class="labelCol vfLabelColTextWrap" scope="row">{!IF(AND(isDistAccount, NOT(isFrench)), $ObjectType.Campaign.fields.NUM_TotalAgreedDist__c.Label, $ObjectType.Campaign.fields.FRML_Total_Agreed__c.Label)}</th>
+          <td class="dataCol">{!IF(AND(isDistAccount, NOT(isFrench)), currentCampaign.NUM_TotalAgreedDist__c, currentCampaign.FRML_Total_Agreed__c)}</td>
+          <th class="labelCol vfLabelColTextWrap" scope="row">{!IF(AND(isDistAccount, NOT(isFrench)), $ObjectType.Campaign.fields.FRML_TotalPendingAgreedDist__c.Label, $ObjectType.Campaign.fields.TotalPendingAgreedBudget__c.Label)}</th>
+          <td class="dataCol">{!IF(AND(isDistAccount, NOT(isFrench)), currentCampaign.FRML_TotalPendingAgreedDist__c, currentCampaign.TotalPendingAgreedBudget__c)}</td>
+        </tr>
+        <tr style="{!IF(NOT(isFrench),'display:none','')}">
+          <th class="labelCol vfLabelColTextWrap" scope="row">{!IF(AND(isDistAccount, NOT(isFrench)), $ObjectType.Campaign.fields.NUM_TotalSalesDist__c.Label, $ObjectType.Campaign.fields.FRML_Total_POG__c.Label)}</th>
+          <td class="dataCol">{!IF(AND(isDistAccount, NOT(isFrench)), currentCampaign.NUM_TotalSalesDist__c, currentCampaign.FRML_Total_POG__c)}</td>
+          <th class="labelCol vfLabelColTextWrap" scope="row">{!IF(AND(isDistAccount, NOT(isFrench)), $ObjectType.Campaign.fields.FRML_TotalPendingSalesDist__c.Label, $ObjectType.Campaign.fields.TotalPendingPOGBudget__c.Label)}</th>
+          <td class="dataCol">{!IF(AND(isDistAccount, NOT(isFrench)), currentCampaign.FRML_TotalPendingSalesDist__c, currentCampaign.TotalPendingPOGBudget__c)}</td>
+        </tr>
+        <tr>
+          <th class="labelCol vfLabelColTextWrap" scope="row"></th>
+            <td class="dataCol" colspan="2"></td>
+        </tr>
+        </tbody>
+        </table>
+    </div>
+    </apex:outputPanel>
+</div>
+<!-- END: CURRENT CAMPAIGN INFO -->
+
+<!-- START: ACTION PLAN USING HTML TAGS -->
+<div class="pbBody">
+    
+    <!-- ACTION PLAN MAIN ACTION BUTTONS: NEW, EDIT, DELETE -->
+    
+    <div id="AP_Buttons" class="btn_wrapper" style="{!if(or(isSharingUser,isMarketingUser),'','display:none')}">
+        <input class="btn submit__btn" type="button" value="{!$Label.AP_AddProducts}" onClick="showProductPicker(this); toggleCheckboxes();"/>
+        <input class="btn submit__btn rows__btn btnDisabled" type="button" disabled="true" value="{!$Label.AP_EditLines}" onClick="toggleButtons(this, false); toggleCheckboxes(); showLines_edit(true);"/>
+        <input class="btn submit__btn rows__btn btnDisabled" type="button" disabled="true" value="{!$Label.AP_DeleteLines}" onClick="toggleButtons(this, false); toggleCheckboxes(); showLines_delete(true);"/>
+        <apex:actionStatus id="loadingSelectors">
+            <apex:facet name="start"><apex:image value="/img/loading.gif" styleClass="loadingImg"/></apex:facet>
+        </apex:actionStatus>
+        <span id="search_result"></span>
+    </div>
+    
+    <!-- ACTION PLAN QUICK SEARCH FIELD -->
+    <div id="search_wrapper" class="section_wrapper" style="{!if(or(isSharingUser,isMarketingUser),'','display:none')}">
+        <input type="text" id="search_input" placeholder="{!$Label.AP_QuickSearch}"/>
+    </div>
+    
+    <!-- ACTION PLAN PRODUCT PICKER -->
+    <div id="product_picker">
+        <div>
+            <select id="product_picker_select" class="chosen-select" data-placeholder="{!$Label.AP_ChooseProducts}" multiple="multiple"></select>
+        </div>
+        <apex:form >
+            <apex:commandButton styleClass="submit__btn submit__add" disabled="true" value="{!$Label.AP_Add}" onClick="toggleButtons(this, true); showLines_new(true); return false;"/>
+            <apex:commandButton styleClass="submit__btn" value="{!$Label.AP_Cancel}" onClick="hideProductPicker($('#AP_Buttons').children('.btn'),false); toggleCheckboxes(); return false;"/>
+            <apex:actionStatus id="loadingSection">
+                <apex:facet name="start"><apex:image value="/img/loading.gif" styleClass="loadingImg"/></apex:facet>
+            </apex:actionStatus>
+        </apex:form>
+    </div>
+    
+    <apex:PageMessages id="AP_messages" rendered="{!or(isSharingUser,isMarketingUser)}"/>
+
+    <!-- ACTION PLAN TEMPORAL SECTION (EDITABLE) -->
+    
+    <div id="AP_section_tmp_container" style="display:none">
+    <apex:outputPanel id="AP_section_tmp_wrapper">
+    <apex:outputPanel id="AP_section_tmp" rendered="{!APSectionTmpRendered}">
+    <apex:form >
+    <div class="pbSubheader pbSubheader_tmp"><h3>{!$Label.AP_EditPanel}</h3></div>
+    <div class="pbSubsection">
+        <table class="list buttons_footer" border="0" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr class="headerRow">
+                    <!-- FIELDSET (HEADER) -->
+                    <apex:repeat var="f" value="{!FieldSet}">
+                    <th>{!IF(AND(f.fieldPath == 'HybridName__c',NOT(OR(isFrench,isBritish))),$ObjectType.CampaignLineItem__c.fields.ProductRef__c.Label,f.label)}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody id="search_list_tmp">
+                <apex:repeat value="{!List_CampaignLineItem_tmp}" var="cli">
+                <tr class="dataRow" data-pce="{!cli.ProductCatalogEntryRef__c}">
+                    <!-- FIELDSET -->
+                    <apex:repeat var="f" value="{!FieldSet}">
+                    <apex:variable var="isDisabled" value="{!OR(AND(OR(f.fieldPath == 'Forecast__c',f.fieldPath == 'Agreed__c'),Map_isCompetitor[cli.ProductRef__c],isFrench),AND(NOT(isFrench),OR(AND(NOT(cli.NUM_FARM_AGREED__c == 0),NOT(cli.NUM_FARM_AGREED__c == null)),AND(NOT(cli.NUM_FARM_FORECAST__c == 0),NOT(cli.NUM_FARM_FORECAST__c == null)),AND(NOT(cli.NUM_ORDERED_CY_QTY__c == 0),NOT(cli.NUM_ORDERED_CY_QTY__c == null)),AND(NOT(cli.NUM_ORDERED_PY_QTY__c == 0),NOT(cli.NUM_ORDERED_PY_QTY__c == null)),AND(NOT(cli.NUM_INVOICED_CY_QTY__c == 0),NOT(cli.NUM_INVOICED_CY_QTY__c == null)),AND(NOT(cli.NUM_INVOICED_PY_QTY__c == 0),NOT(cli.NUM_INVOICED_PY_QTY__c == null)),AND(NOT(cli.POGPY__c == 0),NOT(cli.POGPY__c == null))),f.fieldPath == 'Type__c'))}"/>
+                    <td class="dataCell {!f.fieldPath}">
+                        <span class="input__field">
+                            <apex:outputText rendered="{!OR(f.fieldPath == 'ProductRef__c',AND(f.fieldPath == 'HybridName__c',NOT(OR(isFrench,isBritish))))}" value="{!cli.ProductRef__r.Name}"/>
+                            <apex:outputText rendered="{!AND(f.fieldPath == 'HybridName__c',OR(isFrench,isBritish))}" value="{!cli.HybridName__c}"/>
+                            <apex:outputText rendered="{!f.fieldPath == 'FRML_POGPY__c'}" value="{!Map_POGPY[cli.ProductRef__c]}"/>
+                            <apex:inputField rendered="{!AND(f.fieldPath != 'FRML_POGPY__c', f.fieldPath != 'ProductRef__c', f.fieldPath != 'HybridName__c')}" value="{!cli[f.fieldPath]}" styleClass="{!if(f.required,'required','')} {!if(isDisabled,'input_disabled','')}"/>
+                        </span>
+                        <span class="output__field">
+                            <apex:outputText rendered="{!AND(f.fieldPath == 'HybridName__c',NOT(OR(isFrench,isBritish)))}" value="{!cli.ProductRef__r.Name}"/>
+                            <apex:outputText rendered="{!f.fieldPath == 'FRML_POGPY__c'}" value="{!Map_POGPY[cli.ProductRef__r.Name]}"/>
+                            <apex:outputField rendered="{!f.fieldPath != 'FRML_POGPY__c'}" value="{!cli[f.fieldPath]}"/>
+                        </span>
+                    </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+        <div class="btn_wrapper">
+            <apex:commandButton styleClass="submit__btn submit__insert" value="{!$Label.AP_Insert}" onClick="requiredCheck(); toggleButtons(this, false); freezeAPSection();" action="{!doSave}" reRender="AP_section_view, AP_messages, Campaign_Totals" status="loadingAction">
+                <apex:param name="Action" value="Insert" assignTo="{!Action}"/>
+            </apex:commandButton>
+            <apex:commandButton styleClass="submit__btn submit__delete" value="{!$Label.AP_Delete}" onClick="requiredCheck(); toggleButtons(this, false); freezeAPSection();" action="{!doSave}" reRender="AP_section_view, AP_messages, Campaign_Totals" status="loadingAction">
+                <apex:param name="Action" value="Delete" assignTo="{!Action}"/>
+            </apex:commandButton>
+            <apex:commandButton styleClass="submit__btn submit__edit" value="{!$Label.AP_Update}" onClick="requiredCheck(); toggleButtons(this, false); freezeAPSection();" action="{!doSave}" reRender="AP_section_view, AP_messages, Campaign_Totals" status="loadingAction">
+                <apex:param name="Action" value="Edit" assignTo="{!Action}"/>
+            </apex:commandButton>
+            <apex:commandButton styleClass="submit__btn" value="{!$Label.AP_Cancel}" onClick="toggleProductPicker(); return false;"/>
+            <apex:actionStatus id="loadingAction" onStop="returnIni()">
+                <apex:facet name="start"><apex:image value="/img/loading.gif" styleClass="loadingImg"/></apex:facet>
+            </apex:actionStatus>
+        </div>
+    </div>
+    </apex:form>
+    </apex:outputPanel>
+    </apex:outputPanel>
+    </div>
+    
+    <!-- ACTION PLAN LINES (NOT EDITABLE) -->
+    <apex:outputPanel id="AP_section_view">
+    <!-- <div class="pbSubheader" style="{!if(NOT(AND(isItalian,isDistAccount)),'','display:none')}"><h3>{!$Label.TacticalPlan}</h3></div> -->
+    <div class="pbSubsection">
+        <table class="list" border="0" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr class="headerRow">
+                    <!-- FLAG TO SELECT/UNSELECT ALL ROWS (HEADER) -->
+                    <th><input type="checkbox" class="row_select_all" style="{!if(or(isSharingUser,isMarketingUser),'','display:none')}"/></th>
+                    <!-- FIELDSET (HEADER) -->
+                    <apex:repeat var="f" value="{!FieldSet}">
+                    <th>{!f.label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody id="search_list" class="search_list">
+                <apex:repeat value="{!List_CampaignLineItem}" var="cli">
+                <tr class="dataRow {!if(cli.ProductCatalogEntryRef__c == null,'ghostline','')}">
+                
+                    <!-- FLAG FOR EACH ROW -->
+                    <td class="{!if(and(cli.ProductCatalogEntryRef__c != null,or(isSharingUser,isMarketingUser)),'checkable','')}">
+                        <input class="row_selector" type="checkbox" value="{!cli.Id}" style="{!if(and(cli.ProductCatalogEntryRef__c != null,or(isSharingUser,isMarketingUser)),'','display:none')}"/>
+                        <!--<span style="display:none">{!cli.Owner.Name}</span>-->
+                    </td>
+                    <!-- FIELDSET -->
+                    <apex:repeat var="f" value="{!FieldSet}">
+                    <td class="dataCell {!if(cli.ProductCatalogEntryRef__c != null,'selectable','')}">
+                        <apex:outputText rendered="{!f.fieldPath == 'FRML_POGPY__c'}" value="{!Map_POGPY[cli.ProductRef__c]}"/>
+                        <apex:outputField rendered="{!f.fieldPath != 'FRML_POGPY__c'}" value="{!cli[f.fieldPath]}"/>
+                    </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+            </tbody>
+            <tfoot id="search_footer">
+                <tr class="totalRow">
+                    <td class="totalRow"></td>
+                    <apex:repeat var="f" value="{!FieldSet}">
+                    <td class="totalRow" style="{!if(f.fieldPath == 'FRML_POGPY__c','display:none','')}">{!if(Map_Summarized_Fields[f.fieldPath] == 0 , '', Map_Summarized_Fields[f.fieldPath])}</td>
+                    <td class="totalRow" style="{!if(f.fieldPath != 'FRML_POGPY__c','display:none','')}">{!String_POGPY}</td>
+                    </apex:repeat>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    </apex:outputPanel>
+    
+    <a class="actionLink" href="#AP_Top">{!$Label.AP_GoTop}</a>
+    
+</div>
+<!-- END: ACTION PLAN WITH HTML TAGS -->
+
+</div>
+</div>
+
+<apex:form >
+<!-- INSERT FUNCTIONS -->
+    <apex:actionFunction action="{!reRenderSection}" name="showLines_new" oncomplete="addLines_new();" status="loadingSection">
+        <apex:param name="firstParam" assignTo="{!APSectionTmpRendered}" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction action="{!newAPLines}" name="addLines_new_ctr" reRender="AP_section_tmp_wrapper, AP_messages" oncomplete="addRows_new();" status="loadingSection">
+        <apex:param name="firstParam" assignTo="{!Rows}" value=""/>
+    </apex:actionFunction>
+    
+<!-- DELETE FUNCTIONS -->
+    <apex:actionFunction action="{!reRenderSection}" name="showLines_delete" oncomplete="addLines(this, 'delete');" status="loadingSelectors">
+        <apex:param name="firstParam" assignTo="{!APSectionTmpRendered}" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction action="{!deleteAPLines}" name="addLines_delete_ctr" reRender="AP_section_tmp_wrapper, AP_messages" oncomplete="addRows_delete();" status="loadingSelectors">
+        <apex:param name="firstParam" assignTo="{!Rows}" value=""/>
+    </apex:actionFunction>
+    
+<!-- EDIT FUNCTIONS -->
+    <apex:actionFunction action="{!reRenderSection}" name="showLines_edit" oncomplete="addLines(this, 'edit');" status="loadingSelectors">
+        <apex:param name="firstParam" assignTo="{!APSectionTmpRendered}" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction action="{!editAPLines}" name="addLines_edit_ctr" reRender="AP_section_tmp_wrapper, AP_messages" oncomplete="addRows_edit();" status="loadingSelectors">
+        <apex:param name="firstParam" assignTo="{!Rows}" value=""/>
+    </apex:actionFunction>
+</apex:form>
+
+<!-- INCLUDING EXTERNAL SCRIPTS -->
+<script type="text/javascript" src="{!URLFOR($Resource.jquery_Chosen_package,'chosen.jquery.min.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.jquery_FastLiveFilter_js)}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.jquery_html5placeholder_js)}"></script>
+<script type="text/javascript">
+    var __sfdcSessionId = '{!GETSESSIONID()}';
+</script>
+<script src="/soap/ajax/28.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/28.0/apex.js" type="text/javascript"></script>
+<!-- INCLUDING SCRIPTS -->
+<script type="text/javascript">
+$(document).ready(function() {
+
+// Fade out for the page messages
+    $('.ActionPlanSection .bPageBlock .message').delay(5000).fadeOut(5000);
+
+// Anchor links with scroll easing (smooth scroll)
+    $('a[href^=#]').click(function() {
+        $('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 200);
+        return false;
+    });
+
+// It retrieves the France Sales Product Catalogue for current campaign and division
+    var x = '{!Id_SalesProductCatalogue}';
+    query = "SELECT Id, Name, ProductRef__c, Product_Name__c, ProductRef__r.ProductVendor__c, Vendor__c";
+    query += " FROM ProductCatalogEntry__c";
+    query += " WHERE IsActive__c = true";
+    query += " AND ProductRef__c != null";
+    query += " AND ProductRef__r.ProductVendor__c != null";
+    query += " AND ProductCatalogRef__c = '" + x + "'";
+    query += " ORDER BY Vendor__c ASC, Product_Name__c ASC";
+    
+    result = sforce.connection.query(query);
+    
+    var pceOption = "";
+    var queryMore = true;
+    while(queryMore) {
+        var records = result.getArray("records");
+        for(var i = 0; i < records.length; i++) {
+            if(i == 0)
+                pceOption += "<optgroup label='" + records[i].Vendor__c + "'>";
+                
+            pceOption += "<option value='" + records[i].ProductRef__c + "=" + records[i].Id + "'>" + records[i].Product_Name__c + "</option>";
+            
+            if(i != (records.length - 1) && records[i].ProductRef__r.ProductVendor__c != records[i+1].ProductRef__r.ProductVendor__c)
+                pceOption += "</optgroup><optgroup label='" + records[i+1].Vendor__c + "'>";
+            if(i == (records.length - 1))
+                pceOption += "</optgroup>";
+        }
+        if(result.getBoolean("done"))
+            queryMore = false;
+        else
+            result = sforce.connection.queryMore(result.queryLocator);
+    }
+
+    $('#product_picker_select').html(pceOption);
+
+// It converts default select in complex select
+    $('#product_picker_select').chosen({max_selected_options: 15, no_results_text: '{!$Label.AP_NoResults}'}).change(function() {
+        $(this).trigger('chosen:updated');
+        if($('#product_picker .chosen-choices .search-choice').length == 0)
+            $('[class*="submit__add"]').prop('disabled',true).addClass('btnDisabled').removeClass('btn');
+        else
+            $('[class*="submit__add"]').prop('disabled',false).removeClass('btnDisabled').addClass('btn');
+    });
+// It hides the wrapper for the select
+    $('#product_picker').hide();
+// It filters lines of the table and hides summarized quantities when the filtering is on
+    iniFastLiveFilter();
+// It selects or unselects all checkboxes based on head checkbox value and applies hover style to a selected row
+    iniCheckbox();
+// It enables row selection by also clicking in any part of the row
+    rowSelection();
+
+});
+
+function toggleButtons(a, q) {
+    var buttons = $(a).siblings('.btn').andSelf();
+    if(!$(a).is(':disabled'))
+        buttons.prop('disabled', true).addClass('btnDisabled');
+    else
+        buttons.prop('disabled', false).removeClass('btnDisabled');
+        
+    if(q == true)
+        $('#product_picker_select').prop('disabled', true).trigger('chosen:updated');
+}
+function showProductPicker(a) {
+    toggleButtons(a, false);
+    $('#search_wrapper').slideUp();
+    $('#product_picker').slideDown({ duration: 400, queue: false }).css({opacity: 0}).animate({opacity: 1}, 400);
+}
+function hideProductPicker(a, clear) {
+    toggleButtons(a, false);
+    checkboxAll();
+    var picker = $('#product_picker');
+    picker.slideUp();
+    if(clear == true) {
+        picker.find('option').prop('selected', false);
+        picker.closest('select').trigger('chosen:updated');
+    }
+    $('#search_wrapper').slideDown({ duration: 400, queue: false }).css({opacity: 0}).animate({opacity: 1}, 400);
+}
+// Get selected rows in Action Plan to delete or edit, based on mode variable
+function addLines(a, mode) {
+    var Rows = [];
+    if(mode == 'edit' || mode == 'delete') {
+        $(':checkbox.row_selector').each(function() {
+            if($(this).is(':checked'))
+                Rows.push($(this).val());
+        });
+        if(Rows.length == 0) {
+            toggleButtons(a, false);
+            return false;
+        }
+    }
+    if(mode == 'delete')
+        addLines_delete_ctr(Rows.toString());
+    if(mode == 'edit')
+        addLines_edit_ctr(Rows.toString());
+}
+function addLines_new() {
+    var Rows = [];
+    $('#product_picker_select option:selected').each(function(i) {
+        Rows[i] = $(this).val();
+    });
+    if(Rows.length == 0) {
+        toggleButtons($('#product_picker .btn'), false);
+        $('#product_picker_select').prop('disabled', false).trigger('chosen:updated');
+        return false;
+    }
+    addLines_new_ctr(Rows.toString());
+}
+function addRows_delete() {
+    $('#search_wrapper').slideUp();
+    $('.input__field').hide();
+    $('.output__field').show();
+    $('[class*="submit__insert"], [class*="submit__edit"]').hide();
+    $('#AP_section_tmp_container').slideDown({ duration: 400, queue: false }).css({opacity: 0}).animate({opacity: 1}, 400);
+    $('.ActionPlanSection .bPageBlock .message').delay(5000).fadeOut(5000);
+    preventOut();
+}
+function addRows_edit() {
+    $('#search_wrapper').slideUp();
+    $('.input__field').show();
+    $('.output__field').hide();
+    $('[class*="submit__insert"], [class*="submit__delete"]').hide();
+    $('#AP_section_tmp_container').slideDown({ duration: 400, queue: false }).css({opacity: 0}).animate({opacity: 1}, 400);
+    $('.ActionPlanSection .bPageBlock .message').delay(5000).fadeOut(5000);
+    preventOut();
+    requiredFields();
+    disabledFields();
+}
+function addRows_new() {
+    var PCEs = [];
+    $('#AP_section_tmp_container tbody tr').each(function(i) {
+        PCEs[i] = '\'' + $(this).attr('data-pce') + '\'';
+    });
+    
+    query = "SELECT Id, ProductRef__r.Name, ProductRef__r.Description, ProductRef__r.ProductTypeRef__c, ProductRef__r.ProductTypeRef__r.Name,";
+    query += " ProductRef__r.ProductTreatment__c, ProductRef__r.ProductVendor__r.Name, ProdHumidity__c";
+    query += " FROM ProductCatalogEntry__c";
+    query += " WHERE Id IN (" + PCEs.toString() + ")";
+
+    result = sforce.connection.query(query);
+    records = result.getArray("records");
+    for(i = 0; i < records.length; i++) {
+        $('#AP_section_tmp_container tbody').find('[data-pce="' + records[i].Id + '"]').children('td').each(function() {
+            if($(this).hasClass('ProductRef__c')) $(this).html(records[i].ProductRef__r.Name);
+            if($(this).hasClass('HybridName__c')) $(this).html(records[i].ProductRef__r.Description);
+            if($(this).hasClass('Treatment__c')) $(this).html(records[i].ProductRef__r.ProductTreatment__c);
+            if($(this).hasClass('Provider__c')) $(this).html(records[i].ProductRef__r.ProductVendor__r.Name);
+            if($(this).hasClass('Humidity__c')) $(this).html(records[i].ProdHumidity__c);
+            if($(this).hasClass('FRML_PRODUCTTYPE__c')) {
+                records[i].ProductRef__r.ProductTypeRef__c != null ? $(this).html(records[i].ProductRef__r.ProductTypeRef__r.Name) : $(this).html('');
+            }
+        });
+    }
+    $('.input__field').show();
+    $('.output__field').hide();
+    $('[class*="submit__delete"], [class*="submit__edit"]').hide();
+    $('#AP_section_tmp_container').slideDown({ duration: 400, queue: false }).css({opacity: 0}).animate({opacity: 1}, 400);
+    requiredFields();
+    disabledFields();
+}
+function toggleProductPicker() {
+    $('#AP_section_tmp_container').fadeOut({ duration: 400, queue: false }).slideUp(400);
+    toggleButtons($('#product_picker .btn'), false);
+    $('#product_picker_select').prop('disabled', false).trigger('chosen:updated');
+    if($('#product_picker').is(':hidden')) {
+        $('#search_wrapper').slideDown();
+        toggleButtons($('#product_picker .btn'), false);
+        toggleButtons($('#AP_Buttons').children('.btn'),false);
+        toggleCheckboxes();
+    }
+}
+function freezeAPSection() {
+    $('#AP_section_tmp_container table tr').addClass('disabled');
+    $('#AP_section_tmp_container table tr input, #AP_section_tmp_container table tr select').prop('disabled', true);
+}
+function returnIni() {
+    $('#AP_section_tmp_container').fadeOut({ duration: 300, queue: false }).slideUp(300);
+    hideProductPicker($('.submit__btn'),true);
+    $('#search_input').val('').change();
+    iniFastLiveFilter();
+    iniCheckbox();
+    rowSelection();
+    $('#product_picker_select').prop('disabled', false).trigger('chosen:updated');
+    $('[class*="submit__add"]').prop('disabled',true).addClass('btnDisabled').removeClass('btn');
+    $('.bPageBlock .message').delay(5000).fadeOut(5000);
+    preventOut();
+}
+// It filters lines of the table and hides summarized quantities when the filtering is on
+function iniFastLiveFilter() {
+    $('#search_input').fastLiveFilter('#search_list', {
+        callback: function(total) {
+            var rows = $('#search_list > tr').length;
+            if(total < rows) {
+                $('#search_footer').hide();
+                if(total != 0)
+                    $('#search_result').html('<b>' + total + ' / ' + rows + '</b>');
+                else
+                    $('#search_result').html('<b>{!$Label.AP_NoResults}</b>');
+            } else {
+                $('#search_footer').show();
+                $('#search_result').html('');
+            }
+        }
+    });
+}
+// It selects or unselects all checkboxes based on head checkbox value and applies hover style to a selected row
+function iniCheckbox() {
+    $(':checkbox.row_select_all').change(function() {
+        var checkboxes = $(this).closest('table').find('tr:visible :checkbox:visible');
+        if($(this).is(':checked')) {
+            checkboxes.prop('checked', true);
+            checkboxes.closest('tr').addClass('isSelected');
+        } else {
+            checkboxes.prop('checked', false);
+            checkboxes.closest('tr').removeClass('isSelected');
+        }
+        checkboxAll();
+    });
+    
+    $(':checkbox.row_selector').change(function() {
+        var row = $(this).closest('tr');
+        if($(this).is(':checked'))
+            row.addClass('isSelected');
+        else
+            row.removeClass('isSelected');
+        checkboxAll();
+    });
+    
+    $(':checkbox.row_selector').click(function() {
+        if($(this).is(':checked'))
+            $(this).prop('checked',false);
+        else
+            $(this).prop('checked',true);
+    });
+}
+function checkboxAll() {
+    var selected = $(':checkbox.row_selector:visible:checked');
+    var unselected = $(':checkbox.row_selector:visible').not(':checked');
+    if(selected.length > 0) {
+        $('.rows__btn').prop('disabled', false).removeClass('btnDisabled');
+        if(unselected.length == 0)
+            $(':checkbox.row_select_all').prop('checked',true);
+    } else {
+        $('.rows__btn').prop('disabled', true).addClass('btnDisabled');
+        $(':checkbox.row_select_all').prop('checked',false);
+    }
+}
+function toggleCheckboxes() {
+    var flags = $(':checkbox.row_selector');
+    if(flags.is(':disabled')) {
+        $(':checkbox.row_selector, :checkbox.row_select_all').prop('disabled', false);
+        $('#search_list tr').removeClass('disabled');
+    } else {
+        $(':checkbox.row_selector, :checkbox.row_select_all').prop('disabled', true);
+        $('#search_list tr').addClass('disabled');
+    }
+}
+// It enables row selection by also clicking in any part of the row
+function rowSelection() {
+    $('.search_list tr.dataRow td').click(function() {
+        var flag = $(this).parent('tr').find(':checkbox:visible');
+        if(!flag.is(':disabled')) {
+            if(flag.is(':checked'))
+                flag.prop('checked',false);
+            else
+                flag.prop('checked',true);
+            flag.trigger('change');
+        }
+    });
+}
+// It avoids message to dissapear when the mouse is hover
+function preventOut() {
+    $('.bPageBlock .message').mouseover(function() {
+        $(this).stop().css({opacity: 1});
+    }).mouseout(function() {
+        $(this).delay(3500).fadeOut(5000);
+    });
+}
+// It sets disabled fields properties
+function disabledFields() {
+    $('.input_disabled').prop('disabled',true);
+}
+// It sets required fields properties
+function requiredFields() {
+    $('select.required').parent().parent().contents().wrap('<div class="requiredInput">');
+    $('.requiredInput').prepend('<div class="requiredBlock">');
+}
+// It stops propagation if some required field has not been filled out
+function requiredCheck(e) {
+    var result = $('div.requiredInput:visible').find('input.required:visible, select.required').filter(function(){return !this.value;}).closest('td').addClass('fieldRequired').size() == 0;
+    if(!result) setTimeout(function(){$('.fieldRequired').removeClass('fieldRequired');},400);
+    if(result==false)
+        e.stopPropagation();
+}
+
+</script>
+
+</apex:component>

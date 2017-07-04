@@ -1,0 +1,464 @@
+<apex:page id="page" controller="ComplaintsExportController" sidebar="false" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet#{!fileName}.xls">
+
+    <apex:outputText value="{!xlsHeader}"/>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+
+         <Styles>       
+             <Style ss:ID="s1">
+                 <Alignment/>
+                 <Borders/>
+                 <Font ss:Bold="1"/>
+                 <Interior/>
+                 <NumberFormat/>
+                 <Protection/>
+             </Style>
+             <Style ss:ID="DecimalNumber">
+                <NumberFormat ss:Format="#,##0"/>
+            </Style>
+
+         </Styles>
+    
+         <Worksheet ss:Name="Sheet1">
+             <Table x:FullColumns="1" x:FullRows="1">
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >File Import Claim Number</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complaint Number</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Initiated By</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Date Notified</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Division</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Sub-Division</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Sub-Division Code</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Country</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >State</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complaint Coordinator Location</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Reporting Group</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Region</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Sub-Region</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Brand</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complaint Category</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complaint Sub-Category 1</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complaint Sub-Category 2</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Severity Ranking</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complaint Description</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Estimated Settlement Amount</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Actual Settlement Amount</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Currency</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Settlement Closed Date</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Date of Settlement Agreement</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complaint Created By</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Date Created</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Sales Year</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Claim Status</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Claim Number</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Claim Type</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Function</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Process</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Function Key</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Process Key</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Direct Customer Info</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Indirect Customer Info</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Delivery Info</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Transportation Carrier</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Shipping Company</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Delivery Date</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Invoice Number</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Invoice Date</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Sales Order Info</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Sales Order Date</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Sales Order Number</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Responsible Site</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Responsible Organization</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Validity</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Investigation Details</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Investigation Closed Date</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Create a CAR?</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Create a Product Recall?</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Response to Initiated By</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Additional Recipients for Response to Initiated By</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >SOURCE_INSTANCE</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >URL Complaint Attachment</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Territory</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Close Complaint</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Crop</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Legacy Date Created</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Order Line Item Number</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Manual Indirect Customer Name</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >FOC Seed Value ($USD)</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >FOC COGs Value ($USD)</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Compensation Value in Cash ($USD)</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complaint Coordinator</Data></Cell>
+                     </Row>
+
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListCustomerComplaint1}" var="Comp">
+                     <Row>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].CaseNumber}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint1[counter].DAT_Date_Notified_of_Complaint__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Supply chain</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Supply Chain{!ListCustomerComplaint1[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].LKP_Country__r.TXT_Country_ISO_Code__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell><Data ss:Type="String">Corn Commercial</Data></Cell>
+                        <Cell><Data ss:Type="String">EMEA</Data></Cell>
+                        <Cell><Data ss:Type="String">CE Europe</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].PCK_Brand__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].PICK_Complaint_Category__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].PCK_Complaint_sub_category_1__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].PCK_Complaint_sub_category_2__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].PCK_Severity_Ranking__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].Description} ({!ListCustomerComplaint1[counter].Owner.name})</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint1[counter].NUM_Estimated_Settlement_amount_dolars__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!IF(ListCustomerComplaint1[counter].FRML_Actual_Settlement_Value__c==null,0,ListCustomerComplaint1[counter].FRML_Actual_Settlement_Value__c)}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint1[counter].ClosedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint1[counter].DAT_Date_Settlement_Agreement__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint1[counter].CreatedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].LKP_Sales_Year__r.name}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceSupply Chain{!ListCustomerComplaint1[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceQuality AssuranceSupply Chain{!ListCustomerComplaint1[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].LKP_Direct_Customer_Name__r.GC_Integration_Key__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].TXTA_Delivery_Info__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].TXT_Transportation_Carrier__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].GC_Invoice_Number_Text__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Valid</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].GC_Territory_Name__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].PCK_Crop__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint1[counter].LKP_Indirect_Customer_Name__r.name}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint1[counter].NUM_FOC_Seed_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint1[counter].NUM_FOC_COGs_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint1[counter].NUM_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat>
+
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListCustomerComplaint2}" var="Comp">
+                     <Row>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].CaseNumber}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint2[counter].DAT_Date_Notified_of_Complaint__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Supply chain</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].LKP_Country__r.TXT_Country_ISO_Code__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell><Data ss:Type="String">Corn Commercial</Data></Cell>
+                        <Cell><Data ss:Type="String">EMEA</Data></Cell>
+                        <Cell><Data ss:Type="String">CE Europe</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].PCK_Brand__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].PICK_Complaint_Category__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].PCK_Complaint_sub_category_1__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].PCK_Complaint_sub_category_2__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].PCK_Severity_Ranking__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].Description} ({!ListCustomerComplaint2[counter].Owner.name})</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint2[counter].NUM_Estimated_Settlement_amount_dolars__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!IF(ListCustomerComplaint2[counter].FRML_Actual_Settlement_Value__c==null,0,ListCustomerComplaint2[counter].FRML_Actual_Settlement_Value__c)}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint2[counter].ClosedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint2[counter].DAT_Date_Settlement_Agreement__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint2[counter].CreatedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].LKP_Sales_Year__r.name}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceSupply Chain{!ListCustomerComplaint2[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceQuality AssuranceSupply Chain{!ListCustomerComplaint2[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].LKP_Direct_Customer_Name__r.GC_Integration_Key__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].TXTA_Delivery_Info__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].TXT_Transportation_Carrier__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].GC_Invoice_Number_Text__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Valid</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].GC_Territory_Name__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].PCK_Crop__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint2[counter].LKP_Indirect_Customer_Name__r.name}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint2[counter].NUM_FOC_Seed_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint2[counter].NUM_FOC_COGs_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint2[counter].NUM_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat>
+
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListCustomerComplaint3}" var="Comp">
+                     <Row>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].CaseNumber}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint3[counter].DAT_Date_Notified_of_Complaint__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Supply chain</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].LKP_Country__r.TXT_Country_ISO_Code__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell><Data ss:Type="String">Corn Commercial</Data></Cell>
+                        <Cell><Data ss:Type="String">EMEA</Data></Cell>
+                        <Cell><Data ss:Type="String">CE Europe</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].PCK_Brand__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].PICK_Complaint_Category__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].PCK_Complaint_sub_category_1__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].PCK_Complaint_sub_category_2__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].PCK_Severity_Ranking__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].Description} ({!ListCustomerComplaint3[counter].Owner.name})</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint3[counter].NUM_Estimated_Settlement_amount_dolars__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!IF(ListCustomerComplaint3[counter].FRML_Actual_Settlement_Value__c==null,0,ListCustomerComplaint3[counter].FRML_Actual_Settlement_Value__c)}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint3[counter].ClosedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint3[counter].DAT_Date_Settlement_Agreement__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint3[counter].CreatedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].LKP_Sales_Year__r.name}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceSupply Chain{!ListCustomerComplaint3[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceQuality AssuranceSupply Chain{!ListCustomerComplaint3[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].LKP_Direct_Customer_Name__r.GC_Integration_Key__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].TXTA_Delivery_Info__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].TXT_Transportation_Carrier__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].GC_Invoice_Number_Text__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Valid</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].GC_Territory_Name__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].PCK_Crop__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint3[counter].LKP_Indirect_Customer_Name__r.name}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint3[counter].NUM_FOC_Seed_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint3[counter].NUM_FOC_COGs_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint3[counter].NUM_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat>
+
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListCustomerComplaint4}" var="Comp">
+                     <Row>
+                       <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].CaseNumber}</Data></Cell>
+                       <Cell></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint4[counter].DAT_Date_Notified_of_Complaint__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Supply chain</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].LKP_Country__r.TXT_Country_ISO_Code__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell><Data ss:Type="String">Corn Commercial</Data></Cell>
+                        <Cell><Data ss:Type="String">EMEA</Data></Cell>
+                        <Cell><Data ss:Type="String">CE Europe</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].PCK_Brand__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].PICK_Complaint_Category__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].PCK_Complaint_sub_category_1__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].PCK_Complaint_sub_category_2__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].PCK_Severity_Ranking__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].Description} ({!ListCustomerComplaint4[counter].Owner.name})</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint4[counter].NUM_Estimated_Settlement_amount_dolars__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!IF(ListCustomerComplaint4[counter].FRML_Actual_Settlement_Value__c==null,0,ListCustomerComplaint4[counter].FRML_Actual_Settlement_Value__c)}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint4[counter].ClosedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint4[counter].DAT_Date_Settlement_Agreement__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint4[counter].CreatedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].LKP_Sales_Year__r.name}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceSupply Chain{!ListCustomerComplaint4[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceQuality AssuranceSupply Chain{!ListCustomerComplaint4[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].LKP_Direct_Customer_Name__r.GC_Integration_Key__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].TXTA_Delivery_Info__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].TXT_Transportation_Carrier__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].GC_Invoice_Number_Text__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Valid</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].GC_Territory_Name__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].PCK_Crop__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint4[counter].LKP_Indirect_Customer_Name__r.name}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint4[counter].NUM_FOC_Seed_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint4[counter].NUM_FOC_COGs_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint4[counter].NUM_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat>
+                    
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListCustomerComplaint5}" var="Comp">
+                     <Row>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].CaseNumber}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint5[counter].DAT_Date_Notified_of_Complaint__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Supply chain</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].LKP_Country__r.TXT_Country_ISO_Code__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell><Data ss:Type="String">Corn Commercial</Data></Cell>
+                        <Cell><Data ss:Type="String">EMEA</Data></Cell>
+                        <Cell><Data ss:Type="String">CE Europe</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].PCK_Brand__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].PICK_Complaint_Category__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].PCK_Complaint_sub_category_1__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].PCK_Complaint_sub_category_2__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].PCK_Severity_Ranking__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].Description} ({!ListCustomerComplaint5[counter].Owner.name})</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint5[counter].NUM_Estimated_Settlement_amount_dolars__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!IF(ListCustomerComplaint5[counter].FRML_Actual_Settlement_Value__c==null,0,ListCustomerComplaint5[counter].FRML_Actual_Settlement_Value__c)}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint5[counter].ClosedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint5[counter].DAT_Date_Settlement_Agreement__c}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                        <Cell><Data ss:Type="String"><apex:outputText value="{0, date,yyyy-MM-dd}"> <apex:param value="{!ListCustomerComplaint5[counter].CreatedDate}"/></apex:outputText></Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].LKP_Sales_Year__r.name}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality Assurance</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceSupply Chain{!ListCustomerComplaint5[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Quality AssuranceQuality AssuranceSupply Chain{!ListCustomerComplaint5[counter].PCK_Sub_division__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].LKP_Direct_Customer_Name__r.GC_Integration_Key__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].TXTA_Delivery_Info__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].TXT_Transportation_Carrier__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].GC_Invoice_Number_Text__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">MMS27R</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">Valid</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].GC_Territory_Name__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].PCK_Crop__c}</Data></Cell>
+                        <Cell></Cell>
+                        <Cell></Cell>
+                        <Cell><Data ss:Type="String">{!ListCustomerComplaint5[counter].LKP_Indirect_Customer_Name__r.name}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint5[counter].NUM_FOC_Seed_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint5[counter].NUM_FOC_COGs_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="Number">{!ListCustomerComplaint5[counter].NUM_Value__c}</Data></Cell>
+                        <Cell><Data ss:Type="String">Isabelle Baziet (534221)</Data></Cell>
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat>
+             </Table>
+         </Worksheet>
+    </Workbook>    
+</apex:page>

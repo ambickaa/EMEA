@@ -1,0 +1,111 @@
+<apex:page id="pg" title="Find Existing Duplicates" controller="csmrgp.CsMrgSetupCtrl" tabStyle="Setup_Wizard__tab" >
+<apex:includeScript value="/support/console/28.0/integration.js"/>
+
+<style type="text/css"> 
+    fieldset {border:0; display:inline; padding:10px; vertical-align:top;}
+    .primaryPalette {background-color:#D36D00 !important;}
+    .brdPalette, .secondaryPalette {border-top-color:#D36D00 !important;}
+    .pbSubheader {
+        background: #e96e25 !important; /* Fallback to solid color for older browsers */
+        background-image: linear-gradient(to top, #b95e15, #f97e35) !important;
+        border-radius: 4px;
+        text-shadow: -1px 0 #b95e15, 0 1px #b95e15,1px 0 #b95e15, 0 -1px #b95e15;
+    }
+    
+    .bimg{
+        border: 1px solid dimgray;
+    }
+
+</style>
+
+<apex:sectionheader title="Case Merge Premium" subtitle="Search Organization for Duplicates" help="http://kb.internetcreations.com/pkb_Home?c=Products%3ACase_Merge_Premium"/>
+
+    <apex:form >
+        <apex:pageBlock >
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!previous}" value="Setup Instructions" style="margin-left:-40%"/>
+            <apex:commandButton action="{!goToConfig}" value="Configure Settings" style="margin-left:30%"/>
+        </apex:pageBlockButtons>
+        
+        <apex:actionFunction name="runBatchJob" action="{!runBatchJob}"/>
+        
+        <apex:pageBlockSection title="Search for Duplicates" columns="1" collapsible="false">    
+            <ol>
+                <li>Use the two date selectors to set the range that will determine which cases will be searched. The default is set to use the last three months.</li>
+                <ul><li>Increasing the range may significantly increase the time to process the records based on the number of cases.</li></ul>
+                <li>Select the length of time between Case Open Date for which cases should be considered duplicates. The default is set to seven days.</li>
+                <li>Click the &quot;Begin Search&quot; button to begin the search for duplicates. You will be notified by email when the job is complete.</li>
+            </ol>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel >Start Date</apex:outputLabel>
+                <apex:inputField value="{!startDummy.ActivityDate}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel >End Date</apex:outputLabel>
+                <apex:inputField value="{!endDummy.ActivityDate}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem helpText="Cases will only be considered duplicates if their created dates fall within this range.">
+                <apex:outputLabel value="Max. Range of Days Between Duplicates" />
+                <apex:selectList value="{!dateRange}" size="1">
+                    <apex:selectOptions value="{!dateRangeOptions}" />
+                </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+            <apex:outputPanel >
+                <apex:commandButton id="runBatch" value="Begin Search" onclick="this.value = 'Search is Running'; this.disabled = true; this.style.color='#9A9A9C'; runBatchJob(); return false;"/>
+                <p>
+                Optional: While we recommend the default criteria, you can configure duplicate criteria <a href="/apex/csmrgp__CsMrgFind?sdc=1" target="_blank">here</a>. (Criteria for Case Closed status will be ignored.)
+                </p>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="jobStatus" title="Search Status" columns="1" collapsible="false" rendered="{!job != null}">
+            <apex:actionPoller action="{!updateJobStatus}" rendered="{!continuePolling}" reRender="jobStatus" interval="5"/>
+            
+            <apex:pageBlockTable value="{!job}" var="job">
+                <apex:column value="{!job.Status}"/>
+                <apex:column headerValue="Total Cases">
+                    <apex:outputText value="{!job.TotalJobItems * 5}"/>
+                </apex:column>
+                <apex:column headerValue="Cases Processed">
+                    <apex:outputText value="{!job.JobItemsProcessed * 5}"/>
+                </apex:column>
+                <apex:column headerValue="Failed Cases">
+                    <apex:outputText value="{!job.NumberOfErrors * 5}"/>
+                </apex:column>
+                <apex:column value="{!job.ExtendedStatus}"/>
+                <apex:column value="{!job.CompletedDate}"/>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+        <br/>
+        <apex:pageBlockSection columns="1">
+            <apex:outputPanel >
+                <h1>Once the status above displays &quot;Completed&quot;, click the &quot;Refresh&quot; button on the report chart below.</h1>
+                For additional analytics see the&nbsp;
+                <apex:outputLink style="display:inline;" value="/{!dashboardId}" target="_blank" rendered="{!dashboardId != null}">Case Merge Premium</apex:outputLink>
+                <apex:outputPanel rendered="{!dashboardId = null}">Case Merge Premium</apex:outputPanel> dashboard.
+            </apex:outputPanel>
+            <analytics:reportChart reportId="{!reportIds}" size="small" showRefreshButton="true" hideOnError="true" rendered="{!reportIds != null}"/>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    </apex:form>
+    
+    <script>
+        sforce.console.setTabTitle('Setup - Case Merge Premium');
+    
+        //overwrite help
+        var hlinks = getElementsByClassName('links')[0];
+        hlinks.innerHTML = '<a href="http://ic.force.com/cmpdocs" target="_new">Documentation</a> | <a href="http://kb.internetcreations.com/pkb_Home?c=Products%3ACase_Merge_Premium" target="_new">Knowledge Base</a> | <a href="mailto:casemergepremium@internetcreations.com">casemergepremium@internetcreations.com</a> <img src="/s.gif" alt="Help" class="helpIcon" title="Help">';
+        hlinks.innerHTML += '<br/><div style="font-size:smaller">Free implementation assistance is available.</div>';    
+        
+        hlinks.style.fontSize = 'larger';
+        hlinks.style.position = 'absolute';
+        hlinks.style.float  = 'right';
+        hlinks.style.right = '0%';
+        
+        
+        function setFocusOnLoad() {}
+    </script>
+    
+</apex:page>

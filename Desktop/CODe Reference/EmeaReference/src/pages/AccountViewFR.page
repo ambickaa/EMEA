@@ -1,0 +1,101 @@
+<apex:page standardController="Account"  extensions="AccountViewExtension" sidebar="false">
+<apex:includeScript value="{!$Resource.jQuery_1_9_1}"/>
+<apex:includeScript value="/soap/ajax/28.0/connection.js" />
+<apex:includeScript value="/soap/ajax/28.0/apex.js" />
+<script src="{!URLFOR($Resource.spin_min_js)}"></script>
+
+<meta name="viewport" content="width=1600" />
+
+<script>   
+window.name = 'AccountVisualForce';
+  $(document).ready(function() {   
+    var anchor = '{!anchor}';
+    if (anchor != null && anchor != '') {
+      document.location.href='#{!anchor}';
+    }
+});
+</script>
+
+<script>
+var opts = {
+  lines: 13, // The number of lines to draw
+  length: 7, // The length of each line
+  width: 4, // The line thickness
+  radius: 10, // The radius of the inner circle
+  rotate: 0, // The rotation offset
+  color: '#000', // #rgb or #rrggbb
+  speed: 1, // Rounds per second
+  trail: 60, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: 200, // Top position relative to parent in px
+  left: 'auto' // Left position relative to parent in px
+};
+
+var target = document.getElementById("bodyCell");
+var spinner;
+var target = document.getElementById("contentWrapper");
+    spinner = new Spinner(opts).spin(target);
+
+$(document).ready(function(){
+    spinner.stop();
+});
+</script>
+ 
+<style>
+    .accountTab .secondaryPalette, .individualPalette .accountBlock .secondaryPalette { border-color: {!divisionColor};}
+</style>
+    <apex:pageMessages id="messages"  rendered="{!viewLog}"></apex:pageMessages>
+    <apex:detail relatedList="false" showChatter="false" inlineEdit="true"/>
+    <c:AccountDetail account="{!account}" />
+    <span style="display:{!IF(OR(account.RecordType.name == 'Group/Farm/Site', account.RecordType.name = 'Dist./Ret./PoS'), '', 'none')}"> 
+        <a id="AccountAcreageList" name="AccountAcreageList"></a>
+        <apex:outputPanel rendered="{!ISNULL($CurrentPage.parameters.render) || CONTAINS($CurrentPage.parameters.render,'acreage')}">
+            <span style="{!IF(isFrenchAcreages,'','display:none')}">
+                <c:AccountAcreagesEnhanced />
+            </span>
+        </apex:outputPanel>
+        <a id="AccountAcreageProductList" name="AccountAcreageProductList"></a>
+        <c:AccountDivisionSwitcher rendered="{!NOT(isRSAView)}"></c:AccountDivisionSwitcher>
+        <a id="tacticalPlanList" name="tacticalPlanList"></a>   
+        
+        <!-- ACTION PLAN SECTION -->
+        <c:AccountActionPlan accountId="{!account.Id}"></c:AccountActionPlan>
+        
+
+
+        <a id="AccountMarketingCampaignList" name="AccountGiveAways"></a>
+        <c:AccountGiveAways accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='merchandiseManagementEdit','edit', 'view')}"></c:AccountGiveAways>
+        <a id="AccountMarketingCampaignList" name="AccountMarketingCampaignList"></a>
+        <c:AccountMarketingCampaignList accountId="{!account.Id}" mode="{!IF($CurrentPage.Parameters.mode=='222','edit', 'view')}" rendered="{!Or(true,NOT(isRSAView))}"></c:AccountMarketingCampaignList>
+
+        <apex:outputText rendered="{!IsStandardTrial}"> 
+            <apex:relatedList list="Trials__r" subject="{!$CurrentPage.parameters.id}" pageSize="500" /> 
+        </apex:outputText>
+                <apex:relatedList list="Account_Plans__r" />
+        <a id="AccountComplaintList" name="AccountComplaintList"></a>
+        <apex:outputText rendered="TRUE"> 
+            <apex:relatedList list="Contacts"/>
+        </apex:outputText>
+        <apex:relatedList list="OpenActivities" />
+        <apex:relatedList list="NotesAndAttachments" />
+        <apex:relatedList list="ActivityHistories" />          
+        <apex:relatedList list="Cases" />
+    </span>
+    <span style="{!IF(account.RecordType.name == 'Competitor','','display:none')}">
+        <apex:relatedList list="NotesAndAttachments"/>
+    </span>
+    
+    <!-- Contact section Others-->       
+    <span style="{!IF(account.RecordType.name == 'Others','','display:none')}">
+        <apex:relatedList list="Contacts"/>
+        <apex:relatedList list="OpenActivities"/>
+        <apex:relatedList list="NotesAndAttachments"/>
+        <apex:relatedList list="ActivityHistories"/>
+        <apex:relatedList list="Cases"/>
+    </span>
+    
+    <c:AccountStyle />
+</apex:page>

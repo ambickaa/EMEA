@@ -1,0 +1,342 @@
+<apex:component controller="AccountTacticalPlanController" allowDML="true">
+  <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.proto.min.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.jQuery_chosen,'chosen.min.css')}"/>
+  <apex:variable var="lt" value="{!'<'}"/>
+  <apex:variable var="gt" value="{!'>'}"/>
+  <apex:variable var="amp" value="{!'&'}"/>
+  <apex:variable value="{!0}" var="counter"/>
+<apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+<style type="text/css">
+  .lookupInput {
+    position:relative;
+  }
+  .lookupInput img.closeIcon, .lookupInput img.closeIconOn {
+    position:absolute;
+    top:0; right:24px;
+  }
+  img.loadingImg {
+    vertical-align:middle;
+    margin-left:5px;
+  }
+</style>
+<script type="text/javascript">
+  var __sfdcSessionId = '{!GETSESSIONID()}';
+</script>
+<script src="/soap/ajax/28.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/28.0/apex.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+
+  var pageMode = '{!pageMode}';
+  
+  switchMode(pageMode);
+
+  var x = '{!IDthisPC}';
+  
+  PCEs = "<option value=''></option>";
+
+  query = "SELECT Id, Name, ProductRef__c, Product_Name__c, ProdHumidity__c FROM ProductCatalogEntry__c ";
+  query+= "WHERE IsActive__c = true AND ProductRef__c!=null ";
+  query+= "AND ProductCatalogRef__c = '" + x + "' ORDER BY Product_Name__c ASC";
+  
+  result = sforce.connection.query(query);
+  
+  var queryMore = true;
+  while(queryMore){
+    var records = result.getArray("records");
+ 
+    for(var i = 0; i < records.length; i++){
+      var humidity = records[i].ProdHumidity__c != null ? records[i].ProdHumidity__c : '';
+      PCEs+= "<option pceHumidity='" + humidity + "' value='" + records[i].ProductRef__c + "'>" + records[i].Product_Name__c + "</option>";
+    }
+ 
+    if(result.getBoolean("done")){
+      queryMore = false;
+    } else {
+      result = sforce.connection.queryMore(result.queryLocator);
+    }
+  }
+
+  hideNewLine();
+
+});
+
+function switchMode(mode) {
+  if(mode == 'View') {
+    $(".tacticalPlanEdit").hide();
+    $(".tacticalPlanView").show();
+  }
+  if(mode == 'Edit') {
+    $(".tacticalPlanView").hide();
+    $(".tacticalPlanEdit").show();
+    setRequiredFields();
+    setDisabledFields();
+  }
+  if(mode == 'New') {
+    $("[id$=tacticalPlanButtons]").children(".tacticalPlanView").hide();
+    $("[id$=tacticalPlanButtons]").children(".tacticalPlanEdit").show();
+    setRequiredFields();
+    setDisabledFields();
+  }
+}
+
+function setRequiredFields() {
+
+  $('td > div > span > .required').parent().parent().contents().wrap('{!'<'}div class="requiredInput">');
+  $('select.required').parent().parent().contents().wrap('{!'<'}div class="requiredInput">');
+  $('.requiredInput').prepend('{!'<'}div class="requiredBlock">');
+
+}
+
+function setDisabledFields() {
+
+  $('input.CurrentFieldDisabled').attr('disabled','disabled');
+
+}
+
+function disableButtons(a) {
+    $(a).prop('disabled', true).addClass('btnDisabled');
+    $(a).siblings('input').prop('disabled', true).addClass('btnDisabled');
+}
+function enableButtons(a) {
+    $(a).prop('disabled', false).removeClass('btnDisabled');
+    $(a).siblings('input').prop('disabled', false).removeClass('btnDisabled');
+}
+
+function disableInputs() {
+    $('table[id$=tacticalPlansTable] input, table[id$=tacticalPlansTable] select').prop('disabled', true).addClass('btnDisabled');
+}
+
+function hideNewLine() {
+
+  switchMode('View');
+
+  $(".tacticalPlanNew").each(function() {
+  
+    $(this).parents("tr.dataRow").hide();
+    $(this).html("<select onchange='selectProduct(this); return false;' class='required chosen-select'>" + PCEs + "</select>");
+    $('.chosen-select').chosen({search_contains:true,width: "100%"});  // Here the dropdowns are modified with the chosen-select jquery plugin
+  });
+  
+}
+
+function showNewLine() {
+
+  switchMode('New');
+  
+  $(".tacticalPlanNew").each(function() {
+  
+    $(this).show();
+    $(this).parents("tr.dataRow").show();
+    $(this).parents("td").siblings().children(".tacticalPlanView").hide();
+    $(this).parents("td").siblings().children(".tacticalPlanEdit").show();
+  });
+  
+}
+
+function showEdit() {
+
+  switchMode('Edit');
+
+}
+
+function selectProduct(a) {
+
+  var pr2 = a.value;
+  var humidity = a.options[a.selectedIndex].getAttribute('pceHumidity');
+  
+  $('[id$=hiddenFieldProduct]').val(pr2);
+
+  query = "SELECT Id, Name, ProductTypeRef__c, ProductTypeRef__r.Name, ProductVendor__c, ProductVendor__r.Name, ProductVendor__r.RecordTypeId, ProductTreatment__c ";
+  query+= "FROM Product2 WHERE Id = '" + pr2 + "'";
+  result = sforce.connection.query(query);
+  product = result.getArray("records");
+  
+  var newLine = $('table[id$=tacticalPlansTable] tbody tr').last();
+  
+  var pogpy = '-';
+  var pr2type = (product[0].ProductTypeRef__c != null ? product[0].ProductTypeRef__r.Name : '');
+  var provider = (product[0].ProductVendor__c != null ? product[0].ProductVendor__r.Name : '');
+  var treatment = (product[0].ProductTreatment__c != null ? product[0].ProductTreatment__c : '');
+  
+  newLine.find('.ProductTypeRef__c').html('<span style="color:#236FBD">' + pr2type + '</span>');
+  newLine.find('.POGPY__c').html('<span style="color:#236FBD">' + pogpy + '</span>');
+  newLine.find('.Provider__c').html('<span style="color:#236FBD">' + provider + '</span>');
+  newLine.find('.Treatment__c').html('<span style="color:#236FBD">' + treatment + '</span>');
+  newLine.find('.Humidity__c').html('<span style="color:#236FBD">' + humidity + '</span>');
+  
+  if(product[0].ProductVendor__r.RecordTypeId == '{!isPr2Competitor}') {
+    newLine.find('.PDP_Allocation__c, .SAP_UNITS_ORDERED__c').children('input').attr('disabled','disabled');
+    if({!isFarmAccount}==false)
+      newLine.find('.Forecast__c').children('input').attr('disabled','disabled');
+  } else {
+    newLine.find('.PDP_Allocation__c, .SAP_UNITS_ORDERED__c').children('input').attr('disabled','disabled');
+    newLine.find('.Forecast__c').children('input').removeAttr('disabled');
+  }
+  
+  CallNewProduct();
+  
+}
+
+function checkRequiredInfo() {
+
+  var returned = $("div.requiredInput:visible").find("input.required:visible, select.required").filter(function(){return !this.value;}).closest("td").addClass("fieldRequired").size() == 0;
+  if(!returned) setTimeout(function(){$(".fieldRequired").removeClass("fieldRequired");},300);
+  return returned;
+}
+
+function readyFunction() {
+
+  hideNewLine();
+
+}
+</script>
+
+  <apex:form >
+  
+  <!-- Start: Functions -->
+    <apex:actionFunction name="CallNewProduct" action="{!myNewProduct}" status="loadingProduct" reRender="ProductPicker"/>
+    <apex:inputHidden value="{!IDnewProduct}" id="hiddenFieldProduct"/>
+    
+    <apex:actionFunction name="deleteTacticalPlans" action="{!doDelete}" status="loadingActionPlan" reRender="tacticalPlanTotal, tacticalPlansTable, tacticalPlanmessages, tacticalPlanButtons">
+      <apex:param name="tacticalPlansToDelete" value="" assignTo="{!tacticalPlansToDelete}"/>
+    </apex:actionFunction>
+  <!-- End: Functions -->
+    
+    <apex:pageBlock >
+    
+    <!-- Start: Info fields for the Campaign -->
+      <apex:pageBlockSection id="tacticalPlanTotal">
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel >{!$Label.SelectedCampaignDivision}</apex:outputLabel>
+          <apex:outputText value="{!OBJthisDivision.name}"/> 
+        </apex:pageBlockSectionItem>
+        <apex:outputText ></apex:outputText>
+        <apex:outputField value="{!OBJthisCampaign.TotalCampaignBudget__c}"/>
+        <apex:outputField value="{!OBJthisCampaign.TotalCampaignBudgetFOC__c}"/>
+        <apex:outputField value="{!OBJthisCampaign.TotalPendingForecastBudget__c}"/>
+        <apex:outputField value="{!OBJthisCampaign.FRML_Total_Forecasted__c}"/>
+        <apex:outputField value="{!OBJthisCampaign.TotalPendingAgreedBudget__c}"/>
+        <apex:outputField value="{!OBJthisCampaign.FRML_Total_Agreed__c}"/>
+        <apex:outputField value="{!OBJthisCampaign.TotalPendingPoGBudget__c}"/>
+        <apex:outputField value="{!OBJthisCampaign.FRML_Total_POG__c}"/>
+      </apex:pageBlockSection>
+    <!-- End: Info fields for the Campaign -->
+    
+    <apex:pageMessages id="tacticalPlanmessages"/>
+    
+    <!-- Start: Campaign Line Items -->
+    <apex:pageBlockSection columns="1" title="{!$Label.TacticalPlan}">
+      <apex:pageBlockTable value="{!LISTtacticalPlans}" var="tacticalPlan" id="tacticalPlansTable">
+      
+      <!-- Start: Flag column -->
+        <apex:column id="tacticalPlanFlag" headerClass="tacticalPlanCheckboxColumn">
+          <div style="{!IF(ISNULL(tacticalPlan.Id),'display:none;','')}">
+            <input type="checkbox" style="{!IF(isSharingUser,'','display:none')}"/>
+          </div>
+          <div class="tacticalPlanEdit">
+          </div>
+        </apex:column>
+      <!-- End: Flag column -->
+        
+      <!-- Start: Product column -->
+        <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label}">
+          <div class="smallTable">
+            <apex:outputField value="{!tacticalPlan.ProductRef__r.ProductDisplayName__c}"/>
+          </div>
+          <div class="{!IF(ISNULL(tacticalPlan.Id),'tacticalPlanNew','')} smallTable" style="display:none">
+          
+          </div>
+          <div class="hidden">
+          
+            <apex:selectList id="ProductHidden" value="{!tacticalPlan.ProductRef__c}" size="1" rendered="{!NOT(ISNULL(tacticalPlan.Id))}">
+              <apex:selectOption itemValue="{!tacticalPlan.ProductRef__c}"/>
+            </apex:selectList>
+            
+            <apex:selectList id="ProductPicker" value="{!tacticalPlan.ProductRef__c}" size="1" rendered="{!ISNULL(tacticalPlan.Id)}">
+              <apex:selectOption itemValue="{!IDnewProduct}" itemLabel="{!IDnewProduct}"/>
+            </apex:selectList>
+            
+          </div>
+        </apex:column>
+      <!-- End: Product column -->
+        
+      <!-- Start: Product Type (Auto-filled) -->
+        <apex:column headerValue="{!$ObjectType.Product2.fields.ProductTypeRef__c.label}">
+
+          <div class="tacticalPlanEdit smallTable">
+            <span class="ProductTypeRef__c">
+              <apex:outputText value="{!tacticalPlan.ProductRef__r.ProductTypeRef__r.Name}"/>
+            </span>
+          </div>
+
+          <div class="tacticalPlanView smallTable">
+            <apex:outputText value="{!tacticalPlan.ProductRef__r.ProductTypeRef__r.Name}"/>
+          </div>
+
+        </apex:column>
+      <!-- End: Product Type (Auto-filled) -->
+      
+      <!-- Start: POGPY (Only Farms) -->
+        <apex:column headerValue="{!$Label.POGPY}" rendered="{!isFarmAccount}">
+          <div class="smallTable">
+            <span class="POGPY__c">
+              <apex:outputText value="{!IF(tacticalPlan.ProductRef__c != null, IF(ISNULL(MAPpr2POGPY[tacticalPlan.ProductRef__c]), 0, MAPpr2POGPY[tacticalPlan.ProductRef__c]), 0)}"/>   
+            </span>
+          </div>
+        </apex:column>
+      <!-- End: POGPY (Only Farms) -->
+      
+        <apex:repeat var="f" value="{!TacticalPlanFields}" id="tacticalPlanRow">
+          <apex:column headerValue="{!f.label}">
+
+            <div class="tacticalPlanEdit smallTable" style="display:none">
+                           
+              <apex:variable var="isRequired" value="{!f.fieldPath=='Type__c'}"/> 
+              <apex:variable var="isCurrentProduct" value="{!AND(OR(tacticalPlan.ProductCatalogEntryRef__c!=null, ISNULL(tacticalPlan.ownerID)), OR(AND(tacticalPlan.POGPY__c!=null,f.fieldPath!='Type__c'), AND(tacticalPlan.POGPY__c==null)))}"/>
+ 
+              <span class="{!f.fieldPath}">
+                <apex:inputField value="{!tacticalPlan[f.fieldPath]}" rendered="{!IF(AND(f.fieldPath != 'Inventory__c', isSharingUser, isCurrentProduct), true, false)}" styleClass="{!IF(ISNULL(tacticalPlan.Id),IF(isRequired,'required',''), IF(ISNULL(MAPfieldCfg[tacticalPlan.ProductRef__c]), IF(isRequired,'required',''), IF(MAPfieldCfg[tacticalPlan.ProductRef__c][f.fieldPath] == 'True', 'CurrentFieldDisabled', IF(isRequired,'required',''))))}"/>
+              </span>
+
+              <apex:outputField value="{!tacticalPlan[f.fieldPath]}" rendered="{!OR(AND(f.fieldPath != 'ProductRef__c', f.fieldPath != 'Inventory__c', NOT(isSharingUser)), AND(f.fieldPath != 'ProductRef__c', f.fieldPath != 'Inventory__c',NOT(isCurrentProduct)))}"/> 
+              <apex:outputText value="{0,number,#,##0}" rendered="{!AND(f.fieldPath == 'Inventory__c', OR($User.Id != tacticalPlan.ownerID, NOT(isCurrentProduct)))}">
+                <apex:param value="{!tacticalPlan[f.fieldPath]}"/>
+              </apex:outputText>
+                               
+            </div>
+                            
+            <div class="tacticalPlanView smallTable">
+              <apex:outputField value="{!tacticalPlan[f.fieldPath]}" rendered="{!f.fieldPath != 'ProductRef__c' && f.fieldPath != 'Inventory__c'}"/>
+              <apex:outputText value="{0,number,#,##0}" rendered="{!f.fieldPath == 'Inventory__c'}">
+                <apex:param value="{!tacticalPlan[f.fieldPath]}"/>
+              </apex:outputText>
+            </div>
+
+            <apex:facet name="footer" >{!IF(MAPSumCLI[f.fieldPath] == 0 , '', MAPSumCLI[f.fieldPath])}</apex:facet>
+          </apex:column>
+        </apex:repeat>
+      
+      </apex:pageBlockTable>
+    </apex:pageBlockSection>
+    <!-- End: Campaign Line Items -->
+    
+    <apex:pageBlockButtons location="bottom">
+      <apex:outputPanel layout="block" id="tacticalPlanButtons">
+        <apex:commandButton value="{!$Label.New}" action="{!doNew}" onClick="showNewLine()" styleClass="tacticalPlanView" reRender="ProductPicker, tacticalPlanmessages"/>
+        <apex:commandButton value="{!$Label.Edit}" action="{!doEdit}" onClick="showEdit()" styleClass="tacticalPlanView" reRender="ProductPicker, tacticalPlanmessages"/>
+        <apex:commandButton value="{!$Label.Save}" action="{!doSave}" onClick="disableButtons(this); if(!checkRequiredInfo()){ enableButtons(this); return false;} disableInputs();" styleClass="ProductPicker, tacticalPlanEdit" reRender="tacticalPlansTable, tacticalPlanTotal, tacticalPlanmessages, tacticalPlanButtons" status="loadingActionPlan"/>
+        <apex:commandButton value="{!$Label.Cancel}" action="{!doCancel}" onClick="disableButtons(this); disableInputs();" styleClass="tacticalPlanEdit" reRender="ProductPicker, tacticalPlansTable, tacticalPlanTotal, tacticalPlanmessages, tacticalPlanButtons" status="loadingActionPlan"/>
+        
+        <apex:commandButton value="{!$Label.Delete}" onClick="disableButtons(this); var tacticalPlansToDelete = ''; $('td[id*=\':tacticalPlansTable:\'][id$=\':tacticalPlanFlag\']{!gt}{!gt}input:checked').closest('td').each(function(){tacticalPlansToDelete += this.id.match(/tacticalPlansTable:(.*):tacticalPlanFlag/i)[1] + ',';}); deleteTacticalPlans(tacticalPlansToDelete.slice(0,-1)); return false;" styleClass="tacticalPlanView"/>
+        
+        <apex:actionStatus id="loadingActionPlan" onStop="readyFunction()"><apex:facet name="start"><apex:image value="/img/loading.gif" styleClass="loadingImg"/></apex:facet></apex:actionStatus>
+        <apex:actionStatus id="loadingProduct" onStart="$(this).parent().siblings('input').prop('disabled', true).addClass('btnDisabled');" onStop="$(this).parent().siblings('input').prop('disabled', false).removeClass('btnDisabled'); return false;"><apex:facet name="start"><apex:image value="/img/loading.gif" styleClass="loadingImg"/></apex:facet></apex:actionStatus>
+      </apex:outputPanel>
+    </apex:pageBlockButtons>
+    
+    </apex:pageBlock>
+  </apex:form>
+
+</apex:component>

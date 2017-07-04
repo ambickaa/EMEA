@@ -1,0 +1,32 @@
+<apex:page tabStyle="Account" controller="AccountaddMultipleLinesController">
+    <apex:form >
+    <apex:pageBlock title="Add multiple products">
+        <apex:pageBlockTable value="{!strategy.temporaryCampaignLineItems}" var="line">
+            <apex:column value="{!line.record.ProductRef__c}"/>
+            <apex:column value="{!line.record.Type__c}"/>
+            
+            <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.Forecast__c.label}">
+                <apex:inputField value="{!line.record.Forecast__c}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.Agreed__c.label}">
+                <apex:inputField value="{!line.record.Agreed__c}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.POG__c.label}">
+                <apex:inputField value="{!line.record.POG__c}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.Status__c.label}">
+                <apex:inputField value="{!line.record.Status__c}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.DistributorRef__c.label}">
+                <apex:inputField value="{!line.record.DistributorRef__c}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.PoS__c.label}">
+                <apex:inputField value="{!line.record.PoS__c}"/>
+            </apex:column>
+        </apex:pageBlockTable>
+        <apex:pageBlockButtons >
+            <apex:commandButton value="save" action="{!strategy.save}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,204 @@
+<apex:component >
+    <style>
+        body
+        {
+           // font-size: 0.999em;
+        }
+        .smallTable * input
+        {
+            width: 80%;
+        }
+        .smallTable * .lookupInput
+        {
+            width: 75%;
+        }
+        .bPageBlock .detailList .data2Col
+        {
+            padding-left: 0px;
+        }
+        .outer td.oRight
+        {
+            padding: 0!important;
+        }
+        
+        table
+        {
+           // font-size:0.99em;
+            margin-bottom: 15px;
+        }
+       .disRow
+        {
+            background-color:#E0E0E0;
+        }      
+        
+        .disField
+        {
+        	background-color:#f0f0f0;
+        }
+        .noStock
+        {
+            background-color:#E60026;
+        }      
+        
+        input[type="submit"]
+        {
+            margin-right: 15px;
+        }
+        input[type="text"]
+        {
+            margin-right: 1px;
+            width: 150px;
+        }
+        
+        .inlineEditDiv
+        { 
+            width:90%;
+            height:90%;
+        }       
+        
+        .cellCenter
+        {
+        text-align:center;
+        }
+        
+       
+        .productColumn
+        {
+             white-space:nowrap;
+              
+            
+             
+            
+        }
+        
+         .productColumnBig
+        {
+             white-space:nowrap; 
+             width:75px;
+            
+        }
+        
+        .list td
+        {
+        padding-right:11px;
+        }
+       
+       .buttonRight
+       {
+       float:right;
+       }
+     
+        .buttonLeft
+       {
+       float:left;
+       }
+     
+       .srselecter
+       {
+       margin-bottom:20px;
+       }
+       
+       .spinerId
+       {
+       padding-top:20px;
+       }
+        
+    </style>
+    
+    
+    <script type="text/javascript">
+    /*$(document).ready(function() {
+       $(".chargedCell .foc").hide();
+    });*/
+        
+    function popUp(url) {
+       fenster = window.open(url, "fenster1", "width=1200,height=800,status=yes,scrollbars=yes,resizable=yes");
+       fenster.focus();
+    }
+    
+    function popUpHistory(url) {
+       fenster = window.open(url, "History", "width=600,height=600,status=yes,scrollbars=yes,resizable=yes");
+       fenster.focus();
+    }
+    
+     
+    function popUpStock(url) {
+           fenster = window.open(url, "History", "width=1000,height=600,status=yes,scrollbars=yes,resizable=yes");
+           fenster.focus();
+    }
+        
+    
+    
+    function callBackData(identifier, id, text)
+    {
+        $("."+identifier+" .textField").val(text);
+        $("."+identifier+" .idField").val(id);
+    }
+    
+    
+    
+    function CallAlert() 
+    { 
+        alert("This is parent window's alert function."); 
+    } 
+    
+    /*************************************************************************/
+    
+    var showQuantityField = function() {
+        var dropdownValue = $(this).val();
+        var showClass = '';
+        var prevClass = '';
+        if (dropdownValue === 'Forecast') {
+            showClass = '.forcastInput';
+        } else if (dropdownValue === "Ordered / Discussed") {
+            showClass = '.agreedInput';
+            prevClass = '.forcastInput';
+        } else if (dropdownValue === "Confirmed") {
+            showClass = '.pogInput';
+            prevClass = '.agreedInput';
+        }
+        $(this).parent().parent().parent().children(".quantityColumn").each(
+        
+        function() {
+        
+        
+            // console.log($(this));
+        
+            $(this).children(".hidden").hide();
+            $(this).children(showClass).show();
+
+            var currInput = $(this).find(showClass + ' input');
+            //var prevInput = $(this).find(prevClass + ' input');
+            if (prevClass != '' && currInput.val() == 0)
+            {
+                var prevInput = $(this).find(prevClass + ' input');
+                if (prevInput != null)
+                {
+                    currInput.val(prevInput.val());
+                }
+            }
+            
+            
+            //console.log($(this).children(showClass).before());
+//            $(this).children(showClass).children("input").val($(this).children(showClass).before().children("input").val());
+        });
+
+    }
+$(".statusSelect select").on("change", showQuantityField);
+
+
+var removeNoneValueFromStatusDropdowns = function() {
+    $(".statusSelect select").each(function() {
+        $(this).children().first().remove();
+       // $(this).children().last().remove();
+    });
+}
+
+$(document).ready(function() {
+    removeNoneValueFromStatusDropdowns();
+    $(".statusSelect select").each(showQuantityField);
+    $(".statusSelect select").on("change", showQuantityField);
+});
+    </script>
+    
+</apex:component>

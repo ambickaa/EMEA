@@ -1,0 +1,161 @@
+<apex:page controller="StockManagementController" >
+
+    <apex:sectionHeader title="Stock Allocation {!IF(mode='Tax','Feb Sales','Regular')}"/>
+	<style>
+		 .inlineEditDiv
+        { 
+        	width:90%;
+        	height:90%;
+        }   
+        
+        input[type="text"]
+        {
+            margin-right: 1px;
+            width: 60px;
+        }
+        
+        .inputTop
+        {
+        width:150px;
+        }
+       
+       .bPageBlock th.vfLabelColTextWrap 
+       {
+		white-space: nowrap;
+		}
+        
+     
+	</style>
+
+    <apex:form >
+        
+        
+        <apex:pageBlock tabStyle="ProductCatalogEntry__c">
+            <apex:outputText value="Switch to: " style="font-weight:bold;font-size:14px" />
+            <apex:commandButton value="Regular" action="{!switchToRegular}" rendered="{!NOT(isRegular)}"/>
+            <apex:commandButton value="Feb Sales" action="{!switchToTax}" rendered="{!isRegular}"/>
+        </apex:pageBlock>
+        
+        <apex:pageMessages id="messages"/>
+        <!-- Filters to search Stocks -->
+        <apex:pageBlock title="Filters" id="filters" tabStyle="Product2">
+            <apex:pageBlockSection >
+                <apex:inputField style="width:225px" value="{!productFilter.ProductRef__c}" />
+                <apex:inputField style="width:150px" value="{!stock.User_RSA__c}"/> 
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Search" action="{!searchStock}" reRender="filters, stockTable,otpNav2,  messages" status="loadingSearchStock"/>
+                <apex:actionStatus id="loadingSearchStock" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        <!-- Block to add new Stocks -->
+        <apex:pageBlock title="New Stock" id="stockTableNew">
+            <apex:pageBlockButtons id="stockNewButtons" >
+                <apex:commandButton action="{!doNew}" value="New" reRender="newProdSearch, stockTableNew, messages" rendered="{!NOT(isStockNew)}" status="loadingNewStock"/>
+                <apex:commandButton action="{!doSaveNew}" value="Save New Record" reRender="newProdSearch, stockTable, stockTableNew, otpNav2, messages" rendered="{!showDelLast}" status="loadingNewStock"/>
+                <apex:commandButton action="{!doCancelNew}" value="Cancel" reRender="newProdSearch, stockTableNew, messages" rendered="{!isStockNew}" status="loadingNewStock"/>
+                <apex:actionStatus id="loadingNewStock" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            </apex:pageBlockButtons>
+            
+            <!-- Search by Product -->
+            <div style="width:250px;">
+            <apex:pageBlockSection Id="newProdSearch" rendered="{!isStockNew}" columns="2">
+                <apex:pageBlockSectionItem >
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.ProductCatalogEntry__c.fields.ProductRef__c.label} "/>
+                        <apex:inputField style="width:150px" value="{!product.ProductRef__c}"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:commandButton value="Search" action="{!searchPCE}" reRender="newStockEntry, newProdSearch, stockTable, filters, messages" status="loadingNewStock"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            </div>
+            <!-- Tables for Product Catalog Entry Search and New Stock -->
+            <apex:pageBlockSection id="newStockEntry" columns="2">
+            
+                <!-- Product Catalog Entry Search Table -->
+                <apex:pageBlockSectionItem >
+                    <apex:pageBlockTable value="{!prodCatEntryList}" var="pce" rendered="{!isPCE}">
+                        <apex:repeat value="{!prodCatFields}" var="fPCE">
+                            <apex:column headerValue="{!fPCE.label}">
+                                <apex:commandLink onClick="selectPCE('{!pce.Id}'); return false;" value="{!pce[fPCE.fieldPath]}" rendered="{!fPCE.fieldPath == 'Name'}"/>
+                                <apex:outputText value="{!pce[fPCE.fieldPath]}" rendered="{!fPCE.fieldPath != 'Name'}"/>
+                            </apex:column>
+                        </apex:repeat>
+                        <apex:column headerValue="Add">
+                            <apex:commandButton value=">>" onClick="selectPCE('{!pce.Id}'); return false;"/>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSectionItem>
+                
+                <!-- New Stock Table -->
+                <apex:pageBlockSectionItem >
+                    <apex:pageBlockTable value="{!stockListNew}" var="stockNew" rendered="{!isStockNew}">
+                        <apex:repeat value="{!stockFieldsNew}" var="fieldNew">
+                            <apex:column headerValue="{!fieldNew.label}">
+                                <apex:inputField value="{!stockNew[fieldNew.fieldPath]}"  rendered="{!IF(AND(fieldNew.fieldPath != 'Quantity_RSA__c',fieldNew.fieldPath != 'TaxQuantity_RSA__c'),'true','false')}"/><!-- rendered="{!AND(fieldNew.fieldPath != 'ProductCatalogEntryRef_RSA__c', fieldNew.fieldPath != 'Name')}" -->
+                                <apex:outputField value="{!stockNew[fieldNew.fieldPath]}" rendered="{!IF(OR(fieldNew.fieldPath = 'Quantity_RSA__c',fieldNew.fieldPath = 'TaxQuantity_RSA__c'),'true','false')}"/>
+                            </apex:column>
+                        </apex:repeat>
+                    </apex:pageBlockTable>
+                    
+                    <!-- Buttons for Adding and Deleting lines -->
+                    <apex:pageBlockSectionItem >
+                        <apex:commandButton action="{!addNewStockLine}" value=" + " reRender="newStockEntry, stockNewButtons, newProdSearch, stockTableNew" rendered="{!isStockNew}" style="background-image:none;;float:left;"/>
+                        <apex:commandButton action="{!delLastNew}" value=" - " rendered="{!showDelLast}" reRender="newStockEntry, stockNewButtons, newProdSearch, stockTableNew" style="background-image:none;;float:left;"/>
+                    </apex:pageBlockSectionItem>
+
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageBlockSection>
+                        
+
+        </apex:pageBlock>
+        <apex:pageBlock title="Stocks" mode="inlineEdit" >
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!doSave}" id="saveButton" value="Save" reRender="stockTable, otpNav2, messages" status="loadingButtonStock"/>
+                <apex:actionStatus id="loadingButtonStock" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockTable value="{!stockList}" var="stock" id="stockTable">
+                <apex:column headerValue="Action">
+                    <apex:commandLink action="javascript:if (window.confirm('Are you sure?')) DeleteStock('{!stock.Id}');" value="Del" reRender="otpNav2, stockTable, messages"/>
+                </apex:column>
+                <apex:repeat value="{!stockFields}" var="field">
+                    <apex:column headerValue="{!field.label}">
+                        <apex:outputField value="{!stock[field.fieldPath]}" rendered="{!AND(field.fieldPath != 'Allocation_RSA__c', field.fieldPath != 'TaxAllocation_RSA__c')}">
+                            <apex:inlineEditSupport disabled="True"/>
+                        </apex:outputField>
+                        <apex:outputField value="{!stock[field.fieldPath]}" rendered="{!OR(field.fieldPath == 'Allocation_RSA__c', field.fieldPath == 'TaxAllocation_RSA__c')}">
+                            <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" event="ondblclick" 
+                                changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        </apex:outputField>
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+<!-- BEGIN -->
+                <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="otpNav2">  
+              Total Records Found: <apex:outputText rendered="{!IF(ssc.resultSize==10000,true,false)}">10000 +</apex:outputText><apex:outputText rendered="{!IF(ssc.resultSize < 10000,true,false)}">{!ssc.resultSize}</apex:outputText>  
+                  <apex:image url="/img/search_prevarrow_disabled.gif" styleClass="prevArrow" rendered="{!NOT(ssc.HasPrevious)}"/>  
+                  <apex:image url="/img/search_prevarrow.gif" title="Previous Page" styleClass="prevArrow" rendered="{!ssc.HasPrevious}"/>  
+                  <apex:commandLink action="{!Previous}" title="Previous Page" value="Previous Page" reRender="otpNav2, stockTable" rendered="{!ssc.HasPrevious}" status="loadingStocks"/>  
+                  <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(ssc.HasPrevious)}">Previous Page</apex:outputPanel>           
+                  &nbsp;({!IF(ssc.PageNumber == 1,1,((ssc.PageNumber -1) * ssc.PageSize)+1)}-{!IF(ssc.resultSize < ssc.PageSize,ssc.resultSize,ssc.PageNumber * ssc.pageSize)})&nbsp;  
+                  <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(ssc.HasNext)}">Next Page</apex:outputPanel>           
+                  <apex:commandLink title="Next Page" value="Next Page" rendered="{!ssc.HasNext}" action="{!Next}" reRender="otpNav2, stockTable" status="loadingStocks"/>&nbsp;  
+                  <apex:image url="/img/search_nextarrow.gif" title="Next Page" styleClass="nextArrow" rendered="{!ssc.HasNext}"/>  
+                  <apex:image url="/img/search_nextarrow_disabled.gif" rendered="{!NOT(ssc.HasNext)}"/>   
+                  <apex:actionStatus id="loadingStocks" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+              </apex:outputPanel>
+<!-- END -->
+        </apex:pageBlock>
+        <apex:actionFunction action="{!doDelete}" name="DeleteStock" reRender="otpNav2, stockTable, messages" >
+            <apex:param name="stockid" value="" assignTo="{!SelectedStockId}"/>
+        </apex:actionFunction>
+        <apex:actionFunction action="{!selectPCE}" name="selectPCE" reRender="stockTableNew, newProdSearch, newStockEntry, stockNewButtons, messages" >
+            <apex:param name="selectedPCE" value="" assignTo="{!selectedPCE}"/>
+        </apex:actionFunction>
+        
+    </apex:form>
+</apex:page>

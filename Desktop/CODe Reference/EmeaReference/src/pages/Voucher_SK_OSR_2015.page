@@ -1,0 +1,266 @@
+<apex:page sidebar="false" standardStylesheets="false" renderAs="pdf" showHeader="false" standardcontroller="Voucher__c" extensions="Voucher_SK_OSR_2015_Controller">
+    <html lang="sk">
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <style>
+            @page {
+              size: A4 portrait;
+              margin: 0;
+              padding: 120px 0 40px;
+              border: 0;
+              
+              @top-center {
+                content: element(header);
+              }
+            }
+            
+        </style>
+    </head>
+    <body style="margin:0; padding:0; border:0; font-weight:normal; font-style:normal; font-size:105%; font-size:15px; vertical-align:baseline; text-decoration:none; line-height:1em; font-family:Arial Unicode MS, sans-serif">
+    <div id="page1" style="page-break-after:always;">
+    
+        <table class="header" style="text-align:left; font-weight:normal; position:running(header); top:0; background:#387CA2; width:100%; font-size:255%;">
+            <tr>
+                <td>
+                    <span style="margin-left:40px; padding-top:36px; text-align:left; line-height:180%; vertical-align:bottom; color:#FFF; font-family:sans-serif; font-weight:bold; display:inline-block;">DEKALB<b style="font-size:45%; display:inline-block; margin-top:-23px; line-height:0;">&reg;</b> BONUS 2015</span>
+                </td>
+                <td>
+                    <div style= "margin: 9px 42px 9px 0" align="right"><apex:image url="{!$Resource.DEKALB_OSR_Logo}" width="124px"/></div>
+                </td>
+            </tr>
+        </table>
+
+        <div style="color:#FFF; background:#e53935; position: absolute; top:31px; left:502px; display:inline-block; padding:4px 6px; line-height:1.15; text-transform:uppercase; z-index:10; {!if(status=1,"","display:none;")}">{!if(status=1,"zrušený","")}</div>
+
+        <div style="margin:0 42px">
+
+        <div style="overflow:hidden; vertical-align:top">
+          <div style="float:left; vertical-align:top">
+            <p style="font-size:110%; line-height:1.15; color:#333; margin-top:2px">
+              Objednajte si u svojho distribútora repky DEKALB®<br/>
+              a získajte bonus za hybridy repiek DEKALB® od<br/>
+              spoločnosti MONSANTO SLOVAKIA, s.r.o.
+            </p>
+          </div>
+          <div style="float:right; vertical-align:top; min-width:160px">
+            <p style="font-size:110%; font-family:Arial Unicode MS; line-height:1; padding:0; margin:2px 0 8px 0;">Zákaznické číslo:</p>
+            <p style="margin:0; line-height:1.15; text-transform:uppercase; background:#F8F8F8; padding:4px 6px; border:1px solid #000; min-height:15px">
+              {!if(voucher.AccountRef__r.Client_Code__c!=null,voucher.AccountRef__r.Client_Code__c,'')}
+            </p>
+          </div>
+        </div>
+
+        <table style="margin:0 0 8px; text-align:center; font-weight:normal; background:transparent; width:100%; border:0; font-size:90%; line-height:1; border-collapse:collapse">
+            <thead>
+                <tr>
+                    <th style="font-weight:normal; width:30%; padding:6px 6px 12px; background:#E3E9F4; border:1px solid #000">Hybrid</th>
+                    <th style="font-weight:normal; width:35%; padding:6px 6px 12px; background:#E3E9F4; border:1px solid #000">Počet vriec</th>
+                    <th style="font-weight:normal; width:35%; padding:6px 6px 12px; background:#E3E9F4; border:1px solid #000">Bonus celkom (vriec)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat value="{!VLI_Final}" var="vli">
+                    <tr>
+                        <td style="font-weight:bold; text-align:left; padding:4px 6px; background:#E3E9F4; border:1px solid #000; white-space:nowrap; font-family:sans-serif; line-height:1.10">{!vli[0]}</td>
+                        <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; line-height:1.22">{!vli[1]}</td>
+                        <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; line-height:1.22">{!vli[2]}</td>
+                    </tr>
+                </apex:repeat>
+                <apex:repeat value="{!VLI_FOC_ONLY}" var="vli">
+                    <tr>
+                        <td style="font-weight:bold; text-align:left; padding:4px 6px; background:#E3E9F4; border:1px solid #000; white-space:nowrap; font-family:sans-serif; line-height:1.10">{!vli[0]}</td>
+                        <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; line-height:1.22">{!vli[1]}</td>
+                        <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; line-height:1.22">{!vli[2]}</td>
+                    </tr>
+                </apex:repeat>
+                    <tr>
+                        <td style="background:rgb(255,242,0); padding:8px 0; border:1px solid #000; text-align:center; font-weight:bold; font-family:sans-serif; font-size:1em;">CELKEM</td>
+                        <td style="font-size:1.02em; font-weight:bold; font-family:sans-serif; line-height:1.1; border:1px solid #000;">{!voucher.TotalBags__c}</td>
+                        <td style="font-size:1.02em; font-weight:bold; font-family:sans-serif; line-height:1.1; border:1px solid #000">{!voucher.TotalBagsFOC__c}</td>
+                    </tr>
+            </tbody>
+        </table>
+        
+        <table style="margin:10px 0; text-align:left; font-weight:normal; background:transparent; width:100%; border:0; font-size:80%; border-collapse:collapse">
+            <tbody>
+                <tr>
+                    <td colspan="2" style="font-weight:normal; padding:4px 6px; background:#BDCCE3; background:#E3E9F4; border:1px solid #000; width:33%; font-size:105%;">Celková výmera repky 2015/16 (ha)</td>
+                    <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; width:12%"><span style="font-size:1.1em; color:#193347; text-transform:uppercase">{!if(voucher.AccountRef__r.OSRTotalAcreagesCY__c!=null,voucher.AccountRef__r.OSRTotalAcreagesCY__c,0)}</span></td>
+                    <td style="width:5px; border-left: 1px solid #000; border-right: 1px solid #000;"></td>
+                    <td rowspan="5" style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; vertical-align:top; height:80px; font-size:105%;">Poznámky:<span style="display:block; font-size:1em; color:#193347; padding:5px 0"><apex:outputField value="{!voucher.TXT_NOTES__c}"/></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-weight:normal; padding:4px 6px; background:#E3E9F4; border:1px solid #000; font-size:105%;">Počet DEKALB vriec - 2014/2015</td>
+                    <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000"><span style="font-size:1.1em; color:#193347; text-transform:uppercase">{!if(voucher.AccountRef__r.OSRTotalSalesPY__c!=null,voucher.AccountRef__r.OSRTotalSalesPY__c,0)}</span></td>
+                    <td style="width:5px; border-left: 1px solid #000; border-right: 1px solid #000;"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-weight:normal; padding:4px 6px; background:#E3E9F4; border:1px solid #000; width:35%; font-size:105%;">Distribútor osiva</td>
+                    <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; width:15%"><span style="font-size:1.1em; color:#193347;">{!voucher.DistributorNameCopy__c}</span></td>
+                    <td style="width:5px; border-left: 1px solid #000; border-right: 1px solid #000;"></td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="height:7px;"></td>
+                    <td style="border-top:0; border-bottom:0"></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:normal; padding:4px 6px; width:25%; background:#E3E9F4; border:1px solid #000; vertical-align:top; font-size:105%;">Meno a podpis obchodného zástupcu Monsanto:</td>
+                    <td colspan="2" style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; vertical-align:top;"><span style="font-size:1.1em; color:#193347;">{!voucher.AccountRef__r.Owner.Name}</span></td>
+                    <td style="width:5px; border-left: 1px solid #000; border-right: 1px solid #000;"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="margin:18px 0 5px 0;">
+            <div style="font-weight:normal; font-size:80%; color:#000">Spoločnosť/príjemca bonusu:</div>
+        </div>        
+        
+        <table style="margin:2px 0; text-align:left; font-weight:normal; background:transparent; width:100%; border:0; font-size:75%; border-collapse:collapse; vertical-align:top">
+            <tbody>
+                <tr>
+                    <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; min-height:35px; width:45%; vertical-align:top">Názov podniku: <span style="display:block; font-size:1.1em; color:#193347; text-transform:uppercase; padding:5px 0">{!voucher.FarmNameCopy__c}</span></td>
+                    <td colspan="2" style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; min-height:35px; vertical-align:top">Kontaktná osoba: <span style="display:block; font-size:1.1em; color:#193347; text-transform:uppercase; padding:5px 0">{!AccContact.Name}</span></td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; vertical-align:top; max-height:110px">Sídlo: <span style="display:block; font-size:1.1em; color:#193347; text-transform:uppercase; padding:5px 0">{!voucher.AddressCopy__c}</span></td>
+                    <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; min-height:15px; vertical-align:top; width:22%;">Telefón: <span style="display:inline-block; font-size:1.1em; color:#193347; text-transform:uppercase; padding-left:6px">{!if(AccContact.Phone!=null,AccContact.Phone,voucher.PhoneCopy__c)}</span></td>
+                    <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; min-height:15px; vertical-align:top">Mobil: <span style="display:inline-block; font-size:1.1em; color:#193347; text-transform:uppercase; padding-left:6px">{!AccContact.MobilePhone}</span></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; min-height:20px; vertical-align:top">Email: <span style="display:inline-block; font-size:1.1em; color:#193347; padding-left:6px">{!voucher.EmailCopy__c}</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; vertical-align:top">Okres: <span style="display:inline-block; font-size:1.1em; color:#193347; padding-left:6px">{!voucher.AccountRef__r.County__c}</span></td>
+                    <td colspan="2" style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; min-height:20px; vertical-align:top">Dátum: <span style="display:block; font-size:1.1em; color:#193347; text-transform:uppercase; padding:5px 0">{!VoucherDate}</span></td>
+                </tr> 
+                <tr>
+                    <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; vertical-align:top">DIČ: <span style="display:inline-block; font-size:1.1em; color:#193347; padding-left:6px">{!if(voucher.AccountRef__r.FiscalCode__c!=null,voucher.AccountRef__r.FiscalCode__c,voucher.FiscalCodeCopy__c)}</span></td>  
+                    <td colspan="2" style="font-weight:normal; padding:4px 6px 0; background:#FFF; border:1px solid #000; vertical-align:top; overflow:hidden">
+                        <span style="float:left; margin-right:35px">Podpis:</span> 
+                        <span style="display:inline-block; float:left; text-align:center; position:relative; margin:0; padding:0; border:0">
+                            <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature!= null}">
+                                <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="60px" style="margin:0; margin-bottom:-5px; padding:0; border:0" />
+                            </apex:outputPanel>
+                        </span>
+                    </td>                  
+                </tr>
+
+            </tbody>
+        </table>
+        
+        </div>
+
+    <div style="overflow:hidden; margin: 0 40px">
+      <div style="float:left; width:48%; font-size:63%; line-height:115%">
+
+        <div style="margin:8px 0; color:#000; font-weight:bold; font-family:sans-serif;">Oznámenie o ochrane osobných údajov a súhlas so spracovaním osobných údajov</div>
+        <div style="margin:8px 0; color:#333;">Podpisom tohto formulára a  poskytnutím Vašich osobných údajov dávate spoločnosti MONSANTO SLOVAKIA, s. r. o. súhlas:</div>
+        
+        <ul style="list-style-type:none; margin:0; padding:0; color:#333; text-align:justify">
+            <li style="margin:2px 2px; text-align:left;">a) so spracovaním Vašich osobných údajov v rozsahu a na účely uvedené v tomto oznámení;</li>
+            <li style="margin:2px 2px">b) aby Vás prostredníctvom e-mailu, SMS, MMS a iných elektronických prostriedkov (s použitím údajov, ktoré sa rozhodnete poskytnúť) kontaktovala na marketingové účely;</li>
+            <li style="margin:2px 2px">c) s prenosom Vašich osobných údajov mimo Vašej domovskej jurisdikcie (vrátane krajín mimo EHP, ktoré neposkytujú rovnaké práva a/alebo stupeň ochrany vo vzťahu k Vašim osobným údajom) za účelom umožniť spoločnosti Monsanto a skupine Monsanto (a ňou určeným tretím stranám, ktoré spracovávajú osobné údaje) spracovať Vaše osobné údaje v  súlade s týmto oznámením vrátane prípadov, kedy si to vyžaduje platný zákon.</li>
+        </ul>
+      </div>
+
+      <div style="float:left; width:50%">
+        <table style="margin-top:8px; margin-left:10px; text-align:left; font-weight:normal; background:transparent; width:100%; border:0; font-size:75%; border-collapse:collapse; vertical-align:top">
+            <tbody>
+                <tr>
+                    <td colspan="2" style="font-weight:normal; padding:4px 4px; background:#FFF; border:1px solid #000; min-height:30px; vertical-align:top">Meno: <span style="display:block; font-size:1.1em; color:#193347; text-transform:uppercase; padding:5px 0">{!AccContact.Name}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-weight:normal; padding:4px 4px; background:#FFF; border:1px solid #000; min-height:30px; vertical-align:top">Spoločnosť: <span style="display:block; font-size:1.1em; color:#193347; text-transform:uppercase; padding:5px 0">{!voucher.FarmNameCopy__c}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; vertical-align:top; overflow:hidden">
+                    <span style="float:left; margin-right:25px">Podpis:</span> 
+                        <span style="display:inline-block; float:left; text-align:center; position:relative; margin:0; padding:0; border:0">
+                            <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature!= null}">
+                                <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="60px" style="margin:0; margin-bottom:-5px; padding:0; border:0" />
+                            </apex:outputPanel>
+                        </span>
+                    </td>
+                    <td style="font-weight:normal; padding:4px 4px; background:#FFF; border:1px solid #000; width:25%; min-height:50px; vertical-align:top">Dátum: <span style="display:block; font-size:1.1em; color:#193347; text-transform:uppercase; padding:5px 0">{!VoucherDate}</span>            
+                    </td>     
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="color:#333; padding-top:5px; padding-left:14px; text-align:justify; font-size: 63%; line-height:115%">Meno, ulica, PSČ, P.O. Box, mesto, štát, krajina/región, krajina, fax, telefón, mobil, telefón domov, iný telefónny kontakt, webová stránka, e-mail, meno (krstné, prostredné a priezvisko),oslovenie, zamestnanie, dátum narodenia, pohlavie, zemepisná lokalizácia (zemepisná dĺžka/šírka) farmy, meno používané pre Facebookové konto, meno používané pre Twitter konto, prípadné identifi kačné číslo a/alebo osoba, ktorá rozhoduje.</div>
+      </div>
+    </div>
+    
+    </div>
+    
+    <div id="page2" style="margin: 0 40px">    
+
+        <div style="margin:16px 0 3px 0; font-size:90%; font-family:sans-serif; font-weight:bold;">
+            PODMIENKY PRE ZÍSKANIE BONUSU REPIEK DEKALB®
+        </div>
+        
+        <ul style="list-style-type:none; margin:0; padding:0; font-size:75%; line-height:115%; text-align:justify; color:#333;">
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">1.</b> Zašlite vyplnený originál formulára najneskôr do 20.09.2015 poštou na adresu spoločnosti: MONSANTO SLOVAKIA, s. r. o., Dúbravská cesta 2, 841 04 Bratislava, a objednajte v tom istom termíne osivo repky DEKALB® u Vášho distribútora.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">2.</b> Bonus v tovare alebo finančný bonus sa poskytuje iba za osivo DEKALB® určené pre podnik, ktorý kúpi DEKALB® repky. Bonus v tovare sa nevzťahuje na osivo, ktoré je predmetom ďalšieho predaja alebo akéhokoľvek výmenného (barterového) obchodu.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">3.</b> Výška bonusu v tovare alebo finančného bonusu sa vypočíta podľa platných pravidiel pre túto kampaň. S detailnými pravidlami tejto kampane je povinný oboznámiť účastníka obchodný zástupca spoločnosti MONSANTO SLOVAKIA, s. r. o. Oboznámenie sa s pravidlami účastník tejto kampane potvrdzuje svojím podpisom, ktorý uvedie v tomto formulári. Bonus v tovare bude vypočítaný podľa zúčastneného programu, a následne poskytnutý vo vreciach zdarma. Finančný bonus je poskytovaný z doporučených cien vybraných repiek DEKALB® (bod 2) bez DPH pre konečného zákazníka pre rok 2015 vyhlásených spoločnosťou MONSANTO SLOVAKIA, s. r. o.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">4.</b> Pre dodanie bonusu v tovare do 31. 08. 2015 musí príjemca bonusu v tovare najneskôr do 20.08.2015 doložiť k vyplnenému formuláru kópie dodacích listov, ktoré potvrdzujú nákup vybraných hybridov repky DEKALB® (viď tabuľka), v prípade finančného bonusu sa podnik zaväzuje dodať kópie dodacích listov, ktoré potvrdzujú nákup vybraných hybridov repky DEKALB® do 30.11.2015. Kópie dodacích listov je príjemca bonusu povinný dodať poštou/faxom do uvedeného termínu na adresu spoločnosti MONSANTO SLOVAKIA, s. r. o. alebo odovzdať jeho obchodnému zástupcovi. V prípade nedodržania stanovených termínov, v prípade bonusu v tovare MONSANTO SLOVAKIA, s. r. o. nezaručuje vyššie uvedený termín dodania bonusu, dodaním potrebných dokumentov po termíne 20.09.2015 zaniká príjemcovi nárok na bonus v tovare a v prípade finančného bonusu nárok na finančný bonus nevzniká.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">5.</b> Pri splnení vyššie uvedených podmienok vzniká príjemcovi bonusu nárok na bonus v tovare, bude mu dodaný spoločnosťou MONSANTO SLOVAKIA, s. r. o. alebo jej obchodným zástupcom, alebo prostredníctvom distribučných partnerov. Tento nárok nie je prevoditeľný na tretie osoby a nemôže byť predmetom zástavy.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">6.</b> Spoločnosť MONSANTO SLOVAKIA, s. r. o. si v prípade vyčerpania tovaru na sklade vyhradzuje právo poskytnúť bonus v tovare inom než objednanom, tj. poskytnúť bonus v tovare iného hybridu.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">7.</b> Pri splnení vyššie uvedených podmienok a pri vyrovnaní splatných záväzkov voči spoločnosti MONSANTO SLOVAKIA, s. r. o. do 30.11.2015 vzniká príjemcovi bonusu nárok na finančný bonus a bude mu prevodom na uvedený účet vyplatená príslušná čiastka.</li>            
+            <li style="margin:10px 0"> Bonus v tovare alebo finančný bonus sa poskytuje iba za osivo DEKALB® určené pre konečných zákazníkov (podniky). Tento riadne vyplnený formulár oprávňuje jeho držiteľa po splnení podmienok k poskytnutiu bonusu. Formulár sa nepovažuje za objednávku. Pre viac informácií kontaktujte spoločnosť MONSANTO SLOVAKIA, s. r. o.</li>
+        </ul>
+
+        <div style="margin:16px 0 3px 0; font-size:90%; font-family:sans-serif; font-weight:bold;">
+            PRAVIDLÁ DEKALB Club Programu
+        </div>
+        
+        <ul style="list-style-type:none; margin:0; padding:0; font-size:75%; line-height:115%; text-align:justify; color:#333;">
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">1.</b> Každý koncový užívateľ produktov spoločnosti MONSANTO SLOVAKIA, s. r. o. (ďalej len „Podnik“), ktorý písomne odsúhlasí Pravidlá DEKALB Club programu (ďalej len „Pravidlá“), okrem štátnych subjektov akejkoľvek právnej povahy, sa môže stať účastníkom DEKALB Club programu (ďalej len „Program“).</li>
+            <li style="margin:2px 0; text-align:left"><b style="font-family:sans-serif; margin-right:5px">2.</b> Podpisom Pravidiel Podnik:<br/>
+            bezvýhradne súhlasí s Pravidlami a zaväzuje sa ich dodržiavať; súhlasí s účasťou v Programe na základe podmienok uvedených v Pravidlách; sa zaväzuje splniť všetky daňové povinnosti podľa právneho poriadku Slovenskej republiky vyplývajúce z jej účasti v Programe; sa zaväzuje odškodniť a zbaviť spoločnosť MONSANTO SLOVAKIA, s. r. o., jej zamestnancov a dodávateľov zodpovednosti za akúkoľvek škodu, inú ujmu alebo nároky (vrátane o. i. akýchkoľvek daňových povinností alebo nárokov) v súvislosti s účasťou Podniku v Programe.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">3.</b> Spoločnosť MONSANTO SLOVAKIA, s. r. o. udeľuje Podniku DEKALB Club body podľa pravidiel Programu platných v čase takéhoto udelenia (môžu sa líšiť v jednotlivých sezónach). Úplné pravidlá stanovujúce množstvo bodov, ktoré je možné v každej sezóne získať, Podniku poskytne regionálny predajca.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">4.</b> Aby Podnik mohol získať DEKALB Club body, Podnik doručí kópie potvrdených dodacích listov preukazujúce nákup produktov spoločnosti MONSANTO SLOVAKIA, s. r. o. prostredníctvom pošty (MONSANTO SLOVAKIA, s. r. o., Dúbravská cesta 2, 841 04  Bratislava), emailu ([info.sk@monsanto.com]) alebo regionálneho predajcu. Podnik je povinný doručiť uvedené kópie dodacích listov do dátumu špecifikovaného pre danú kampaň. Bližšie informácie podá zástupca spoločnosti MONSANTO SLOVAKIA, s. r. o.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">5.</b> DEKALB Club body sa prevedú na elektronický účet Podniku do 30 dní od dátumu doručenia kópií dodacích listov do spoločnosti MONSANTO SLOVAKIA, s. r. o.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">6.</b> Podnik môže získané DEKALB Club body použiť na nákup vecí z internetového obchodu spoločnosti MONSANTO SLOVAKIA, s. r. o. DEKALB Club body môže získať a použiť len Podnik (t. j. koncový užívateľ produktov spoločnosti MONSANTO SLOVAKIA, s. r. o.) a nie zamestnanci, zástupcovia alebo zhotovitelia Podniku alebo iné tretie strany. DEKALB Club body sú neprenosné.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">7.</b> Veci, ktoré Podnik zakúpi za získané DEKALB Club body, budú doručené len na adresu sídla Podniku alebo na inú adresu Podniku uvedenú v osobitnom Prehlásení o inom mieste doručenia, podpísanom Podnikom a zaslanom spoločnosti MONSANTO SLOVAKIA, s. r. o.</li>            
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">8.</b> Body platia od dátumu ich prevodu na elektronický účet Podnikom a ich platnosť automaticky uplynie dva (2) roky od dátumu nahrania bodov na elektronický účet.</li>
+            <li style="margin:2px 0"><b style="font-family:sans-serif; margin-right:5px">9.</b> Spoločnosť MONSANTO SLOVAKIA, s. r. o. si vyhradzuje právo tento Program meniť.</li>
+            <li style="margin:2px 0; text-align:left"><b style="font-family:sans-serif; margin-right:5px">10.</b> Podpisom tohto formulára a poskytnutím Vašich osobných údajov dávate spoločnosti MONSANTO SLOVAKIA, s. r. o. právo na:<br/>a) spracovanie Vašich osobných údajov pre účely DEKALB Clubu a komunikácie s Vami.<br/>b) kontaktovanie Vás poštou a e-mailom v súvislosti s DEKALB Clubom.</li>
+        </ul>
+
+        <div style="margin-top:16px; font-size:80%; font-family:sans-serif; font-weight:bold;">
+            Registrácia do DEKALB CLUB programu:
+        </div>
+        <div style="font-size:80%; font-family:sans-serif; font-weight:bold;">
+            <table style="margin:5px 0; text-align:left; font-weight:normal; background:transparent; width:100%; border:0; font-size:80%; border-collapse:collapse; vertical-align:top">
+                <tbody>
+                    <tr>                        
+                        <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; min-height:35px; width:50%; vertical-align:top">Meno štatutárného zástupcu: <span style="display:block; font-size:1.1em; color:#193347; text-transform:uppercase; padding:5px 0">{!ContactName}</span></td>
+                        <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; min-height:35px; width:20%;vertical-align:top">Dátum: <span style="display:block; font-size:1.1em; color:#193347; text-transform:uppercase; padding:5px 0">{!if(ContactName!=null,VoucherDate,"")}</span></td>
+                        
+                        <td style="font-weight:normal; padding:4px 6px; background:#FFF; border:1px solid #000; vertical-align:top; overflow:hidden">
+                        <span style="float:left; margin-right:5px">Podpis:</span> 
+                            <span style="display:inline-block; float:left; text-align:center; position:relative; margin:0; padding:0; border:0">
+                                <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature!= null && ContactName!=null}">
+                                    <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="50px" style="margin:0; margin-bottom:-5px; padding:0; border:0" />
+                                </apex:outputPanel>
+                            </span>
+                        </td>              
+                    </tr>                    
+                </tbody>
+            </table>            
+        </div>
+
+        <div style="margin:2px 0; font-size:90%; font-family:sans-serif;">
+            <b>MONSANTO SLOVAKIA, s.r.o.</b>
+            <div style="margin:1px 0; font-size:75%; margin-right:5px">Důbravská cesta 1793/2, 841 04 Bratislava, tel.:+421 2 49 104 710, e-mail: info.sk@monsanto.com</div>
+            <b>www.monsanto.sk | www.dekalb.sk</b>
+        </div>
+
+    </div>  
+
+    </body>
+    </html>   
+</apex:page>

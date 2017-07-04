@@ -1,0 +1,486 @@
+<apex:component id="component" controller="actionPlanCPController" allowDML="true">  
+   <apex:includeScript value="{!$Resource.jQuery}"/>
+   <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.jquery.min.js')}" />
+   <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen, 'chosen.jquery.js')}"/>
+   <apex:includeScript id="a" value="https://www.google.com/jsapi" />
+   <apex:stylesheet value="{!URLFOR($Resource.jQuery_chosen, 'chosen.css')}"/>
+   <apex:attribute name="category" type="String" description="category of account"/>
+   <style type="text/css">
+      body .bPageBlock .detailList table.black-borders tr td{ border-color: #000; }
+      .notEditable{background-color:#E4E4E4; color:black; font-weight: bold; text-align:right; width: 90px;}
+      .inlineEditDiv > input[type=text] {width: 50px;}
+      td > input[type=text] {text-align:right;}
+      .pr2FamilySelector th,
+      .pr2FamilySelector td {
+        vertical-align: middle!important;
+        white-space: nowrap!important;
+        text-align: left!important;
+      }
+   </style>
+   <apex:form id="actionForm">
+      <apex:actionFunction name="loadData" status="loadStatus" action="{!getData}"/>
+      <apex:actionStatus onstart="loading(true)" onstop="loading(false)" id="loadStatus"/>
+      <!-- ****** DASHBOARDS ****** -->
+      <!-- **DASHBOARDS DISTRIBUTOR OR COOP** -->
+      <apex:pageBlock id="actionPlanSummary" title="{!$Label.Action_Plan_Dashboards}" rendered="{!IF(category == 'Sold-to party', true, false)}">
+         <apex:actionRegion id="regionPlanSummary">
+            
+            <apex:pageBlockSection columns="3" id="summaryPlan" title="{!$Label.Action_Plan_Dashboards}">
+               
+               <table size="2" class="pr2FamilySelector">
+
+               <apex:selectList title="Product family" id="familyPick" size="1" value="{!selFamily}" label="{!$Label.Product_Family}" multiselect="false" style="width:200px;">
+                  <apex:selectOptions value="{!FPoptions}"/>
+               </apex:selectList>
+               <apex:commandbutton onclick="initCharts()" rerender="regionPlanSummary" value="{!$Label.Refresh}" styleClass="buttonStyle" style="background:LightWhite; width:150px;"/>
+
+               <apex:actionFunction action="{!filterFamily}" name="updateReports" rerender="mainPanel" oncomplete="initCharts();"/>
+
+               </table>
+
+               <table size="1">
+                  <tr>
+                     <td>
+                        <div id="chartBlock"/>
+                     </td>
+                     <td>
+                        <div id="chartBlock2"/>
+                     </td>
+                     <td>
+                        <div id="chartBlock3"/>
+                     </td>
+                  </tr>
+               </table>
+               <script type="text/javascript">
+                  // Load the Visualization API and the piechart package.
+                  google.load('visualization', '1.0', {'packages':['corechart']});
+                  
+                  // Set a callback to run when the Google Visualization API is loaded.
+                  google.setOnLoadCallback(initCharts);
+                  
+                  function initCharts() 
+                  {
+                      
+                      actionPlanCPController.surveyResults("{!accountId}",
+                      document.getElementById("page:CPComponent:component:actionForm:actionPlanSummary:summaryPlan:familyPick").options[document.getElementById("page:CPComponent:component:actionForm:actionPlanSummary:summaryPlan:familyPick").selectedIndex].text,
+                      function(result, event){ 
+                           //Dashboard POG vs Delivered
+                           var visualization = new google.visualization.ColumnChart(document.getElementById('chartBlock'));                             
+                           //Forecast vs Delivered
+                           var visualization2 = new google.visualization.ColumnChart(document.getElementById('chartBlock2'));
+                           //Delivered CFY vs Delivered PFY
+                           var visualization3 = new google.visualization.ColumnChart(document.getElementById('chartBlock3'));
+                           
+                           // Prepare table model for chart with columns
+                           var data = new google.visualization.DataTable();
+                           data.addColumn('string', '{!$Label.Period}'); 
+                           data.addColumn('number', '{!$Label.Delivered_Name} PFY');
+                           data.addColumn('number', '{!$Label.Delivered_Name} CFY');
+                           
+                           data.addColumn('number', 'POG PFY');
+                          data.addColumn('number', 'POG CFY');
+                           
+                           
+                           // Prepare table model for chart with columns
+                           var data2 = new google.visualization.DataTable();
+                           data2.addColumn('string', '{!$Label.Period}');
+                           data2.addColumn('number', '{!$Label.Forecast} CFY');                           
+                           data2.addColumn('number', '{!$Label.Delivered_Name} CFY');
+                           
+                           // Prepare table model for chart with columns
+                           var data3 = new google.visualization.DataTable();
+                           data3.addColumn('string', '{!$Label.Period}');
+                          data3.addColumn('number', '{!$Label.Delivered_Name} PFY');
+                           data3.addColumn('number', '{!$Label.Delivered_Name} CFY');                           
+                           
+                           
+                           // add rows from the remoting results
+                           for(var i=0; i<result.length; i++){
+                              var r = result[i];
+                              data.addRow([r.period, r.dpfy, r.dcfy,r.ppfy, r.pcfy ]);
+                              data2.addRow([r.period, r.fcfy, r.dcfy]);
+                              data3.addRow([r.period, r.dpfyna, r.dcfyna]);
+                            }
+                          // all done, lets draw the chart with some options to make it look nice.
+                         visualization.draw(data, {legend : {position: 'bottom', textStyle: {color: 'blue', fontSize: 12}}, title: "POG VS {!$Label.Delivered_Name} - {!$Label.Cumulated}", width:500, height:400,vAxis:{title: "RELs", textStyle:{fontSize: 14}},hAxis:{title: "{!$Label.Period}", textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                         visualization2.draw(data2, {legend : {position: 'bottom', textStyle: {color: 'blue', fontSize: 12}}, title: "{!$Label.Forecast} VS {!$Label.Delivered_Name} - {!$Label.Cumulated}", width:500, height:400,vAxis:{title: "RELs",minValue:0, textStyle:{fontSize: 14}},hAxis:{title: "{!$Label.Period}", textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                         visualization3.draw(data3, {legend : {position: 'bottom', textStyle: {color: 'blue', fontSize: 12}}, title: "{!$Label.Delivered_Name} PFY VS {!$Label.Delivered_Name} CFY", width:500, height:400,vAxis:{title: "RELs",minValue:0, textStyle:{fontSize: 14}},hAxis:{title: "{!$Label.Period}", textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                  
+                    }, {escape:true});
+                  }
+               </script>              
+            </apex:pageBlockSection>
+         </apex:actionRegion>
+      </apex:pageBlock>
+      <!-- **DASHBOARDS PoS**-->
+      <apex:pageBlock id="actionPlanSummaryPoS" title="{!$Label.Action_Plan_Dashboards}" rendered="{!IF(category == 'Ship-to party', true, false)}">
+         <apex:actionRegion id="regionPlanSummary">
+            <apex:pageBlockSection columns="3" id="summaryPlan" title="{!$Label.Action_Plan_Dashboards}" collapsible="true">
+            <table size="2" class="pr2FamilySelector">
+               <apex:selectList title="Product family" id="familyPick" size="1" value="{!selFamily}" label="{!$Label.Product_Family}" multiselect="false" style=" width:200px;">
+                  <apex:selectOptions value="{!FPoptions}"/>
+               </apex:selectList>
+               
+               <apex:commandbutton onclick="initCharts()" rerender="regionPlanSummary" value="{!$Label.Refresh}" styleClass="buttonStyle" style="background:LightWhite; width:150px;"/>
+               
+               <apex:actionFunction action="{!filterFamily}" name="updateReports" rerender="mainPanel" oncomplete="initCharts();"/>
+               
+               </table>
+               <table>
+                  <tr>
+                     <td>
+                        <div id="chartBlock"/>
+                     </td>
+                  </tr>
+               </table>
+               <script type="text/javascript">
+                  // Load the Visualization API and the piechart package.
+                  google.load('visualization', '1.0', {'packages':['corechart']});
+                  
+                  // Set a callback to run when the Google Visualization API is loaded.
+                  google.setOnLoadCallback(initCharts);
+                  
+                  function initCharts() 
+                  {
+                      
+                      actionPlanCPController.surveyResults("{!accountId}",
+                      document.getElementById("page:CPComponent:component:actionForm:actionPlanSummaryPoS:summaryPlan:familyPick").options[document.getElementById("page:CPComponent:component:actionForm:actionPlanSummaryPoS:summaryPlan:familyPick").selectedIndex].text,
+                      function(result, event){ 
+                           //Dashboard Forecast PY vs ForecastCY
+                           var visualization = new google.visualization.ColumnChart(document.getElementById('chartBlock'));                             
+                           
+                           // Prepare table model for chart with columns
+                           var data = new google.visualization.DataTable();
+                           data.addColumn('string', '{!$Label.Quarter}'); 
+                           data.addColumn('number', '{!$Label.Forecast} PFY');
+                           data.addColumn('number', '{!$Label.Forecast} CFY');
+                          
+                  
+                           // add rows from the remoting results
+                           for(var i=0; i<result.length; i++){ 
+                              var r = result[i];
+                              data.addRow([r.period,  r.fpfy, r.fcfy]);         
+                            }
+                          // all done, lets draw the chart with some options to make it look nice.
+                         visualization.draw(data, {legend : {position: 'bottom', textStyle: {color: 'blue', fontSize: 12}}, title: "{!$Label.Forecast} CFY vs {!$Label.Forecast} PFY", width:500, height:400,vAxis:{title: "RELs", textStyle:{fontSize: 14}},hAxis:{title: "{!$Label.Quarter}", textStyle:{fontSize: 14},showTextEvery:1,slantedText:true, slantedTextAngle:45}});
+                         
+                    }, {escape:true});
+                  }
+               </script>
+            </apex:pageBlockSection>
+            
+         </apex:actionRegion>
+      </apex:pageBlock>
+      <!-- ****** SUMMARY ****** -->
+      <apex:pageBlock id="pageBlockSummary" title="{!$Label.Action_Plan_Summary}">
+         <apex:pageBlockSection id="summaryPlan" title="{!$Label.Action_Plan_Summary}" collapsible="true" columns="1">
+            <apex:pageblockTable var="apl" value="{!summaryAPL}">
+               <apex:column headerValue="SKU" value="{!apl.name}"/>
+               <apex:column headerValue="{!$Label.Summary_Total_POG_FY_1}">{!FLOOR(apl.pogPFY)} </apex:column>
+               <apex:column headerValue="{!$Label.Accumulative_POG_PY}">{!FLOOR(apl.pogPFYTD)}</apex:column>
+               <apex:column headerValue="{!$Label.Accumulative_POG_CY}">{!FLOOR(apl.pogCFY)}</apex:column>
+            </apex:pageBlockTable>
+         </apex:pageBlockSection>
+      </apex:pageBlock>
+      <!-- ****** ACTION PLAN ****** -->              
+      <!-- ACTION PLAN LINE TABLE -->
+      <apex:pageBlock id="actionPlan" title="{!$Label.CP_Action_Plan}">
+         <apex:pagemessages escape="false" rendered="{!showException == true}"  />
+         <script type="text/javascript">
+            function changeHeader(){
+                var i = 0;
+
+                        var ltChar = '<', gtChar = '>';
+                        var doubleHeaderHTML = $('#collapseTableScript' + i).parent().parent().parent().parent().html();
+                        doubleHeaderHTML = doubleHeaderHTML.replace(/<t.ead[\s\S]*<\/thead>/ig, "<newDoubleHeader>");
+                        doubleHeaderHTML = doubleHeaderHTML.replace('<newDoubleHeader>',ltChar + 'thead>' + 
+                                                                    '<tr class="headerRow" style="border-bottom-width:1px;">' + 
+                                                                    '    {!IF(mode == 'view', '<th rowspan="2" style="text-align: center; width: 50px;">'+$Label.Action+'</th>','')} ' + 
+                                                                    '    <th rowspan="2" style="text-align: center;">{!$Label.SKU}</th>' +
+                                                                    '    <th colspan="2" style="text-align: center;">{!$Label.Forecast}</th>' +
+                                                                    '   {!IF((category == 'Sold-to party'), '<th colspan="2" style="text-align: center; ">'+$Label.Ordered_Name+'</th>','')}' + 
+                                                                    '   {!IF((category == 'Sold-to party'), '<th colspan="2" style="text-align: center; ">'+$Label.Delivered_Name+'</th>','')}' +
+                                                                    '    <th colspan="2" style="text-align: center;">{!$Label.Initial_Stock_Name}</th>' +
+                                                                    '    <th colspan="2" style="text-align: center;">{!$Label.Final_Stock_Name}</th>' +
+                                                                    '    <th colspan="2" style="text-align: center;">{!$Label.PoG}</th>' +
+                                                                    '</tr><tr class="headerRow" style="border:none">' +
+                                                                    '    <th style="text-align: center;border-left-width: thin; width: 90px;">{!$Label.Forecast_L_Kg}</th>' +
+                                                                    '    <th style="text-align: center; width: 90px;">{!$Label.Forecast_Rel}</th>' +
+                                                                    '   {!IF((category == 'Sold-to party'), '<th style="text-align: center; width: 90px;">'+$Label.Ordered+'</th>','')}' + 
+                                                                    '   {!IF((category == 'Sold-to party'), '<th style="text-align: center; width: 90px;">'+$Label.Ordered_Rel+'</th>','')}' + 
+                                                                    '   {!IF((category == 'Sold-to party'), '<th style="text-align: center; width: 90px;">'+$Label.Delivered+'</th>','')}' + 
+                                                                    '   {!IF((category == 'Sold-to party'), '<th style="text-align: center; width: 90px;">'+$Label.Delivered_Rel+'</th>','')}' +       
+                                                                    '    <th style="text-align: center; width: 90px;">{!$Label.Initial_Stock}</th>' +
+                                                                    '    <th style="text-align: center; width: 90px;">{!$Label.Units_RELs}</th>' +
+                                                                    '    <th style="text-align: center; width: 90px;">{!$Label.Final_Stock}</th>' +
+                                                                    '    <th style="text-align: center; width: 90px;">{!$Label.Units_RELs}</th>' +
+                                                                    '    <th style="text-align: center; width: 90px;">{!$Label.Final_Stock}</th>' +
+                                                                    '    <th style="text-align: center; width: 90px;">{!$Label.Units_RELs}</th>' +
+                                                                    '</tr></thead' + gtChar);
+                        $('#collapseTableScript'+i).parent().parent().parent().parent().html(doubleHeaderHTML);
+             }
+            
+         </script>
+         
+         <apex:pageBlockSection id="sectionPlan" title="{!$Label.CP_Action_Plan}" collapsible="true" columns="1">
+            <!-- FILTER SELECTION TABLE -->
+            <apex:panelGrid columns="1" styleClass="black-borders" border="0" width="100%" style="border-collapse:collapse; border-left: none; border-color: #000;" >
+               <apex:outputText value="{!$Label.Period}" style="font-weight: bold" rendered="{!IF(category == 'Sold-to party', true, false)}"/>
+               <apex:selectList id="periods" title="Period" value="{!periodSelected}" size="1" rendered="{!IF(category == 'Sold-to party', true, false)}" >
+                  <apex:actionSupport event="onchange" action="{!getData}" onsubmit="loading(true)" oncomplete="loading(false), chargePickStyle()" reRender="panelView, panelEdit, actionPlan"/>
+                  <apex:selectOptions value="{!periods}"/>
+               </apex:selectList>
+               <apex:outputText value="{!$Label.Quarter}" style="font-weight: bold" rendered="{!IF(category == 'Ship-to party', true, false)}"/>
+               <apex:selectList id="quarters" title="Quarter" value="{!quarterSelected}" size="1" rendered="{!IF(category == 'Ship-to party', true, false)}">
+                  <apex:actionSupport event="onchange" action="{!getData}" onsubmit="loading(true)" oncomplete="loading(false), chargePickStyle()" reRender="panelView, panelEdit, actionPlan"/>
+                  <apex:selectOptions value="{!quarters}"/>
+               </apex:selectList>
+            </apex:panelGrid>
+            
+            <!-- TABLE VIEW -->     
+            <apex:outputPanel id="panelView" style="display:block;" rendered="{!IF(mode == 'view', true, false)}">
+               <div id="contentLoading" style="display:none;">
+                  <div style="text-align: center;">
+                     <img src="/img/loading.gif" alt="Loading graphic" />
+                  </div>
+               </div>
+               <div id="contentLoaded">
+                  <!-- <apex:repeat value="{!mapProductFamilyAPL}" var="outerKey"> -->
+                     <apex:pageblockTable value="{!listaPintarAPL}" var="item" style="margin-bottom: 0px">
+                        <apex:column headerValue="{!$Label.Action}" width="50px" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:inputCheckbox value="{!item.selected}" rendered="{!IF(mode == 'view' && item.total == false, true, false)}" />
+                        </apex:column>
+                        <apex:facet name="header">
+                           <script id="collapseTableScript0"></script>
+                        </apex:facet>
+                        <!-- VIEW NAME -->
+                        <apex:column headerValue="{!$Label.SKU}" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                           <apex:outputField value="{!item.actionPlanLine.LKP_SKU__r.TXT_commercial_name__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.name}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column rendered="{!IF((mode == 'view' ), true, false)}" headerValue="{!$Label.Forecast_L_Kg}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Forecast__c}" rendered="{!IF( isDevice == 'true' && item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}">
+                              <apex:inlineEditSupport event="onmouseover" showOnEdit="saveButton2, cancelButton2" hideOnEdit="newButton,editButton,multipleButton,deleteButton,saveButton,cancelButton" />                      
+                           </apex:outputField>
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Forecast__c}" style="text-align: right;" rendered="{!IF( isDevice == 'true' && item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}"/>
+                           <apex:outputField id="fieldForecast" value="{!item.actionPlanLine.NUM_Forecast__c}" rendered="{!IF( isDevice == 'false' && item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}">
+                              <apex:inlineEditSupport event="ondblclick" showOnEdit="saveButton2, cancelButton2" hideOnEdit="newButton,editButton,multipleButton,deleteButton,saveButton,cancelButton" />
+                           </apex:outputField>
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Forecast__c}" style="text-align: right;" rendered="{!IF( isDevice == 'false' && item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}"/>
+                           <apex:outputText value="{!item.totalForecast}" style="{!IF(country.Units_of_Measurement__c == 'Basic Units', 'padding-right: 16px','')}" rendered="{!item.total == true}" />                            
+                        </apex:column>
+                        <apex:column rendered="{!IF((mode == 'view' ), true, false)}" headerValue="{!$Label.Forecast_Rel}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Forecast_Rel__c}" rendered="{!IF( isDevice == 'true' && item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}">
+                              <apex:inlineEditSupport event="onmouseover" showOnEdit="saveButton2, cancelButton2" hideOnEdit="newButton,editButton,multipleButton,deleteButton,saveButton,cancelButton" />                      
+                           </apex:outputField>
+                           <apex:outputField value="{!item.actionPlanLine.FRML_Forecast_Rel__c}" style="text-align: right;" rendered="{!IF( isDevice == 'true' && item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}"/>
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Forecast_Rel__c}" style="text-align: right;" rendered="{!IF( isDevice == 'false' && item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}">
+                               <apex:inlineEditSupport event="ondblclick" showOnEdit="saveButton2, cancelButton2" hideOnEdit="newButton,editButton,multipleButton,deleteButton,saveButton,cancelButton" />
+                           </apex:outputField>
+                           <apex:outputField value="{!item.actionPlanLine.FRML_Forecast_Rel__c}" style="text-align: right;" rendered="{!IF( isDevice == 'false' && item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}"/>
+                           <apex:outputText value="{!item.totalForecastRel}" style="{!IF(country.Units_of_Measurement__c == 'Rels', 'padding-right: 16px','')}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column rendered="{!IF((mode == 'view' ) && (category == 'Sold-to party'), true, false)}" headerValue="{!$Label.Ordered}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Ordered__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.totalOrdered}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column rendered="{!IF((mode == 'view' ) && (category == 'Sold-to party'), true, false)}" headerValue="{!$Label.Ordered_Rel}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.FRML_Ordered_Rel__c}" rendered="{!item.total == false}" />
+                           <apex:outputText value="{!item.totalOrderedRel}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column rendered="{!IF((mode == 'view' ) && (category == 'Sold-to party'), true, false)}" headerValue="{!$Label.Delivered}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Delivered__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.totalDelivered}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column rendered="{!IF((mode == 'view' ) && (category == 'Sold-to party'), true, false)}" headerValue="{!$Label.Delivered_Rel}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.FRML_Delivered_Rel__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.totalDeliveredRel}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column rendered="{!IF((mode == 'view' ), true, false)}" headerValue="{!$ObjectType.Action_Plan_Line__c.fields.NUM_Initial_stock__c.label}" width="104px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Initial_stock__c}" rendered="{!item.total == false}" />
+                           <apex:outputText value="{!item.totalInitialStock}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        
+                        <apex:column rendered="{!IF((mode == 'view' ), true, false)}" headerValue="{!$ObjectType.Action_Plan_Line__c.fields.FRML_Initial_stock_Rel__c.label}" width="104px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.FRML_Initial_stock_Rel__c}" rendered="{!item.total == false}" />
+                           <apex:outputText value="{!item.totalInitialStockRel}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        
+                        <apex:column rendered="{!IF((mode == 'view' ), true, false)}" headerValue="{!$ObjectType.Action_Plan_Line__c.fields.NUM_Final_stock__c.label}" width="104px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outPutField value="{!item.actionPlanLine.NUM_Final_stock__c}" rendered="{!IF( isDevice == 'true' && item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}">
+                              <apex:inlineEditSupport event="onmouseover" showOnEdit="saveButton2, cancelButton2" hideOnEdit="newButton,editButton,multipleButton,deleteButton,saveButton, cancelButton" />
+                           </apex:outputField>
+
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Final_stock__c}" rendered="{!IF( isDevice == 'false' && item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}">
+                              <apex:inlineEditSupport event="ondblclick" showOnEdit="saveButton2, cancelButton2" hideOnEdit="newButton,editButton,multipleButton,deleteButton,saveButton, cancelButton" />
+                           </apex:outputField>
+
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Final_stock__c}" style="text-align: right;" rendered="{!IF(item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}"/>   
+
+                           <apex:outputText value="{!item.totalFinalStock}" style="padding-right: 16px;" rendered="{!item.total == true}" />
+                        </apex:column>
+
+<apex:column rendered="{!IF((mode == 'view' ), true, false)}" headerValue="{!$ObjectType.Action_Plan_Line__c.fields.NUM_Final_stock_Rel__c.label}" width="104px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+
+                        <apex:outputField value="{!item.actionPlanLine.NUM_Final_stock_Rel__c}" rendered="{!IF( isDevice == 'true' && item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}">
+                              <apex:inlineEditSupport event="onmouseover" showOnEdit="saveButton2, cancelButton2" hideOnEdit="newButton,editButton,multipleButton,deleteButton,saveButton,cancelButton" />                      
+                           </apex:outputField>
+
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Final_stock_Rel__c}" style="text-align: right;" rendered="{!IF( isDevice == 'false' && item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}">
+                               <apex:inlineEditSupport event="ondblclick" showOnEdit="saveButton2, cancelButton2" hideOnEdit="newButton,editButton,multipleButton,deleteButton,saveButton,cancelButton" />
+                           </apex:outputField>
+
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Final_stock_Rel__c}" style="text-align: right;" rendered="{!IF( item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}"/>
+
+                           <apex:outputText value="{!item.totalFinalStockRel}" rendered="{!item.total == true}" />
+                        </apex:column>
+
+                        <apex:column rendered="{!IF((mode == 'view'), true, false)}" headerValue="{!$ObjectType.Action_Plan_Line__c.fields.NUM_Final_stock__c.label}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.FRML_POG_Unit__c}" rendered="{!item.total == false}" />
+                           <apex:outputText value="{!item.totalPogKg}" rendered="{!item.total == true}" />
+                        </apex:column>
+                           <apex:column rendered="{!IF((mode == 'view'), true, false)}" headerValue="{!$ObjectType.Action_Plan_Line__c.fields.FRML_POG_Rel__c.label}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                               <apex:outputField value="{!item.actionPlanLine.FRML_POG_Rel__c}" rendered="{!item.total == false}" />
+                               <apex:outputText value="{!item.totalPog}" rendered="{!item.total == true}" />
+                          </apex:column>
+                     </apex:pageblockTable>
+                <!--  </apex:repeat>   -->
+               </div>
+               
+            </apex:outputPanel>
+            
+            <!-- TABLE EDIT -->      
+            <apex:outputPanel id="panelEdit" rendered="{!IF(mode == 'edit', true, false)}" style="display:block;" >
+               <div id="contentLoading" style="display:none;">
+                  <div style="text-align: center;">
+                     <img src="/img/loading.gif" alt="Loading graphic" />
+                  </div>
+               </div>
+               <div id="contentLoaded">
+
+                      <apex:pageblockTable value="{!listaPintarAPL}" var="item" rendered="{!IF(mode == 'edit', true, false)}" style="margin-bottom: 0px">
+                          <apex:facet name="header">
+                              <script id="collapseTableScript0"></script>
+                          </apex:facet>
+                         <!-- 27/04/2017 CR - create of new list to active PCE - CR-00000627 -->
+                          <apex:column headerValue="{!$Label.SKU}" style="{!IF(item.total == true, 'font-weight: bold; background-color:#E4E4E4;','')}">
+                              <apex:selectList id="itemProd" value="{!item.actionPlanLine.LKP_SKU__c}" styleClass="applyStyle" size="1" style="width:100px;" rendered="{!NOT(item.total) && item.actionPlanLine.Id == null}">
+                                  <apex:selectOptions value="{!productosActive}" />
+                              </apex:selectList>
+                              <apex:outputText value="{!item.actionPlanLine.LKP_SKU__r.TXT_commercial_name__c}" rendered="{!NOT(item.total) && item.actionPlanLine.Id != null}" />
+                              <apex:outputText value="{!item.name}" rendered="{!item.total == true}" />
+                          </apex:column>  
+                          <!-- END 27/04/2017 CR - create of new list to active PCE - CR-00000627 -->                       
+                          <apex:column headerValue="{!$Label.Forecast_L_Kg}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                              <apex:inputfield value="{!item.actionPlanLine.NUM_Forecast__c}" style="width: 91px;" rendered="{!IF(item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}"/>
+                              <apex:outputField value="{!item.actionPlanLine.NUM_Forecast__c}" rendered="{!IF(item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}"/>
+                              <apex:outputText value="{!item.totalForecast}" rendered="{!item.total == true}" />
+                          </apex:column>
+                          <apex:column headerValue="{!$Label.Forecast_Rel}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                              <apex:inputfield value="{!item.actionPlanLine.NUM_Forecast_Rel__c}" style="width: 91px;" rendered="{!IF(item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}"/>
+                              <apex:outputField value="{!item.actionPlanLine.NUM_Forecast_Rel__c}" rendered="{!IF(item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}"/>
+                              <apex:outputText value="{!item.totalForecastRel}" rendered="{!item.total == true}" />
+                          </apex:column>
+                        <apex:column rendered="{!IF((category == 'Sold-to party'), true, false)}" headerValue="{!$Label.Ordered}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Ordered__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.totalOrdered}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column rendered="{!IF((category == 'Sold-to party'), true, false)}" headerValue="{!$Label.Ordered_Rel}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.FRML_Ordered_Rel__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.totalOrderedRel}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column rendered="{!IF((category == 'Sold-to party'), true, false)}" headerValue="{!$Label.Delivered}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:inputField value="{!item.actionPlanLine.NUM_Delivered__c}" rendered="{!item.total == false && enableEditInvoice}"/>
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Delivered__c}" rendered="{!item.total == false && NOT(enableEditInvoice)}"/>
+                           <apex:outputText value="{!item.totalDelivered}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column rendered="{!IF( (category == 'Sold-to party'), true, false)}" headerValue="{!$Label.Delivered_Rel}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.FRML_Delivered_Rel__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.totalDeliveredRel}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        <apex:column headerValue="{!$Label.Initial_Stock}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Initial_stock__c}" rendered="{!item.total == false}" />
+                           <apex:outputText value="{!item.totalInitialStock}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        
+                        <apex:column headerValue="{!$Label.Initial_Stock}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.FRML_Initial_stock_Rel__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.totalInitialStockRel}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        
+                        <apex:column headerValue="{!$Label.Final_Stock}" width="91px" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:inputField value="{!item.actionPlanLine.NUM_Final_stock__c}" style="width: 91px;" rendered="{!IF(item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}"/>
+                           <apex:outputField value="{!item.actionPlanLine.NUM_Final_stock__c}" style="width: 91px;" rendered="{!IF(item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}"/>
+                           <apex:outputText value="{!item.totalFinalStock}" rendered="{!item.total == true}" />
+                        </apex:column>
+                        
+                        <apex:column headerValue="{!$Label.Final_Stock}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:inputField value="{!item.actionPlanLine.NUM_Final_stock_Rel__c}" style="width: 91px;" rendered="{!IF(item.total == false && country.Units_of_Measurement__c == 'Rels', true, false)}"/>
+                           <apex:outputField value="{!item.actionPlanLine.FRML_Final_stock_Rel__c}" style="width: 91px;" rendered="{!IF(item.total == false && country.Units_of_Measurement__c == 'Basic Units', true, false)}"/>
+                           <apex:outputText value="{!item.totalFinalStockRel}" rendered="{!item.total == true}" />
+                        </apex:column>      
+
+                        <apex:column headerValue="{!$Label.Final_Stock}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.FRML_POG_Unit__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.totalPogKg}" rendered="{!item.total == true}" />
+                        </apex:column>                         
+                        <apex:column headerValue="{!$Label.POG_REL}" width="91px" style="text-align: right;" styleClass="{!IF(item.total == true, 'notEditable','')}">
+                           <apex:outputField value="{!item.actionPlanLine.FRML_POG_Rel__c}" rendered="{!item.total == false}"/>
+                           <apex:outputText value="{!item.totalPog}" rendered="{!item.total == true}" />
+                        </apex:column>
+                     </apex:pageBlockTable> 
+               </div>
+            </apex:outputPanel>
+         </apex:pageBlockSection>
+         <apex:pageBlockButtons id="buttonsBlock" location="bottom">
+            <apex:commandButton id="newButton" status="loadStatus" value="{!$Label.New}" action="{!newRow}" onComplete="chargePickStyle()" rerender="actionPlan" rendered="{!mode == 'view'}" />
+            <apex:commandButton id="editButton" status="loadStatus" value="{!$Label.Edit}" action="{!editAll}" onComplete="chargePickStyle()" rerender="actionPlan" rendered="{!mode == 'view' && listActionPlanLines.size > 0}"/>
+            <apex:commandButton id="multipleButton" value="{!$Label.ButtonAddMultipleLines}" action="{!multiLines}" rendered="{!mode == 'view'}" />
+            <apex:commandButton id="deleteButton" value="{!$Label.Delete}" onclick="if(!confirm('Are you sure?')){return};" action="{!deleteActionPlanLines}" status="loadStatus" reRender="errorLines, lines,actionPlan" rendered="{!listActionPlanLines.size > 0 && mode == 'view'}" />
+            <apex:commandButton id="saveButton" status="loadStatus" value="{!$Label.Save}" action="{!save}" rerender="actionPlan" rendered="{!IF(mode == 'edit' && isAddMultipleLines = false, true,false)}" />
+            <apex:commandButton id="cancelButton" status="loadStatus" value="{!$Label.Cancel}" action="{!cancelCustom}" rerender="actionPlan" rendered="{!IF(mode == 'edit' && isAddMultipleLines = false, true,false)}" />
+            <apex:commandButton id="saveButton2" status="loadStatus" value="{!$Label.Save}" action="{!save}" rerender="actionPlan" style="display: none;" />
+            <apex:commandButton id="cancelButton2" status="loadStatus" value="{!$Label.Cancel}" action="{!cancelCustom}" rerender="actionPlan" style="display: none;" />
+            <apex:commandButton id="saveButtonAddMulLines" status="loadStatus" value="{!$Label.Save}" action="{!save}"  rendered="{!IF(mode == 'edit' && isAddMultipleLines = true, true,false)}" />
+            <apex:commandButton id="cancelButtonAddMulLines" status="loadStatus" value="{!$Label.Cancel}" action="{!cancelCustom}"  rendered="{!IF(mode == 'edit' && isAddMultipleLines = true, true,false)}"  />
+         </apex:pageBlockButtons>
+      </apex:pageBlock>
+   </apex:form>
+   <script type="text/javascript"> 
+      function loading(val) {
+          if(val) {
+            document.getElementById('contentLoading').style.display = 'block';
+            document.getElementById('contentLoaded').style.display = 'none';
+          }
+          else 
+          {
+              document.getElementById('contentLoading').style.display = 'none';
+              changeHeader();
+              document.getElementById('contentLoaded').style.display = 'block';
+          }
+      }
+      
+   </script>
+   <script type="text/javascript">
+      $(document).ready(function() 
+      {
+         chargePickStyle();
+         changeHeader();
+      });
+      
+      function chargePickStyle()
+      {         
+         setTimeout(function (){
+            $('.applyStyle').chosen({search_contains:true,width: "100%",placeholder_text_single:"{!$Label.Default_pick_list_option}",allow_single_deselect:true}); 
+        }, 150); //Evitar bloqueo del desplegable 
+      }
+      
+      function addRow()
+      {
+          var x;
+          x = document.getElementById('{!$Component.actionForm.actionPlan.sectionPlan}');
+      }
+               
+   </script> 
+      
+</apex:component>

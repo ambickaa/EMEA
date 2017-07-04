@@ -1,0 +1,59 @@
+<apex:component controller="AccountAcreageListController" allowDML="true">
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="apSetting" type="String" description="DE: isGermanActionPlan"/>
+    
+    <apex:form id="theMainForm">
+        <apex:Pageblock >
+        <apex:pageBlockSection columns="2">
+            <apex:outputField value="{!currentYear.Name}" title="{!$Label.AcreagesYear}"/>
+            <apex:outputlabel />
+            <apex:outputField value="{!currentYear.YearStartDate__c}" title="{!$Label.AcreagesStartDate}"/>
+            <apex:outputField value="{!currentYear.YearEndDate__c}" title="{!$Label.AcreagesEndDate}"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="{!$Label.AccountAcreageTitle}" columns="1" id="theSection"> 
+            <apex:pageblockTable value="{!merchandiseManagements}" var="acreage" rendered="{!IsList}">
+                <apex:column rendered="{!IF(mode == 'edit', false, true)}" headerValue="{!'Action'}">
+                    <apex:inputCheckbox value="{!acreage.checked}"  />
+                </apex:column>
+                <apex:repeat var="fieldSetMember" value="{!AcreageFieldSetManager.acreageFieldMembers}">
+                <apex:column rendered="{!fieldSetMember.fieldPath != 'OwnerId'}">
+                    <apex:facet name="header">{!fieldSetMember.label}</apex:facet>
+                    <apex:outputField value="{!acreage.acreage[fieldSetMember.fieldPath]}" rendered="{!AND(OR(acreage.isHasPrev, NOT(fieldSetMember.isPrevField)),OR(mode == 'view', AND(NOT(acreage.isNewAcreage), fieldSetMember.isReadOnly)))}" />
+                    <apex:inputField value="{!acreage.acreage[fieldSetMember.fieldPath]}" rendered="{!AND(NOT(fieldSetMember.isPrevField), mode == 'edit', OR(acreage.isNewAcreage, NOT(fieldSetMember.isReadOnly)), NOT(fieldSetMember.isProductGroup), NOT(fieldSetMember.isProductType))}" required="{!fieldSetMember.required}" />
+
+                    <div class="requiredInput">
+                    <div class="requiredBlock"></div>
+                    <apex:selectList value="{!selectedProductGroup}" size="1" id="prductGroupList" 
+                         required="true" rendered="{!AND(acreage.isNewAcreage, fieldSetMember.isProductGroup)}">
+                            <apex:selectOptions value="{!productGroupItems}" id="prductGroupItems"/>
+                            <apex:actionSupport event="onchange" action="{!updateProductTypeItems}" reRender="theMainForm" status="forMainTable"/>
+                    </apex:selectList>
+                    </div>
+                    <apex:selectList value="{!selectedProductType}" size="1" id="prductTypeList" 
+                        rendered="{!AND(acreage.isNewAcreage, fieldSetMember.isProductType)}" required="true">
+                            <apex:selectOptions value="{!productTypeItems}" id="prductTypeItems"/>
+                    
+                    </apex:selectList>
+                    
+                </apex:column> 
+                
+                </apex:repeat>
+                
+            </apex:pageblockTable>
+            <apex:actionStatus id="forMainTable"  startText="updating..." layout="block" startStyle="text-align: center; font-weight: bold; color: red;"/>
+         
+        
+       </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!save}" id="saveButton" value="{!$Label.Save}" rendered="{!IF(mode == 'edit', true, false)}" />
+                <apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!newRecord}" />
+                <apex:commandButton action="{!cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true, false)}" immediate="true"/>
+                <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!Edit}" rendered="{!AND(mode == 'view', isHasElements)}"  />
+                <apex:commandButton action="{!deletex}" id="deleteButton" value="{!$Label.Delete}" rendered="{!AND(mode == 'view', isHasElements)}" />
+            </apex:pageBlockButtons>
+        </apex:Pageblock>
+        
+        
+    </apex:form>
+</apex:component>

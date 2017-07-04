@@ -1,0 +1,156 @@
+<apex:component allowDML="true" controller="AccountPageAcreagesController">
+    
+    <apex:attribute name="account" type="Account" description="currentAccount" required="true" />
+    
+    <apex:form id="List_Records_Table">
+    
+    <span class="component-messages">
+        <apex:pageMessages rendered="{!showAcreagesMessages}" escape="false" />
+    </span>
+    
+    <apex:pageBlock >
+
+        <div class="pageBlockSection">
+            <apex:pageBlockSection title="{!$Label.AccountAcreageTitle + ' ' + acreagesYear}" columns="1" collapsible="false"></apex:pageBlockSection>
+        </div>
+
+        <div class="pbHeader buttonsSection">
+            <table>
+                <tr>
+                    <td class="pbTitle"></td>
+                    <td class="pbButton">
+                        <apex:commandButton value="{!$Label.New}" styleClass="{!IF(OR(modeEdit, NOT(isOwner), AND(currentCampaign == null, NOT(isCPUser))), 'hidden', '')} btn-view" onClick="modeNew(this, New_Acreages); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_edit}" disabled="true" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner)), AND(currentCampaign == null, NOT(isCPUser))), 'hidden', '')} btn-view btn-rows" onClick="rowsEdit(this, RowsEdit_Acreages); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_edit_all}" disabled="false" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner)), AND(currentCampaign == null, NOT(isCPUser))), 'hidden', '')} btn-view btn-all" onClick="rowsEditAll(this, RowsEdit_Acreages); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_delete}" disabled="true" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')} btn-view btn-rows" onClick="xConfirm(this, 'delete', RowsDelete_Acreages); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_add_line}" styleClass="{!IF(modeNew, '', 'hidden')} btn-action btn-add" onClick="addNewLine(this); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_save}" styleClass="{!IF(modeEdit, '', 'hidden')} btn-action" onClick="if(!requiredCheck(this)) { return false; } xConfirm(this, 'save', RowsSave_Acreages); return false;" />
+                        <apex:commandButton value="{!$Label.AccountPage_btn_discard}" styleClass="{!IF(modeEdit, '', 'hidden')} btn-action" onClick="xConfirm(this, 'cancel', Cancel_Acreages); return false;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <apex:variable var="rows_edit" value="{!''}{!Rows}" />
+
+        <table class="sortable compact row-border hover nowrap hiddenLines">
+            <thead class="{!IF(List_Records.size == 0, 'hidden', '')}">
+                <tr>
+                    <th class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"></th>
+                    <th class="col-flag {!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" /></th>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <th>{!f.label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat var="r" value="{!List_Records}">
+                
+                <apex:variable var="hasPY" value="{!r.PreviousAcreageRef__c != null}"/>
+                
+                <tr class="{!IF(OR(AND(modeEdit, NOT(CONTAINS(rows_edit, r.Id))), AND(modeNew, r.Id != null)), 'row-disabled', '')} {!IF(AND(!modeNew, r.Id == null), 'hidden', '')} {!IF(AND(modeNew, r.Id == null), 'newLine', '')}">
+                    <td class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r.Id}" title="{!r.Name}" target="_blank" onClick="event.stopPropagation()"><img src="/img/alohaSkin/help_grey.png" /></a></td>
+                    <td class="col-flag {!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" record-id="{!r.Id}" /></td>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <td class="{!f}">
+                            <apex:outputField value="{!r[f.fieldPath]}" rendered="{!IF(CONTAINS(rows_edit, r.Id), false, true)}" />
+                            <apex:inputField value="{!r[f.fieldPath]}" rendered="{!IF(AND(CONTAINS(rows_edit, r.Id), f.fieldPath != 'AcrProductGroupRef__c', f.fieldPath != 'AcrProductTypeRef__c'), true, false)}" style="width:75%" styleClass="{!IF(AND(hasPY, f.fieldPath == 'AcrProviderRef__c'), 'isDisabled', '')} {!IF(OR(f.required, f.dbrequired), 'required', '')}" />
+
+                            <apex:selectList rendered="{!IF(AND(CONTAINS(rows_edit, r.Id), f.fieldPath == 'AcrProductGroupRef__c'), true, false)}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select required {!IF(hasPY, 'disabled', '')}">
+                                <apex:selectOption itemValue="" itemLabel="" itemDisabled="false" />
+                                <apex:selectOptions value="{!Options_ProductGroups}" />
+                            </apex:selectList>
+
+                            <apex:selectList rendered="{!IF(AND(CONTAINS(rows_edit, r.Id), f.fieldPath == 'AcrProductTypeRef__c'), true, false)}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select">
+                                <apex:selectOption itemValue="" itemLabel="" itemDisabled="false" />
+                                <apex:selectOptions value="{!Options_ProductTypes}" />
+                            </apex:selectList>
+                            <style type="text/css">
+                                .apex_acr td.AcrTotalAcreages__c input {max-width: 90px}
+                            </style>
+                        </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th class="{!IF(NOT(isAdmin), 'hidden', '')}"></th>
+                    <th class="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"></th>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <th class="{!IF(f.Type == 'double', f.Type + ' ' + f, '')}"></th>
+                    </apex:repeat>
+                </tr>
+            </tfoot>
+        </table>
+        
+        <ul class="block-details-list">
+            <apex:repeat var="r" value="{!availableReports}">
+                <li class="{!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r.Id}?pv1={!account.Id}" target="_blank"><img src="/img/icon/custom51_100/gears16.png" />{!r.Name}</a></li>
+            </apex:repeat>
+        </ul>
+        
+    </apex:pageBlock>
+
+    <apex:actionFunction action="{!doDelete}" name="RowsDelete_Acreages" reRender="List_Records_Table" oncomplete="iniAll()">
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+    </apex:actionFunction>
+
+    <apex:actionFunction action="{!modeEdit}" name="RowsEdit_Acreages" reRender="List_Records_Table" oncomplete="iniAll()">
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction action="{!cancelModes}" name="Cancel_Acreages" reRender="List_Records_Table" oncomplete="iniAll()" />
+    <apex:actionFunction action="{!doSave}" name="RowsSave_Acreages" reRender="List_Records_Table" oncomplete="iniAll()" />
+    <apex:actionFunction action="{!modeNew}" name="New_Acreages" reRender="List_Records_Table" oncomplete="iniAll()" />
+
+    <script type="text/javascript">
+        $(document).ready(function()
+        {
+            getTranslations();
+                
+            if('{!modeEdit}' == 'true')
+                getProductTypes();
+        });
+        
+        function getTranslations()
+        {
+            var translations = {!Map_ProductTranslations};
+            $('.AcrProductGroupRef__c > span > a, .AcrProductTypeRef__c > span > a').each(function() {
+                    if(typeof translations[this.href.split('/').pop()] !== 'undefined'){
+                        $(this).html(translations[this.href.split('/').pop()]);
+                    }
+            });
+        }
+        
+        function getProductTypes()
+        {
+            var JSONProducts = JSON.parse('{!JSON_ProductGroupWithTypes}');
+            
+            $('.AcrProductGroupRef__c .chosen-select').each(function() {
+                var matrix = JSONProducts[$(this).val()];
+                
+                $(this).closest('tr').find('.AcrProductTypeRef__c .chosen-select option').each(function() {
+                    $(this).show();
+                    if($.inArray($(this).val(), matrix ) == -1)
+                        $(this).hide();
+                });
+            });
+            
+            $('.AcrProductGroupRef__c .chosen-select').chosen({disable_search_threshold: 8, allow_single_deselect: true, search_contains: true, no_results_text: "{!$Label.AccountPage_picklist_no_results}"}).change(function() {
+                var matrix = JSONProducts[$(this).val()];
+                
+                $(this).closest('tr').find('.AcrProductTypeRef__c .chosen-select option').each(function() {
+                    $(this).show().css('display', 'list-item');
+                    if($.inArray($(this).val(), matrix ) == -1)
+                        $(this).hide();
+                });
+                $(this).closest('tr').find('.AcrProductTypeRef__c .chosen-select').val('').trigger('chosen:updated');
+                $(this).closest('tr').find('.chosen-default > span').text("{!$Label.AccountPage_picklist_default_text}");
+            });
+        }
+    </script>
+    
+    </apex:form>
+    
+</apex:component>

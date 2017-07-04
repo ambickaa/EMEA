@@ -1,0 +1,99 @@
+<apex:page standardcontroller="case" extensions="VFC_Delivery"  showheader="false" sidebar="false">
+
+   <apex:includeScript value="/support/console/30.0/integration.js"/>
+      <apex:includeScript value="/soap/ajax/30.0/connection.js"/>
+      <apex:includeScript value="/xdomain/xdomain.js"/>
+<apeX:form >
+<script>
+   
+
+
+ var preRecordId;
+   function testOpenSubtab(id,name) 
+        {
+            preRecordId= id;
+           tabname= name;
+
+            if (sforce.console.isInConsole())
+               sforce.console.getEnclosingPrimaryTabId(openSubtab);
+            else
+            {
+                window.open('/' + id,'_blank');
+            }
+        }
+        
+        function testOpenSubtabnew(id, name) 
+        {
+            preRecordId= id;
+            tabname= name;
+            if (sforce.console.isInConsole())
+               sforce.console.getEnclosingPrimaryTabId(openSubtabnew);
+            else
+            {
+                window.open('/' + id,'_blank');
+            }
+        }
+        
+        var openSubtab = function openSubtab(result){
+            sforce.console.getFocusedPrimaryTabId(OpenSubtabAlt);
+        }
+        var OpenSubtabAlt = function OpenSubtabAlt(result) 
+        {
+            var primaryTabId = result.id;         
+            sforce.console.openSubtab(primaryTabId ,'/'+preRecordId , true,tabname, null );
+           
+
+        };
+        
+        var openSubtabnew = function openSubtabnew (result){
+            sforce.console.getFocusedPrimaryTabId(OpenSubtabnewAlt);
+        }
+        var OpenSubtabnewAlt= function OpenSubtabnewAlt(result) 
+        {
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/'+ preRecordId , true, 
+                tabname, null  );           
+        }
+        
+      
+        </script>
+  <apex:pageBlock >
+      
+    <!--<center><apex:commandButton onclick="window.open('{!DestURL}','_blank');" value="Add Order Products"/></center>-->
+      <apex:pageBlockTable value="{!invoiceselection}" var="oi" id="dttable">
+      
+      <apex:column >
+           <apex:facet name="header">Action</apex:facet>
+           <apex:commandLink action="{!removeinv}" reRender="dttable" >
+           <apex:param assignTo="{!Ivid}" value="{!oi.id}" name="assignvalue" /> Remove</apex:commandLink> 
+           </apex:column> 
+      
+          <apex:column headerValue="Invoice Number" >
+              <apex:outputLink value="{!oi.InvoiceRecordId__c}" onclick="testOpenSubtab('{!oi.InvoiceRecordId__c}','{!oi.Invoice_Number_Text__c }'); return false;" > {!oi.Invoice_Number_Text__c }</apex:outputLink> 
+           </apex:column>         
+           <apex:column headerValue="Invoice Status" value="{!oi.Invoice_Status_Descr__c}"/> 
+           <apex:column headerValue="Currency Description" value="{!oi.Invoice_Currency_Descr__c}"/> 
+           <apex:column headerValue="Total Invoice Amount" value="{!oi.Total_Inv_Amount_Nbr__c}"/>
+           <apex:column headerValue="Invoice Creation Date" value="{!oi.Invoice_Creation_Date__c }"/>
+           <apex:column headerValue="Invoice Due Date" value="{!oi.Invoice_Due_Date__c}"/>
+           <apex:column headerValue="Item Number" > 
+           <!--<apex:outputLink value="{!oi.InvoiceLineItemId_Text__c}"         onclick="testOpenSubtab('{!oi.InvoiceLineItemId_Text__c}','{!oi.InvoiceLineItemId_Text__c}'); return false;" > {!oi.Invoice_Line_Item_Name_Text__c }</apex:outputLink> -->
+              <apex:outputLink value="{!oi.InvoiceLineItemId_Text__c}" onclick="testOpenSubtabnew('{!oi.InvoiceLineItemId_Text__c}','{!oi.Invoice_Line_Item_Name_Text__c }'); return false;" > {!oi.Invoice_Line_Item_Name_Text__c }</apex:outputLink> 
+           </apex:column>
+           <apex:column headerValue="Material Code" value="{!oi.Invoice_Material_Code__c}"/> 
+           <apex:column headerValue="Description" value="{!oi.Invoice_Line_Item_Descr__c}"/> 
+           <!--<apex:column headerValue="Item Number" value="{!oi.Invoice_Item_Number__c}"/> -->
+           <apex:column headerValue="Net Value" value="{!oi.Invoice_Net_Value_Amount__c}"/> 
+           <apex:column headerValue="QTY" value="{!oi.Invoice_Line_Item_QTY__c}"/> 
+           <apex:column headerValue="UOM-line item" value="{!oi.UOM_line_item_Text__c}"/> 
+           <apex:column headerValue="Last Modified Date" value="{!oi.Last_Modified_Inv_Date__c}"/>
+           
+         <!-- <apex:column headerValue="Order Line Items ID" >
+              <apex:outputLink value="/{!oi.OrderLine_Item_Id_Text__c}" target="_blank"> {!oi.OrderLineItem_Number_Text__c}</apex:outputLink> 
+           </apex:column>-->
+           
+          
+      </apex:pageBlockTable>
+  </apex:pageBlock>
+</apeX:form>
+</apex:page>

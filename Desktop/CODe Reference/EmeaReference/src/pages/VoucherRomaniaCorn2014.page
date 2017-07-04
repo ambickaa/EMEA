@@ -1,0 +1,367 @@
+<apex:page sidebar="false" language="" renderAs="pdf" standardStylesheets="false" showHeader="false" standardcontroller="Voucher__c" extensions="VouchersGeneratorController" ContentType="text/html;charset=iso-8859-9">
+
+<html lang="ro" >
+ <head>
+ <meta http-equiv="content-type" content="text/html;charset=iso-8859-9"/>
+        <title>Voucher</title>
+   <style>
+@page {
+  size: A4 portrait;
+  margin: 0px;
+  padding: 0in;
+  border: 0px;
+}
+
+ 
+  </style>
+</head>
+    <body style=" margin: 0px; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; vertical-align: baseline; text-decoration: none;font-family: 'Arial Unicode MS', Calibri, Arial, Verdana, Geneva, Helvetica, sans-serif;">
+        <div class="web" style=" padding: 0; border: none; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; background: #fff; width: 795px;  margin: 0 auto;">
+            <div class="grid2-1" style="float: left; width: 444px;">
+                <div class="header" style="text-decoration: none; height:110px">
+                    <div class="box-left" style="padding-top: 20px; padding-right: 10px; padding-left: 35px;">
+                        <div class="box-logo" style=" margin-bottom: 0px;">
+                            <apex:image url="{!$Resource.inovatie}" width="116" />
+                           <!-- <img style="display: block; margin: 0; padding: 0;" id="headerTLlogo" src="img/inovatie.png" alt="Logo Inovatie" width="116"/>-->
+                        </div>
+                        <div style="color:red; font-size:25px; position:absolute; top:30px; left:250px"> {!aviso} </div>
+                        <h1 id="headerTL" style="margin-top: 0px; font-weight:normal; font-size: 40px; color: #39abe6;">Fii lider cu DEKALB!</h1>
+                    </div>
+                </div>
+                <div class="content" style="height:640px; margin-top:0px;">              
+                    <div class="conditiile blue" style=" background: #39abe6; color: #fff;height:150px">
+                        <h3 id="headerBLa" style=" margin: 20px; padding: 0px; border: none; font-style: normal; font-family: inherit; vertical-align: baseline; text-decoration: none; margin-bottom: 10px; font-size: 17px; font-weight: bold; text-transform: uppercase;">CONDIŢIILE DE PARTICIPARE LA PROMOŢIA INIŢIATĂ DE MONSANTO ROMÂNIA S.R.L.:</h3>
+                        <ul id="headerBL" style=" margin: 10px; padding: 0; border: none; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; padding-left: 18px; list-style-position: outside; list-style-type: decimal; list-style: none; ">
+                            <li id="headerBLb1" style=" padding-bottom: 6px; font-size: 13px;" ><p style=" margin: 0px; padding: 0; border: none; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; font-weight: bold;">1. Transmiterea VOUCHER-ului de la fermier către distribuitor, până la data de 15.02.2014.</p></li>
+                            <li id="headerBLb2" style=" padding-bottom: 6px; font-size: 13px;"><p style=" margin: 0; padding: 0; border: none;  font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; font-weight: bold;">2. Cantitatea comandată va fi livrată până la data de 15.04.2014.</p></li>
+                            <li id="headerBLb3" style=" padding-bottom: 6px; font-size: 13px;"><p style=" margin: 0; padding: 0; border: none;  font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; font-weight: bold;">3. Achiziționarea a minim 2 hibrizi de porumb DEKALB.</p></li>
+                        </ul>
+                    </div>
+                    <div class="table" style=" border-spacing: 0;  font-size: 11px;">
+                        <table class="table01" style=" margin: 0; padding: 0; border: none; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; padding: 0px 15px 0px 35px;" cellspacing="0" cellpadding="0.5"  >
+                            <thead>
+                                <tr>
+                                    <th id="bodyLcol1" class="especial" style=" padding-right: 40px; padding-left: 5px; width: 42px;">Grupe de hibizi</th>
+                                    <th id="bodyLcol2" style=" padding:  0; text-align: left; font-weight: bold; vertical-align: middle;   width: 83px;">Hibrid</th>
+                                    <th id="bodyLcol3" style=" padding: 0; text-align: left; font-weight: bold; vertical-align: middle;   width: 83px;">FAO</th>
+                                    <th id="bodyLcol4" style=" padding: 0; text-align: left; font-weight: bold; vertical-align: middle;   width: 72px;">Pret RON <span style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; width:100%; float:left;">2014</span></th>
+                                    <th id="bodyLcol5" style=" padding: 0; text-align: left; font-weight: bold; vertical-align: middle; " >Cantitatea comandata (saci)</th>
+                                </tr>
+                            </thead>
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr style="height: 6px; background: #c8d300;"><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr style="height: 3px; background: #00ade9;"><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                            
+                                                     
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">                            
+<!--START-->
+                                <apex:outputPanel layout="none" rendered="{!HDdisplay}">
+                                 
+                                 <apex:variable value="{!0}" var="counter" />
+
+                                  <apex:repeat value="{!HDMapSet}" var="HDMapKey">
+
+                                <apex:variable value="{!counter + 1}" var="counter" />
+
+                                <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                     <apex:outputPanel layout="none" rendered="{!IF(counter=1,true,false)}">
+                                    <td rowspan="{!Hdrows}" class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold; text-transform: uppercase;">HD</td>
+                                     </apex:outputPanel>
+                                  <td style="vertical-align: middle;">{!HDMap[HDMapKey]['HName']}</td>
+                                    <td style="vertical-align: middle;">{!HDMap[HDMapKey]['FAO']}</td>
+                                    <td style="vertical-align: middle;">{!ROUND(value(HDMap[HDMapKey]['Price']),0)}</td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">{!FLOOR(VALUE(HDMap[HDMapKey]['Bags']))}</span></td>
+                                    
+                                </tr>           
+                                  </apex:repeat>
+                                </apex:outputPanel>
+                                
+                            </tbody>
+                           <apex:outputPanel layout="none" rendered="{!HDdisplay}">
+                             <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr class="line-green" style=" height: 6px; background: #c8d300;" ><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr class="line-blue" style="height: 3px; background: #00ade9;" ><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+
+                            </apex:outputPanel>
+                        
+<!--END-->
+
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">                            
+<!--START-->
+                                <apex:outputPanel layout="none" rendered="{!MTdisplay}">
+                                 
+                                 <apex:variable value="{!0}" var="counter" />
+
+                                  <apex:repeat value="{!MTMapSet}" var="MTMapKey">
+
+                                <apex:variable value="{!counter + 1}" var="counter" />
+
+                                <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                     <apex:outputPanel layout="none" rendered="{!IF(counter=1,true,false)}">
+                                    <td rowspan="{!MTrows}" class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold; text-transform: uppercase;">MAXTECH</td>
+                                     </apex:outputPanel>
+                                     
+                                     
+                                  <td style="vertical-align: middle;">{!MTMap[MTMapKey]['HName']}</td>
+                                    <td style="vertical-align: middle;">{!MTMap[MTMapKey]['FAO']}</td>
+                                    <td style="vertical-align: middle;">{!ROUND(value(MTMap[MTMapKey]['Price']),0)}</td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">{!FLOOR(VALUE(MTMap[MTMapKey]['Bags']))}</span></td>
+                                    
+                                </tr>           
+                                  </apex:repeat>
+                                </apex:outputPanel>
+                                
+                            </tbody>
+                           <apex:outputPanel layout="none" rendered="{!MTdisplay}">
+ 
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr class="line-green" style=" height: 6px; background: #c8d300;" ><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr class="line-blue" style="height: 3px; background: #00ade9;" ><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                            </apex:outputPanel>
+                        
+<!--END-->
+
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">                            
+<!--START-->
+                                <apex:outputPanel layout="none" rendered="{!CLdisplay}">
+                                 
+                                 <apex:variable value="{!0}" var="counter" />
+
+                                  <apex:repeat value="{!CLMapSet}" var="CLMapKey">
+
+                                <apex:variable value="{!counter + 1}" var="counter" />
+
+                                <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                     <apex:outputPanel layout="none" rendered="{!IF(counter=1,true,false)}">
+                                    <td rowspan="{!CLrows}" class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold; text-transform: uppercase;">CLASIC</td>
+                                     </apex:outputPanel>
+                                  <td style="vertical-align: middle;">{!CLMap[CLMapKey]['HName']}</td>
+                                    <td style="vertical-align: middle;">{!CLMap[CLMapKey]['FAO']}</td>
+                                    <td style="vertical-align: middle;">{!ROUND(value(CLMap[CLMapKey]['Price']),0)}</td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">{!FLOOR(VALUE(CLMap[CLMapKey]['Bags']))}</span></td>
+                                    
+                                </tr>           
+                                  </apex:repeat>
+                                </apex:outputPanel>
+                                
+                            </tbody>
+                           <apex:outputPanel layout="none" rendered="{!CLdisplay}">
+ 
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr class="line-green" style=" height: 6px; background: #c8d300;" ><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr class="line-blue" style="height: 3px; background: #00ade9;" ><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                            </apex:outputPanel>
+                        
+<!--END-->
+
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">                            
+<!--START-->
+                                <apex:outputPanel layout="none" rendered="{!YGdisplay}">
+                                 
+                                 <apex:variable value="{!0}" var="counter" />
+
+                                  <apex:repeat value="{!YGMapSet}" var="YGMapKey">
+
+                                <apex:variable value="{!counter + 1}" var="counter" />
+
+                                <tr style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">    
+                                     <apex:outputPanel layout="none" rendered="{!IF(counter=1,true,false)}">
+                                    <td rowspan="{!YGrows}" class="first" style="padding-left: 5px; vertical-align: middle; font-weight: bold; text-transform: uppercase;">YIELDGARD</td>
+                                     </apex:outputPanel>
+                                  <td style="vertical-align: middle;">{!YGMap[YGMapKey]['HName']}</td>
+                                    <td style="vertical-align: middle;">{!YGMap[YGMapKey]['FAO']}</td>
+                                    <td style="vertical-align: middle;">{!ROUND(value(YGMap[YGMapKey]['Price']),0)}</td>
+                                    <td class="box-line02" style="padding-right: 5px;vertical-align: middle;" ><span class="line02" style="display: block; padding-top: 0px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%; ">{!FLOOR(VALUE(YGMap[YGMapKey]['Bags']))}</span></td>
+                                    
+                                </tr>           
+                                  </apex:repeat>
+                                </apex:outputPanel>
+                                
+                            </tbody>
+                           <apex:outputPanel layout="none" rendered="{!YGdisplay}">
+ 
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr class="line-green" style=" height: 6px; background: #c8d300;" ><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr class="line-blue" style="height: 3px; background: #00ade9;" ><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                            </apex:outputPanel>
+                        
+<!--END-->
+                           
+                           
+                           
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr class="line-blue" style="height: 3px; background: #00ade9;" ><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                            <tbody style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">
+                                <tr>    
+                                    <td id="bodyLtotal" colspan="4" class="txt-Ltotal" style="padding-top: 15px; font-weight: bold; ">TOTAL cantitate comandată (saci)</td>
+                                    <td style="padding-right: 5px;"><span class="line" style="display: block;  border-bottom: 1px dotted #000; width: 100%; padding-top: 1px;"> {!FLOOR(Voucher.TotalBags__c)}  </span></td>
+                                </tr>   
+                            </tbody>
+                        </table>
+                        <table class="table02" style=" margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;  padding: 45px 15px 0px 35px; font-size: 13px;" cellspacing="0" cellpadding="1" >
+                            <thead>
+                                <tr>
+                                    <th style="width: 110px;"></th>
+                                    <th style="width: 71px;"></th>
+                                    <th style="width: 71px;"></th>
+                                    <th style="width: 71px;"></th>
+                                    <th style="width: 71px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: #ffdd00;">
+                                    <td id="bodyLdiscoundTitle" colspan="5" class="title03" style=" vertical-align: middle; font-weight: bold; padding: 2px 5px;">Promotia MONSANTO</td>
+                                </tr>
+                                <tr class="line-blue" style="height: 3px; background: #00ade9;" ><td style=" vertical-align: middle;"></td><td style=" vertical-align: middle;"></td><td style=" vertical-align: middle;"></td><td style=" vertical-align: middle;"></td><td style=" vertical-align: middle;"></td></tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="tr02">    
+                                    <td id="bodyLdiscount1" class="first"  style=" vertical-align: middle; padding: 3px 0 3px 3px; font-size: 10px; ">Saci (80.000 boabe)</td>
+                                    <td style="  font-size: 10px; vertical-align: middle;">{!Discounts[2]['MinBags']}-{!Discounts[2]['MaxBags']}</td>
+                                    <td style="  font-size: 10px; vertical-align: middle;">{!Discounts[3]['MinBags']}-{!Discounts[3]['MaxBags']}</td>
+                                    <td style="  font-size: 10px; vertical-align: middle;">{!Discounts[4]['MinBags']}-{!Discounts[4]['MaxBags']}</td>
+                                    <td style="   font-size: 10px; vertical-align: middle;"> &gt;{!Discounts[5]['MinBags']}</td>
+                                </tr>
+                                <tr class="tr02">    
+                                    <td id="bodyLdiscount2" class="first"  style=" vertical-align: middle; padding: 2px 0 3px 3px; font-size: 10px; ">Discount în sămânța gratuită (%)</td>
+                                    <td style=" font-size: 10px; vertical-align: middle;">{!ROUND(VALUE(Discounts[2]['PercentIncreaseInBags']),0)} %</td>
+                                    <td style=" font-size: 10px; vertical-align: middle;">{!ROUND(VALUE(Discounts[3]['PercentIncreaseInBags']),0)} %</td>
+                                    <td style=" font-size: 10px; vertical-align: middle;">{!ROUND(VALUE(Discounts[4]['PercentIncreaseInBags']),0)} %</td>
+                                    <td style=" font-size: 10px; vertical-align: middle;">{!ROUND(VALUE(Discounts[5]['PercentIncreaseInBags']),0)} %</td>
+                                </tr>
+                                <tr class="tr02">    
+                                    <td id="bodyLdiscount3" class="first" style=" vertical-align: middle; padding: 2px 1px 2px 3px; font-size: 10px; ">Total saci sămânță gratuită din hibridul</td>
+                                   
+                                
+                                    
+                                    <td class="box-line" style="font-size: 11px; vertical-align: middle; padding: 3px 5px 4px 5px;"><span class="line" style="display: block; padding-top: 5px; margin-bottom: 0px; border-bottom: 0px dotted #000; width: 100%;">{!IF(Discounts[2]['isUsed']='true',voucher.TotalBagsFOC__c,null )}  </span></td>
+                                    <td class="box-line" style="font-size: 11px; vertical-align: middle; padding: 3px 5px 4px 5px;"><span class="line" style="display: block; padding-top: 5px; margin-bottom: 0px; border-bottom: 0px dotted #000; width: 100%;">{!IF(Discounts[3]['isUsed']='true',voucher.TotalBagsFOC__c,null )}  </span></td>
+                                    <td class="box-line" style=" font-size: 11px;vertical-align: middle; padding: 3px 5px 4px 5px;"><span class="line" style="display: block; padding-top: 5px; margin-bottom: 0px; border-bottom: 0px dotted #000; width: 100%;">{!IF(Discounts[4]['isUsed']='true',voucher.TotalBagsFOC__c,null )}  </span></td>
+                                    <td class="box-line" style="font-size: 11px; vertical-align: middle; padding: 3px 5px 4px 5px;"><span class="line" style="display: block; padding-top: 5px; margin-bottom: 0px; border-bottom: 0px dotted #000; width: 100%;">{!IF(Discounts[5]['isUsed']='true',voucher.TotalBagsFOC__c,null )} </span></td>                    
+                                </tr>
+                            </tbody>
+                            <tbody>                                
+                                <tr class="line-blue" style="height: 3px; background: #00ade9;"><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box-bodyLdiscount" style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; padding: 02px 10px 5px 40px; font-size: 10px;">
+                            <span id="bodyLdiscount4" style="display: block; padding-bottom: 0px;">Pentru cantități &lt; {!Discounts[2]['MinBags']} de saci se acordă un discount în RON de {!ROUND(VALUE(Discounts[1]['DiscountInPrice']),0)} RON/SAC</span>
+                            <span id="bodyLdiscount5" style="display: block; padding-bottom: 0px;">Promoție suplimentară</span>
+                            <span id="bodyLdiscount6" style="display: block;">* Pentru plata în decembrie se acordă un discount suplimentar de 5% în sămânța gratuită</span>
+                            <span id="bodyLdiscount7" style="display: block;">* Pentru Barter în luna ianuarie se acordă un discount suplimentar de 40 RON/SAC</span>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid2-2 blue" style="float: left; background: #39abe6; width: 351px; background: #39abe6; color: #fff;">
+                <div class="header">
+                    <div class="box-right" style="padding: 15px 25px 13px 20px; height:110px;">
+                        <div class="box-logo" style="margin-bottom: 13px;">
+                            <div class="imagendekalb" style="margin-top: 0px; padding-top: 0px; margin-left: 190px;">
+                            <apex:image url="{!$Resource.dekalb}" width="95"/>
+                            </div>
+                           <!-- <img id="headerTRlogo" src="img/dekalb.png" alt="Logo Dekalb" width="95" style="display: block; margin: 0; padding: 0; margin-left: 190px;"/>-->
+                        </div>
+                        <h2 id="headerTR" style="margin: 0; padding: 0; border: 0px; font-style: normal; font-family: inherit; vertical-align: baseline; text-decoration: none; font-size: 15px; color: #fff; line-height: 1;"><span  style="margin: 0; padding: 0; border: 0px; font-style: normal; font-family: inherit; vertical-align: baseline; text-decoration: none; font-size: 18px; font-weight: bold;">VOUCHER</span> pentru precomanda hibrizilor de porumb DEKALB în sezonul 2014</h2>
+                    </div>
+                 </div>                             
+                <div class="content" style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none;">                
+                    <div id="headerBR" class="white" style="padding: 10px 30px 10px 15px; background: #fff; color: #000;">                        
+                        <span id="farmNameTitle" class="title" style="padding-left: 5px; font-size: 14px; font-weight: bold;">Nume societate agricolă/Fermier:</span>
+                        <span id="farmName" class="line" style="display: block; font-size:{!tamletranom}px; padding-top: 5px; padding-left: 5px; margin-bottom: 5px; border-bottom: 1px dotted #000; width: 100%;">   {!voucher.FarmNameCopy__c}  </span>
+                        <span id="fiscalCodeTitle" class="title" style="padding-left: 5px; font-size: 14px; font-weight: bold;">Cod fiscal societate/CNP persoană fizică:</span>
+                        <span id="fiscalCode" class="line" style="display: block;font-size: 14px; padding-top: 5px; padding-left: 5px; margin-bottom: 5px; border-bottom: 1px dotted #000; width: 100%;"> {!voucher.FiscalCodeCopy__c} </span>
+                        <span id="addressTitle" class="title" style="padding-left: 5px; font-size: 14px; font-weight: bold;">Adresa/Sediu social:</span>
+                        <span id="address" class="line" style="display: block; font-size: {!tamletra}px; padding-top: 5px; padding-left: 5px; margin-bottom: 0px; border-bottom: 1px dotted #000; width: 100%;"> {!voucher.AddressCopy__c}  </span>
+                        <div style="padding-top: 5px">
+                            <span id="phoneTitle" class="title" style="padding-left: 5px; font-size: 14px; font-weight: bold;">Telefon:</span>
+                            <span id="phone" class="line continue"  style="display: block; font-size: 14px; padding-top: 5px; padding-left: 5px; border-bottom: 1px dotted #000; width: 100%; float: right;  display: inline-block; width: 75%;">  {!voucher.PhoneCopy__c}</span> 
+                        </div>
+                    </div>
+                    <div id="bodyR" style="margin: 0; padding: 0; border: 0px; font-weight: normal; font-style: normal; font-size: 100%; font-family: inherit; vertical-align: baseline; text-decoration: none; height:670px">
+                        <span id="bodyRtitle" class="box-bodyR" style="padding: 10px 30px 10px 20px; display: block; color: #000; font-weight: bold; background: #c8d300; ">Seria Ro Nr. {!voucher.name} </span>                    
+                        <div style="padding: 5px 0 5px 15px;">                        
+                            <div>
+                                <span id="bodyRtitle1" class="title02" style="display: block; padding: 5px 0 4px 5px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #fff;">Se completează de <span class="destacado" style=" text-transform: uppercase; font-weight: bold; ">fermier</span></span>
+                              
+                              
+                                <div class="box-bodyRtitle" style=" padding-right: 30px; height: 100px; padding-bottom: 100px;">
+                                <table style="padding-top:10px; padding-bottom:5px;">
+									<tr style="font-weight: bold; font-size: 12px">
+										<th width="128px" > Vânzarea se efectuează prin <span class="destacado" style=" text-transform: uppercase; font-weight: bold; " >distribuitorul</span>:</th>
+										<th width="132px"  style=" padding-left:13px; padding-top:5px; vertical-align:bottom"> Semnătură și ștampilă: </th>
+									</tr>
+
+									<tr>
+										<td  width="128px" style=" padding-left:1px; padding-right:1px; vertical-align:middle;  height: 55px;  background: #fff;font-size:{!tamletradis}px; color:black; text-align:center;">  <apex:outputField style="width:130px" value="{!voucher.DistributorNameCopy__c}"/> </td>
+										<td  width="145px" style="display: block;  height: 55px; padding-left:13px; ">  <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}" ><img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="55px" width="130px" style="max-height:55px; max-width:130px;"/></apex:outputPanel> </td>
+									</tr>
+
+</table>
+                                </div>
+                                
+ <!-- STARTTT                               
+                                <div class="box-bodyRtitle"  style="padding-right: 30px; height: 135px; padding-bottom: 80px;"> 
+                                    
+                                        <div id="bodyRtitle1a" class="txt-box" style="display: inline-block; position:relative; top:5px; left: 10px; width:41.5%; padding: 10px 0 5px 0; font-weight: bold; font-size: 11px; margin-bottom:10px;">Vânzarea se efectuează prin <span class="destacado" style=" text-transform: uppercase; font-weight: bold; " >distribuitorul</span>:</div>
+                                        <div id="bodyRtitle1b" class="txt-box" style="display: inline-block; position:relative; top: -8px; right: -20px; width:41.5%; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Semnătură și ștampilă:</div>
+                   
+                                          <div id="bodyRtitle1Box1" class="box" style="display: table-cell; vertical-align: middle; position:relative; top:30px; left: 5px; width: 135px; height: 55px; background: #fff; font-size:{!tamletradis}px; text-align:center; color:black; "> <apex:outputField style="width:135px" value="{!voucher.DistributorNameCopy__c}"/> </div> 
+                                         <div id="bodyRtitle1Box2" class="box" style="display: inline-block; width: 41.5%;position:relative; top:-56px; right: -153px; height: 55px; background: #fff;"> 
+                                                 <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}" ><img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="55px" width="130px" style="max-height:70px; max-width:210px;"/></apex:outputPanel> 
+                                           </div>
+                                    
+                                </div>   
+                                
+ END -->                               
+                                                             
+                                <span id="bodyRtitle2" class="title02" style=" position:relative; top:-90px; display: block; padding: 5px 0 4px 5px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #fff;">Se completează de <span class="destacado" style=" text-transform: uppercase; font-weight: bold; ">distribuitor</span></span>
+                               <div class="box-bodyRtitle" style="  position:relative; top:-95px; padding-right: 30px; padding-bottom: 15px;" >
+                                    <div class="box-signer" style="display: inline-block; padding-left: 5px; margin-right: 7px; width: 43%;">
+                                        <span id="bodyRtitle2a" class="txt-box" style="display: block; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Seria și nr. facturii:</span>
+                                        <span id="bodyRtitle2Box1" class="box" style="display: block; width: 100%; height: 55px; background: #fff;">  </span>
+                                    </div>
+                                    <div class="box-signer" style="display: inline-block; padding-left: 4px; margin-right: 7px; width: 43%;">
+                                        <span id="bodyRtitle2b" class="txt-box" style="display: block; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Data:</span>
+                                        <span id="bodyRtitle2Box2" class="box" style="display: block; width: 100%; height: 55px; background: #fff;font-size:13px; color:black;">  </span>
+                                    </div>
+                                    <div class="box-signer" style="display: inline-block; padding-left: 4px; margin-right: 7px; width: 43%;">
+                                        <span id="bodyRtitle2c" class="txt-box" style="display: block; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Semnătură și ștampilă:</span>
+                                        <span id="bodyRtitle2Box3" class="box" style="display: block; width: 100%; height: 55px; background: #fff;"> </span>
+                                    </div>
+                                </div> 
+                                <span id="bodyRtitle3" class="title02" style=" position:relative; top:-95px; display: block; padding: 5px 0 4px 0px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #fff;">Se completează de <span class="destacado" style="text-transform: uppercase; font-weight: bold;">MONSANTO ROMÂNIA S.R.L.</span></span>
+                                <div class="box-bodyRtitle" style=" position:relative; top:-95px;">
+                                    <div class="box-signer" style="position: absolute; top:0px; right:188px; display: inline-block;  width: 43%;">
+                                        <span id="bodyRtitle3a" class="txt-box" style="display: inline-block; position:relative; top:0px; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Nume și prenume reprezentant vânzări:</span>
+                                        <span id="bodyRtitle3Box1" class="box" style="display: table-cell; vertical-align:middle; position:relative; top:0px; width: 135px; height: 55px; background: #fff;font-size:{!tamletradis}px; color:black; text-align:center;"> {!Voucher.Owner.Name} </span>
+                                    </div>
+                                    <div class="box-signer" style="position: absolute; top:16px; right:38px; display: inline-block;   width: 43%;">
+                                        <span id="bodyRtitle3b" class="txt-box" style="display: inline-block; position:relative; top:0px; padding: 10px 0 5px 0; font-weight: bold; font-size: 12px;">Data:</span>
+                                        <span id="bodyRtitle3Box2" class="box" style="display: table-cell; vertical-align:middle;  position:relative; top:0px; width: 130px; height: 55px;  text-align:center; background: #fff;font-size:{!tamletradis}px; color:black;">  {!CreatedDate}   </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-Rfoot" style=" position:relative; top:30px; padding: 10px 30px 10px 0px;">
+                                <span id="bodyRfoot1"  style="padding-bottom: 10px; display: block; font-size: 12px; line-height: 1; font-weight: bold;">Orice modificări ulterioare completării VOUCHER-ului duc la anularea acestuia!</span>
+                                <span id="bodyRfoot2"  style="padding-bottom: 20px; display: block; font-size: 12px; line-height: 1; color: #000;">Sunt de acord ca MONSANTO ROMÂNIA S.R.L. să preia în evidențele sale datele incluse pe prezentul formular de precomandă și să le utilizeze în scop de marketing. </span>
+                                <span id="bodyRfoot3"  class="destacado" style="padding-bottom: 10px; display: block; font-size: 12px; line-height: 1.5; text-align: right; font-size: 18px; color: #000;"> <!-- EXEMPLAR FERMIER --> </span>
+                            </div>                     
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <div class="box-bodyLdiscount" style=" padding-bottom: 0px; margin-bottom: 0px;   text-align: justify; font-size: 6px; position: absolute; top: 1050px;padding-left: 7px;  border: none; font-weight: normal; font-style: normal; font-family: inherit; vertical-align: baseline; text-decoration: none; background: #fff; width: 770px;  margin-left:5px; margin-right:5px;" >
+<span id="bodyLdiscount5">Prin prezenta sunt de acord si-mi exprim consimtamantul ca Monsanto Romania SRL (“Monsanto") ca parte a  grupului global de societati Monsanto (“Grupul Monsanto")sa prelucreze datele mele cu caracter personal in vederea stabilirii si gestionarii unei relatii furnizor-client si  sa ma contacteze prin email,SMS, MMS sau orice alte mijloace de comunicare electronice  in scop de marketing.Inteleg ca am urmatoarele drepturi in ceea ce priveste prelucrarea datelor mele cu caracter personal in temeiul prezentei notificari:(i)dreptul de acces la date si de interventie asupra acestora;(ii)dreptul de opozitie ;(iii) dreptul de a nu face obiectul unei decizii individuale automate in considerarea acestora date.(iv)dreptul de a deferii  orice disputa cu privire la prelucrarea datelor mele cu caracter personal unei instante de judecata si ca aceste drepturi pot fi exercitate in conformitate cu termenii  si conditiile Legii  nr 667/2001 privind prelucrarea datelor cu caracter personal si libera circulatie a acestora .Imi exprim deasemenea consimtamantul cu privire la transferul datelor mele cu caracter personal catre destinatarii din grupul Monsanto ,tertii care presteaza diverse servicii in temeiul unor contracte incheiate cu Monsanto sau membrii ai grupului Monsanto sau in scopul respectarii obligatiilor legale, fiscale sau de orice alta natura societatii precum si catre terti din jurisdictii din afara UE /SSE care poate nu ofera acelasi nivel  de protectie ca jurisdictiile UE/SSE in sensul articolului 29 din Legea 677/2001.Sunt constient de faptul ca semnarea acestui formular nu este obligatorie si in acelasi timp inteleg ca daca aleg sa nu il semnez este posibil ca Monsanto sa nu imi poate presta serviciile societatii in  viitor atunci cand aceste Informatii sunt necesare pentru prestarea acestor servicii.</span>
+</div>
+
+    </body>
+    </html>
+</apex:page>

@@ -1,0 +1,234 @@
+<apex:page standardController="case" extensions="listComplaintProductController">
+    
+    <apex:form id="CustomList">
+        <apex:includeScript value="{!$Resource.jQuery}"/>
+        <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.jquery.min.js')}" />
+        <apex:includeScript id="a" value="https://www.google.com/jsapi" />
+        <apex:stylesheet value="{!URLFOR($Resource.jQuery_chosen, 'chosen.css')}"/>
+        <style type="text/css">
+            body .bPageBlock .detailList table.black-borders tr td{ border-color: #000; }
+            
+            .ct{
+            text-align:center;
+            }
+            .bPageBlock .detailList .labelCol {
+            width: 22%;
+            }
+            .loadingImg {
+            position: absolute;
+            margin-top: .25rem;
+            margin-left: -1.25rem;
+            }
+            .hide {
+            display: none!important
+            }
+            .action-col {
+                width: 1px!important;
+                padding-right: 5px!important
+            }
+        </style>
+        
+        <div  id="contentLoading"  style="display:none;">
+            <div style="text-align: center;"> 
+                <img src="/img/loading.gif" alt="Loading graphic" />
+            </div>
+        </div>   
+        
+       <div id="contentLoaded">
+           
+            <apex:pageblock >
+               
+                 <apex:pageMessages /> 
+                
+                <apex:pageblocktable value="{!listcProducts}" var="Product" id="table" rendered="{!IF(mode == 'view', true, false)}" styleClass="{!IF(mode == 'edit', '', 'hide')}" >
+                    <apex:column headerValue="Action" headerClass="action-col">
+                        <apex:inputCheckbox value="{!Product.selected}" />
+                    </apex:column>
+                    <apex:column value="{!Product.comProd.LKP_Product__c}" headerValue="{!$ObjectType.Complaint_Products__c.fields.LKP_Product__c.label}" />                     
+                    <apex:column value="{!Product.comProd.TXT_Batch_Name__c}" headerValue="{!$ObjectType.Complaint_Products__c.fields.TXT_Batch_Name__c.label}" />
+                    <apex:column value="{!Product.comProd.NUM_Complaint_quantity__c}" headerValue="{!$ObjectType.Complaint_Products__c.fields.NUM_Complaint_quantity__c.label}" />
+                    <apex:column value="{!Product.comProd.PICK_Complained_Qty_UOM__c}" headerValue="{!$ObjectType.Complaint_Products__c.fields.PICK_Complained_Qty_UOM__c.label}" />
+                    <apex:column value="{!Product.comProd.NUM_Affected_Acres_ha__c}" headerValue="{!$ObjectType.Complaint_Products__c.fields.NUM_Affected_Acres_ha__c.label}" />
+                    <apex:column value="{!Product.comProd.LKP_Product_Variety__c}" headerValue="{!$ObjectType.Complaint_Products__c.fields.LKP_Product_Variety__c.label}" />
+                    <apex:column value="{!Product.comProd.NUM_Quantity_for_replacement__c}" headerValue="{!$ObjectType.Complaint_Products__c.fields.NUM_Quantity_for_replacement__c.label}" />
+                </apex:pageblocktable>
+                
+            <!--Edit table-->
+                          
+                <apex:pageblocktable value="{!listcProducts}" var="prod" id="editTable"  rendered="{!IF(mode == 'edit', true, false)}" styleClass="{!IF(mode == 'view', '', 'hide')}" >
+                    
+                    
+                    <apex:column style="width:19%" headerValue="{!$ObjectType.Complaint_Products__c.fields.LKP_Product__c.label} "  >
+                        <apex:selectList style="width:10%" required="TRUE" value="{!prod.comProd.LKP_Product__c}" styleClass="applyStyle prodName {!IF(prod.comProd.id != null,'edtPr2', 'newPr2')}" title="no" onchange="showBatchs(this);" onfocus="showBatchs(this);" disabled="{!IF(prod.comProd.id != null,true, false)}">                    
+                            <apex:selectOptions value="{!listAvailableProducts}"/>
+                        </apex:selectList>                    
+                    </apex:column>
+                    
+                    
+                    <apex:column style="width:13%" headerValue="{!$ObjectType.Complaint_Products__c.fields.TXT_Batch_Name__c.label}"  >
+                        <apex:selectList style="width:90%" required="TRUE" value="{!prod.comProd.TXT_Batch_Name__c}" styleClass="applyStyle batchStyle" title="no" label="{!$ObjectType.Complaint_Products__c.fields.TXT_Batch_Name__c.label}">                    
+                            <apex:selectOptions id="obatchs1" value="{!batchsForProds1}"/>
+                            <apex:selectOptions id="obatchs2" value="{!batchsForProds2}"/>
+                            <apex:selectOptions id="obatchs3" value="{!batchsForProds3}"/>
+                            <apex:selectOptions id="obatchs4" value="{!batchsForProds4}"/>
+                        </apex:selectList>                    
+                    </apex:column>
+                                       
+                    <apex:column style="width:10%" headerValue="{!$ObjectType.Complaint_Products__c.fields.NUM_Complaint_quantity__c.label}"  >
+                        <apex:inputField style="width:90%" required="TRUE" value="{!prod.comProd.NUM_Complaint_quantity__c}"/>
+                    </apex:column>
+
+                    <apex:column style="width:10%" headerValue="{!$ObjectType.Complaint_Products__c.fields.PICK_Complained_Qty_UOM__c.label}" >
+                        <apex:selectList style="width:15%" value="{!prod.comProd.PICK_Complained_Qty_UOM__c}" styleClass="applyStyle" title="no" label="{!$ObjectType.Complaint_Products__c.fields.PICK_Complained_Qty_UOM__c.label}">
+                        <apex:selectOptions value="{!AvailableUnits}"/>
+                        </apex:selectList>
+                    </apex:column>
+                   
+                    <apex:column style="width:10%" headerValue="{!$ObjectType.Complaint_Products__c.fields.NUM_Affected_Acres_ha__c.label}">
+                        <apex:inputField style="width:90%" required="TRUE" value="{!prod.comProd.NUM_Affected_Acres_ha__c}"/>
+                    </apex:column>
+                    
+                    <apex:column style="width:18%" headerValue="{!$ObjectType.Complaint_Products__c.fields.LKP_Product_Variety__c.label}">
+                        <apex:selectList style="width:15%" value="{!prod.comProd.LKP_Product_Variety__c}" styleClass="applyStyle" title="no" label="{!$ObjectType.Complaint_Products__c.fields.LKP_Product_Variety__c.label}">
+                        <apex:selectOptions value="{!listAvailableProducts}"/>
+                        </apex:selectList>
+                    </apex:column>
+                    
+                    <apex:column style="width:10%" headerValue="{!$ObjectType.Complaint_Products__c.fields.NUM_Quantity_for_replacement__c.label}">
+                        <apex:inputField style="width:90%" value="{!prod.comProd.NUM_Quantity_for_replacement__c}"/>
+                    </apex:column>
+                    
+               </apex:pageblocktable>
+                <apex:pageBlockButtons dir="" id="buttons"  rendered="true">
+                    
+                    <apex:actionStatus id="loadingAction">
+                        <apex:facet name="start"><apex:image value="/img/loading.gif" styleClass="loadingImg"/></apex:facet>
+                    </apex:actionStatus>
+                    
+                    <apex:commandButton id="newButton" value="New line" status="loadingAction" action="{!newRow}" onclick="editMode();" oncomplete="chargePickStyle();" reRender="CustomList" rendered="{!IF(mode == 'view', true, false)}" />
+                    
+                    <apex:CommandButton id="SaveButton" value="Save" status="loadingAction" action="{!save}" oncomplete="chargePickStyle();" reRender="CustomList" rendered="{!IF(mode == 'edit', true, false)}" />
+                    <apex:commandButton id="CancelButton" value="Cancel" status="loadingAction" action="{!cancel}" oncomplete="chargePickStyle();" reRender="CustomList" rendered="{!IF(mode == 'edit', true, false)}" />
+                    <apex:commandButton id="EditButton" value="Edit lines" status="loadingAction" action="{!edit}" onclick="editMode();" oncomplete="chargePickStyle();" reRender="CustomList,mode" rendered="{!IF(mode == 'view', true, false)}"/>
+                    <apex:commandButton id="DelButton" value="Delete" status="loadingAction" action="{!del}" oncomplete="chargePickStyle();"  reRender="CustomList" rendered="{!IF(mode == 'view', true, false)}"/>
+               
+                </apex:pageBlockButtons>
+
+            </apex:pageblock>
+        </div>
+        
+        <script>
+        $(document).ready(function()
+                          {
+                              chargePickStyle();
+                              
+                          if('{!mode}'=='edit')
+                                  editMode();
+                          });
+        
+        function editMode() {
+            
+            /* $('.btn__submit').prop('disabled',true).addClass('btnDisabled');
+                $('.btn__edit, .btn__delete, .btn__addmultiple').addClass('hide');
+                $('.btn__save, .btn__cancel').removeClass('hide');*/
+            //$('#table').addClass('hide');
+            //$('#editTable').removeClass('hide');
+                   
+            $('.prodName').each(function()
+           {
+               showBatchs($(this));        
+           });
+            
+        }
+                          
+        function chargePickStyle()
+        {
+            $('.applyStyle').chosen({
+                allow_single_deselect:true,
+                search_contains:true,
+                width: "100%",
+                placeholder_text_single:"{!$Label.Default_pick_list_option}"
+            });
+            
+            // -------------------
+            // It makes the dropdown actually drop up when the page edge breaks the dropdown list
+            // -------------------
+            $('.applyStyle').on('chosen:showing_dropdown', function(event, params) {
+                var chosen_container = $( event.target ).next( '.chosen-container' );
+                var dropdown = chosen_container.find( '.chosen-drop' );
+                var dropdown_top = dropdown.offset().top - $(window).scrollTop();
+                var dropdown_height = dropdown.height();
+                var viewport_height = $(window).height();
+                
+                if ( dropdown_top + dropdown_height > viewport_height ) {
+                    chosen_container.addClass('chosen-drop-up');
+                }
+                
+            });
+            
+            $('.applyStyle').on('chosen:hiding_dropdown', function(event, params) {
+                $( event.target ).next( '.chosen-container' ).removeClass( 'chosen-drop-up' );
+            });
+        }
+    
+        function showBatchs(e)
+        {
+              if ($(e).closest('tr').find('.prodName').val() != null && $(e).closest('tr').find('.prodName').val() != '' && $(e).closest('tr').find(".batchStyle") != null && $(e).hasClass('edtPr2'))
+              {
+                  var prodName = $(e).closest('tr').find('.prodName').val();
+                  var $mapParentChBatchs = jQuery.parseJSON('{!JSENCODE(mapBatchesJSON)}');
+                  var values = $mapParentChBatchs[prodName];
+                  var batch = $(e).closest('tr').find('.batchStyle option:selected').text();
+                  $(e).closest('tr').find(".batchStyle").empty();
+                  $(e).closest('tr').find(".batchStyle").append(new Option('{!$Label.Default_pick_list_option}', ''));
+                  for (var i = 0; i < values.length; i++)
+                  {
+                      if (values[i] != '' && values[i] != null && values[i] != batch)
+    
+                      {
+    
+                          $(e).closest('tr').find(".batchStyle").append(new Option(values[i], values[i]));
+    
+                          $(e).closest('tr').find(".batchStyle").data('chosen').allow_single_deselect = false;
+    
+                      }
+                  }
+    
+                  $(e).closest('tr').find(".batchStyle").append(new Option(batch, batch)).prop('selected', true);
+                  $(e).closest('tr').find(".batchStyle").val(batch);
+                  $(e).closest('tr').find(".batchStyle").trigger("chosen:updated");
+                 
+              } 
+             else if ($(e).closest('tr').find('.prodName').val() != null)
+              {
+                  var prodName = $(e).closest('tr').find('.prodName').val();
+    
+                  var $mapParentChBatchs = jQuery.parseJSON('{!JSENCODE(mapBatchesJSON)}');
+                  var values = $mapParentChBatchs[prodName];
+                  
+                  
+                  $(e).closest('tr').find(".batchStyle").empty();
+                  $(e).closest('tr').find(".batchStyle").append(new Option('{!$Label.Default_pick_list_option}', ''));
+    
+                  for (var i = 0; i < values.length; i++)
+                  {
+                      if (values[i] != '' && values[i] != null)
+                      {
+                          $(e).closest('tr').find(".batchStyle").append(new Option(values[i], values[i]));
+                      }
+                  }
+                 $(e).closest('tr').find(".batchStyle").data('chosen').allow_single_deselect = false;
+                 $(e).closest('tr').find(".batchStyle").trigger("chosen:updated");
+              }
+              else if($(e).closest('tr').find('.prodName').val() == null){
+                  $(e).closest('tr').find(".batchStyle").empty();
+                  $(e).closest('tr').find(".batchStyle").trigger("chosen:updated");
+              }
+
+        }
+        
+        </script>
+        
+    </apex:form>
+    
+</apex:page>

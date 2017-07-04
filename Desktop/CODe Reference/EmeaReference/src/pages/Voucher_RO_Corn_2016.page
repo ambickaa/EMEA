@@ -1,0 +1,276 @@
+<apex:page sidebar="false" applyHtmlTag="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="ro" standardcontroller="Voucher__c" extensions="Voucher_RO_Corn_2016_Controller" applyBodyTag="false">
+    <html lang="ro">
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <style>
+            @page {
+              size: A4 portrait;
+              margin: 0px;
+              padding: 0in;
+              border: 0px;}
+        </style>
+    </head>
+    <body style="margin:0; padding:0; border:0; font-weight:normal; font-style:normal; font-size:100%; font-size:13px; vertical-align:baseline; text-decoration:none; line-height:1; font-family:Arial Unicode MS, sans-serif">
+
+    <div id="page1">
+    <table cellspacing="0" style="width:100%; border-collapse:collapse; border-spacing:0; border:0; outline:0; position:relative; top:0; left:0; right:0; bottom:0; height:297mm; vertical-align:top">
+        <tr>
+            <td rowspan="2" style="width:54%; background:#0E6E9B"><apex:image url="{!$Resource.RO_Voucher2016_Left_Top_2}" width="100%" style="display:block; margin:0; padding:0px 1px; outline:0; border:0;" /></td>
+            <td style="width:54%; background:#0B5375; color:#FFF; padding:40px 40px 8px 25px;">
+                <span style="display:block; text-align:right; margin-bottom:0px"><apex:image url="{!$Resource.DEKALB_COLOR_OLD}" width="92px" style="filter:gray;"/></span>
+                <h2 style="font-size:1.15em; line-height:1.25em;"><b style="font-size:1.1em; font-family:sans-serif; font-weight:bold;">VOUCHER</b> pentru precomanda hibrizilor <br></br>de porumb DEKALB în sezonul 2016</h2>
+            </td>
+        </tr>
+        <tr>
+            <td style="background:#FFF; color:#000; padding:5px 40px 10px 25px;">
+                <h4 style="font-weight:bold; font-family:sans-serif; margin:4px 0 0;">Nume societate agricol<b style="font-family:Arial Unicode MS">ă</b>/Fermier:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:4px 0; margin:0">{!voucher.FarmNameCopy__c} &nbsp;</span>
+                
+                <h4 style="font-weight:bold; font-family:sans-serif; margin:4px 0 0;">Cod fiscal societate/CNP persoan<b style="font-family:Arial Unicode MS">ă</b> fizic<b style="font-family:Arial Unicode MS">ă</b>:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:4px 0; margin:0">{!voucher.FiscalCodeCopy__c} &nbsp;</span>
+                
+                <h4 style="font-weight:bold; font-family:sans-serif; margin:4px 0 0;">Adres<b style="font-family:Arial Unicode MS">ă</b>/Sediu social:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:4px 0; margin:0">{!voucher.AddressCopy__c} {!voucher.AccountRef__r.County__c}&nbsp;</span>
+                
+                <h4 style="display:inline-block; font-family:sans-serif; font-weight:bold; margin:4px 0 0; margin-top:15px; padding:1px 4px 1px 0; background:#FFF">Telefon:</h4>
+                <span style="display:block; border-bottom:1px dotted #000; padding:4px 0; padding-left:55px; margin:0; margin-top:-20px;">{!Phones} &nbsp;</span>
+            </td>
+        </tr>
+        
+        <tr>
+            <td style="height:650px; width:46%; background:#FFF; vertical-align:top; padding:10px 15px 0 30px;">
+                <!-- HYBRIDS TABLE -->
+                <table cellspacing="0" style="width:100%; border-collapse:collapse; border-spacing:0; border:0; vertical-align:middle; font-size:80%; color:#000; font-family:sans-serif; line-height:0.8em;">
+                    <thead>
+                        <tr style="font-size:80%; text-align:center; vertical-align: top; line-height: 1.2em">
+                            <th style="font-weight:bold; padding:5px 0;">Hibrid</th>
+                            <th style="font-weight:bold; padding:5px 0;">Tip</th>
+                            <th style="font-weight:bold; padding:5px 0;">Pret de list<b style="font-family:Arial Unicode MS;">ă</b><br/><small>(RON/sac)</small></th>
+                            <th style="font-weight:bold; padding:5px 0;">Ambalaj<br/><small>(nr. boabe în sac)</small></th>
+                            <th style="font-weight:bold; padding:5px 0;">Maturitate</th>
+                            <th style="font-weight:bold; padding:5px 0;">Num<b style="font-family:Arial Unicode MS;">ă</b>r saci<br/>comanda<b style="font-family:Arial Unicode MS;">&#355;</b>i<br/></th>
+                            <th style="font-weight:bold; padding:5px 0;">Discount<br/>acordat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="7" style="height:4px; background:#FFF;"></td></tr>
+                        <tr><td colspan="7" style="height:4px; background:#FDE200;"></td></tr>
+                        <tr><td colspan="7" style="height:4px; background:#0B5375;"></td></tr>
+                        
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_NOUHD}" var="NOUHD">
+                            <tr style="font-size:85%; text-align: center;" >
+                                <td>{!HYB_NAME_NOUHD[counter]}</td>
+                                <td rowspan="{!HYB_NUM_NOUHD}" style="{!if(counter==0,'','display:none;')}"><apex:image url="{!$Resource.RO_Voucher2015_Bubble}" width="20px" style="display:inline-block; margin:0; padding:0; border:0;"/><apex:image url="{!$Resource.HD_Hybrid_type}" width="20px" style="display:inline-block; margin:0; padding:0; border:0;"/></td>
+                                <td>{!HYB_PRICE_NOUHD[counter]}</td>
+                                <td>{!HYB_SIZE_NOUHD[counter]}</td>
+                                <td>{!HYB_FAO1_NOUHD[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_NOUHD[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_DISC_NOUHD[counter]}</td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr><td colspan="7" style="height:8px; border-bottom:4px solid #FDE200; display:none; {!DISPLAY[0]}"></td></tr>
+                        <tr><td colspan="7" style="height:6px; background:#0B5375; display:none; {!DISPLAY[0]}"></td></tr>
+
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_NOU}" var="NOU">
+                            <tr style="font-size:85%; text-align: center;" >
+                                <td>{!HYB_NAME_NOU[counter]}</td>
+                                <td rowspan="{!HYB_NUM_NOU}" style="{!if(counter==0,'','display:none;')}"><apex:image url="{!$Resource.RO_Voucher2015_Bubble}" width="20px" style="display:inline-block; margin:0; padding:0; border:0;"/></td>
+                                <td>{!HYB_PRICE_NOU[counter]}</td>
+                                <td>{!HYB_SIZE_NOU[counter]}</td>
+                                <td>{!HYB_FAO1_NOU[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_NOU[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_DISC_NOU[counter]}</td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr><td colspan="7" style="height:8px; border-bottom:4px solid #FDE200; display:none; {!DISPLAY[1]}"></td></tr>
+                        <tr><td colspan="7" style="height:6px; background:#0B5375; display:none; {!DISPLAY[1]}"></td></tr>
+                        
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_HD}" var="HD">
+                            <tr style="font-size:85%; text-align: center;">
+                                <td>{!HYB_NAME_HD[counter]}</td>
+                                <td rowspan="{!HYB_NUM_HD}" style="{!if(counter==0,'','display:none;')}"><apex:image url="{!$Resource.HD_Hybrid_type}" width="20px" style="display:inline-block; margin:0; padding:0; border:0;"/></td>
+                                <td>{!HYB_PRICE_HD[counter]}</td>
+                                <td>{!HYB_SIZE_HD[counter]}</td>
+                                <td>{!HYB_FAO1_HD[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_HD[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_DISC_HD[counter]}</td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr><td colspan="7" style="height:8px; border-bottom:4px solid #FDE200; display:none; {!DISPLAY[2]}"></td></tr>
+                        <tr><td colspan="7" style="height:6px; background:#0B5375; display:none; {!DISPLAY[2]}"></td></tr>
+                        
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_OTHERS}" var="OTHERS">
+                            <tr style="font-size:85%; text-align: center;">
+                                <td>{!HYB_NAME_OTHERS[counter]}</td>
+                                <td rowspan="{!HYB_NUM_OTHERS}" style="{!if(counter==0,'','display:none;')}"> </td>
+                                <td>{!HYB_PRICE_OTHERS[counter]}</td>
+                                <td>{!HYB_SIZE_OTHERS[counter]}</td>
+                                <td>{!HYB_FAO1_OTHERS[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_OTHERS[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_DISC_OTHERS[counter]}</td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr><td colspan="7" style="height:8px; border-bottom:4px solid #FDE200; display:none; {!DISPLAY[3]}"></td></tr>
+                        <tr><td colspan="7" style="height:6px; background:#0B5375; display:none; {!DISPLAY[3]}"></td></tr>
+                        
+                        <!--<apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_MAXTECH}" var="MAXTECH">
+                            <tr style="font-size:85%; text-align: center;">
+                                <td>{!HYB_NAME_MAXTECH[counter]}</td>
+                                <td rowspan="{!HYB_NUM_MAXTECH}" style="{!if(counter==0,'','display:none;')}"> </td>
+                                <td>{!HYB_PRICE_MAXTECH[counter]}</td>
+                                <td>{!HYB_SIZE_MAXTECH[counter]}</td>
+                                <td>{!HYB_FAO1_MAXTECH[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_MAXTECH[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_DISC_MAXTECH[counter]}</td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr><td colspan="7" style="height:8px; border-bottom:4px solid #FDE200; display:none; {!DISPLAY[3]}"></td></tr>
+                        <tr><td colspan="7" style="height:6px; background:#0B5375; display:none; {!DISPLAY[3]}"></td></tr>
+
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_CLASIC}" var="CLASIC">
+                            <tr style="font-size:85%; text-align: center;">
+                                <td>{!HYB_NAME_CLASIC[counter]}</td>
+                                <td rowspan="{!HYB_NUM_CLASIC}" style="{!if(counter==0,'','display:none;')}"> </td>
+                                <td>{!HYB_PRICE_CLASIC[counter]}</td>
+                                <td>{!HYB_SIZE_CLASIC[counter]}</td>
+                                <td>{!HYB_FAO1_CLASIC[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_CLASIC[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_DISC_CLASIC[counter]}</td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr><td colspan="7" style="height:8px; border-bottom:4px solid #FDE200; display:none; {!DISPLAY[3]}"></td></tr>
+                        <tr><td colspan="7" style="height:6px; background:#0B5375; display:none; {!DISPLAY[3]}"></td></tr>
+                        
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_YIELDGARD}" var="YIELDGARD">
+                            <tr style="font-size:85%; text-align: center;">
+                                <td>{!HYB_NAME_YIELDGARD[counter]}</td>
+                                <td rowspan="{!HYB_NUM_YIELDGARD}" style="{!if(counter==0,'','display:none;')}">YIELDGARD</td>
+                                <td>{!HYB_PRICE_YIELDGARD[counter]}</td>
+                                <td>{!HYB_SIZE_YIELDGARD[counter]}</td>
+                                <td>{!HYB_FAO1_YIELDGARD[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_YIELDGARD[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_DISC_YIELDGARD[counter]}</td>                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+
+                        <tr><td colspan="7" style="height:8px; border-bottom:4px solid #FDE200; {!if(HYB_NUM_YIELDGARD!=0,'','display:none;')}"></td></tr>
+                        <tr><td colspan="7" style="height:6px; background:#0B5375; {!if(HYB_NUM_YIELDGARD!=0,'','display:none;')}"></td></tr>
+                        
+                        <apex:variable value="{!0}" var="counter" />
+                        <apex:repeat value="{!HYB_NAME_DK}" var="DK">
+                            <tr style="font-size:85%; text-align: center;">
+                                <td>{!HYB_NAME_DK[counter]}</td>
+                                <td rowspan="{!HYB_NUM_DK}" style="{!if(counter==0,'','display:none;')}"> </td>
+                                <td>{!HYB_PRICE_DK[counter]}</td>
+                                <td>{!HYB_SIZE_DK[counter]}</td>
+                                <td>{!HYB_FAO1_DK[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_BAGS_DK[counter]}</td>
+                                <td style="border-bottom:1px dashed #000; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!HYB_DISC_DK[counter]}</td>
+                            </tr>
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                        </apex:repeat>
+                        
+                        <tr><td colspan="7" style="height:8px; border-bottom:4px solid #FDE200; display:none; {!DISPLAY[4]}"></td></tr>
+                        <tr><td colspan="7" style="height:6px; background:#0B5375; display:none; {!DISPLAY[4]}"></td></tr> -->
+                        
+                        <tr>
+                            <td colspan="5" style="line-height:1.2em; padding: 5px 0; font-weight:bold;">TOTAL saci cump<b style="font-family:Arial Unicode MS;">ă</b>ra<b style="font-family:Arial Unicode MS;">&#355;</b>i (saci)</td>
+                            <td style="border-bottom:1px dashed #000; padding: 5px 0; text-align:center; line-height:1.2em; font-weight:bold;{!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!voucher.TotalBags__c}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="border-bottom:1px solid transparent; font-weight:bold; font-size:1.2em; line-height:1.2em;">TOTAL discount</td>
+                            <td style="border-bottom:1px dashed #000; font-weight:bold; font-size:1.2em; line-height:1.2em; text-align:center; {!if(STYLELINES >= 18,'padding:3px 0 2px 5px;','padding:5px 0 2px 5px;')}">{!voucher.Price_Coupon__c} RON</td>
+                        </tr>                  
+                    </tbody>     
+                </table>
+            </td>
+            <td style="height:650px; width:46%; background:#0B5375; color:#FFF; vertical-align:top; padding:0 5px 10px 25px; font-size:80%; line-height:1.1em;">
+            
+            <div style="background:#FDE200; color:#000; vertical-align:middle; padding:12px 25px; margin-bottom: 15px; margin-left: -25px; margin-right: -5px; overflow: hidden">
+                <span style="float:left; font-family:sans-serif; font-size:1.25em">Seria Ro Nr. {!voucher.Name}</span> <span style="float:right; text-transform:uppercase; font-family:sans-serif; font-weight:bold; color:#AD2929; font-size:1.25em">{!if(status==1,'Anulat','')}</span>
+            </div>
+            
+                <h2 style="font-size:1.1em; border-bottom:1px solid #FFF; line-height:1.45em; margin-top:5px;">Se completează de <b style="text-transform:uppercase; font-weight:bold; font-family:sans-serif;">fermier</b></h2>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Vânzarea se efectueaz<b style="font-family:Arial Unicode MS;">ă</b> prin DISTRIBUITORUL:
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px; height: 100%; vertical-align: middle;"><b style="font-family:Arial Unicode MS;">{!voucher.DistributorNameCopy__c}</b></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Semn<b style="font-family:Arial Unicode MS;">ă</b>tur<b style="font-family:Arial Unicode MS;">ă</b> <b style="font-family:Arial Unicode MS;">ş</b>i <b style="font-family:Arial Unicode MS;">ş</b>tampil<b style="font-family:Arial Unicode MS;">ă</b>:<br/>&nbsp;
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;">
+                            <span style="display:block; padding:1px;">
+                            <apex:outputPanel layout="inline-block" rendered="{!$CurrentPage.parameters.signature!= null}">
+                                <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" width="130px" style="max-height:60px; max-width:210px; position: relative; top: 15%; transform: translateY(-25%);"/>
+                            </apex:outputPanel>
+                            </span>
+                        </div>
+                    </div>
+                
+                <h2 style="font-size:1.1em; border-bottom:1px solid #FFF; line-height:1.45em; margin-top:5px;">Se completează de <b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">distribuitor</b></h2>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Seria <b style="font-family:Arial Unicode MS;">ş</b>i nr. facturii:
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;"></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Data:
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px"></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-weight:bold; font-family:sans-serif;">
+                        Semn<b style="font-family:Arial Unicode MS;">ă</b>tur<b style="font-family:Arial Unicode MS; font-weight:bold;">ă</b> <b style="font-family:Arial Unicode MS;">ş</b>i <b style="font-family:Arial Unicode MS;">ş</b>tampil<b style="font-family:Arial Unicode MS;">ă</b>
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;"></span></div>
+                    </div>
+                    
+                <h2 style="font-size:1.1em; border-bottom:1px solid #FFF; line-height:1.45em; margin-top:5px;">Se completează de <b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">MONSANTO ROM</b>Â<b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">NIA S.R.L.</b></h2>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-family:sans-serif; font-weight:bold;">
+                        Nume <b style="font-family:Arial Unicode MS;">ş</b>i prenume reprezentant vânz<b style="font-family:Arial Unicode MS; font-weight:bold;">ă</b>ri:
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;"><b style="font-family:Arial Unicode MS;">{!Voucher.Owner.Name}</b></span></div>
+                    </div>
+                    <div style="display:inline-block; width:42%; margin-right:12px; vertical-align:top; font-family:sans-serif;">
+                        <b>Data:</b><br/>&nbsp;
+                        <div style="background:#FFF; height:62px; margin:12px 0 12px; color:#000;"><span style="display:inline-block; padding:5px;">{!data}</span></div>
+                    </div>
+                    
+                <p style="display:block; margin:40px 30px 0px 0;">Sunt de acord ca MONSANTO ROMÂNIA S.R.L. să preia în evidenţele sale datele incluse pe prezentul formular de precomandă şi să le utilizeze în scop de marketing.</p>
+            </td>
+        </tr>
+        <tr>
+             <td style="width:46%; background:#FFF; vertical-align:top;">
+                <table cellspacing="0" cellpadding="0" style="width:100%; border-collapse:collapse; border-spacing:0; border:0; outline:0; top:0; left:0; right:0; bottom:0;">
+                        <tr>
+                            <td rowspan="3" style="border-right:4px solid #FDE200; width:100%; height:109px; background:#FDE200; vertical-align:top; font-size:0.8em; font-family:Arial Unicode MS;; padding:5px 10px 0px 20px"><b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;"><br></br>Not</b>&#258; : <br></br>• Dac&#x103; se constat&#x103; nerespectarea vreuneia dintre condiţiile care valideaz&#x103;<br></br>voucherul, <b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">monsanto rom</b>Â<b style="text-transform:uppercase; font-family:sans-serif; font-weight:bold;">nia s.r.l.</b> î&#x15f;i rezerv&#x103; dreptul de a-l anula.<br></br><br></br>Pentru mai multe informatii legate despre produsele noastre, va rugam sa accesati:http://www.dekalb.ro/porumb/catalog-produse</td>
+                        </tr>  
+                </table>
+            </td>
+            <td style="width:54%; background:#FFF; vertical-align:top;">
+                <table cellspacing="0" cellpadding="0" style="width:100%; border-collapse:collapse; border-spacing:0; border:0; outline:0; top:0; left:0; right:0; bottom:0;">
+                        <tr>
+                            <td rowspan="3" style=" width:100%; border-top:4px solid #0B5375; border-left:2px solid #0B5375; border-right:4px solid #0B5375; height:109px; background:#0B5375; text-align:center; vertical-align:top; color:#FFF; font-size:1.3em; font-family:sans-serif; font-weight:bold; padding:0px 0px 0px 80px; ">EXEMPLAR MONSANTO</td>
+                        </tr>    
+                </table>
+            </td>
+        </tr>
+    </table>
+    </div>
+    </body>
+    </html>   
+</apex:page>

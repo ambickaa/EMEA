@@ -1,0 +1,7 @@
+<apex:page standardController="Hybrid__c"  showHeader="true"  sidebar="false" tabStyle="Hybrid__c">
+ 
+<meta name="viewport" content="width=1600" />
+	<div id="errorDiv_ep"></div>
+    <apex:pageMessages id="messages"  rendered="true"></apex:pageMessages>
+    <apex:detail subject="{!Hybrid__c}" relatedList="true" showChatter="false" inlineEdit="false" oncomplete="window.location.reload(false);"/>
+</apex:page>

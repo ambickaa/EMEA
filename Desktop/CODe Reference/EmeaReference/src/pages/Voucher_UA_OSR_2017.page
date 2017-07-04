@@ -1,0 +1,331 @@
+<apex:page sidebar="false" standardStylesheets="false" showHeader="false" renderAs="pdf" language="uk" standardcontroller="Voucher__c" extensions="Voucher_UA_OSR_2017_Controller" applyBodyTag="false">
+    <html lang="uk">
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <style>
+            @page {
+              size: A4 portrait;
+              margin: 0px;
+              padding: 0in;
+              border: 0px;}
+           .container {
+                width:85%;
+            }
+            .left {
+                width:auto;
+                overflow:hidden;
+            }
+            .right {
+                width:auto;
+                //float:right;
+                border-bottom: 1px solid black;
+            }
+            .inlineGroup{
+                margin:15px 0; 
+                border-bottom:1px solid #000; 
+                font-size:15px;
+            }
+            .inlineHeader{
+                font-weight:bold; 
+                font-style:italic;
+                display:inline-block; 
+                position:relative; 
+                bottom:-3px; 
+                left:-3px; 
+                padding:1px 5px 5px 3px; 
+                background:#FFF;
+            }
+            .inlineContent{
+                color:#333; 
+                text-transform:uppercase;
+            }
+            .signature{
+                width:40%;
+                border:0;
+                border-bottom: 1px dotted #000;
+                font-size:11px;
+            }
+        </style>
+    </head>
+    <body style="margin:0 60px; padding:0; border:0; font-weight:normal; font-style:normal; font-size:100%; font-size:13px; vertical-align:baseline; text-decoration:none; line-height:1em; font-family:Arial Unicode MS;">
+        
+        <div style="padding:0; margin:0; border:none; font-family:inherit; background:#FFF;">
+            <apex:image url="{!$Resource.dekalb_ukraine2017_1}" width="812px" style="margin:0; margin-left:-60px; margin-top:0; display:inline-block;"/>
+        </div>
+        
+        <div style="padding-top:20px; line-height:1.8em; font-weight:bold; color:#1F497D; font-size:14.5px; font-family:inherit; text-align:center; margin:0 auto; margin-bottom:2px; border-bottom:1px solid #000">
+            ДОВІДКА ПРО ГІБРИДИ ДО ДОГОВОРУ ПРО ПРОВЕДЕННЯ<br/> ДЕМОНСТРАЦІЙНОГО ВИПРОБУВАННЯ Nº {!voucher.Name} FOC
+        </div>
+        
+        <div style="color:red; font-size:16px; text-align:right; height:16px; text-transform:uppercase">{!if(status=1,"скасовано"," ")}</div>
+        
+        <div style="position:relative; margin-top:5px; padding-bottom:1px; border-bottom:1px solid #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">(Партнер) (Назва господарства)</span>
+            <span style="color:#333; text-transform:uppercase">{!voucher.FarmNameCopy__c} &nbsp;</span>
+            <span style="display:inline-block; position:absolute; padding:0 0 4px 4px; bottom:-2px; right:0; background:#FFF">
+                <span style="display:inline-block; font-weight:bold;">Cod. CIP: CC - </span>
+                <span style="display:inline-block; border:1px solid #000; width:89px; height:18px; margin-bottom:-4px">
+                    <span style="float:left; border-right:1px solid #000; width:14px; height:18px; text-align:center">{!CC0}</span>
+                    <span style="float:left; border-right:1px solid #000; width:14px; height:18px; text-align:center">{!CC1}</span>
+                    <span style="float:left; border-right:1px solid #000; width:14px; height:18px; text-align:center">{!CC2}</span>
+                    <span style="float:left; border-right:1px solid #000; width:14px; height:18px; text-align:center">{!CC3}</span>
+                    <span style="float:left; border-right:1px solid #000; width:14px; height:18px; text-align:center">{!CC4}</span>
+                    <span style="float:left; width:14px; height:18px; text-align:center">{!CC5}</span>
+                </span>
+            </span>
+        </div>
+        <div style="margin-top:2px; padding-bottom:1px; border-bottom:1px solid #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Область</span>
+            <span style="color:#333; text-transform:uppercase">{!voucher.AccountRef__r.StateProvince__c} &nbsp;</span>               
+        </div>
+        <div style="margin-top:2px; padding-bottom:1px; border-bottom:1px solid #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Район</span>
+            <span style="color:#333; text-transform:uppercase">{!voucher.AddressCopy__c} &nbsp;</span>
+        </div>
+        <div style="margin-top:2px; padding-bottom:1px; border-bottom:1px solid #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Місто</span>
+            <span style="color:#333; text-transform:uppercase">{!voucher.AccountRef__r.City__c} &nbsp;</span>
+        </div>
+        <div style="margin-top:2px; padding-bottom:1px; border-bottom:1px solid #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Телефон</span>
+            <span style="color:#333; text-transform:uppercase">{!Phones} &nbsp;</span>
+        </div>
+        <div style="margin-top:2px; padding-bottom:1px; border-bottom:1px solid #000; width:100%">
+            <span style="font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Електронна пошта</span>
+            <span style="color:#333">{!voucher.EmailCopy__c} &nbsp;</span>
+        </div>
+        
+        <div style="padding-top:35px; padding-bottom:0; line-height:1.8em; font-weight:bold; color:#1F497D; font-size:14.5px; font-family:inherit; text-align:center; margin:0 auto; margin-bottom:1px; border-bottom:1px solid #000">
+            РОЗРАХУНОК ОТРИМАННЯ БЕЗКОШТОВНОГО НАСІННЯ
+        </div>
+ 
+        <apex:outputPanel layout="none">
+        
+        <div style="background:#FFF; padding-top:15px; padding-bottom:15px; width:49.5%; vertical-align:top; margin-right:.1%; display:inline-block; {!HYB_DISPLAY}">
+            <table cellspacing="0" style="width:100%; text-align:center; border:2px solid #1F497D;">
+                <thead style="line-height:1.2em">
+                    <tr>
+                        <th cellspacing="0" style="border:none; vertical-align:middle; background:#1F497D; color:#FFF; font-weight:bold; padding:1px 1px 2px">Назва Гібриду</th>
+                        <th cellspacing="0" style="border:none; vertical-align:middle; background:#1F497D; color:#FFF; font-weight:bold; padding:1px 1px 2px">Кількість<br/>(Придбане насіння,<br/> мішків)</th>
+                    </tr>
+                </thead>
+                <tbody style="margin:0; padding:0; line-height:1.2em; border-collapse:collapse;">                            
+                    
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!HYB_NAME}" var="hyb">
+
+                        <tr style="margin:0; padding:2px;">    
+                            <td style="border-right:2px solid #1F497D; border-top:2px solid #1F497D; vertical-align:middle; padding:2px;">{!HYB_NAME[counter]}</td>
+                            <td style="border-top:2px solid #1F497D; vertical-align:middle; padding:2px">{!HYB_BAGS[counter]}</td>
+                        </tr>
+                        
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat>
+
+                    <tr style="margin:0; padding:2px;">
+                        <td style="border-right:2px solid #1F497D; border-top:2px solid #1F497D; vertical-align:middle; padding:2px; background:#1F497D; color:#FFF">Всього</td>
+                        <td style="border-top:2px solid #1F497D; vertical-align:middle; padding:2px; color:#1F497D">{!HYB_NUM_BAGS}</td>
+                    </tr>
+
+                </tbody>                
+            </table>
+        </div>
+        
+        <div style="background:#FFF; padding-top:15px; padding-bottom:15px; vertical-align:top; width:49.5%; display:inline-block; {!FOC_DISPLAY}">
+            <table cellspacing="0" style="width:100%; text-align:center; border:2px solid #1F497D;">
+                <thead style="line-height:1.2em">
+                    <tr>
+                        <th cellspacing="0" style="border:none; vertical-align:middle; background:#1F497D; color:#FFF; font-weight:bold; padding:1px 1px 2px">Назва Гібриду</th>
+                        <th cellspacing="0" style="border:none; vertical-align:middle; background:#1F497D; color:#FFF; font-weight:bold; padding:1px 1px 2px">Кількість<br/>(Гібриди для <br/>випробування, мішків)</th>
+                    </tr>
+                </thead>
+                <tbody style="margin:0; padding:0; line-height:1.2em; border-collapse:collapse;">                            
+                    
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!FOC_NAME}" var="foc">
+
+                        <tr style="margin:0; padding:2px;">    
+                            <td style="border-right:2px solid #1F497D; border-top:2px solid #1F497D; vertical-align:middle; padding:2px;">{!FOC_NAME[counter]}</td>
+                            <td style="border-top:2px solid #1F497D; vertical-align:middle; padding:2px">{!FOC_BAGS[counter]}</td>
+                        </tr>
+                        
+                        <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat>
+
+                    <tr style="margin:0; padding:2px;">
+                        <td style="border-right:2px solid #1F497D; border-top:2px solid #1F497D; vertical-align:middle; padding:2px; background:#1F497D; color:#FFF">Всього</td>
+                        <td style="border-top:2px solid #1F497D; vertical-align:middle; padding:2px; color:#1F497D">{!FOC_NUM_BAGS}</td>
+                    </tr>
+
+                </tbody>                
+            </table>
+        </div>
+
+        </apex:outputPanel>
+        
+        <div style="margin-top:52px; padding-bottom:1px; border-bottom:1px solid #000; width:66%">
+            <span style="font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Регіональний представник<br/>компанії «ТОВ Монсанто Україна»</span>
+            <span style="color:#333; text-transform:uppercase">{!voucher.Owner.Name} &nbsp;</span>
+        </div>
+        <div style="float:right; margin-top:-20px; padding-bottom:1px; border-bottom:1px solid #000; width:22%;">
+            <span style="font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Дата</span>
+            <span style="color:#333; text-transform:uppercase">{!data} &nbsp;</span>
+        </div>
+        
+        <div style="margin-top:12px; padding-bottom:1px; border-bottom:1px solid #000; width:66%">
+            <span style="font-weight:bold; display:inline-block; position:relative; bottom:-3px; left:-3px; padding:1px 5px 5px 3px; background:#FFF">Представник Господарства</span>
+            <span style="color:#333; text-transform:uppercase"><apex:outputPanel layout="inline-block" rendered="{!$CurrentPage.parameters.signature!= null}" ><img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" width="140px" style="max-height:80px; max-width:210px;"/></apex:outputPanel> &nbsp;</span>
+        </div>
+        
+        <div style="float:right">
+            <apex:image url="{!$Resource.dekalb_ukraine2017_2}" width="116px" style="margin-top:22px"/>
+        </div>
+        
+        <!-- 1st page of the legal text -->
+        <div style="page-break-after:always;"></div>
+        
+        <div style="margin-top:80px;text-align:center;font-size:11px;">
+            ПОВІДОМЛЕННЯ ПРО КОНФІДЕНЦІЙНІСТЬ ТА ЗГОДА НА ОБРОБКУ ПЕРСОНАЛЬНИХ ДАНИХ
+        </div>
+
+        <div class="inlineGroup">
+            <span class="inlineHeader">Ваше ПІБ</span>
+            <span class="inlineContent">{!voucher.LKP_CONTACT__r.Name} &nbsp;</span>
+        </div>
+        <div class="inlineGroup">
+            <span class="inlineHeader">Дата народження</span>
+            <span class="inlineContent">
+                <apex:outputText value="{0, date, d MMMM yyyy}">
+                    <apex:param value="{!voucher.LKP_CONTACT__r.Birthdate}" /> 
+                </apex:outputText> &nbsp;
+            </span>
+        </div>
+        <div class="inlineGroup">
+            <span class="inlineHeader">Ваш номер телефону</span>
+            <span class="inlineContent">{!voucher.LKP_CONTACT__r.Phone} &nbsp;</span>
+        </div>
+        <div class="inlineGroup">
+            <span class="inlineHeader">Адреса електронної пошти</span>
+            <span class="inlineContent">{!voucher.LKP_CONTACT__r.Email} &nbsp;</span>
+        </div>
+        <div class="inlineGroup">
+            <span class="inlineHeader">Назва Вашого підприємства</span>
+            <span class="inlineContent">{!voucher.AccountRef__r.Name} &nbsp;</span>
+        </div>
+        <div class="inlineGroup">
+            <span class="inlineHeader">Ваша посада</span>
+            <span class="inlineContent">{!voucher.LKP_CONTACT__r.Position_picklist__c} &nbsp;</span>
+        </div>
+        <div class="inlineGroup">
+            <span class="inlineHeader">Область</span>
+            <span class="inlineContent">{!voucher.AccountRef__r.StateProvince__c} &nbsp;</span>
+        </div>
+        <div class="inlineGroup">
+            <span class="inlineHeader">Район</span>
+            <span class="inlineContent">{!voucher.AccountRef__r.County__c} &nbsp;</span>
+        </div>
+        <div class="inlineGroup">
+            <span class="inlineHeader">Населений пункт</span>
+            <span class="inlineContent">{!voucher.AccountRef__r.City__c} &nbsp;</span>
+        </div>
+        
+        <div class="inlineGroup">
+            <span class="inlineHeader">Площа ріллі в обробітку,га</span>
+            <span class="inlineContent">{!voucher.AccountRef__r.TotalAcreagesCY__c} &nbsp;</span>
+            <span class="inlineHeader">; під кукурудзою,га</span>
+            <span class="inlineContent">{!voucher.AccountRef__r.CornTotalAcreagesCY__c} &nbsp;</span>
+            <span class="inlineHeader">; під ріпаком, га</span>
+            <span class="inlineContent">{!voucher.AccountRef__r.OSRTotalAcreagesCY__c} &nbsp;</span>
+        </div>
+        <div style="text-align:center;margin:20px 0;">
+            <span style="font-weight:bold; display:inline-block; position:relative;font-size:10px;">Згода</span>
+        </div>
+        <div class="inlineGroup" style="margin-bottom:5px;border-bottom:1px solid #000; font-weight:normal;font-size:10px;color:#353535;text-align:justify;">
+            <p>Підписуючи цю форму та надаючи Ваші персональні дані1, Ви надаєте <span style="color:#000;">товариству з обмеженою відповідальністю «Монсанто Україна»</span> згоду: </p>
+            <p>
+            <div>(a) обробляти Ваші персональні дані в межах та для цілей, що вказані в цьому повідомленні;</div>
+            <div>(b) контактувати з Вами по електронній пошті, SMS, MMS та шляхом використання інших засобів електронного зв’язку (використовуючи надану вами інформацію) для цілей маркетингу; та</div>
+            <div>(c) передавати Ваші персональні дані за межі Вашої <b style="color:#000;">країни</b> (включаючи країни поза межами ЄЕЗ, які не забезпечують такі ж права та/або рівень захисту відносно Ваших персональних даних), що дозволить ТОВ «Монсанто Україна» та групі компаній «Монсанто» (та третім особам, уповноваженим <b style="color:#000;">ТОВ «Монсанто Україна»</b> на обробку даних) обробляти Ваші персональні дані відповідно до цього повідомлення, в тому числі, якщо цього вимагає законодавство.</div>
+            </p>
+            
+            <p><b style="color:#000;">Ваші права стосовно ваших персональних даних </b></p>
+            
+            <p>Цим повідомляємо, що у відповідності до Закону України «Про захист персональних даних» від 1.06.2010, в редакції від 20.11.2012, Ви як суб’єкт персональних даних маєте наступні права: </p>
+
+            <p>
+            <ol>
+                <li>знати про місцезнаходження бази персональних даних, яка містить Ваші персональні дані, її призначення та найменування, місцезнаходження та / або місце проживання (перебування) володільця чи розпорядника персональних даних або дати відповідне доручення щодо отримання цієї інформації уповноваженим ним особам, крім випадків, встановлених законом; </li>
+                <li>отримувати інформацію про умови надання доступу до Ваших персональних даних, зокрема інформацію про третіх осіб, яким передаються Ваші персональні дані;</li>
+                <li>на доступ до Ваших персональних даних;</li>
+                <li>отримувати не пізніш як за тридцять календарних днів з дня надходження запиту, крім випадків, передбачених законом, відповідь про те, чи зберігаються Ваші персональні дані у відповідній базі персональних даних, а також отримувати зміст Ваших персональних даних, які зберігаються;</li>
+                <li>пред'являти вмотивовану вимогу володільцю персональних даних із запереченням проти обробки Ваших персональних даних; </li>
+                <li>пред'являти вмотивовану вимогу щодо зміни або знищення Ваших персональних даних будь-яким володільцем та розпорядником персональних даних, якщо ці дані обробляються незаконно чи є недостовірними;</li>
+                <li>на захист Ваших персональних даних від незаконної обробки та випадкової втрати, знищення, пошкодження у зв'язку з умисним приховуванням, ненаданням чи несвоєчасним їх наданням, а також на захист від надання відомостей, що є недостовірними чи ганьблять честь, гідність та ділову репутацію фізичної особи;</li>
+                <li>звертатися із скаргами на обробку Ваших персональних даних до органів державної влади та посадових осіб, до повноважень яких належить забезпечення захисту персональних даних, або до суду;</li>
+                <li>застосовувати засоби правового захисту в разі порушення законодавства про захист персональних даних;</li>
+                <li>вносити застереження стосовно обмеження права на обробку Ваших персональних даних;</li>
+                <li>відкликати згоду на обробку персональних даних;</li>
+                <li>знати механізм автоматичної обробки персональних даних;</li>
+                <li>на захист від автоматизованого рішення, яке має для Вас правові наслідки.</li>
+            </ol>
+            </p>
+        </div>
+        <div>
+            <span style="font-weight:normal; display:inline-block; position:relative;font-size:10px;text-align:justify;">
+                1 Ім'я, вулиця, поштовий індекс, поштовий ящик, місто, штат, округ / регіон, країна, факс, телефон, мобільний телефон, домашній телефон, інший телефон, веб-сайт, електронна пошта, ім'я (прізвище, ім'я, по батькові), звернення, посада , дата народження, стать, географічне положення (довгота / широта) господарства, ім'я, використовуване у Facebook, ім'я, використовуване у Твіттері і / або особа, що приймає рішення.
+            </span>
+        </div>
+        
+        <!-- 2nd page of the legal text -->
+        <div style="page-break-after:always;"></div>
+        
+        <div style="margin-top:80px;text-align:left;font-size:11px;font-weight:normal;color:#353535;text-align:justify;">
+            <p>Ви маєте право на <b style="color:#000;">доступ до</b> Ваших персональних даних, що <b style="color:#000;">обробляються ТОВ</b> «Монсанто <b style="color:#000;">Україна</b>», та на виправлення певної неточної інформації стосовно Вас. Якщо ви забажаєте скористатися цим правом, або повідомити ТОВ «Монсанто Україна» про внесення змін до Ваших персональних даних, просимо використовувати контактну інформацію, що вказана нижче. <b style="color:#000;">Інші Ваші права як суб’єкта персональних даних викладені в Повідомленні, що додається до цього документу.</b></p>
+            <p>Якщо в будь-який час Ви забажаєте відкликати цю згоду, Ви можете це зробити.</p>
+            <p>Просимо звертатися до Озерова Л.В. по T: 380-44-4907575 E: <a href="url">lidiia.ozerova@monsanto.com</a> з будь-якими питаннями стосовно вищезазначеного.</p>
+            <p><b style="color:#000;">Мета цього повідомлення</b></p>
+            <p><b style="color:#000;">ТОВ</b> «Монсанто <b style="color:#000;">Україна</b>» <b style="color:#000;">(м. Київ, 01033, вул. Володимирська, буд. 101-А, корп.2)</b> (надалі – „Монсанто”, „ми”, „нас”, „наш”), як частина міжнародної групи компаній «Монсанто» ( надалі – «Група Монсанто»), бажає забезпечити якнайбільш ефективне надання послуг клієнтам. У зв’язку з цим, ми створили централізовану електронну базу даних клієнтів і контактної інформації, що дозволить збирати, зберігати та мати доступ до контактної інформації наших клієнтів і більш ефективно використовувати цю інформацію, щоб розуміти і реагувати на індивідуальні запити і вимоги. 
+            Цим повідомленням ми інформуємо Вас, які персональні дані ми збираємо, яким чином вони обробляються і як Ви можете скористатися Вашими особистими правами на доступ, оновлення, виправлення та видалення такої інформації.</p>
+            <p><b style="color:#000;">Які персональні дані ми збираємо?</b></p>
+            
+            <p>Інформація, яку ми хотіли б отримати про Вас і Вашу компанію, викладена <b style="color:#000;">вище в</b> цьому документі <b style="color:#000;">у посиланні в кінці попередньої сторінки.</b> Ви не зобов’язані підписувати цей документ, але якщо Ви приймете рішення не підписувати його, ми можемо бути позбавлені можливості надавати Вам наші послуги в майбутньому, якщо ця інформація буде необхідна для надання такої послуги (послуг). 
+            Якщо Ви є нашим клієнтом, ми можемо попросити Вас надати інформацію стосовно третіх осіб, що беруть участь в ланцюгу поставок. Якщо Ви надаватимете будь-які персональні дані, за допомогою яких можна ідентифікувати таку третю особу (осіб) і які стосується цієї третьої особи (осіб), то надаючи таку інформацію, Ви підтверджуєте, що ця третя особа (особи) надали Вам згоду на передання нам такої інформації для вказаних нижче цілей.</p>
+            
+            <p><b style="color:#000;">Яким чином та з якою метою будуть використовуватись Ваші персональні дані?</b></p>
+            
+            <p><b style="color:#000;">ТОВ</b> «Монсанто <b style="color:#000;">Україна</b>» буде обробляти ці персональні дані з метою:</p> 
+            <ul>
+                <li>управління взаємовідносинами з клієнтами - встановлення та управління взаємовідносинами з Вами, планування наших візитів та інша взаємодія або спілкування з Вами, реєстрація та відстеження нашої взаємодії з Вами, та робота з будь-якими питаннями або кореспонденцією, що надходить від Вас;</li>
+                <li>прямий маркетинг - інформування Вас про продукцію і послуги «Монсанто» поштою, факсом та електронною поштою, SMS, MMS та за допомогою інших електронних засобів;</li>
+                <li>інші законні підстави - оцінка, планування, класифікація рахунків, дослідження та аналіз, прогнозування, адміністративна звітність, вдосконалення ланцюга поставок, життєвого циклу продуктів, бухгалтерського обліку, інша внутрішня діяльність (в тому числі спільні підприємства і валовий обсяг) і управління продажами, якщо для цього необхідні персональні дані;</li>
+                <li>замовлення будь-яких послуг на законних підставах у будь-яких третіх осіб, як юридичних, так і фізичних, та надання таких послуг будь-яким третім особам, а також запобігання і реагування на технічні проблеми або проблеми в обслуговуванні, пов’язані з такими послугами; та/або</li>
+                <li>дотримання правових, нормативних та інших зобов’язань належного управління.</li>
+            </ul>
+            
+            <p>Ми також можемо знеособити Ваші персональні дані, видаливши інформацію, яка може ідентифікувати Вашу особу, тому ми можемо використовувати знеособлену інформацію про Вас з метою проведення досліджень і для інших вищевказаних цілей.</p>
+            
+            <p><b style="color:#000;">Кому будуть доступні мої персональні дані?</b></p>
+            
+            <p>Ваші персональні дані бути надані і використовуватись із вказаною метою в межах Групи «Монсанто» та можуть бути передані з цією метою: (і) будь-яким третім особам, в тому числі, без обмеження, тим, що надають послуги «Монсанто» або Групі «Монсанто» на підставі договору; (іі) іншим особам, які не є учасниками Групи «Монсанто» і яким вказані треті особи доручили обробку Ваших персональних даних на підставі відповідних договорів; та (ііі) у випадках, коли цього вимагає чинне законодавство</p>
+            
+            <p><b style="color:#000;">Чи будуть мої персональні дані передаватися закордон?</b></p>
+            
+            <p>Ваші персональні дані можуть передаватись отримувачам в межам Групи «Монсанто» та/або третім особам, в тому числі за межі України, в тому числі до країн, законодавство яких не забезпечує такого саме рівня захисту персональних даних, як законодавство України.</p>
+            
+            <div class="inlineGroup signature">
+                <span class="inlineHeader">Підпис:</span>
+                <span class="inlineContent"><apex:outputPanel layout="inline-block" rendered="{!$CurrentPage.parameters.signature!= null}" ><img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" width="140px" style="max-height:80px; max-width:210px;"/></apex:outputPanel> &nbsp;</span>
+            </div>
+            <div class="inlineGroup signature">
+                <span class="inlineHeader">ПІБ:</span>
+                <span class="inlineContent">{!voucher.LKP_CONTACT__r.Name} &nbsp;</span>
+            </div>
+            <div class="inlineGroup signature">
+                <span class="inlineHeader">Дата:</span>
+                <span class="inlineContent">{!data} &nbsp;</span>
+            </div>
+        </div>
+        
+    </body>
+    </html>   
+</apex:page>

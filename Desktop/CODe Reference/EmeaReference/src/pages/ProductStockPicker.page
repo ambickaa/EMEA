@@ -1,0 +1,58 @@
+<apex:page controller="StockPickerController" sidebar="false" tabStyle="Product2">
+    <apex:sectionHeader title="Stock Allocation" subtitle="Add Products"/>
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:form >
+    <apex:pageBlock title="Products to add">
+        <apex:pageBlockTable value="{!stpAdded}" var="product">
+            <apex:column headerValue="Select">
+                <apex:inputCheckbox value="{!product.selected}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.Product2.fields.Name.label}" value="{!product.pce.ProductRef__r.Name}"/>
+            <apex:column headerValue="{!$ObjectType.Product2.fields.ProductKernelSize__c.label}" value="{!product.pce.ProductRef__r.ProductKernelSize__c}" />
+            <apex:column headerValue="{!$ObjectType.Product2.fields.ProductTreatment__c.label}" value="{!product.pce.ProductRef__r.ProductTreatment__c}" />
+            <apex:column headerValue="{!$ObjectType.Product2.fields.ProductBagSize__c.label}" value="{!product.pce.ProductRef__r.ProductBagSize__c}" />
+            <apex:column headerValue="{!$ObjectType.Product2.fields.ProductMaturity__c.label}" value="{!product.pce.ProductRef__r.ProductMaturity__c}" />
+           
+        </apex:pageBlockTable>
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Add Products" action="{!doSave}"/>
+            <apex:commandButton value="{!$Label.Cancel}" action="{!doCancel}"/>
+            <apex:commandButton value="{!$Label.Delete}" action="{!doDeleteSelected}" id="doDeleteSelected"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    
+    <apex:pageBlock title="Filters" >
+        <apex:pageBlockSection >
+            <apex:inputText label="{!$ObjectType.Product2.fields.Name.label}" value="{!filterName}"/>
+            <apex:inputField value="{!filter.ProductKernelSize__c}"/>           
+            <apex:inputField value="{!filter.ProductTreatment__c}"/>           
+            <apex:inputField value="{!filter.ProductBagSize__c}"/>   
+            <apex:inputField value="{!filter.ProductMaturity__c}"/>    
+            <apex:inputField value="{!filter.ProductPrmyPkType__c}"/>   
+            <apex:inputField value="{!filter.ProductVendor__c}"/>   
+            <apex:inputField value="{!filter.ProductBagWeight__c}"/>   
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="{!$Label.Filter}" action="{!doFilter}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock> 
+    
+    <apex:pageBlock title="Possible Products" >
+         <apex:pageBlockTable value="{!stpResult}" var="product">
+            <apex:column headerValue="Select">
+                <apex:inputCheckbox value="{!product.selected}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.Product2.fields.Name.label}" value="{!product.pce.ProductRef__r.Name}"/>
+            <apex:column headerValue="{!$ObjectType.Product2.fields.ProductKernelSize__c.label}" value="{!product.pce.ProductRef__r.ProductKernelSize__c}" />
+            <apex:column headerValue="{!$ObjectType.Product2.fields.ProductTreatment__c.label}" value="{!product.pce.ProductRef__r.ProductTreatment__c}" />
+            <apex:column headerValue="{!$ObjectType.Product2.fields.ProductBagSize__c.label}" value="{!product.pce.ProductRef__r.ProductBagSize__c}" />
+            <apex:column headerValue="{!$ObjectType.Product2.fields.ProductMaturity__c.label}" value="{!product.pce.ProductRef__r.ProductMaturity__c}" />
+         </apex:pageBlockTable>
+             
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Select Products" action="{!doAddSelected}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>     
+
+    </apex:form>
+</apex:page>

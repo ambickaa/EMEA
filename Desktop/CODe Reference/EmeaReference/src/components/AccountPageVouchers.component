@@ -1,0 +1,58 @@
+<apex:component controller="AccountPageVouchersController">
+    
+    <apex:attribute name="account" type="Account" description="currentAccount" required="false"/>
+
+    <apex:pageBlock >
+
+        <div class="pageBlockSection">
+	        <apex:pageBlockSection title="{!$ObjectType.Voucher__c.labelPlural}" columns="1" collapsible="false"></apex:pageBlockSection>
+        </div><br/>
+        
+        <table class="sortable compact row-border hover nowrap">
+            <thead class="{!IF(List_Records.size == 0, 'hidden', '')}">
+                <tr>
+                    <th>{!$ObjectType.Voucher__c.fields.Name.label}</th>
+                    <th>{!$ObjectType.Campaign.fields.DivisionRef__c.label}</th>
+                    <th>{!IF(isFarmAccount, $ObjectType.Voucher__c.fields.DistributorRef__c.label, $ObjectType.Voucher__c.fields.AccountRef__c.label)}</th>
+                    <th>{!$ObjectType.Voucher__c.fields.TotalBags__c.label}</th>
+                    <th>{!$ObjectType.Voucher__c.fields.Status__c.label}</th>
+                    <th>{!$ObjectType.Voucher__c.fields.Signed__c.label}</th>
+                    <th>{!$Label.Document}</th>
+                    <th>{!$Label.Last_Update}</th>
+                    <th>{!$Label.Created_By}</th>
+                    <th>{!$Label.Created_Date}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat var="r" value="{!List_Records}">
+                <tr class="{!IF(OR(r.Status__c == 'Cancelled', r.Status__c == 'Rejected'), 'row-disabled', '')}">
+                    <td><apex:outputLink target="_blank" value="/{!r.Id}">{!r.Name}</apex:outputLink></td>
+                    <td>{!r.CampaignRef__r.DivisionRef__r.Name}</td>
+                    <td><apex:outputLink target="_blank" value="/{!IF(isFarmAccount, r.DistributorRef__c, r.AccountRef__c)}">{!IF(isFarmAccount, r.DistributorNameCopy__c, r.FarmNameCopy__c)}</apex:outputLink></td>
+                    <td>{!r.TotalBags__c} ({!r.TotalBagsFOC__c})</td>
+                    <td>{!r.Status__c}</td>
+                    <td><apex:outputField value="{!r.Signed__c}" /></td>
+                    <td>
+                        <apex:repeat value="{!r.attachments}" var="attachment">
+                            <apex:outputLink target="_blank" title="{!attachment.Name}" value="/servlet/servlet.FileDownload?file={!attachment.Id}">
+                                <apex:image value="{!if(right(attachment.name, 3) == 'pdf','/img/icon/documents16.png','/img/icon/custom51_100/pencil16.png')}" />
+                            </apex:outputLink> &nbsp;
+                        </apex:repeat>
+                    </td>
+                    <td><apex:outputField value="{!r.LastModifiedDate}" /></td>
+                    <td><apex:outputLink value="/{!r.CreatedById}">{!r.CreatedBy.Name}</apex:outputLink></td>
+                    <td><apex:outputField value="{!r.CreatedDate}" /></td>
+                </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+        
+        <ul class="block-details-list">
+    		<apex:repeat var="r" value="{!availableReports}">
+    			<li class="{!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r.Id}?pv1={!account.Id}" target="_blank"><img src="/img/icon/custom51_100/gears16.png" />{!r.Name}</a></li>
+    		</apex:repeat>
+        </ul>
+        
+    </apex:pageBlock>
+    
+</apex:component>

@@ -1,0 +1,21 @@
+<apex:component >
+    
+    <apex:attribute name="idField" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    
+    
+        <span class="{!idField}">
+           
+            <a href="javascript:;" onclick="javascript:popUpHistory('/apex/tacticalPlanHistory?id={!idField}&mode={!mode}');">View History</a>
+            <apex:componentBody />
+        </span>
+   
+    <style>
+        .idField
+        {
+            display:none;
+        }
+    </style>
+    
+    
+</apex:component>

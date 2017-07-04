@@ -1,0 +1,15 @@
+<apex:page standardController="Delivery__c" extensions="DeliveryLineItems_Inline_Extension">
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!delivery}" var="del">
+            <apex:column headerValue="{!$ObjectType.Delivery_Line_Item__c.fields.Name.Label}">
+                <apex:outputLink value="/{!del.Id}" target="_blank">{!del.Name}</apex:outputLink>
+            </apex:column>
+            <apex:column value="{!del.GC_Item_Code__c}"/>
+            <apex:column value="{!del.GC_Item_Descr__c}"/>
+            <apex:column value="{!del.GC_Batch_Number_Text__c}"/>
+            <apex:column value="{!del.GC_Plant_Desc__c}"/>
+            <apex:column value="{!del.GC_SKULineItem_Quantity__c}"/>
+            <apex:column value="{!del.GC_Shipping_Point_Descr__c}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>

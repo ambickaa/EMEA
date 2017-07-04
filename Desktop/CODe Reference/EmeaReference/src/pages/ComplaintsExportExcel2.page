@@ -1,0 +1,130 @@
+<apex:page id="page" controller="ComplaintsExportController" sidebar="false" contentType="application/vnd.ms-excel#{!fileName}.xls">
+    <apex:outputText value="{!xlsHeader}"/>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">      
+         <Styles>
+             <Style ss:ID="s1">
+                 <Alignment/>
+                 <Borders/>
+                 <Font ss:Bold="1"/>
+                 <Interior/>
+                 <NumberFormat/>
+                 <Protection/>
+             </Style>
+         </Styles>
+    
+         <Worksheet ss:Name="Sheet1">
+             <Table x:FullColumns="1" x:FullRows="1">
+                 <Column ss:Width="170"/>
+                 <Column ss:Width="170"/>
+                     <Row>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Customer Complaint</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >LineID</Data></Cell>    
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Batch</Data></Cell>    
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Product Name</Data></Cell>  
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complaint Quantity</Data></Cell>  
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Complained Qty UOM</Data></Cell>  
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Affected Acres</Data></Cell>  
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Affected Acres UOM</Data></Cell>  
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Quality Score</Data></Cell>
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >Description</Data></Cell>  
+                         <Cell ss:StyleID="s1"><Data ss:Type="String" >plantingDate</Data></Cell>
+                     </Row>
+
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListComplaintProducts1}" var="Comp">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].LKP_CASE__r.CaseNumber}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].Name}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].TXT_Batch_Name__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].LKP_Product__r.name}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts1[counter].NUM_Complaint_quantity__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].PICK_Complained_Qty_UOM__c}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts1[counter].NUM_Affected_Acres_ha__c}</Data></Cell>
+                         <Cell></Cell>
+                         <Cell></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].LKP_Product__r.name}</Data></Cell>
+                         <Cell></Cell>
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat> 
+                    
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListComplaintProducts2}" var="Comp">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts2[counter].LKP_CASE__r.CaseNumber}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts2[counter].Name}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListComplaintProducts2[counter].TXT_Batch_Name__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts2[counter].LKP_Product__r.name}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts2[counter].NUM_Complaint_quantity__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts2[counter].PICK_Complained_Qty_UOM__c}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts2[counter].NUM_Affected_Acres_ha__c}</Data></Cell>
+                         <Cell></Cell> 
+                         <Cell></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].LKP_Product__r.name}</Data></Cell>
+                         <Cell></Cell>
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat> 
+                    
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListComplaintProducts3}" var="Comp">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts3[counter].LKP_CASE__r.CaseNumber}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts3[counter].Name}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListComplaintProducts3[counter].TXT_Batch_Name__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts3[counter].LKP_Product__r.name}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts3[counter].NUM_Complaint_quantity__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts3[counter].PICK_Complained_Qty_UOM__c}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts3[counter].NUM_Affected_Acres_ha__c}</Data></Cell>
+                         <Cell></Cell> 
+                         <Cell></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].LKP_Product__r.name}</Data></Cell> 
+                         <Cell></Cell>
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat> 
+                    
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListComplaintProducts4}" var="Comp">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts4[counter].LKP_CASE__r.CaseNumber}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts4[counter].Name}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListComplaintProducts4[counter].TXT_Batch_Name__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts4[counter].LKP_Product__r.name}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts4[counter].NUM_Complaint_quantity__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts4[counter].PICK_Complained_Qty_UOM__c}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts4[counter].NUM_Affected_Acres_ha__c}</Data></Cell>
+                         <Cell></Cell> 
+                         <Cell></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].LKP_Product__r.name}</Data></Cell>
+                         <Cell></Cell>
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat> 
+                    
+                    <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!ListComplaintProducts5}" var="Comp">
+                     <Row>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts5[counter].LKP_CASE__r.CaseNumber}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts5[counter].Name}</Data></Cell>
+                        <Cell><Data ss:Type="String">{!ListComplaintProducts5[counter].TXT_Batch_Name__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts5[counter].LKP_Product__r.name}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts5[counter].NUM_Complaint_quantity__c}</Data></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts5[counter].PICK_Complained_Qty_UOM__c}</Data></Cell>
+                         <Cell><Data ss:Type="Number">{!ListComplaintProducts5[counter].NUM_Affected_Acres_ha__c}</Data></Cell>
+                         <Cell></Cell> 
+                         <Cell></Cell>
+                         <Cell><Data ss:Type="String">{!ListComplaintProducts1[counter].LKP_Product__r.name}</Data></Cell> 
+                         <Cell></Cell>
+                     </Row>
+                     <apex:variable value="{!counter + 1}" var="counter" />
+                    </apex:repeat> 
+
+             </Table>
+         </Worksheet>
+    </Workbook>    
+</apex:page>

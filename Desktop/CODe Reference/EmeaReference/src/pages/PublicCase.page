@@ -1,0 +1,176 @@
+<!-- <apex:page standardController="Case" extensions="CaseExtension" sidebar="false" showHeader="false"> -->
+<apex:page controller="PublicCaseController" sidebar="false" showHeader="false">
+
+	<apex:pageMessages ID="message"/>
+	<apex:form style="custPopup">
+		<apex:pageBlock mode="maindetail">
+			<apex:pageBlockSection columns="3"  >
+				<apex:outputText ></apex:outputText>
+				<apex:image id="theImage" value="http://www.dekalb.co.uk/dekalb/img/visuels/banners/EN/innovation_always_on.jpg" style="custPopup"/>
+			</apex:pageBlockSection>
+			
+			
+			<apex:pageBlockSection showHeader="true" title="Case Information" columns="2">
+				<apex:outputField value="{!currentCase.record.CaseNumber}"/>
+				<apex:outputField value="{!currentCase.record.OwnerId}"/>
+				
+				<apex:outputField value="{!currentCase.record.AccountId}"/>
+				<apex:outputField value="{!currentCase.record.CreatedDate}"/>
+				<apex:outputField value="{!currentCase.record.ContactId}"/>
+				<apex:outputField value="{!currentCase.record.ClosedDate}"/>
+				<apex:outputField value="{!currentCase.record.Status}"/>
+				<apex:outputText ></apex:outputText>
+				<apex:outputField value="{!currentCase.record.Priority}"/>
+				
+				
+			 </apex:pageBlockSection>
+				
+			 <apex:pageBlockSection showHeader="true" title="Description Information" columns="2">  
+				<apex:outputField value="{!currentCase.record.Subject}"/>
+				<apex:outputText ></apex:outputText>
+				<apex:outputText value="{!currentCase.record.Product__r.Name}" label="Product"/>
+				<apex:outputText ></apex:outputText>
+				<apex:outputField value="{!currentCase.record.Description}"/>
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="3" rendered="{!currentCase.record.Status != 'Closed'}">
+				<apex:outputText ></apex:outputText>
+				<apex:commandButton action="{!closeCase}" value="Close this Case" style="width:100%"/>
+			</apex:pageBlockSection>
+		   
+			<apex:pageBlockSection showHeader="true" title="Case Comment" columns="1">
+				<apex:commandButton action="{!openCommentWindow}" value="New Comment"/>
+				<apex:pageBlockTable value="{!currentCase.commentList}" var="cc" style="width:95%">
+					<apex:column headerValue="Comments">
+						<strong>
+							Created By: {!cc.CreatedBy.Name}
+							<apex:outputText value="({0,date,dd.MM.yyyy HH:mm:ss})">
+								<apex:param value="{!cc.CreatedDate}" />
+							</apex:outputText>
+						</strong>
+						<br/>
+						<apex:outputField value="{!cc.CommentBody}"/>
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection showHeader="true" title="Attachments" columns="1">
+				<apex:pageBlockTable value="{!currentCase.attachmentList}" var="ca" style="width:95%">
+					<apex:column headerValue="Attachment Name">
+						<a href="{!$Site.CurrentSiteUrl}servlet/servlet.FileDownload?file={!ca.Id}&oid={!$Organization.Id}" target="_blanc">{!ca.Name}</a><br/>
+						<a href="{!URLFOR($Action.Attachment.Download, ca.Id)}">{!ca.Name}</a><br/>
+						<a href="/PublicAttachment?file={!ca.Id}" target="_blanc">{!ca.Name}</a><br/>
+					</apex:column>
+					<apex:column headerValue="Last Modified" style="width:25%">
+						<apex:outputField value="{!ca.LastModifiedDate}"/>
+					</apex:column>
+					<apex:column headerValue="Created By" style="width:25%">
+						<apex:outputField value="{!ca.Owner.Name}"/>
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+				
+		</apex:pageBlock>
+		
+		<apex:outputPanel id="pop">
+			<apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!showCommentWindow}"/>
+			<apex:outputPanel styleClass="custPopup" layout="inline" rendered="{!showCommentWindow}">
+				<apex:outputtext value="Case Comment" rendered="true" style="width:50px ; vertical-align:top"/>
+				<br/>
+				<apex:inputTextarea value="{!newCommentBody}" rendered="true" rows="5" style="width:500px ; vertical-align:top"/>
+				<br/>
+				<br/>
+				<apex:commandButton value="Add Comment" action="{!addNewComment}" style="vertical-align:bottom"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<apex:commandButton value="Cancel" action="{!closeCommentWindow}"/>
+			 </apex:outputPanel>
+		</apex:outputPanel>
+		
+	</apex:form>
+	
+	<style>
+	   .dateFormat{display:none;}
+	   textarea {width: 95%;}
+	   .custPopup{
+			background-color: white;
+			border-width: 2px;
+			border-style: solid;
+			z-index: 9999;
+			left: 40%;
+			text-align:center;
+			padding:10px;
+			position: absolute;
+			/* These are the 3 css properties you will need to change so the popup 
+			displays in the center of the screen. First set the width. Then set 
+			margin-left to negative half of what the width is. You can add 
+			the height property for a fixed size pop up if you want.*/
+			width: 600px;
+			height: 150px;
+			margin-left: -250px;
+			top:500px;
+			align : center;
+		}
+		.custPopup1{
+			background-color: white;
+			border-width: 2px;
+			border-style: solid;
+			text-align:center;
+			z-index: 9999;
+			left: 50%;
+			padding:10px;
+			position: absolute;
+			/* These are the 3 css properties you will need to change so the popup 
+			displays in the center of the screen. First set the width. Then set 
+			margin-left to negative half of what the width is. You can add 
+			the height property for a fixed size pop up if you want.*/
+			width: 500px;
+			height: 120px;
+			margin-left: -250px;
+			top:100px;
+			align : center;
+		}
+		.custPopupRenovar{
+			background-color: white;
+			border-width: 2px;
+			border-style: solid;
+			z-index: 9999;
+			left: 30%;
+			padding:10px;
+			position: absolute;
+			/* These are the 3 css properties you will need to change so the popup 
+			displays in the center of the screen. First set the width. Then set 
+			margin-left to negative half of what the width is. You can add 
+			the height property for a fixed size pop up if you want.*/
+			width: 100px;
+			margin-left: -250px;
+			top:100px;
+			align : center;
+		}
+		.popupBackground{
+			background-color:black;
+			opacity: 0.20;
+			filter: alpha(opacity = 20);
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			z-index: 9998;
+			align:center;
+			
+		}
+		.popupTitulo{
+			background-color:black;
+			opacity: 0.20;
+			filter: alpha(opacity = 20);
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			z-index: 9998;
+			align: left;
+		}
+	</style>
+
+</apex:page>

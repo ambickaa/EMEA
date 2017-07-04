@@ -1,0 +1,23 @@
+<apex:component controller="InvoiceLineItemComponentCtrl">
+    <apex:attribute assignTo="{!invoiceId}" name="parentInvoiceId" type="Id" description="invoice Id"/>
+    <apex:attribute assignTo="{!oInvoice}" name="parentInvoice" type="Invoice__c" description="Parent Invoice Object"/>
+    <apex:pageBlock title="Invoice Line Items">
+        <apex:pageBlockTable value="{!lstInvoiceLineItemsShow}" var="lineitem" 
+                             rendered="{!lstInvoiceLineItems.size != 0}">
+            <apex:column headerValue="{!$ObjectType.Invoice_Line_Item__c.fields.Name.Label}">
+                <apex:outputLink value="javascript:fnOpenSubtab('{!lineitem.Id}','{!lineitem.Name}')">{!lineitem.Name}</apex:outputLink>
+            </apex:column>
+            <apex:column value="{!lineitem.GC_Item_Code__c}"/>
+            <apex:column value="{!lineitem.GC_Item_Descr__c}"/>
+            <apex:column value="{!lineitem.GC_Net_Value_Amount__c}"/>
+            <apex:column value="{!lineitem.GC_Quantity__c}"/>
+            <apex:column value="{!lineitem.GC_UOM_Line_Item_Descr__c}"/>
+        </apex:pageBlockTable>
+        <apex:outputPanel layout="block" style="margin-top: 5px" rendered="{!lstInvoiceLineItems.size > 5}">
+            <apex:outputLink value="javascript:fnOpenSubtab('{!invoiceId}','Invoice')">Go to details page to see the complete list ({!lstInvoiceLineItems.size}) »</apex:outputLink>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!lstInvoiceLineItems.size == 0}">
+            No records to display
+        </apex:outputPanel>    
+    </apex:pageBlock>
+</apex:component>

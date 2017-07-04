@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>34.0</apiVersion>
+    <description>Action Plan component for accounts (farms and distributors)</description>
+    <label>Action Plan for accounts</label>
+</ApexComponent>

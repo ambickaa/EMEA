@@ -1,0 +1,200 @@
+<apex:page sidebar="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="es" standardcontroller="Voucher__c" extensions="VoucherSpain2015Controller" applybodyTag="false">
+<html lang="es">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1"/>
+<title>Voucher</title>
+<style>
+@page{
+    size: A4 portrait;
+    margin: 0cm;
+    padding: 0cm;
+    border: 0cm;
+}
+</style>
+</head> 
+<body style="background:#FFFFFF; color:#333333; margin:0; padding:0; border:0; font-weight:normal; font-style:italic; line-height:1.25; font-size:100%; font-size:14.8px; vertical-align:baseline; text-decoration:none; font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif">
+
+<div id="PAGE_1" style="position:relative; width:100%; height:1122px;">
+    <apex:image url="{!$Resource.ES_Voucher2015_header}" width="100%"/>
+    
+    <div id="container" style="position:relative; margin:0 46px; height:800px;">
+        <apex:image url="{!$Resource.ES_Voucher2015_copynote}" width="7px" style="position:absolute; top:42%; right:-20px; padding:0; margin:0;"/>
+        
+        <div style="position:relative; padding:10px 0 0; margin:0; with:100%; height:95px; color:#39ABE6; text-align:right; text-transform:uppercase; font-size:1.15em">
+            <apex:image url="{!$Resource.ES_Voucher2015_logo}" width="110px" style="position:absolute; top:10px; left:0"/>
+            <br/>Ahora la semilla de los híbridos<br/><b style="font-weight:boldest">Gen20*</b> cubre contra insectos<br/><span style="color:#E55252; font-style:normal; font-weight:bold">{!aviso}</span>
+        </div>
+        
+        <div style="border-bottom:1px solid #39ABE6; margin-bottom:12px">
+            <span style="color:#39ABE6; text-transform:uppercase; font-weight:bold; font-size:1.15em">Datos de la finca</span>
+            <span style="float:right">Fecha <span style="font-style:normal; color:#000; margin-left:15px; width:120px;">{!CreatedDate}</span></span>
+        </div>
+        
+        <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px">
+            <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Datos de la Finca o Explotación</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucher.FarmNameCopy__c}&nbsp;</span></span>
+        </div>
+           
+        <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px">
+            <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Nombres y apellidos</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucherC1}&nbsp;</span></span>
+        </div>
+        
+        <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px">
+            <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Dirección</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucherC2}&nbsp;</span></span>
+        </div>
+        
+        <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px">
+            <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF;">Localidad</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucherC3}&nbsp;</span></span>
+        </div>
+        
+        <div style="width:100%">
+            <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px; width:42.5%; display:inline-block; margin-right:.9%">
+                <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">C.P.</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucherC4}&nbsp;</span></span>
+            </div>
+            
+            <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px; width:56%; display:inline-block;">
+                <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Provincia</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucherC5}&nbsp;</span></span>
+            </div>
+        </div>
+        
+        <div style="width:100%">
+            <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px; width:42.5%; display:inline-block; margin-right:.9%">
+                <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Teléfonos</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucherC6}&nbsp;<i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; width:8px; background:#FFF">&nbsp;</i>{!voucherC7}&nbsp;</span></span>
+            </div>
+            
+            <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px; width:56%; display:inline-block;">
+                <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">E-mail</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucherC8}&nbsp;</span></span>
+            </div>
+        </div>
+        
+        <div style="width:100%">
+            <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px; width:49.5%; display:inline-block; margin-right:.9%">
+                <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Nº Has. Riego</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!SUM_Riego}&nbsp;</span></span>
+            </div>
+            
+            <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px; width:49%; display:inline-block;">
+                <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Nº Has. Maíz</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucherAccount.CornTotalAcreagesCY__c}&nbsp;</span></span>
+            </div>
+        </div>
+        
+        <div style="width:100%">
+            <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px; width:49.5%; display:inline-block; margin-right:.9%">
+                <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Nº Has. Maíz Grano</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!SUM_Maiz_Grano}&nbsp;</span></span>
+            </div>
+            
+            <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px; width:49%; display:inline-block;">
+                <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Nº Has. Maíz Silo</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!SUM_Maiz_Silo}&nbsp;</span></span>
+            </div>
+        </div>
+        
+        <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px">
+            <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">Distribuidor</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!voucher.DistributorNameCopy__c}&nbsp;</span></span>
+        </div>
+        
+        <div style="border-bottom:1px solid #39ABE6; margin-bottom:5px">
+            <span><i style="display:inline-block; position:relative; top:2px; padding-bottom:2px; padding-right:8px; background:#FFF">PDV</i> <span style="font-size:.92em; font-style:normal; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{!PoSAccount}&nbsp;</span></span>
+        </div>
+        
+        <p style="margin-bottom:0; font-size:.6em; text-align:justify; font-style:normal;">La información por usted facilitada tiene carácter voluntario, teniendo como finalidad la constitución de un fichero de datos de carácter personal de Monsanto Agricultura España, S.L. (Avda. de Burgos 17, 10ª Plta. - 28036 Madrid), para futuras acciones comerciales y promocionales de la citada compañía. El responsable del tratamiento del fichero será la citada compañía. Vd. tiene derecho a acceder a este fichero y a rectificar o cancelar sus datos. En este caso, comuníquenoslo expresamente. Si no desea recibir información, indíquelo con X en esta casilla. <span style="width:8px; height:8px; display:inline-block; position:relative; top:2px; border:1px solid #39ABE6;"></span></p>
+        
+        <p style="margin-bottom:0; margin-top:6px; font-size:.85em; text-align:justify">El abajo firmante acepta las condiciones del Programa Semilla Segura para beneficiarse de estas ofertas por las siguientes cantidades de semilla; dicho programa está condicionado a las clausulas descritas en el reverso de este documento.</p>
+
+        <table cellspacing="5px" style="width:102%; margin-left:-5px; text-align:center;">
+            <thead style="font-size:.85em; border-collapse:separate">
+                <tr style="border:1px solid #39ABE6; background:#39ABE6; color:#FFFFFF">
+                    <th style="width:25%; border:1px solid #39abe6; line-height:1.05; font-weight:bold; font-size:1.1em">Variedad</th>
+                    <th style="width:25%; border:1px solid #39abe6; line-height:1.05; font-weight:normal">Tipo de<br/>tratamiento</th>
+                    <th style="width:25%; border:1px solid #39abe6; line-height:1.05; font-weight:normal">Nº de sacos de<br/>50.000 semillas</th>
+                    <th style="width:25%; border:1px solid #39abe6; line-height:1.05; font-weight:normal">Densidad de Siembra</th>
+                </tr>
+            </thead>
+            <tbody style="font-size:.9em; border-collapse:separate">                            
+                <apex:outputPanel layout="none">
+                <apex:variable value="{!0}" var="counter" />
+                    <apex:repeat value="{!voucherLineItems}" var="vli">
+                    <apex:variable value="{!counter + 1}" var="counter" />
+                        <tr style="padding:2px; vertical-align:middle">    
+                            <td style="font-style:normal; color:#000; border: 1px solid #39ABE6;">{!vli.HybridName__c}&nbsp;</td>
+                            <td style="font-style:normal; color:#000; border: 1px solid #39ABE6;">{!vli.campaignLineItemRef__r.Treatment__c}&nbsp;</td>
+                            <td style="font-style:normal; color:#000; border: 1px solid #39ABE6;">{!vli.Bags__c}&nbsp;</td>
+                            <td style="font-style:normal; color:#000; border: 1px solid #39ABE6;">{!vli.campaignLineItemRef__r.PlantingDensity__c}&nbsp;</td>
+                        </tr>           
+                </apex:repeat>
+                </apex:outputPanel>
+                <tr style="border:1px solid #39ABE6; background:#39ABE6; font-size:1.1em">            
+                    <td colspan="2" style="border:1px solid #39ABE6; vertical-align:middle; text-align:left; color:#FFFFFF; font-weight:bold">Total&nbsp;</td>
+                    <td style="border:1px solid #39ABE6; vertical-align:middle; text-align:center; color:#FFFFFF; font-weight:bold">{!voucher.TotalBags__c}&nbsp;</td>
+                    <td colspan="2" style="background:#FFFFFF; text-align:right; font-size:.75em; line-height:1em; color:#E55252"><span style="padding-left:18px; padding-right:2px">{!if(CountVLI > 5,'* Sólo se muestran las 5 líneas con mayor número de sacos.','')}</span></td>
+                </tr>     
+            </tbody>                
+        </table>
+
+        <table cellspacing="0" style="position:absolute; bottom:0; margin:0; padding:0; border:none; width:75%; font-weight:bold; font-size:.85em;">
+        <tr>
+            <td style="width:33%; text-align:left; vertical-align:text-top">Firma agricultor<br/>NIF: <span style="color:#000; font-style:normal; font-weight:normal">{!voucher.FiscalCodeCopy__c}</span></td>
+            <td style="width:33%; text-align:center; vertical-align:top;">Firma Monsanto</td>
+            <td style="width:33%; text-align:right; vertical-align:text-top">Firma Gerente<br/>de Área/Asesor</td>
+        </tr>
+        <tr>
+            <td style="margin-top:15px"> <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="55px"/></td>
+            <td style="text-align:center"> <apex:image url="{!$Resource.signatureESP}" height="75px"/></td>
+            <td></td>
+        </tr>
+        </table>
+
+    </div><!-- CONTAINER -->
+    <apex:image url="{!$Resource.ES_Voucher2015_footer2}" width="100%" style="position:absolute; bottom:0; left:0; right:0; padding:0; margin:0;"/>
+</div>
+
+<div id="PAGE_2" style="position:relative; width:100%; height:1122px;">
+
+    <div style="margin:0 56px; padding-top:60px; text-align:justify; font-style:normal">
+        <h1 style="font-size:23px;padding-bottom:3px; line-height:1; margin:0; color:#000">TÉRMINOS Y CONDICIONES DEL PROGRAMA</h1>
+        <h1 style="font-size:23px;padding-bottom:33px; line-height:1; margin:0; color:#000">"SEMILLA SEGURA" - Campaña FY'14</h1>
+        <apex:image url="{!$Resource.dekalb_image}" width="120" style="position:absolute; right:50px; top:50px"/>
+        
+        <p style="font-size:13px;padding-bottom:8px; margin:0"><b style="font-size:14px;font-family:Helvetica, sans-serif; font-weigth:bold">Organizador:</b> El Organizador del Programa "Semilla Segura" (el "Programa") es Monsanto Agricultura España, S.L. ("Monsanto") sociedad con domicilio en Avda. de Burgos, 17 - 28036 Madrid (España).</p>
+        <p style="font-size:13px;padding-bottom:8px; margin:0"><b style="font-size:14px;font-family:Helvetica, sans-serif; font-weigth:bold">Producto:</b> Los productos cubiertos por el Programa son las variedades de maíz de Monsanto (a partir de ahora nombradas como "híbridos" Dekalb.</p>
+        <p style="font-size:13px;padding-bottom:8px; margin:0"><b style="font-size:14px;font-family:Helvetica, sans-serif; font-weigth:bold">Alcance Geográfico:</b> El Programa estará vigente en todas las provincias de España.</p>
+        <p style="font-size:13px;padding-bottom:8px; margin:0"><b style="font-size:14px;font-family:Helvetica, sans-serif; font-weigth:bold">Alcance Temporal para la Reserva de la Semilla:</b> El Programa estará vigente desde el 1 de Septiembre 2013 hasta el 31 de diciembre de 2013.</p>
+        <p style="font-size:13px;padding-bottom:0; margin:0"><b style="font-size:14px;font-family:Helvetica, sans-serif; font-weigth:bold">Objeto y Condiciones del Programa:</b></p>
+            <ul style="font-size:13px;padding-left:33px;margin:0">
+                <li>Este Programa está limitado a compras iguales o superiores a 10 sacos de 50.000 semillas de los híbridos arriba indicados.</li>
+                <li>Monsanto le repondrá la semilla sembrada a la que se hace referencia en este programa a través del Distribuidor indicado en la casilla "Distribuidor", en el caso de que su nivel de nascencia impida alcanzar el potencial óptimo de la variedad en la parcela sembrada. Esto será consensuado por el personal autorizado por Monsanto. La resiembra cubrirá los siguientes casos:</li>
+                    <ul style="font-size:13.5px;padding-left:48px;margin:0;list-style-type:none">
+                        <li style="text-indent:-15px">- &nbsp;Híbridos GEN 20 (DKC6728, DKC6630, DKC5031, DKC5815, DKC4608, DKC6031 y DKC4117): En estos híbridos se cubren las condiciones meteorológicas adversas además de insectos (en caso de rosquilla hasta 4 hojas), siempre que el agricultor haya protegido convenientemente el cultivo con las aplicaciones insecticidas adecuadas.</li>
+                        <li style="text-indent:-15px">- &nbsp; Resto de híbridos: condiciones meteorológicas adversas.</li>
+                    </ul>
+            </ul>
+            <ul style="font-size:13px;padding-left:33px;margin:0">
+                <li>Condiciones válidas sólo para el pedido inicial de semillas.</li>
+                    <ul style="font-size:13.5px;padding-left:48px;margin:0;list-style-type:none">
+                        <li style="text-indent:-15px">- &nbsp; Promoción válida hasta el fin de existencias.</li>
+                        <li style="text-indent:-15px">- &nbsp; En el caso de que se produzca un desastre generalizado en el país, Monsanto se reserva el derecho a limitar la cantidad de semilla dada en la resiembra a cada agricultor.</li>
+                        <li style="text-indent:-15px">- &nbsp; Esto no debe ser considerado como un compromiso de Monsanto para entregar la semilla especificada.</li>
+                    </ul>
+            </ul>
+            <ul style="font-size:13px;padding-left:33px;margin:0;padding-bottom:8px">
+                <li>La semilla para resiembra a elegir dependerá de la disponibilidad de semilla Dekalb en ese momento.</li>
+                <li>La semilla es sólo para resiembra en el mismo campo indicado en la reclamación, no podrá ser sembrada en otro campo, ni podrá ser sembrada el año siguiente, ni vendida a terceros.</li>
+            </ul>
+        <p style="font-size:13px;padding-bottom:0; margin:0"><b style="font-size:14px;font-family:Helvetica, sans-serif; font-weigth:bold">Términos del Programa para el Agricultor:</b></p>
+            <ul style="font-size:13px;padding-left:33px;margin:0;padding-bottom:8px">
+                <li>El Agricultor se compromete a sembrar la semilla a la que se hace referencia según las buenas prácticas agrícolas de humedad, temperatura y profundidad, SIN QUE EXISTAN LÍMITES EN LA FECHA DE SIEMBRA.</li>
+                <li>El Agricultor conservará la copia de este contrato, las etiquetas de la semilla y el albarán de retirada del Distribuidor, sin cuya presentación este programa no será válido.</li>
+                <li>En el caso de reclamación por ataque de insectos, el agricultor deberá demostrar la realización de las prácticas agronómicas adecuadas, así como de la aplicación de los insecticidas necesarios por la protección del cultivo.</li>
+            </ul>
+        <p style="font-size:13px;padding-bottom:0; margin:0"><b style="font-size:14px;font-family:Helvetica, sans-serif; font-weigth:bold">Términos del Programa - Procedimiento de ejecución:</b></p>
+            <ul style="font-size:13px;padding-left:33px;margin:0;">
+                <li>En caso de que la semilla garantizada tenga un nivel de nascencia que le impida alcanzar en la parcela sembrada una producción razonable, Monsanto repondrá al Agricultor la misma cantidad de semilla afectada, bien del mismo híbrido o de otro, si así es acordado entre Monsanto y el Agricultor.</li>
+                <li>Si las circunstancias descritas en el párrafo anterior se produjesen, el Agricultor se pondrá en contacto con el Personal autorizado <span style="display:inline-block; border-bottom:1px dotted #000; width:340px"></span> Móvil <span style="display:inline-block; border-bottom:1px dotted #000; width:150px"></span></li>
+                <li>Se inspeccionarán las parcelas afectadas y se repondrá la semilla afectada si fuese necesario, previa presentación del albarán de retirada del punto de venta y/o Distribuidor, la copia de este programa y las etiquetas oficiales de los sacos.</li>
+                <li>La visita a la parcela objeto de resiembra sólo podrá ser realizada por el personal autorizado por Monsanto: Gerentes de Área, Técnicos de Desarrollo, Asesores Agronómicos o Consultores Dekalb.</li>
+                <li>Toda parcela en la que se haya aprobado la resiembra será susceptible de inspección por parte del personal autorizado de Monsanto. Si pasado una semana desde la retirada de semilla para resiembra por parte del agricultor no se ha destruido la anterior siembra y sembrado la nueva, se anulará el expediente y se facturará al agricultor la semilla de resiembra.</li>
+            </ul>
+        <div style="display:block; margin-top:18px"><apex:image url="{!$Resource.monsanto_image_terms}" width="100" style="display:block"/></div>
+    </div>
+</div>
+
+</body>
+</html>
+</apex:page>

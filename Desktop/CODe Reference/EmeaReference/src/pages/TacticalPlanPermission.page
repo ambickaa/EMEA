@@ -1,0 +1,131 @@
+<apex:page contentType="application/javascript" controller="AccountTacticalPlanStatusPermController">
+/*
+* Disables Quantity Field for standard tactical Plan based on status Field
+*
+*/
+var disableQuantityByStatusValue = function(selectValue)
+{
+    $(".Status__c").each(function(){
+    
+        if($(this).children("select").length !== 0)
+        {
+            statusSelect= $(this).children("select");
+        }
+        else
+        {
+            statusSelect= $(this).children().children("select");
+        }
+        if($(statusSelect).val() === selectValue)
+        {
+            $(this).parents("tr").children().children(".Quantity__c").children().children("input").attr("disabled","disabled");
+        }
+        else
+        {
+            $(this).parents("tr").children().children(".Quantity__c").children().children("input").removeAttr("disabled");
+
+        }
+
+    });
+}
+
+var setQuantityToZero = function(selectValue)
+{
+    $(".Status__c").each(function(){
+    
+        if($(this).children("select").length !== 0)
+        {
+            statusSelect= $(this).children("select");
+        }
+        else
+        {
+            statusSelect= $(this).children().children("select");
+        }
+        if($(statusSelect).val() === selectValue)
+        {
+            $(this).parents("tr").children().children(".Quantity__c").children().children("input").val("0");
+        }
+});
+}
+var disableStatus;
+if($(".Status__c").length !== 0)
+{
+    disableStatus = function(statusValue)
+    {
+        $(".Status__c").each(function()
+        {
+            if($(this).children("select").length !== 0)
+            {
+                statusSelect= $(this).children("select");
+            }
+            else
+            {
+                statusSelect= $(this).children().children("select");
+            }
+            $(statusSelect).children().each(function()
+            {
+                if($(this).val() == statusValue)
+                {
+                    $(this).attr("disabled", "disabled");
+                }
+            });
+        });
+    }
+}
+else
+{
+    disableStatus = function(statusValue)
+    {
+        $('.'+statusValue+' input').attr('disabled', 'disabled');
+    }
+}
+var removeStatus = function(statusValue)
+{
+    $(".Status__c").each(function(){
+        if($(this).children("select").length !== 0)
+        {
+            statusSelect= $(this).children("select");
+        }
+        else
+        {
+            statusSelect= $(this).children().children("select");
+        }
+        $(statusSelect).children().each(function(){
+            if($(this).val() == statusValue)
+            {
+                $(this).remove();
+            }
+        });
+    });
+}
+
+var permissions = {!Permissions};
+
+var executePermissions = function()
+{
+    $(permissions).each(function(){
+        permissionName = this.name;
+        permissionValue = this.value;
+        if(permissionValue === 'removeStatus')
+        {
+            removeStatus(permissionName);
+        }
+        if(permissionValue === 'disableStatus')
+        {
+            disableStatus(permissionName);
+        }
+        if(permissionValue === 'disableQuantity')
+        {
+            disableQuantityByStatusValue(permissionName);
+        }
+        
+        if(permissionValue === 'QuantityToZero')
+        {
+            setQuantityToZero(permissionName);
+        }
+    });
+}
+executePermissions();
+$(".Status__c select").change(executePermissions);
+    
+
+</apex:page>

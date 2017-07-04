@@ -1,0 +1,8 @@
+<apex:page showHeader="false" sidebar="false">
+    <script>
+        var url = window.location.href;
+        url = url.substring(url.indexOf("=")+1, url.length);
+        url = decodeURIComponent(url);
+        window.location.href=url;
+    </script>
+</apex:page>

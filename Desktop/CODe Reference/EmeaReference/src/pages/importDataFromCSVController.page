@@ -1,0 +1,24 @@
+<apex:page controller="importDataFromCSVController" cache="true">
+    <apex:form >
+        <apex:pagemessages id="messages" />
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="5" title="1 - Complete the following fields"> 
+                <apex:inputField value="{!CaSel.CountryRef__c}" required="true"/>
+                <apex:inputField value="{!CaSel.YearV2__c}" required="true"/>
+                <apex:inputField value="{!CaSel.DivisionRef__c}" required="true"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2" title="2 - Load the CSV (Separated by COMMAS)"> 
+                <apex:outputText value="Important: The CVD file should have the columns: OwnerId, AccountId, Product SapCode, EVF, Commande, Livre and Precocite. In the order specified." />
+                <apex:inputFile value="{!csvFileBody}"  filename="{!csvAsString}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2" title="3 - Load the Sales">
+                <apex:outputText value="Important: It deletes all Monsanto AP for distributors." />
+                  <apex:commandButton value="Import NFU Sales" action="{!importCSVFile}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2" title="Log Folder">
+                <apex:outputText value="Click the following link to open the NFU logs folder." />
+                <a href="javascript:;" onclick="javascript:window.open('/{!folderId}','_blank');">NFU Loads</a>                                                               
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+   </apex:form>
+</apex:page>

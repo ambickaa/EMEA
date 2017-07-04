@@ -1,0 +1,64 @@
+<apex:component controller="AccountFreeOfChargeController" allowDML="true">
+
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    
+    <apex:variable value="{!1}" var="counterRowNum"/>
+
+    <apex:form rendered="{!isRSAView}">
+        <style>
+            .apexp .individualPalette .bPageBlock .pbBody .pbSubheader{
+                background-image:url('/img/alohaSkin/opacity75.png');
+                color:black;
+                padding:4px 16px;
+            }
+            .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3{
+                font-size: 1.2em;
+                font-color: black;
+            }
+            .apexp .bPageBlock.apexDefaultPageBlock .pbBody{
+                margin: 0px 0px 0px;
+            }
+            input.smallInput{
+                width:35px;
+            }
+        </style>
+    <apex:pageBlock title="Free Of Charge">
+        <apex:pageBlockSection columns="1" id="productFOC">
+            <apex:pageBlockTable value="{!FreeOfCharge.productFOC}" var="FOC" >
+                <apex:column headerValue="{!$Label.Action}" rendered="{!isEditButton}">
+                    <apex:inputCheckBox value="{!FOC.selected}" /> 
+                </apex:column>
+                <apex:column headerValue="Product">
+                    <apex:outputField value="{!FOC.item.ProductRef__r.Name}"/>
+                    <!--<c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!FOC.lookupValue.id}" text="{!FOC.lookupValue.text}" identifier="{!'giveAwayCell'&TEXT(counterRowNum)}" division="{!$CurrentPage.parameters.division}" catalog="Tax" rendered="{!FreeOfCharge.editMode}">
+                        <apex:inputText styleClass="idField" value="{!FOC.lookupValue.id}"  />
+                    </c:CustomLookupField>
+                    <apex:variable value="{!counterRowNum + 1}" var="counterRowNum"/>-->
+                </apex:column> 
+                <apex:column headerValue="Kernel Size">
+                    <apex:outputField value="{!FOC.item.ProductRef__r.ProductKernelSize__c}"/>
+                </apex:column>
+                <apex:column headerValue="Treatment">
+                    <apex:outputField value="{!FOC.item.ProductRef__r.ProductTreatment__c}"/>
+                </apex:column>
+                <apex:column headerValue="Quantity">
+                    <apex:outputField value="{!FOC.item.QuantityFOC__c}" rendered="{!NOT(FreeOfCharge.editMode)}"/>
+                    <apex:inputField value="{!FOC.item.QuantityFOC__c}" rendered="{!AND(FreeOfCharge.editMode)}" styleClass="smallInput"/>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputPanel layout="block" style="text-align:center;" rendered="{!isEditButton}">
+                <!--<apex:commandButton value="New" action="{!FreeOfCharge.addNew}" reRender="productFOC,messages"/>-->
+                <apex:commandButton value="Add Multiple Lines" action="{!doLoadProductPickerRegular}"/>
+                <apex:commandButton value="Edit" action="{!FreeOfCharge.edit}" reRender="productFOC,messages"/>
+                <apex:commandButton value="Delete Selected Item(s)" action="{!FreeOfCharge.deleteSelected}" reRender="productFOC,messages"/> &nbsp;&nbsp;
+                <apex:commandButton value="Save" action="{!FreeOfCharge.save}" reRender="productFOC,messages" rendered="{!IF(FreeOfCharge.editMode, true, false)}" />
+                <apex:commandButton value="Cancel" action="{!FreeOfCharge.cancel}" reRender="productFOC,messages"/>
+            </apex:outputPanel>
+            
+        </apex:pageBlockSection>
+    
+    
+    </apex:pageBlock>
+    </apex:form>
+  
+</apex:component>

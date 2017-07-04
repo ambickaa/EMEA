@@ -1,0 +1,1575 @@
+<apex:component controller="AccountTacticalPlanElementController" allowDML="true" >
+   
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    <style>
+    .notOwner{
+            background-color:#D6D6D6;
+    }
+    </style>
+
+    <div id="accID" style="color:white;font-size:0.5px">{!accountid}</div>    <!--do not delete-->
+    <apex:variable value="{!0}" var="counter"/>
+    
+      <!-- 
+        <script type="text/javascript">
+        alert('TEST TEST :{!currentDivision.name} isgermanview {!isGermanView} \n isgermanCPview -> {!isGermanCPView} //// \n roundup: {!currentDivision.name='Roundup'}  //// germanyCPControler->isDisplay: {!germanyCPController.isDisplay}   ////////// \n\n GermanyST -- isDisplay: {!germanySTController.isDisplay}/ \n\n isOWner?-> {!germanySTController.IsAccOwn} //// currentCamp-> {!germanySTController.currentCamp} currentDiv-> {!germanySTcontroller.CurrentDiv}')
+        </script>       
+      --> 
+        <apex:form rendered="{!AND(IsGermanCPView, germanyCPController.isDisplay, OR( currentDivision.name = 'CP', currentDivision.name = 'Roundup', currentDivision.name = 'Latitude', currentDivision.name = 'Monitor',currentDivision.name = 'Monfast', currentDivision.name = 'Guardian Tetra', currentDivision.name = 'Harness', currentDivision.name = 'Actimum'))}">
+        <apex:pageBlock >
+            <script id="division-color-switcher">
+                document.getElementById('division-color-switcher').parentNode.parentNode.style.backgroundColor = "#{!currentDivision.color__c}";
+            </script>
+            
+            <apex:pageBlockSection title="{!currentDivision.Name}" collapsible="false" columns="1">
+                <style>body .bPageBlock .detailList table.black-borders tr td{ border-color: #000; }</style>
+                    <table class="black-borders" border="1" width="100%" style="border-collapse:collapse; border-color: #000;">
+                        <tr>
+                            <td rowspan="2" style="text-align: center; vertical-align:middle;" >{!$ObjectType.Campaign.fields.TotalCampaignBudget__c.label} : {!TEXT(currentCampain.TotalCampaignBudget__c)}</td>
+                            <td colspan="3" style="background-color:#a1cbf4;text-align: center; vertical-align:middle;">{!$Label.CP_AP_FY_1}</td>
+                            <td colspan="3" style="background-color:#a1f4b0;text-align: center; vertical-align:middle;">{!$Label.CP_AP_FY}</td>
+                        </tr><tr>
+                            <td>{!$Label.CP_AP_Plan}</td>
+                            <td>{!$Label.CP_AP_Agreed}</td>
+                            <td>{!$Label.CP_AP_IST}</td>
+                            <td>{!$Label.CP_AP_Plan}</td>
+                            <td>{!$Label.CP_AP_Agreed}</td>
+                            <td>{!$Label.CP_AP_IST}</td>
+                        </tr><tr>
+                            <td>{!$Label.CP_AP_SalesPotential}</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_FORECAST']}</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_AGREED'] }</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_POG']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_FORECAST']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_AGREED']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_POG']}</td>
+                        </tr><tr>
+                            <td>{!$Label.CP_AP_Potentialusage}</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_FORECAST_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_AGREED_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_POG_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_FORECAST_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_AGREED_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_POG_OWN']}</td>
+                        </tr><tr>
+                            <td>{!$Label.CP_AP_MarketShare} %</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_FORECAST_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_AGREED_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_POG_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_FORECAST_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_AGREED_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_POG_RATIO']} %</td>
+                        </tr>
+                    </table>
+                </apex:pageBlockSection>            
+            
+            
+            {!GermanyCPController.texto}
+            <apex:pageBlockSection columns="1" title="{!$Label.TacticalPlan}">
+                <apex:pageBlockTable value="{!germanyCPController.tacticalPlans}" var="tacticalPlan" styleClass="smallTable ">
+                   <apex:column rendered="{!IF(mode == 'view', true, false)}" headerValue="{!$Label.Action}">
+                        <apex:inputCheckbox value="{!tacticalPlan.nextPeriodeElement.checked}" rendered="{!IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header"><script id="collapseTableScript">
+                        $(document).ready(function(){
+                        var ltChar = '<', gtChar = '>';
+                    
+                         var doubleHeaderHTML = $('#collapseTableScript').parent().parent().parent().parent().parent().parent().html();
+                         doubleHeaderHTML = doubleHeaderHTML.replace(/<t.ead[\s\S]*<\/thead>/ig, "<newDoubleHeader>");
+                         doubleHeaderHTML = doubleHeaderHTML.replace('<newDoubleHeader>',ltChar + 'thead>' + 
+                        '<tr class="headerRow">' + 
+                        '    {!IF(mode == 'view', '<th rowspan="2">'+$Label.CP_AP_Action+'</th>','')} ' + 
+                        '    <th rowspan="2">{!$Label.CP_AP_Product}</th>' + 
+                        '    <th colspan="2" style="text-align: center;">{!$Label.CP_AP_PotentialExplotPlan}</th>' +
+                        '    <th colspan="2" style="text-align: center;">{!$Label.CP_AP_PotentialExplotClosed}</th>' +
+                        '    <th colspan="2" style="text-align: center;">{!$Label.CP_AP_PotentialExplotPoG} </th>' +
+                        '    <th rowspan="2" style="text-align: center;">{!$Label.Distributor_APCP}</th>' +
+                        '</tr><tr class="headerRow">' +
+                        '    <th style="text-align: center;background-color:#a1cbf4">{!$Label.PreviousYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1f4b0">{!$Label.CurrentYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1cbf4">{!$Label.PreviousYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1f4b0">{!$Label.CurrentYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1cbf4">{!$Label.PreviousYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1f4b0">{!$Label.CurrentYear}</th>' +
+                        '</tr></thead' + gtChar);
+                        $('#collapseTableScript').parent().parent().parent().parent().parent().parent().html(doubleHeaderHTML);                        });
+
+                        </script>{!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label}</apex:facet>
+                        <!--<apex:variable var="isOwner" value="{!IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)}" />-->
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.ProductRef__c}" rendered="{!IF(OR(mode == 'view', tacticalPlan.nextPeriodeElement.lookupValue.text != '', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}" />
+                    <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!tacticalPlan.nextPeriodeElement.lookupValue.id}" text="{!tacticalPlan.nextPeriodeElement.lookupValue.text}" identifier="{!'giveAwayCell'&TEXT(counter)}" division="{!$CurrentPage.parameters.division}" rendered="{!IF(AND(mode == 'edit', tacticalPlan.nextPeriodeElement.lookupValue.id == null, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}">
+                            <apex:inputText styleClass="idField" value="{!tacticalPlan.nextPeriodeElement.lookupValue.id}"  />
+                     </c:CustomLookupField><div style="display:none" class="{!IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),'','checkClass')}"></div>
+                     <apex:facet name="footer">{!$Label.SUM}</apex:facet>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.record.Forecast__c}"/>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_PY_FORECAST'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.Forecast__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <span class="Forecast"><apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.Forecast__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/></span>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_CY_FORECAST'])}</apex:facet>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.record.Agreed__c}"/>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_PY_AGREED'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.Agreed__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <span class="Forecast"><apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.Agreed__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/></span>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_CY_AGREED'])}</apex:facet>
+                    </apex:column>
+
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.record.POG__c}"/>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_PY_POG'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.POG__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <span class="Forecast"><apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.POG__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/></span>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_CY_POG'])}</apex:facet>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.DE_DistributorRef__c.label}" > <!--rendered="{!IF(account.recordType.name == 'Dist./Ret./PoS', false, true)}">-->
+                        <apex:outPutField value="{!tacticalPlan.nextPeriodeElement.record.DE_DistributorRef__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <apex:inPutField value="{!tacticalPlan.nextPeriodeElement.record.DE_DistributorRef__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/>
+                    </apex:column>
+                                
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom" rendered="{!AND(germanyCPController.IsEditButton, germanyCPController.IsDisplayButtons)}">
+                        <apex:commandButton action="{!germanyCPController.doLoadProductPicker}" value="{!$Label.ButtonAddMultipleLines}" rendered="{!IF(mode == 'view', true, false)}" />
+                        <apex:commandButton action="{!germanyCPController.save}" id="saveButton" value="{!$Label.Save}" rendered="{!IF(mode == 'edit', true, false)}" />
+                        <apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!germanyCPController.newRecord}"/>
+                        <apex:commandButton action="{!germanyCPController.cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true, false)}" immediate="true"/>
+                        <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!germanyCPController.Edit}" rendered="{!AND(mode == 'view', germanyCPController.isHasElements)}"  />
+                        <apex:commandButton action="{!germanyCPController.deletex}" id="deleteButton" value="{!$Label.Delete}" rendered="{!AND(mode == 'view', germanyCPController.isHasElements)}" />
+                        
+                         <apex:commandButton value="{!$Label.ButtonExcelCreate}"  rendered="{!AND(mode == 'view', germanyCPController.isHasElements, currentDivision.Name != 'Roundup', NOT(isCpStandard), germanyCPController.IsDisplayExcel)}"  onClick="document.getElementById('downloaderForm').setAttribute('action','{!CreateExcelURL}'); document.getElementById('downloaderForm').submit(); return false;"/>
+                     
+                        <apex:commandButton value="{!$Label.ButtonExcelCreate}" rendered="{!AND(mode == 'view', currentDivision.Name = 'Roundup', NOT(isCpStandard),germanyCPController.IsDisplayExcel)}" onClick="document.getElementById('downloaderForm').setAttribute('action','{!CreateExcelURL2}'); document.getElementById('downloaderForm').submit(); return false;" />
+                       
+                        <apex:CommandButton id="cvpButton2" value="{!$Label.ButtonExcelMail}"  action="{!germanySTController.excelToMail}" rendered="{!AND(mode == 'view', NOT(isCpStandard), germanySTController.IsDisplayExcel)}"/>
+                        <apex:commandButton value="{!$Label.ButtonExcelMail}" action="{!germanyCPController.excelToMail}" rendered="{!AND(mode == 'view', germanyCPController.isHasElements, currentDivision.Name != 'Roundup', NOT(isCpStandard),germanyCPController.IsDisplayExcel)}" />
+                     
+                        <apex:commandButton value="{!$Label.ButtonExcelMail}" action="{!germanyCPController.excelToMail}" rendered="{!AND(mode == 'view', currentDivision.Name = 'Roundup', NOT(isCpStandard),germanyCPController.IsDisplayExcel)}" />
+ 
+                        <apex:outputPanel id="downloader" style="display:none;">
+                            <apex:iframe src="{!downloadURL}" rendered="{!NOT(ISNULL(downloadURL))}"/>
+                        </apex:outputPanel>
+
+                        <!--Acreages<apex:commandButton action="{!doCreateAcreages}" id="acreages" value="{!$Label.CreateAcreages}" rendered="{!AND(mode == 'view', italyController.isHasElements)}" />
+                        Voucher<apex:commandButton action="{!goToVoucherGeneratorPage}" value="{!$Label.CreateVoucher}" rendered="{!AND(mode == 'view', italyController.isHasElements)}"/>-->
+            </apex:pageBlockButtons>
+            
+            
+            
+        </apex:pageBlock>
+        <script type="text/javascript">
+            $('.checkClass').each(function(i, obj) {
+                if(obj.innerHTML == '') {
+                    obj.parentNode.parentNode.setAttribute('onmouseover',''); 
+                    obj.parentNode.parentNode.style.backgroundColor = '#eee';
+                }
+            });
+        </script>
+    </apex:form>
+
+    <!--CP UKraine -->
+      <!--   <apex:form rendered="{!AND(isUKView,OR( currentDivision.name = 'Roundup', currentDivision.name = 'Guardian Tetra', currentDivision.name = 'Actimum', currentDivision.name = 'Harness', currentDivision.name = 'Monfast'), germanyCPController.isDisplay)}">   -->    
+      <apex:form rendered="false">
+        <apex:pageBlock >
+            <script id="division-color-switcher">
+                document.getElementById('division-color-switcher').parentNode.parentNode.style.backgroundColor = "#{!currentDivision.color__c}";
+            </script>
+            
+            <apex:pageBlockSection title="{!currentDivision.Name}" collapsible="false" columns="1">
+                <style>body .bPageBlock .detailList table.black-borders tr td{ border-color: #000; }</style>
+                    <table class="black-borders" border="1" width="100%" style="border-collapse:collapse; border-color: #000;">
+                        <tr>
+                            <td rowspan="2" style="text-align: center; vertical-align:middle;" >{!$ObjectType.Campaign.fields.TotalCampaignBudget__c.label} : {!TEXT(currentCampain.TotalCampaignBudget__c)}</td>
+                            <td colspan="3" style="background-color:#a1cbf4;text-align: center; vertical-align:middle;">{!$Label.CP_AP_FY_1}</td>
+                            <td colspan="3" style="background-color:#a1f4b0;text-align: center; vertical-align:middle;">{!$Label.CP_AP_FY}</td>
+                        </tr><tr>
+                            <td>Plan</td>
+                            <td>Vereinbarung</td>
+                            <td>IST</td>
+                            <td>Plan</td>
+                            <td>Vereinbarung</td>
+                            <td>IST</td>
+                        </tr><tr>
+                            <td>Gesamtabsatz-Potenzial</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_FORECAST']}</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_AGREED'] }</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_POG']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_FORECAST']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_AGREED']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_POG']}</td>
+                        </tr><tr>
+                            <td>Potenzialaussch�pfung</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_FORECAST_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_AGREED_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_POG_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_FORECAST_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_AGREED_OWN']}</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_POG_OWN']}</td>
+                        </tr><tr>
+                            <td>Marktanteil %</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_FORECAST_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_AGREED_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['LY_POG_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_FORECAST_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_AGREED_RATIO']} %</td>
+                            <td>{!GermanyCPController.summaryFields2['CY_POG_RATIO']} %</td>
+                        </tr>
+                    </table>
+                </apex:pageBlockSection>            
+            
+            
+            {!GermanyCPController.texto}
+            
+            <apex:pageBlockSection columns="1" title="{!$Label.TacticalPlan}">
+                <apex:pageBlockTable value="{!germanyCPController.tacticalPlans}" var="tacticalPlan" styleClass="smallTable ">
+                   <apex:column rendered="{!IF(mode == 'view', true, false)}" headerValue="{!$Label.Action}">
+                        <apex:inputCheckbox value="{!tacticalPlan.nextPeriodeElement.checked}" rendered="{!IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header"><script id="collapseTableScript">
+                        $(document).ready(function(){
+                        var ltChar = '<', gtChar = '>';
+                    
+                         var doubleHeaderHTML = $('#collapseTableScript').parent().parent().parent().parent().parent().parent().html();
+                         doubleHeaderHTML = doubleHeaderHTML.replace(/<t.ead[\s\S]*<\/thead>/ig, "<newDoubleHeader>");
+                         doubleHeaderHTML = doubleHeaderHTML.replace('<newDoubleHeader>',ltChar + 'thead>' + 
+                        '<tr class="headerRow">' + 
+                        '    {!IF(mode == 'view', '<th rowspan="2">Aktion</th>','')} ' + 
+                        '    <th rowspan="2">Produkt</th>' + 
+                        '    <th colspan="2" style="text-align: center;">Potenzialaussch�pfung Plan</th>' +
+                        '    <th colspan="2" style="text-align: center;">Potenzialaussch�pfung nach geschlossener ZV</th>' +
+                        '    <th colspan="2" style="text-align: center;">Potenzialaussch�pfung IST</th>' +
+                        '    <th rowspan="2" style="text-align: center;">Vorlieferant</th>' +
+                        '</tr><tr class="headerRow">' +
+                        '    <th style="text-align: center;background-color:#a1cbf4">{!$Label.PreviousYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1f4b0">{!$Label.CurrentYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1cbf4">{!$Label.PreviousYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1f4b0">{!$Label.CurrentYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1cbf4">{!$Label.PreviousYear}</th>' +
+                        '    <th style="text-align: center;background-color:#a1f4b0">{!$Label.CurrentYear}</th>' +
+                        '</tr></thead' + gtChar);
+                        $('#collapseTableScript').parent().parent().parent().parent().parent().parent().html(doubleHeaderHTML);                        });
+
+                        </script>{!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label}</apex:facet>
+                       <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.ProductRef__c}" rendered="{!IF(OR(mode == 'view', tacticalPlan.nextPeriodeElement.lookupValue.text != '', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}" />
+                    <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!tacticalPlan.nextPeriodeElement.lookupValue.id}" text="{!tacticalPlan.nextPeriodeElement.lookupValue.text}" identifier="{!'giveAwayCell'&TEXT(counter)}" division="{!$CurrentPage.parameters.division}" rendered="{!IF(AND(mode == 'edit', tacticalPlan.nextPeriodeElement.lookupValue.id == null, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}">
+                            <apex:inputText styleClass="idField" value="{!tacticalPlan.nextPeriodeElement.lookupValue.id}"  />
+                     </c:CustomLookupField><div style="display:none" class="{!IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),'','checkClass')}"></div>
+                     <apex:facet name="footer">{!$Label.SUM}</apex:facet>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.record.Forecast__c}"/>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_PY_FORECAST'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.Forecast__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <span class="Forecast"><apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.Forecast__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/></span>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_CY_FORECAST'])}</apex:facet>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.record.Agreed__c}"/>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_PY_AGREED'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.Agreed__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <span class="Forecast"><apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.Agreed__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/></span>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_CY_AGREED'])}</apex:facet>
+                    </apex:column>
+
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.record.POG__c}"/>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_PY_POG'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.POG__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <span class="Forecast"><apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.POG__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/></span>
+                        <apex:facet name="footer">{!TEXT(germanyCPController.sumOfNumberFields['C_CY_POG'])}</apex:facet>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.DE_DistributorRef__c.label}" > 
+                        <apex:outPutField value="{!tacticalPlan.nextPeriodeElement.record.DE_DistributorRef__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <apex:inPutField value="{!tacticalPlan.nextPeriodeElement.record.DE_DistributorRef__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/>
+                    </apex:column>
+                                
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockButtons location="bottom" rendered="{!AND(germanyCPController.IsEditButton, germanyCPController.IsDisplayButtons)}">
+                        <apex:commandButton action="{!germanyCPController.doLoadProductPicker}" value="{!$Label.ButtonAddMultipleLines}" rendered="{!IF(mode == 'view', true, false)}" />
+                        <apex:commandButton action="{!germanyCPController.save}" id="saveButton" value="Save" rendered="{!IF(mode == 'edit', true, false)}" />
+                        <apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!germanyCPController.newRecord}"/>
+                        <apex:commandButton action="{!germanyCPController.cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true, false)}" immediate="true"/>
+                        <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!germanyCPController.Edit}" rendered="{!AND(mode == 'view', germanyCPController.isHasElements)}"  />
+                        <apex:commandButton action="{!germanyCPController.deletex}" id="deleteButton" value="{!$Label.Delete}" rendered="{!AND(mode == 'view', germanyCPController.isHasElements)}" />
+                        
+                        <!-- <apex:commandButton value="{!$Label.ButtonExcelCreate}"  rendered="{!AND(mode == 'view', germanyCPController.isHasElements, currentDivision.Name != 'Roundup',germanyCPController.IsDisplayExcel)}"  onClick="document.getElementById('downloaderForm').setAttribute('action','{!CreateExcelURL}'); document.getElementById('downloaderForm').submit(); return false;"/>
+                     
+                        <apex:commandButton value="{!$Label.ButtonExcelCreate}" rendered="{!AND(mode == 'view', germanyCPController.isHasElements, currentDivision.Name = 'Roundup',germanyCPController.IsDisplayExcel)}" onClick="document.getElementById('downloaderForm').setAttribute('action','{!CreateExcelURL2}'); document.getElementById('downloaderForm').submit(); return false;" />
+                       
+                        <apex:CommandButton id="cvpButton2" value="{!$Label.ButtonExcelMail}"  action="{!germanySTController.excelToMail}" rendered="{!AND(IF(mode == 'view', true, false), germanySTController.IsDisplayExcel)}"/>
+                        <apex:commandButton value="{!$Label.ButtonExcelMail}" action="{!germanyCPController.excelToMail}" rendered="{!AND(mode == 'view', germanyCPController.isHasElements, currentDivision.Name != 'Roundup',germanyCPController.IsDisplayExcel)}" />
+                     
+                        <apex:commandButton value="{!$Label.ButtonExcelMail}" action="{!germanyCPController.excelToMail}" rendered="{!AND(mode == 'view', germanyCPController.isHasElements, currentDivision.Name = 'Roundup',germanyCPController.IsDisplayExcel)}" />
+ 
+                        <apex:outputPanel id="downloader" style="display:none;">
+                            <apex:iframe src="{!downloadURL}" rendered="{!NOT(ISNULL(downloadURL))}"/>
+                        </apex:outputPanel>-->
+
+                        <!--Acreages<apex:commandButton action="{!doCreateAcreages}" id="acreages" value="{!$Label.CreateAcreages}" rendered="{!AND(mode == 'view', italyController.isHasElements)}" />
+                        Voucher<apex:commandButton action="{!goToVoucherGeneratorPage}" value="{!$Label.CreateVoucher}" rendered="{!AND(mode == 'view', italyController.isHasElements)}"/>-->
+            </apex:pageBlockButtons>
+            
+            
+            
+        </apex:pageBlock>
+        <script type="text/javascript">
+            $('.checkClass').each(function(i, obj) {
+                if(obj.innerHTML == '') {
+                    obj.parentNode.parentNode.setAttribute('onmouseover',''); 
+                    obj.parentNode.parentNode.style.backgroundColor = '#eee';
+                }
+            });
+        </script>
+    </apex:form>   
+    
+<!--    CP Ukraine -->
+    
+    
+     <apex:form rendered="{!AND(isGermanView,OR(currentDivision.Name = 'Corn', currentDivision.Name = 'OSR'), germanySTController.isDisplay)}">
+        <apex:pageBlock >
+          <apex:pageMessages />
+           <apex:pageblockSection title="{!currentDivision.Name}" collapsible="false" >
+                <apex:outputLabel />
+                 <apex:pageBlockSectionItem >
+                    <apex:outputText />
+                </apex:pageBlockSectionItem>
+                
+                <!--<apex:pageBlockSectionItem >
+                    <apex:outputLabel >{!$Label.SelectedCampaignDivision}</apex:outputLabel>
+                    <apex:outputText value="{!currentDivision.name}"/>
+                </apex:pageBlockSectionItem>
+                <apex:outputText />-->
+                
+                <apex:outputField value="{!currentCampain.TotalCampaignBudgetFOC__c}"/>
+                <apex:outputText />
+                
+                <apex:outputField value="{!currentCampain.TotalCampaignBudget__c}"/>
+                <apex:outputText />
+                
+                <apex:outputField value="{!currentCampain.NUM_TotalCampaignBudgetDist__c}"/>
+                <apex:outputText />
+                
+                <apex:outputText />               
+                <apex:outputText />
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.CP_AP_Plan}"></apex:outputLabel>
+                    <apex:outputText />
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.CP_AP_Agreed}"></apex:outputLabel>
+                    <apex:outputText />
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputField value="{!currentCampain.TotalForecastCharged__c}"/>
+                <apex:outputField value="{!currentCampain.TotalAgreedCharged__c}"/>
+
+                <apex:outputField value="{!currentCampain.TotalForecastFOC__c}"/>
+                <apex:outputField value="{!currentCampain.TotalAgreedFOC__c}"/>
+
+                <apex:outputField value="{!currentCampain.DE_TotalPendingForecastBudget__c}"/>
+                <apex:outputField value="{!currentCampain.DE_TotalPendingAgreedBudget__c}"/>
+                
+                <apex:pageBlockSectionItem >
+                     <apex:outputLabel value="{!$objecttype.campaign.fields.PrcForecastAdvancementSales__c.label}"/>
+                     <apex:outputText value="{!Round(currentCampain.PrcForecastAdvancementSales__c,0)} %"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="{!$objecttype.campaign.fields.PrcAgreedAdvancementSales__c.label}"/>
+                    <apex:outputText value="{!Round(currentCampain.PrcAgreedAdvancementSales__c,0)} %"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText />
+                <apex:outputText />
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.CP_AP_NetSales}"></apex:outputLabel>
+                    <apex:outputText />
+                </apex:pageBlockSectionItem>
+                <apex:outputText />
+                
+                <apex:outputField value="{!currentCampain.TotalSalesCharged__c}"/>
+                <apex:outputText />
+                
+                <apex:outputField value="{!currentCampain.TotalSalesFOC__c}"/>
+                <apex:outputText />
+                
+                <apex:outputField value="{!currentCampain.DE_TotalPendingPoGBudget__c}"/>
+                <apex:outputText />
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="{!$objecttype.campaign.fields.PrcPoGAdvancementSales__c.label}"/>
+                    <apex:outputText value="{!Round(currentCampain.PrcPoGAdvancementSales__c,0)} %"/>
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageblockSection>
+            <apex:variable var="isOwner" value="{!NOT(True)}"/>
+            <apex:pageBlockSection columns="1" title="{!$Label.TacticalPlan}">
+                <apex:pageBlockTable value="{!germanySTController.tacticalPlans}" var="tacticalPlan" styleClass="smallTable">
+                   <apex:column rendered="{!IF(mode == 'view', true, false)}" headerValue="{!$Label.Action}" >
+                        <apex:variable var="isOwner" value="{!IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)}" />
+                        <apex:inputCheckbox value="{!tacticalPlan.nextPeriodeElement.checked}" rendered="{!IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)}"/>
+                    </apex:column>
+                    <apex:column >
+                    <apex:facet name="header"><script id="collapseTableScript">
+                    $(document).ready(function(){
+                        var ltChar = '<', gtChar = '>';
+                    
+                         var doubleHeaderHTML = $('#collapseTableScript').parent().parent().parent().parent().parent().parent().html();
+                         doubleHeaderHTML = doubleHeaderHTML.replace(/<t.ead[\s\S]*<\/thead>/ig, "<newDoubleHeader>");
+                         doubleHeaderHTML = doubleHeaderHTML.replace('<newDoubleHeader>',ltChar + 'thead>' + 
+                        '<tr class="headerRow">' + 
+                        '    {!IF(mode == 'view', '<th rowspan="2">'+$Label.CP_AP_Action+'</th>','')} ' + 
+                        '    <th rowspan="2">{!$Label.CP_AP_Product}</th>' +    
+                        '    {!IF(currentDivision.name == 'Corn', '<th rowspan="2">'+$Label.CP_AP_KeyPoints+'</th>','')} ' + 
+                        '    {!IF(currentDivision.name == 'OSR', '<th rowspan="2">'+$Label.ASorten+'</th>','')} ' + 
+                        '    <th rowspan="2">{!$Label.CP_AP_Treatment}</th>' + 
+                        '    <th colspan="2">{!$Label.CP_AP_PY}</th>' +
+                        '    <th colspan="2">{!$Label.CP_AP_Plan} CY</th>' +
+                        '    <th colspan="2">{!$Label.CP_AP_Agreed} CY</th>' +
+                        '    <th colspan="2">{!$Label.CP_AP_NetSales} CY</th>' +
+                        '    <th rowspan="2">{!$Label.CP_AP_Distributor}</th>' + 
+                        '</tr><tr class="headerRow">' +
+                        '    <th>{!$Label.CP_AP_Charged}</th>' +
+                        '    <th>{!$Label.CP_AP_FOC}</th>' +
+                        '    <th>{!$Label.CP_AP_Charged}</th>' +
+                        '    <th>{!$Label.CP_AP_FOC}</th>' +
+                        '    <th>{!$Label.CP_AP_Charged}</th>' +
+                        '    <th>{!$Label.CP_AP_FOC}</th>' +
+                        '    <th>{!$Label.CP_AP_Charged}</th>' +
+                        '    <th>{!$Label.CP_AP_FOC}</th>' +
+                        '</th></thead' + gtChar);
+                        $('#collapseTableScript').parent().parent().parent().parent().parent().parent().html(doubleHeaderHTML);                        });
+
+                        </script>{!$Label.CP_AP_FOC}<!-- {!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label} --></apex:facet>
+                        <apex:variable var="isOwner" value="{!IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)}" /> 
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.ProductRef__r.ProductDisplayName__c}" rendered="{!IF(OR(mode == 'view', tacticalPlan.nextPeriodeElement.lookupValue.text != '', !isOwner), true, false)}" />
+                    <!--<apex:outputText value="{!tacticalPlan.nextPeriodeElement.lookupValue.text}" rendered="{!IF(OR(mode == 'view', tacticalPlan.nextPeriodeElement.lookupValue.text != ''), true, false)}" />-->
+                    <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!tacticalPlan.nextPeriodeElement.lookupValue.id}" text="{!tacticalPlan.nextPeriodeElement.lookupValue.text}" identifier="{!'giveAwayCell'&TEXT(counter)}" division="{!$CurrentPage.parameters.division}" rendered="{!IF(AND(mode == 'edit', tacticalPlan.nextPeriodeElement.lookupValue.id == null, isOwner), true, false)}">
+                            <apex:inputText styleClass="idField" value="{!tacticalPlan.nextPeriodeElement.lookupValue.id}"  />
+                     </c:CustomLookupField><div style="display:none" class="{!IF(isOwner,'','checkClass')}"></div>
+                     <apex:facet name="footer">{!$Label.SUM}</apex:facet>
+                    </apex:column>
+              <!-- CR-00000181: Conditions for rendering "DE_isPremium__c" field are explained in a Solution with the following name:  "GERMANY - Conditions for rendering DE_isPremium__c field in the AP" -->     
+                    <apex:column headerValue="{!$ObjectType.ProductCatalogEntry__c.fields.DE_isPremium__c.label}" rendered="{!IF(currentDivision.name == 'Corn', true, false)}">
+                         <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.DE_isPremium__c}" rendered="{!IF(OR(NOT(CONTAINS(premiumProductsCurrent,tacticalPlan.record.ProductRef__r.Name)), mode == 'view', tacticalPlan.frozen=true, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}" />
+                         <apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.DE_isPremium__c}" rendered="{!IF(AND(CONTAINS(premiumProductsCurrent,tacticalPlan.record.ProductRef__r.Name), mode == 'edit', tacticalPlan.frozen=false, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}" />
+                     </apex:column> 
+             
+                    <apex:column headerValue="{!$ObjectType.ProductCatalogEntry__c.fields.DE_isPremium__c.label}" rendered="{!IF(currentDivision.name == 'OSR', true, false)}">
+                         <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.DE_isPremium__c}" rendered="{!IF(OR(NOT(CONTAINS(premiumProductsCurrent,tacticalPlan.record.ProductRef__r.Name)), mode == 'view', tacticalPlan.frozen=true, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}" />
+                         <apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.DE_isPremium__c}" rendered="{!IF(AND(CONTAINS(premiumProductsCurrent,tacticalPlan.record.ProductRef__r.Name), mode == 'edit', tacticalPlan.frozen=false, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}" />
+                    </apex:column>                                       
+                    
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.Treatment__c.label}">
+                        <apex:outputField value="{!tacticalPlan.record.Treatment__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.record.POG__c}"/>
+                        <apex:facet name="footer">{!TEXT(germanySTController.sumOfNumberFields['C_PY_POG'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.FOCPC}">
+                        <apex:outputField value="{!tacticalPlan.freeOfChargeElement.record.POG__c}"/>
+                        <apex:facet name="footer">{!TEXT(germanySTController.sumOfNumberFields['FOC_PY_POG'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CForecastCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.Forecast__c}"  rendered="{!IF(OR(mode == 'view',tacticalPlan.frozen=true, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <span class="Forecast"><apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.Forecast__c}"  rendered="{!IF(AND(mode == 'edit', tacticalPlan.frozen=false, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/></span>
+                        <apex:facet name="footer">{!TEXT(germanySTController.sumOfNumberFields['C_CY_FORECAST'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.FOCForecastCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.Forecast__c}" rendered="{!IF(OR(mode == 'view', tacticalPlan.frozen=true, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <span class="Forecast"><apex:inputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.Forecast__c}" rendered="{!IF(AND(mode == 'edit', tacticalPlan.frozen=false, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/></span>
+                        <apex:facet name="footer">{!TEXT(germanySTController.sumOfNumberFields['FOC_CY_FORECAST'])}</apex:facet>
+                    </apex:column>
+                     <apex:column headerValue="{!$Label.CAgreedCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.Agreed__c}" rendered="{!IF(OR(mode == 'view',tacticalPlan.frozen=true, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.Agreed__c}" rendered="{!IF(AND(mode == 'edit', tacticalPlan.frozen=false, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/>
+                        <apex:facet name="footer">{!TEXT(germanySTController.sumOfNumberFields['C_CY_AGREED'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.FOCAgreedCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.Agreed__c}" rendered="{!IF(OR(mode == 'view',tacticalPlan.frozen=true, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <apex:inputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.Agreed__c}" rendered="{!IF(AND(mode == 'edit',tacticalPlan.frozen=false, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/>
+                        <apex:facet name="footer">{!TEXT(germanySTController.sumOfNumberFields['FOC_CY_AGREED'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPoGCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.POG__c}" rendered="{!IF(OR(mode == 'view',tacticalPlan.frozen=true,IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.POG__c}" rendered="{!IF(AND(mode == 'edit',tacticalPlan.frozen=false, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/>
+                        <apex:facet name="footer">{!TEXT(germanySTController.sumOfNumberFields['C_CY_POG'])}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!account.recordType.name}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.POG__c}" rendered="{!IF(OR(mode == 'view',tacticalPlan.frozen=true,IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <apex:inputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.POG__c}" rendered="{!IF(AND(mode == 'edit', tacticalPlan.frozen=false,IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/>
+                        <apex:facet name="footer">{!TEXT(germanySTController.sumOfNumberFields['FOC_CY_POG'])}</apex:facet>
+                    </apex:column>
+                    <!--<apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.DE_DistributorRef__c.label}" >
+                        <apex:outPutField value="{!tacticalPlan.nextPeriodeElement.record.DE_DistributorRef__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <apex:inPutField value="{!tacticalPlan.nextPeriodeElement.record.DE_DistributorRef__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/>
+                    </apex:column>-->
+                    <!--New field distributor-->
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.LKP_DistributorRefST__c.label}" >
+                        <apex:outPutField value="{!tacticalPlan.nextPeriodeElement.record.LKP_DistributorRefST__c}" rendered="{!IF(OR(mode == 'view',tacticalPlan.frozen=true, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <apex:inPutField value="{!tacticalPlan.nextPeriodeElement.record.LKP_DistributorRefST__c}" rendered="{!IF(AND(mode == 'edit', tacticalPlan.frozen=false, IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/>
+                    </apex:column>
+                    <!--rendered="{!IF(account.recordType.name == 'Dist./Ret./PoS', false, true)}"-->
+                    <!--<apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.PoS__c.label}" >
+                        <apex:outPutField value="{!tacticalPlan.nextPeriodeElement.record.PoS__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),false,true)), true, false)}"/>
+                        <apex:inPutField value="{!tacticalPlan.nextPeriodeElement.record.PoS__c}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.nextPeriodeElement.record.ownerID,ISNULL(tacticalPlan.nextPeriodeElement.record.ownerID)),true,false)), true, false)}"/>
+                    </apex:column>-->
+                                
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <!--Buttons ActionPlan-->
+            <apex:pageBlockButtons location="bottom" rendered="{!AND(germanySTController.IsDisplayButtons)}"> <!-- germanySTController.IsAPRegionalManager All conditions from this method are already included -->
+                       <apex:commandButton action="{!germanySTController.doLoadProductPicker}" value="{!$Label.ButtonAddMultipleLines}" rendered="{!IF(mode == 'view', true, false)}" />
+                        <apex:commandButton action="{!germanySTController.save}" id="saveButton" value="Save" rendered="{!IF(mode == 'edit', true, false)}" />
+                        <apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!germanySTController.newRecord}"/>
+                        <apex:commandButton action="{!germanySTController.cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true, false)}" immediate="true"/>
+                        <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!germanySTController.Edit}" rendered="{!AND(mode == 'view', germanySTController.isHasElements)}"  />
+                        <apex:commandButton action="{!germanySTController.deletex}" id="deleteButton" value="{!$Label.Delete}" rendered="{!AND(mode == 'view', germanySTController.isHasElements)}" />
+                        
+                        <apex:CommandButton id="cvpButton" value="{!$Label.ButtonExcelCreate}"  action="{!doCreateExcel}"  rendered="{!AND(IF(mode == 'view', true, false), AND(NOT(isCpStandard), germanySTController.IsDisplayExcel))}" onClick="document.getElementById('downloaderForm').setAttribute('action','{!CreateExcelURL}'); document.getElementById('downloaderForm').submit(); return false;"/>
+                        <apex:CommandButton id="cvpButton2" value="{!$Label.ButtonExcelMail}"  action="{!germanySTController.excelToMail}" rendered="{!AND(IF(mode == 'view', true, false), AND(NOT(isCpStandard),germanySTController.IsDisplayExcel))}"/>
+            
+            </apex:pageBlockButtons>
+            
+            
+        </apex:pageBlock>
+        <script type="text/javascript">
+            $('.checkClass').each(function(i, obj) {
+                if(obj.innerHTML == '') {
+                    obj.parentNode.parentNode.setAttribute('onmouseover',''); 
+                    obj.parentNode.parentNode.style.backgroundColor = '#eee';
+                }
+            });
+        </script>
+    </apex:form>
+
+    <apex:outputPanel rendered="{!isGermanView}" >
+        <form id="downloaderForm" target="_blank" method="GET" >
+            <input type="hidden" id="downloaderForm_id" name="id" value="{!account.id}" />
+            <input type="hidden" id="downloaderForm_divisionId" name="division" value="{!currentDivision.Id}" />
+            <input type="hidden" id="downloaderForm_retoureId" name="retoureId" value="{!retoure.id}" />
+        </form>    
+    </apex:outputPanel>
+    
+    
+    <apex:form rendered="{!isItalianView}">
+
+        <apex:pageBlock >
+            <apex:pageBlockSection rendered="{!country=='france'}">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >{!$Label.SelectedCampaignDivision}</apex:outputLabel>
+                    <apex:outputText value="{!currentDivision.name}"/>
+                </apex:pageBlockSectionItem>
+                <apex:outputText ></apex:outputText>
+                <apex:outputField value="{!currentCampain.TotalCampaignBudget__c}"/>
+                <apex:outputText ></apex:outputText>
+                <apex:outputField value="{!currentCampain.TotalAllocatedCharged__c}"/>
+                <apex:outputField value="{!currentCampain.TotalAllocatedFOC__c}"/>
+                
+                <apex:outputField value="{!currentCampain.TotalPendingBudget__c}"/>
+            </apex:pageBlockSection>
+            
+            
+            
+            <apex:pageblockSection rendered="{!country=='italy'}" >
+                <apex:outputLabel />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="PDR"></apex:outputLabel>
+                    <apex:outputText />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >{!$Label.SelectedCampaignDivision}</apex:outputLabel>
+                    <apex:outputText value="{!currentDivision.name}"/>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!currentCampain.TotalPendingAgreedBudget__c}"/>
+                <apex:outputField value="{!currentCampain.TotalCampaignBudget__c}"/>
+                <apex:outputField value="{!currentCampain.PrcAgreedAdvancementSales__c}"/>
+                <apex:outputField value="{!currentCampain.TotalCampaignBudgetFOC__c}"/>
+                <apex:outputField value="{!currentCampain.TotalPendingAgreedFOC__c}"/>                
+                <apex:outputText />
+                <apex:outputField value="{!currentCampain.PrcAgreedAdvancementFOC__c}"/>
+                <apex:outputText />
+                <apex:outputText />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="PROG"></apex:outputLabel>
+                    <apex:outputText />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="POG"></apex:outputLabel>
+                    <apex:outputText />
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!currentCampain.TotalPendingForecastBudget__c}"/>
+                <apex:outputField value="{!currentCampain.TotalPendingPoGBudget__c}"/>
+                <apex:outputField value="{!currentCampain.PrcForecastAdvancementSales__c}"/>
+                <apex:outputField value="{!currentCampain.PrcPoGAdvancementSales__c}"/>
+                <apex:outputField value="{!currentCampain.TotalPendingForecastFOC__c}"/>                
+                <apex:outputField value="{!currentCampain.TotalPendingPoGFOC__c}"/>                
+                <apex:outputField value="{!currentCampain.PrcForecastAdvancementFOC__c}"/>
+                <apex:outputField value="{!currentCampain.PrcPoGAdvancementFOC__c}"/>
+            </apex:pageblockSection>
+        
+            <apex:pageBlockSection columns="1" title="{!$Label.TacticalPlan}">
+                <apex:pageBlockTable value="{!italyController.tacticalPlans}" var="tacticalPlan" styleClass="smallTable ">
+                   <apex:column rendered="{!IF(mode == 'view', true, false)}" headerValue="{!$Label.Action}">
+                       
+                        <apex:inputCheckbox value="{!tacticalPlan.nextPeriodeElement.checked}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label}">
+                     <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.ProductRef__c}" rendered="{!IF(OR(mode == 'view', tacticalPlan.nextPeriodeElement.lookupValue.text != ''), true, false)}" />
+                    <!--<apex:outputText value="{!tacticalPlan.nextPeriodeElement.lookupValue.text}" rendered="{!IF(OR(mode == 'view', tacticalPlan.nextPeriodeElement.lookupValue.text != ''), true, false)}" />-->
+                    <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!tacticalPlan.nextPeriodeElement.lookupValue.id}" text="{!tacticalPlan.nextPeriodeElement.lookupValue.text}" identifier="{!'giveAwayCell'&TEXT(counter)}" division="{!$CurrentPage.parameters.division}" rendered="{!IF(AND(mode == 'edit', tacticalPlan.nextPeriodeElement.lookupValue.id == null), true, false)}">
+                            <apex:inputText styleClass="idField" value="{!tacticalPlan.nextPeriodeElement.lookupValue.id}"  />
+                     </c:CustomLookupField>
+                     <apex:facet name="footer">{!$Label.SUM}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.Treatment__c.label}">
+                        <apex:outputField value="{!tacticalPlan.record.Treatment__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPC}">
+                        <apex:outputField value="{!tacticalPlan.record.POG__c}"/>
+                        <apex:facet name="footer">{!italyController.sumOfNumberFields['C_PY_POG']}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.FOCPC}">
+                        <apex:outputField value="{!tacticalPlan.freeOfChargeElement.record.POG__c}"/>
+                        <apex:facet name="footer">{!italyController.sumOfNumberFields['FOC_PY_POG']}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CForecastCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.Forecast__c}" rendered="{!AND(mode == 'view', NOT(isBlockFields))}"/>
+                        <span class="Forecast">
+                            <apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.Forecast__c}" rendered="{!AND(mode == 'edit', NOT(isBlockFields))}"/>
+                            <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.Forecast__c}" rendered="{!isBlockFields}"/>
+                        </span>
+                        <apex:facet name="footer">{!italyController.sumOfNumberFields['C_CY_FORECAST']}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.FOCForecastCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.Forecast__c}" rendered="{!AND(mode == 'view', NOT(isBlockFields))}"/>
+                        <span class="Forecast">
+                            <apex:inputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.Forecast__c}" rendered="{!AND(mode == 'edit', NOT(isBlockFields))}"/>
+                            <apex:outputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.Forecast__c}" rendered="{!isBlockFields}"/>
+                        </span>
+                        <apex:facet name="footer">{!italyController.sumOfNumberFields['FOC_CY_FORECAST']}</apex:facet>
+                    </apex:column>
+                     <apex:column headerValue="{!$Label.CAgreedCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.Agreed__c}" rendered="{!IF(mode == 'view', true, false)}"/>
+                        <apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.Agreed__c}" rendered="{!IF(mode == 'edit', true, false)}"/>
+                        <apex:facet name="footer">{!italyController.sumOfNumberFields['C_CY_AGREED']}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.FOCAgreedCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.Agreed__c}" rendered="{!IF(mode == 'view', true, false)}"/>
+                        <apex:inputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.Agreed__c}" rendered="{!IF(mode == 'edit', true, false)}"/>
+                        <apex:facet name="footer">{!italyController.sumOfNumberFields['FOC_CY_AGREED']}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.CPoGCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.POG__c}" rendered="{!IF(mode == 'view', true, false)}"/>
+                        <apex:inputField value="{!tacticalPlan.nextPeriodeElement.record.POG__c}" rendered="{!IF(mode == 'edit', true, false)}"/>
+                        <apex:facet name="footer">{!italyController.sumOfNumberFields['C_CY_POG']}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.FOCPoGCC}">
+                        <apex:outputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.POG__c}" rendered="{!IF(mode == 'view', true, false)}"/>
+                        <apex:inputField value="{!tacticalPlan.nextPeriodeElement.freeOfChargeElement.record.POG__c}" rendered="{!IF(mode == 'edit', true, false)}"/>
+                        <apex:facet name="footer">{!italyController.sumOfNumberFields['FOC_CY_POG']}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.Inventory__c.label}" rendered="{!IF(Country == 'germany', true, false)}">
+                        <apex:outputText value="{!tacticalPlan.nextPeriodeElement.inventory}"/>
+                        <apex:facet name="footer">{!italyController.sumOfNumberFields['CY_Inventory']}</apex:facet>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.PlantingDensity__c.label}">
+                        <apex:outPutField value="{!tacticalPlan.nextPeriodeElement.record.PlantingDensity__c}" rendered="{!IF(mode == 'view', true, false)}"/>
+                        <apex:inPutField value="{!tacticalPlan.nextPeriodeElement.record.PlantingDensity__c}" rendered="{!IF(mode == 'edit', true, false)}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.DistributorRef__c.label}" rendered="{!IF(account.recordType.name == 'Dist./Ret./PoS', false, true)}">
+                        <apex:outPutField value="{!tacticalPlan.nextPeriodeElement.record.DistributorRef__c}" rendered="{!IF(mode == 'view', true, false)}"/>
+                        <apex:inPutField value="{!tacticalPlan.nextPeriodeElement.record.DistributorRef__c}" rendered="{!IF(mode == 'edit', true, false)}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.PoS__c.label}" rendered="{!IF(account.recordType.name == 'Dist./Ret./PoS', false, true)}">
+                        <apex:outPutField value="{!tacticalPlan.nextPeriodeElement.record.PoS__c}" rendered="{!IF(mode == 'view', true, false)}"/>
+                        <apex:inPutField value="{!tacticalPlan.nextPeriodeElement.record.PoS__c}" rendered="{!IF(mode == 'edit', true, false)}"/>
+                    </apex:column>
+                                
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons location="bottom" rendered="{!italyController.IsEditButton}">
+                        <apex:commandButton action="{!italyController.doLoadProductPicker}" value="{!$Label.ButtonAddMultipleLines}" rendered="{!IF(mode == 'view', true, false)}" />
+                        <apex:commandButton action="{!italyController.save}" id="saveButton" value="Save" rendered="{!IF(mode == 'edit', true, false)}" />
+                        <apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!italyController.newRecord}"/>
+                        <apex:commandButton action="{!italyController.cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true, false)}" immediate="true"/>
+                        <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!italyController.Edit}" rendered="{!AND(mode == 'view', italyController.isHasElements)}"  />
+                        
+                        <apex:commandButton action="{!italyController.deletex}" id="deleteButton" value="{!$Label.Delete}" rendered="{!AND(mode == 'view', italyController.isHasElements, NOT(isBlockFields))}" />
+                        <apex:commandButton action="{!italyController.deletex}" id="deleteButtonBlock" value="{!$Label.Delete}" disabled="true" rendered="{!isBlockFields}" />
+                        
+                        <apex:commandButton action="{!doCreateAcreages}" id="acreages" value="{!$Label.CreateAcreages}" rendered="{!AND(mode == 'view', italyController.isHasElements)}" />
+                        <apex:commandButton action="{!goToVoucherGeneratorPage}" value="{!$Label.CreateVoucher}" rendered="{!AND(mode == 'view', italyController.isHasElements)}"/>
+            </apex:pageBlockButtons>
+            
+            
+            
+        </apex:pageBlock>
+    </apex:form>
+    
+    
+    
+    <apex:form rendered="{!isUKView}">
+        <apex:pageBlock >
+            <apex:pageblockSection >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >{!$Label.SelectedCampaignDivision}</apex:outputLabel>
+                    <apex:outputText value="{!currentDivision.name}"/>
+                </apex:pageBlockSectionItem>
+                <apex:outputText />
+                <apex:outputField value="{!currentCampain.TotalCampaignBudget__c}"/>
+                <apex:outputText />
+                <apex:outputField value="{!currentCampain.TotalAllocatedCharged__c}"/>
+                <apex:outputField value="{!currentCampain.TotalAllocatedFOC__c}"/>
+                <apex:outputField value="{!currentCampain.TotalPendingBudget__c}"/>
+            </apex:pageblockSection>
+        
+            <!--<apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >{!$Label.SelectedCampaignDivision}</apex:outputLabel>
+                    <apex:outputText value="{!currentDivision.name}"/>
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageBlockSection>-->
+            
+            <apex:pageBlockSection columns="1" title="{!$Label.TacticalPlan}">
+                <apex:pageBlockTable value="{!ukController.TacticalPlans}" var="tacticalPlan">
+                    <apex:column rendered="{!IF(mode == 'view', true, false)}" headerValue="{!$Label.Action}">
+                       
+                        <apex:inputCheckbox value="{!tacticalPlan.nextPeriodeElement.checked}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label}">
+                     <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record.ProductRef__c}" rendered="{!IF(OR(mode == 'view', tacticalPlan.nextPeriodeElement.lookupValue.text != ''), true, false)}" />
+                    <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!tacticalPlan.nextPeriodeElement.lookupValue.id}" text="{!tacticalPlan.nextPeriodeElement.lookupValue.text}" identifier="{!'giveAwayCell'&TEXT(counter)}" division="{!$CurrentPage.parameters.division}" rendered="{!IF(AND(mode == 'edit', tacticalPlan.nextPeriodeElement.lookupValue.id == null), true, false)}">
+                            <apex:inputText styleClass="idField" value="{!tacticalPlan.nextPeriodeElement.lookupValue.id}"  />
+                     </c:CustomLookupField>
+                     <apex:facet name="footer">{!$Label.SUM}</apex:facet>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$Label.POGPY}">
+                        <apex:outputField value="{!tacticalPlan.record.POG__c}"/>
+                        <apex:facet name="footer">{!SUBSTITUTE(IF(ukController.sumOfNumberFields['pogPrev'] == 0, '', TEXT(ukController.sumOfNumberFields['pogPrev'])), '.0', '')}</apex:facet>
+                    </apex:column>
+                    
+                    
+                    <apex:repeat var="f" value="{!ukController.fieldSetManager.managedFieldSetMembers}">
+                    
+                <apex:column headerValue="{!f.label}" rendered="true" footerClass="{!IF(AND(account.recordType.name == 'Dist./Ret./PoS', OR(f.fieldPath == 'PoS__c', f.fieldPath=='DistributorRef__c')), 'distributor', '')}" styleClass="{!IF(AND(account.recordType.name == 'Dist./Ret./PoS', OR(f.fieldPath == 'PoS__c', f.fieldPath=='DistributorRef__c')), 'distributor', '')}" headerClass="{!IF(AND(account.recordType.name == 'Dist./Ret./PoS', OR(f.fieldPath == 'PoS__c', f.fieldPath=='DistributorRef__c')), 'distributor', '')}">
+                    <!-- <apex:facet name="header" >{!f.label}</apex:facet>{!f.label} -->
+                    <span class="{!f.fieldPath}"><apex:inputField value="{!tacticalPlan.nextPeriodeElement.record[f.fieldPath]}"  rendered="{!IF(mode == 'edit', true, false)}" required="{!f.required}" /></span>
+                    <apex:outputField value="{!tacticalPlan.nextPeriodeElement.record[f.fieldPath]}" rendered="{!IF(mode == 'view', true, false)}" />
+                    <apex:facet name="footer">{!SUBSTITUTE(IF(ukController.sumOfNumberFields[f.fieldPath] == 0, '', TEXT(ukController.sumOfNumberFields[f.fieldPath])), '.0', '')}</apex:facet>
+                </apex:column> 
+                
+        </apex:repeat>
+                </apex:pageBlockTable>
+                <style>
+                    .distributor
+                    {
+                        display:none;
+                    }
+                </style>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons location="bottom" rendered="{!ukController.IsEditButton}">
+                <apex:commandButton action="{!ukController.doLoadProductPicker}" value="{!$Label.ButtonAddMultipleLines}" rendered="{!IF(mode == 'view', true, false)}" />
+                <apex:commandButton action="{!ukController.save}" id="saveButton" value="Save" rendered="{!IF(mode == 'edit', true, false)}" />
+                <apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!ukController.newRecord}"/>
+                <apex:commandButton action="{!ukController.cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true, false)}" immediate="true"/>
+                <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!ukController.Edit}" rendered="{!AND(mode == 'view', ukController.isHasElements)}"  />
+                <apex:commandButton action="{!ukController.deletex}" id="deleteButton" value="{!$Label.Delete}" rendered="{!AND(mode == 'view', ukController.isHasElements)}" />
+                <apex:commandButton action="{!doCreateAcreages}" id="acreages" value="{!$Label.CreateAcreages}" rendered="{!AND(mode == 'view', ukController.isHasElements)}" />
+                <!-- <apex:commandButton action="{!goToVoucherGeneratorPage}" value="{!$Label.CreateVoucher}" rendered="{!AND(mode == 'view', ukController.isHasElements)}"/> -->
+    </apex:pageBlockButtons>
+    
+        </apex:pageBlock>
+    </apex:form>
+    
+    
+    
+    <apex:form rendered="{!isRSAView}">
+        <style>
+            .apexp .individualPalette .bPageBlock .pbBody .pbSubheader{
+                background-image:url('/img/alohaSkin/opacity75.png');
+                color:black;
+                padding:4px 16px;
+            }
+            .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3{
+                font-size: 1.2em;
+                font-color: black;
+            }
+            .apexp .bPageBlock.apexDefaultPageBlock .pbBody{
+                margin: 0px 0px 0px;
+            }
+            input.smallInput{
+                width:55px;
+            }
+
+    .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 30%;            
+            padding:10px;
+            position: absolute;
+            width: 900px;
+            margin-left: -250px;
+            bottom:400px;
+            align : center;
+    }
+    .popupBackground{
+            background-color:black;
+            opacity: 0.05;
+            filter: alpha(opacity = 5);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+            align:center;
+            
+    }
+    .hasPreliminar{
+            background-color:AliceBlue;
+    }
+    
+.customPopup {
+            background-color: white;
+            border-style: solid;
+            border-width: 2px;
+            left: 50%;
+            padding:10px;
+            position: fixed;
+            z-index: 9999;
+            width: 1000px;
+            margin-left: -500px;
+            top:25%;
+
+}
+.disabledTextBox {
+    background-color: white;
+    border: 1px solid;
+    color: black;
+    cursor: default;
+    width: 90px;
+    display: table;
+    padding: 2px 1px;
+    text-align:right;
+}   
+
+.closeButton {
+    float: right;
+}
+
+ 
+        
+
+
+</style>
+    
+<script>
+     function openRequestPage()
+     {
+          var accountId= document.getElementById('accID').innerHTML;
+          var url="/apex/ConsignmentDetail?Id=" + accountId;
+          window.open(url,'_blank','height=400,width=1200,left=80,top=100,titlebar=no,location=no,resizable=yes,scrollbars=yes,toolbar=no,status=no',false);
+          return false;
+     }
+
+/*
+function popupSpinner(elementId,top)
+{    
+    target2 = document.getElementById(elementId);
+    spinner2 = new Spinner(opts).spin(target2);
+        
+}
+             
+function popupSpinnerClose()
+{
+    spinner2.stop();
+        spinner2.stop();
+
+}*/
+function reloadPage(url){
+            window.location=url;
+}
+
+ var newWin=null;
+ function openLookupPopup(orderType, catalogType, con)
+ {
+  var accountId= document.getElementById('accID').innerHTML;
+  var url="/apex/OrderGeneratorRemoter?accountId=" + accountId+"&orderType=" + orderType+"&catalogType=" + catalogType+"&consigned=" + con;
+
+  newWin=window.open(url, 'Popup','height=400,width=900,left=150,top=50,titlebar=no,location=no,resizable=yes,scrollbars=yes,toolbar=no,status=no',true);
+  if (window.focus) 
+  {
+   newWin.focus();
+  }
+    
+     return false;
+ }
+       
+ function closeLookupPopup()
+ {
+    if (null!=newWin)
+    {
+       newWin.close();
+    }  
+ }
+</script>
+
+        <apex:pageBlock title="{!$Label.ActionPlan}">
+            <apex:actionStatus id="locker">
+                <apex:facet name="start">
+                    <div class="popupBackground">
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockSection id="campaignInfo">
+                <apex:outputText label="{!$Label.SelectedCampaignDivision}" value="{!currentDivision.name}"/>
+                <apex:outputField value="{!currentCampain.TotalCampaignBudget__c}"/>
+                <apex:outputField label="{!$Label.TotalForecastUsed_RSA}" value="{!currentCampain.TotalForecastCharged__c}"/>
+                <apex:outputText label="{!$Label.TotalForecastBudget_RSA}" value="{0,number,0,000}" ><apex:param value="{!currentCampain.TotalCampaignBudget__c - currentCampain.TotalForecastCharged__c}"/></apex:outputText>
+                <apex:outputField label="{!$Label.TotalDiscussedUsed_RSA}" value="{!currentCampain.TotalAgreedCharged__c}"/>
+                <apex:outputText label="{!$Label.TotalDiscussedBudget_RSA}" value="{0,number,0,000}" ><apex:param value="{!currentCampain.TotalCampaignBudget__c - currentCampain.TotalAgreedCharged__c}"/></apex:outputText>
+                <apex:outputField label="{!$Label.TotalOrderedUsed_RSA}"  value="{!currentCampain.TotalSalesCharged__c}"/>
+                <apex:outputText label="{!$Label.TotalOrderedBudget_RSA}" value="{0,number,0,000}" ><apex:param value="{!currentCampain.TotalCampaignBudget__c - currentCampain.TotalSalesCharged__c}"/></apex:outputText>
+            </apex:pageBlockSection>
+            <apex:variable value="{!1}" var="counterRowNum"/>
+            <apex:variable var="disableCreateFinalTaxOrder" value="{!OR(True)}" />
+            <apex:variable var="disableCreateFinalRegularOrder" value="{!OR(True)}" />
+            <apex:variable var="disableCreateFinalFebReceiptOrder" value="{!OR(True)}" />      
+            <apex:variable var="disableCreateFinalConsignedOrder" value="{!OR(True)}" />      
+            <apex:variable var="disableCreatePreliminaryTaxOrder" value="{!OR(False)}" />
+            <apex:variable var="disableCreatePreliminaryRegularOrder" value="{!OR(False)}" />
+            <apex:variable var="disableCreatePreliminaryFebReceiptOrder" value="{!OR(False)}" />
+            <apex:variable var="disableCreatePreliminaryConsignedOrder" value="{!OR(False)}" />
+   
+
+            <apex:pageBlockSection title="{!$Label.TaxOrders}" columns="1" id="taxOrders">
+                <apex:pageBlockTable value="{!rsaController.actionPlan.taxOrders}" var="currentItem" >
+
+                    <apex:column headerValue="{!$Label.Action}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}"> <!-- rendered="{!rsaController.isEditButton}" -->
+                        <apex:inputCheckBox value="{!currentItem.selected}" rendered="{!NOT(currentItem.freezeDelete)}"  />
+                    </apex:column>
+                    <apex:column headerValue="Product" footerValue="SUM" style="white-space:nowrap;" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.ProductRef__r.Name}" rendered="{!OR(NOT(rsaController.actionPlan.editModeTax),currentItem.freezeDelete)}" style="white-space:nowrap"/>
+                        <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!currentItem.lookupValue.id}" text="{!currentItem.lookupValue.text}" identifier="{!'taxSalesCell'&TEXT(counterRowNum)}" division="{!$CurrentPage.parameters.division}" catalog="Tax" rendered="{!AND(rsaController.actionPlan.editModeTax,NOT(currentItem.freezeDelete))}" >
+                            <apex:inputText styleClass="idField" value="{!currentItem.lookupValue.id}"  />
+                        </c:CustomLookupField>
+                        <apex:outputPanel rendered="{!currentItem.freezeRow}">
+                            <script type="text/javascript" id="rowDisabler{!counterRowNum}">
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.style.backgroundColor = '#eee';
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.setAttribute('onMouseOver','');
+                            </script>
+                        </apex:outputPanel>
+                        <apex:variable value="{!counterRowNum + 1}" var="counterRowNum"/>
+                        
+                        <apex:variable value="{!OR(False)}" var="disableCreateFinalTaxOrder" rendered="{!AND(!currentItem.freezeRow,AND(currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.preliminaryOrderRef_RSA__r.Status_RSA__c == 'Closed',OR(currentItem.item.FinalOrderRef_RSA__c == null,currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft')))}" />
+                        <apex:variable value="{!OR(True)}" var="disableCreatePreliminaryTaxOrder" rendered="{!AND(!currentItem.freezeRow,OR(AND(currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.PreliminaryOrderRef_RSA__r.Status_RSA__c != 'Draft'),currentItem.item.FinalOrderRef_RSA__c != null))}" />
+                    </apex:column>
+                    <apex:column headerValue="Stock" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.TaxStockLeft_RSA__c}" />
+                         </apex:outputText>
+                        (<apex:outputText value="{0, number,0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.TaxQuantity_RSA__c}" />
+                         </apex:outputText>)                        
+                    </apex:column>
+                    <apex:column headerValue="Hybrid"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                 
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.HybridRef__r.TaxStockleft__c}" />
+                         </apex:outputText>
+                        (<apex:outputText value="{0, number,0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.HybridRef__r.TaxQuantity__c}" />
+                         </apex:outputText>)                                    
+                    </apex:column>                     
+                    <apex:column headerValue="Budget"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                     
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.TotalBudget-currentItem.TotalSales}" />
+                         </apex:outputText>
+                    </apex:column>
+                                        
+                    <apex:column headerValue="Quantity PY" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.POGPY__c}" />
+                         </apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Forecast CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['TAX_CY_FORECAST'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:inputField value="{!currentItem.item.Forecast__c}" rendered="{!AND(rsaController.actionPlan.editModeTax,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft'))}" styleClass="smallInput"/>
+                        <apex:outputField value="{!currentItem.item.Forecast__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeTax,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft')))}"/>
+                    </apex:column>
+                    <apex:column headerValue="Discussed CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['TAX_CY_DISCUSSED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:inputField value="{!currentItem.item.Agreed__c}" rendered="{!AND(rsaController.actionPlan.editModeTax, NOT(currentItem.freezeDiscussed))}" styleClass="smallInput"/>
+                        <apex:outputField value="{!currentItem.item.Agreed__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeTax, NOT(currentItem.freezeDiscussed)))}"/>
+                    </apex:column>
+                    <apex:column headerValue="Ordered CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['TAX_CY_ORDERED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:inputField value="{!currentItem.item.POG__c}"     rendered="{!AND(rsaController.actionPlan.editModeTax,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput"/>
+                        <apex:outputField value="{!currentItem.item.POG__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeTax,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                    </apex:column>
+                    <apex:column headerValue="Plants per Hectares" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:inputField value="{!currentItem.item.PlantingDensity__c}"     rendered="{!AND(rsaController.actionPlan.editModeTax,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput" required="true"/>
+                        <apex:outputText value="{!IF(ISNUMBER(currentItem.item.PlantingDensity__c),IF(VALUE(currentItem.item.PlantingDensity__c)<70000,$Label.NormalDensity,$Label.DoubleCropping),' - ')}" rendered="{!NOT(AND(rsaController.actionPlan.editModeTax,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                    </apex:column>
+                    <apex:column headerValue="Delivered from" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                        <apex:inputField value="{!currentItem.item.DistributorRef__c}" rendered="{!rsaController.actionPlan.editModeTax  && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                        <apex:outputField value="{!currentItem.item.DistributorRef__c}" rendered="{!!(rsaController.actionPlan.editModeTax  && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                    </apex:column>
+                    <apex:column headerValue="Point of Sales" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:inputField value="{!currentItem.item.PoS__c}" rendered="{!rsaController.actionPlan.editModeTax && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                        <apex:outputField value="{!currentItem.item.PoS__c}" rendered="{!!(rsaController.actionPlan.editModeTax && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                    </apex:column>
+                    <apex:column headerValue="Bag sizes conversion" value="{!currentItem.item.BagSizeConversion_RSA__c}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}"/>
+                    <apex:column headerValue="U.S/Irrigat" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}" rendered="{!!(rsaController.actionPlan.editModeTax  && !currentItem.freezeOrdered && !currentItem.freezeRow && !currentItem.hasPrelim)}"/>
+                        <apex:inputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}"     rendered="{!rsaController.actionPlan.editModeTax  && !currentItem.freezeOrdered && !currentItem.freezeRow &&!currentItem.hasPrelim}"/>
+                    </apex:column>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.PreliminaryOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.FinalOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.Price_Copy__c}" />    
+                </apex:pageBlockTable>
+                <apex:outputPanel layout="block" style="text-align:center;" rendered="{!AND(rsaController.isEditButton, OR(True, MONTH(TODAY()) >= 1, MONTH(TODAY()) <= 2))}" id="taxButtons">
+                  <apex:outputPanel layout="block" rendered="{!(AND(NOT(rsaController.actionPlan.editModeFebReceipt),NOT(rsaController.actionPlan.editModeRegular),NOT(rsaController.actionPlan.editModeConsigned)))}" >
+                    <apex:commandButton value="New" style="margin-right:8px" action="{!rsaController.actionPlan.addNewTax}" rendered="{!NOT(rsaController.actionPlan.editModeTax)}" reRender="taxOrders,messages,regularButtons,febButtons,conButtons" status="locker"/>
+                    <apex:commandButton value="{!$Label.ButtonAddMultipleLines}" style="margin-right:8px" action="{!rsaController.doLoadProductPickerTax}" rendered="{!NOT(rsaController.actionPlan.editModeTax)}" status="locker"/>
+                    <apex:commandButton value="Edit" style="margin-right:8px" action="{!rsaController.actionPlan.editTax}" rendered="{!NOT(rsaController.actionPlan.editModeTax)}" reRender="taxOrders,messages,regularButtons,febButtons,conButtons" status="locker"/>
+                    <apex:commandButton value="Delete Selected Item(s)" style="margin-right:0px" action="{!rsaController.actionPlan.deleteSelectedTax}" rendered="{!NOT(rsaController.actionPlan.editModeTax)}" reRender="taxOrders,messages,regularButtons,febButtons,conButtons" status="locker"/> &nbsp;&nbsp; 
+                    <apex:commandButton value="Save" style="margin-right:8px" action="{!rsaController.actionPlan.saveTax}" rendered="{!rsaController.actionPlan.editModeTax}" reRender="taxOrders,messages,campaignInfo,regularButtons,febButtons,conButtons" status="locker" />
+                    <apex:commandButton value="Cancel" style="margin-right:8px" action="{!rsaController.actionPlan.cancelTax}" rendered="{!rsaController.actionPlan.editModeTax}" reRender="taxOrders,messages,regularButtons,febButtons,conButtons" status="locker" immediate="true"/>
+                    <apex:commandButton value="Check SOH" style="margin-right:2px" action="{!rsaController.actionPlan.checkTaxStock}" rendered="{!NOT(rsaController.actionPlan.editModeTax)}" status="locker"/>&nbsp;&nbsp;
+                    <apex:commandButton value="Create Preliminary Order" style="margin-right:8px" rendered="{!NOT(rsaController.actionPlan.editModeTax)}" disabled="{!NOT(rsaController.actionPlan.displayCreateTaxPreliminarButton)}" status="locker"  onclick="openLookupPopup('Preliminary','Tax','false'); return false"/>
+                    <apex:commandButton value="Create Final Order" style="margin-right:3px" rendered="{!NOT(rsaController.actionPlan.editModeTax)}" disabled="{!NOT(rsaController.actionPlan.displayCreateTaxFinalButton)}" status="locker"  onclick="openLookupPopup('Final','Tax','false'); return false"/>
+                  </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="{!$Label.FebReceipt}" columns="1" id="febReceiptOrders">
+                <apex:pageBlockTable value="{!rsaController.actionPlan.FebReceiptOrders}" var="currentItem">
+                    <apex:column headerValue="{!$Label.Action}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">  
+                        <apex:inputCheckBox value="{!currentItem.selected}" rendered="{!NOT(currentItem.freezeDelete)}" >
+                        </apex:inputCheckBox>  
+                    </apex:column>
+                    <apex:column headerValue="Product" footerValue="SUM"  style="white-space:nowrap" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.ProductRef__r.Name}" rendered="{!OR(NOT(rsaController.actionPlan.editModeFebReceipt), currentItem.freezeDelete)}"/>
+                        <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!currentItem.lookupValue.id}" text="{!currentItem.lookupValue.text}" identifier="{!'regularSalesCell'&TEXT(counterRowNum)}" division="{!$CurrentPage.parameters.division}" catalog="Feb Receipt" rendered="{!AND(rsaController.actionPlan.editModeFebReceipt,NOT(currentItem.freezeDelete))}">
+                            <apex:inputText styleClass="idField" value="{!currentItem.lookupValue.id}"  />
+                        </c:CustomLookupField>
+                        <apex:outputPanel rendered="{!currentItem.freezeRow}">
+                            <script type="text/javascript" id="rowDisabler{!counterRowNum}">
+                                        // {!currentItem.freezeRow}
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.style.backgroundColor = '#eee';
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.setAttribute('onMouseOver','');
+                            </script>
+                        </apex:outputPanel>
+                        <apex:variable value="{!counterRowNum + 1}" var="counterRowNum"/>
+                        
+                        <apex:variable value="{!OR(False)}" var="disableCreateFinalFebReceiptOrder" rendered="{!AND(!currentItem.freezeRow,currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.preliminaryOrderRef_RSA__r.Status_RSA__c != 'Draft',OR(currentItem.item.FinalOrderRef_RSA__c == null,currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft'))}" />
+                        <apex:variable value="{!OR(True)}" var="disableCreatePreliminarFebReceiptOrder" rendered="{!AND(!currentItem.freezeRow,OR(AND(currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.PreliminaryOrderRef_RSA__r.Status_RSA__c != 'Draft'),currentItem.item.FinalOrderRef_RSA__c != null))}" />
+                    </apex:column>
+                    <apex:column headerValue="Stock"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                 
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.StockLeft_RSA__c}" />
+                         </apex:outputText>
+                        (<apex:outputText value="{0, number,0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.Quantity_RSA__c}" />
+                         </apex:outputText>)                                    
+                    </apex:column>
+                    <apex:column headerValue="Hybrid"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                 
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.HybridRef__r.Stockleft__c}" />
+                         </apex:outputText>
+                        (<apex:outputText value="{0, number,0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.HybridRef__r.Quantity__c}" />
+                         </apex:outputText>)                                    
+                    </apex:column>                    
+                    <apex:column headerValue="Budget"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                     
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.TotalBudget-currentItem.TotalSales}" />
+                         </apex:outputText>
+                    </apex:column>
+                                       
+                    <apex:column headerValue="Quantity PY" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.POGPY__c}" />
+                         </apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Forecast CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['FEBRECEIPT_CY_FORECAST'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.Forecast__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeFebReceipt,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft')))}"/>
+                        <apex:inputField value="{!currentItem.item.Forecast__c}"  rendered="{!AND(rsaController.actionPlan.editModeFebReceipt,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft'))}" styleClass="smallInput"/>
+                    </apex:column>
+                    <apex:column headerValue="Discussed CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['FEBRECEIPT_CY_DISCUSSED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.Agreed__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeFebReceipt,NOT(currentItem.freezeDiscussed),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.Agreed__c}"     rendered="{!AND(rsaController.actionPlan.editModeFebReceipt,NOT(currentItem.freezeDiscussed),NOT(currentItem.freezeRow))}" styleClass="smallInput"/>
+                    </apex:column>
+                    <apex:column headerValue="Ordered CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['FEBRECEIPT_CY_ORDERED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.POG__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeFebReceipt,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.POG__c}"     rendered="{!AND(rsaController.actionPlan.editModeFebReceipt,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput"/>
+                    </apex:column> 
+                    <apex:column headerValue="Plants per Hectares" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputText value="{!IF(ISNUMBER(currentItem.item.PlantingDensity__c),IF(VALUE(currentItem.item.PlantingDensity__c)<70000,$Label.NormalDensity,$Label.DoubleCropping),' - ')}" rendered="{!NOT(AND(rsaController.actionPlan.editModeFebReceipt,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.PlantingDensity__c}"     rendered="{!AND(rsaController.actionPlan.editModeFebReceipt,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput" required="true"/>
+                    </apex:column>
+                    <apex:column headerValue="Delivered from" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.DistributorRef__c}" rendered="{!!(rsaController.actionPlan.editModeFebReceipt && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                        <apex:inputField value="{!currentItem.item.DistributorRef__c}" rendered="{!rsaController.actionPlan.editModeFebReceipt && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                    </apex:column>
+                    <apex:column headerValue="Point of Sales" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.PoS__c}" rendered="{!!(rsaController.actionPlan.editModeFebReceipt && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                        <apex:inputField value="{!currentItem.item.PoS__c}" rendered="{!rsaController.actionPlan.editModeFebReceipt && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                    </apex:column>
+                    <apex:column headerValue="Bag sizes conversion" value="{!currentItem.item.BagSizeConversion_RSA__c}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}"/>
+                    <apex:column headerValue="U.S/Irrigat" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                        <apex:outputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}" rendered="{!NOT(rsaController.actionPlan.editModeFebReceipt && !currentItem.freezeOrdered && !currentItem.freezeRow && !currentItem.hasPrelim)}"/>
+                        <apex:inputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}"     rendered="{!rsaController.actionPlan.editModeFebReceipt && !currentItem.freezeOrdered && !currentItem.freezeRow && !currentItem.hasPrelim}"/>
+                    </apex:column>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.PreliminaryOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.FinalOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.Price_Copy__c}" />
+                </apex:pageBlockTable>               
+                <apex:outputPanel layout="block" style="text-align:center;" rendered="{!rsaController.isEditButton}" id="febButtons">
+                  <apex:outputPanel layout="block" rendered="{!(AND(NOT(rsaController.actionPlan.editModeTax),NOT(rsaController.actionPlan.editModeRegular),NOT(rsaController.actionPlan.editModeConsigned)))}">  
+                    <apex:commandButton style="margin-right:8px" value="New" action="{!rsaController.actionPlan.addNewFebReceipt}" rendered="{!NOT(rsaController.actionPlan.editModeFebReceipt)}" reRender="febReceiptOrders,messages,febButtons,taxButtons,regularButtons,conButtons" status="locker"/>
+                    <apex:commandButton style="margin-right:8px" value="{!$Label.ButtonAddMultipleLines}" action="{!rsaController.doLoadProductPickerFebReceipt}" rendered="{!NOT(rsaController.actionPlan.editModeFebReceipt)}" status="locker"/>
+                    <apex:commandButton style="margin-right:8px" value="Edit" action="{!rsaController.actionPlan.editFebReceipt}" rendered="{!NOT(rsaController.actionPlan.editModeFebReceipt)}" reRender="febReceiptOrders,messages,febButtons,taxButtons,regularButtons,conButtons" status="locker"/>
+                    <apex:commandButton style="margin-right:0px" value="Delete Selected Item(s)" action="{!rsaController.actionPlan.deleteSelectedFebReceipt}" rendered="{!NOT(rsaController.actionPlan.editModeFebReceipt)}" reRender="febReceiptOrders,messages,febButtons,taxButtons,regularButtons,conButtons" status="locker"/> &nbsp;&nbsp;
+                    <apex:commandButton style="margin-right:8px" value="Save" action="{!rsaController.actionPlan.saveFebReceipt}" rendered="{!rsaController.actionPlan.editModeFebReceipt}" reRender="febReceiptOrders,messages,campaignInfo,febButtons,taxButtons,regularButtons,conButtons" status="locker" />
+                    <apex:commandButton style="margin-right:8px" value="Cancel" action="{!rsaController.actionPlan.cancelFebReceipt}" rendered="{!rsaController.actionPlan.editModeFebReceipt}" reRender="febReceiptOrders,messages,febButtons,taxButtons,regularButtons,conButtons"  status="locker" immediate="true"/>
+                    <apex:commandButton style="margin-right:2px" value="Check RSS" action="{!rsaController.actionPlan.checkRegularStock}" rendered="{!NOT(rsaController.actionPlan.editModeFebReceipt)}" status="locker"/>&nbsp;&nbsp;                                              
+                    <apex:commandButton style="margin-right:8px" value="Create Preliminary Order"  rendered="{!NOT(rsaController.actionPlan.editModeFebReceipt)}" disabled="{!NOT(rsaController.actionPlan.displayCreateFebReceiptPreliminarButton)}" status="locker"  onclick="openLookupPopup('Preliminary','Feb Receipt','false'); return false" />
+                    <apex:commandButton style="margin-right:3px" value="Create Final Order"  rendered="{!NOT(rsaController.actionPlan.editModeFebReceipt)}" disabled="{!NOT(rsaController.actionPlan.displayCreateFebReceiptFinalButton)}" status="locker"  onclick="openLookupPopup('Final','Feb Receipt','false'); return false" />                                              
+                  </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:pageBlockSection>                
+            
+            
+            <apex:pageBlockSection title="{!$Label.RegularOrders}" columns="1" id="regularOrders">
+                <apex:pageBlockTable value="{!rsaController.actionPlan.regularOrders}" var="currentItem">
+                    <apex:column headerValue="{!$Label.Action}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:inputCheckBox value="{!currentItem.selected}" rendered="{!NOT(currentItem.freezeDelete)}" >
+                        </apex:inputCheckBox>  
+                    </apex:column>
+                    <apex:column headerValue="Product" footerValue="SUM"  style="white-space:nowrap" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.ProductRef__r.Name}" rendered="{!OR(NOT(rsaController.actionPlan.editModeRegular), currentItem.freezeDelete)}"/>
+                        <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!currentItem.lookupValue.id}" text="{!currentItem.lookupValue.text}" identifier="{!'regularSalesCell'&TEXT(counterRowNum)}" division="{!$CurrentPage.parameters.division}" catalog="Regular" rendered="{!AND(rsaController.actionPlan.editModeRegular,NOT(currentItem.freezeDelete))}">
+                            <apex:inputText styleClass="idField" value="{!currentItem.lookupValue.id}"  />
+                        </c:CustomLookupField>
+                        <apex:outputPanel rendered="{!currentItem.freezeRow}">
+                            <script type="text/javascript" id="rowDisabler{!counterRowNum}">
+                                        // {!currentItem.freezeRow}
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.style.backgroundColor = '#eee';
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.setAttribute('onMouseOver','');
+                            </script>
+                        </apex:outputPanel>
+                        <apex:variable value="{!counterRowNum + 1}" var="counterRowNum"/>
+                        
+                        <apex:variable value="{!OR(False)}" var="disableCreateFinalRegularOrder" rendered="{!AND(!currentItem.freezeRow,currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.preliminaryOrderRef_RSA__r.Status_RSA__c != 'Draft',OR(currentItem.item.FinalOrderRef_RSA__c == null,currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft'))}" />
+                        <apex:variable value="{!OR(True)}" var="disableCreatePreliminaryRegularOrder" rendered="{!AND(!currentItem.freezeRow,OR(AND(currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.PreliminaryOrderRef_RSA__r.Status_RSA__c != 'Draft'),currentItem.item.FinalOrderRef_RSA__c != null))}" />
+                    </apex:column>
+                    <apex:column headerValue="Stock"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                     
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.StockLeft_RSA__c}" />
+                         </apex:outputText>
+                        (<apex:outputText value="{0, number,0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.Quantity_RSA__c}" />
+                         </apex:outputText>)  
+                    </apex:column>
+                    <apex:column headerValue="Hybrid"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                 
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.HybridRef__r.Stockleft__c}" />
+                         </apex:outputText>
+                        (<apex:outputText value="{0, number,0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.HybridRef__r.Quantity__c}" />
+                         </apex:outputText>)                                    
+                    </apex:column>                  
+                    <apex:column headerValue="Budget"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                     
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.TotalBudget-currentItem.TotalSales}" />
+                         </apex:outputText>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Quantity PY" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.POGPY__c}" />
+                         </apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Forecast CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['REGULAR_CY_FORECAST'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.Forecast__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeRegular,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft')))}"/>
+                        <apex:inputField value="{!currentItem.item.Forecast__c}"  rendered="{!AND(rsaController.actionPlan.editModeRegular,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft'))}" styleClass="smallInput"/>
+                    </apex:column>
+                    <apex:column headerValue="Discussed CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['REGULAR_CY_DISCUSSED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.Agreed__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeRegular,NOT(currentItem.freezeDiscussed),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.Agreed__c}"     rendered="{!AND(rsaController.actionPlan.editModeRegular,NOT(currentItem.freezeDiscussed),NOT(currentItem.freezeRow))}" styleClass="smallInput"/>
+                    </apex:column>
+                    <apex:column headerValue="Ordered CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['REGULAR_CY_ORDERED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.POG__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeRegular,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.POG__c}"     rendered="{!AND(rsaController.actionPlan.editModeRegular,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput"/>
+                    </apex:column> 
+                    <apex:column headerValue="Plants per Hectares" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputText value="{!IF(ISNUMBER(currentItem.item.PlantingDensity__c),IF(VALUE(currentItem.item.PlantingDensity__c)<70000,$Label.NormalDensity,$Label.DoubleCropping),' - ')}" rendered="{!NOT(AND(rsaController.actionPlan.editModeRegular,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.PlantingDensity__c}"     rendered="{!AND(rsaController.actionPlan.editModeRegular,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput" required="true"/>
+                    </apex:column>
+                    <apex:column headerValue="Delivered from" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.DistributorRef__c}" rendered="{!!(rsaController.actionPlan.editModeRegular && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                        <apex:inputField value="{!currentItem.item.DistributorRef__c}" rendered="{!rsaController.actionPlan.editModeRegular && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                    </apex:column>
+                    <apex:column headerValue="Point of Sales" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.PoS__c}" rendered="{!!(rsaController.actionPlan.editModeRegular && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                        <apex:inputField value="{!currentItem.item.PoS__c}" rendered="{!rsaController.actionPlan.editModeRegular && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                    </apex:column>
+                    <apex:column headerValue="Bag sizes conversion" value="{!currentItem.item.BagSizeConversion_RSA__c}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}"/>
+                    <apex:column headerValue="U.S/Irrigat" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                        <apex:outputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}" rendered="{!NOT(rsaController.actionPlan.editModeRegular && !currentItem.freezeOrdered && !currentItem.freezeRow && !currentItem.hasPrelim)}"/>
+                        <apex:inputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}"     rendered="{!rsaController.actionPlan.editModeRegular && !currentItem.freezeOrdered && !currentItem.freezeRow && !currentItem.hasPrelim}"/>
+                    </apex:column>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.PreliminaryOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.FinalOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.Price_Copy__c}" /> 
+                </apex:pageBlockTable>
+                <apex:outputPanel layout="block" style="text-align:center;" rendered="{!rsaController.isEditButton}" id="regularButtons">
+                  <apex:outputPanel layout="block" rendered="{!(AND(NOT(rsaController.actionPlan.editModeFebReceipt),NOT(rsaController.actionPlan.editModeTax),NOT(rsaController.actionPlan.editModeConsigned)))}">  
+                    <apex:commandButton style="margin-right:8px" value="New" action="{!rsaController.actionPlan.addNewRegular}" rendered="{!NOT(rsaController.actionPlan.editModeRegular)}" reRender="regularOrders,messages,taxButtons,febButtons,conButtons" status="locker"/>
+                    <apex:commandButton style="margin-right:8px" value="{!$Label.ButtonAddMultipleLines}" action="{!rsaController.doLoadProductPickerRegular}" rendered="{!NOT(rsaController.actionPlan.editModeRegular)}" status="locker"/>
+                    <apex:commandButton style="margin-right:8px" value="Edit" action="{!rsaController.actionPlan.editRegular}" rendered="{!NOT(rsaController.actionPlan.editModeRegular)}" reRender="regularOrders,messages,taxButtons,febButtons" status="locker"/>
+                    <apex:commandButton style="margin-right:0px" value="Delete Selected Item(s)" action="{!rsaController.actionPlan.deleteSelectedRegular}" rendered="{!NOT(rsaController.actionPlan.editModeRegular)}" reRender="regularOrders,messages,taxButtons,febButtons,conButtons" status="locker"/> &nbsp;&nbsp;
+                    <apex:commandButton style="margin-right:8px" value="Save" action="{!rsaController.actionPlan.saveRegular}" rendered="{!rsaController.actionPlan.editModeRegular}" reRender="regularOrders,messages,taxButtons,febButtons,conButtons" status="locker" />
+                    <apex:commandButton style="margin-right:8px" value="Cancel" action="{!rsaController.actionPlan.cancelRegular}" rendered="{!rsaController.actionPlan.editModeRegular}" reRender="regularOrders,messages,taxButtons,febButtons,conButtons"  status="locker" immediate="true"/>
+                    <apex:commandButton style="margin-right:2px" value="Check RSS" action="{!rsaController.actionPlan.checkRegularStock}" rendered="{!NOT(rsaController.actionPlan.editModeRegular)}" status="locker"/>&nbsp;&nbsp;                    
+                    <apex:commandButton style="margin-right:8px" value="Create Preliminary Order"  rendered="{!NOT(rsaController.actionPlan.editModeRegular)}" disabled="{!NOT(rsaController.actionPlan.displayCreatePreliminarButton)}" status="locker" rerender="popupPreliminary" onclick="openLookupPopup('Preliminary','Regular','false'); return false" />
+                    <apex:commandButton style="margin-right:3px" value="Create Final Order"  rendered="{!NOT(rsaController.actionPlan.editModeRegular)}" disabled="{!NOT(rsaController.actionPlan.displayCreateFinalButton)}" status="locker" rerender="popupFinal" onclick="openLookupPopup('Final','Regular','false'); return false" />
+                  </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        
+            <apex:pageBlockSection title="{!$Label.GeneralOrders}" columns="1" id="generalOrders">
+                <apex:pageBlockTable value="{!rsaController.actionPlan.generalOrders}" var="currentItem">
+                    <apex:column headerValue="{!$Label.Action}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:inputCheckBox value="{!currentItem.selected}" rendered="{!NOT(currentItem.freezeDelete)}" >
+                        </apex:inputCheckBox>  
+                    </apex:column>
+                    <apex:column headerValue="Product" footerValue="SUM"  style="white-space:nowrap" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                  <!--        <script type="text/javascript">
+                            alert('editModeGeneral: {!rsaController.actionPlan.editModeGeneral}');
+                            alert('deberia ser false: {!OR(NOT(rsaController.actionPlan.editModeGeneral), currentItem.freezeDelete)}');
+                            alert('deberia ser true: {!AND(rsaController.actionPlan.editModeGeneral,NOT(currentItem.freezeDelete))}');
+                        </script> -->
+                        <apex:outputField value="{!currentItem.item.ProductRef__r.Name}" rendered="{!OR(NOT(rsaController.actionPlan.editModeGeneral), currentItem.freezeDelete)}"/>
+                        <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!currentItem.lookupValue.id}" text="{!currentItem.lookupValue.text}" identifier="{!'generalSalesCell'&TEXT(counterRowNum)}" division="{!$CurrentPage.parameters.division}" catalog="General" rendered="{!AND(rsaController.actionPlan.editModeGeneral,NOT(currentItem.freezeDelete))}">
+                            <apex:inputText styleClass="idField" value="{!currentItem.lookupValue.id}"  />
+                        </c:CustomLookupField>
+                        <apex:outputPanel rendered="{!currentItem.freezeRow}">
+                            <script type="text/javascript" id="rowDisabler{!counterRowNum}">
+                                        // {!currentItem.freezeRow}
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.style.backgroundColor = '#eee';
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.setAttribute('onMouseOver','');
+                            </script>
+                        </apex:outputPanel>
+                        <apex:variable value="{!counterRowNum + 1}" var="counterRowNum"/>
+                        
+                        <apex:variable value="{!OR(False)}" var="disableCreateFinalGeneralOrder" rendered="{!AND(!currentItem.freezeRow,currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.preliminaryOrderRef_RSA__r.Status_RSA__c != 'Draft',OR(currentItem.item.FinalOrderRef_RSA__c == null,currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft'))}" />
+                        <apex:variable value="{!OR(True)}" var="disableCreatePreliminaryGeneralOrder" rendered="{!AND(!currentItem.freezeRow,OR(AND(currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.PreliminaryOrderRef_RSA__r.Status_RSA__c != 'Draft'),currentItem.item.FinalOrderRef_RSA__c != null))}" />
+                    </apex:column>
+                    <apex:column headerValue="Stock"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                     
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.TaxStockLeft_RSA__c}" />
+                         </apex:outputText>
+                        (<apex:outputText value="{0, number,0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.TaxQuantity_RSA__c}" />
+                         </apex:outputText>)  
+                    </apex:column>
+                    <apex:column headerValue="Hybrid"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                 
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.HybridRef__r.TaxStockleft__c}" />
+                         </apex:outputText>
+                        (<apex:outputText value="{0, number,0.#}">
+                               <apex:param value="{!currentItem.item.GlobalStock_RSA__r.HybridRef__r.TaxQuantity__c}" />
+                         </apex:outputText>)                                    
+                    </apex:column>                  
+                    <apex:column headerValue="Budget"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                     
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.TotalBudget-currentItem.TotalSales}" />
+                         </apex:outputText>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Quantity PY" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.POGPY__c}" />
+                         </apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Forecast CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['GENERAL_CY_FORECAST'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.Forecast__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeGeneral,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft')))}"/>
+                        <apex:inputField value="{!currentItem.item.Forecast__c}"  rendered="{!AND(rsaController.actionPlan.editModeGeneral,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft'))}" styleClass="smallInput"/>
+                    </apex:column>
+                    <apex:column headerValue="Discussed CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['GENERAL_CY_DISCUSSED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.Agreed__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeGeneral,NOT(currentItem.freezeDiscussed),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.Agreed__c}"     rendered="{!AND(rsaController.actionPlan.editModeGeneral,NOT(currentItem.freezeDiscussed),NOT(currentItem.freezeRow))}" styleClass="smallInput"/>
+                    </apex:column>
+                    <apex:column headerValue="Ordered CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['GENERAL_CY_ORDERED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.POG__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeGeneral,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.POG__c}"     rendered="{!AND(rsaController.actionPlan.editModeGeneral,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput"/>
+                    </apex:column> 
+                    <apex:column headerValue="Plants per Hectares" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputText value="{!IF(ISNUMBER(currentItem.item.PlantingDensity__c),IF(VALUE(currentItem.item.PlantingDensity__c)<70000,$Label.NormalDensity,$Label.DoubleCropping),' - ')}" rendered="{!NOT(AND(rsaController.actionPlan.editModeGeneral,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.PlantingDensity__c}"     rendered="{!AND(rsaController.actionPlan.editModeGeneral,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput" required="true"/>
+                    </apex:column>
+                    <apex:column headerValue="Delivered from" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.DistributorRef__c}" rendered="{!!(rsaController.actionPlan.editModeGeneral && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                        <apex:inputField value="{!currentItem.item.DistributorRef__c}" rendered="{!rsaController.actionPlan.editModeGeneral && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                    </apex:column>
+                    <apex:column headerValue="Point of Sales" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.PoS__c}" rendered="{!!(rsaController.actionPlan.editModeGeneral && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                        <apex:inputField value="{!currentItem.item.PoS__c}" rendered="{!rsaController.actionPlan.editModeGeneral && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                    </apex:column>
+                    <apex:column headerValue="Bag sizes conversion" value="{!currentItem.item.BagSizeConversion_RSA__c}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}"/>
+                    <apex:column headerValue="U.S/Irrigat" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                        <apex:outputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}" rendered="{!NOT(rsaController.actionPlan.editModeGeneral && !currentItem.freezeOrdered && !currentItem.freezeRow && !currentItem.hasPrelim)}"/>
+                        <apex:inputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}"     rendered="{!rsaController.actionPlan.editModeGeneral && !currentItem.freezeOrdered && !currentItem.freezeRow && !currentItem.hasPrelim}"/>
+                    </apex:column>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.PreliminaryOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.FinalOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.Price_Copy__c}" /> 
+                </apex:pageBlockTable>
+                <apex:outputPanel layout="block" style="text-align:center;" rendered="{!rsaController.isEditButton}" id="generalButtons">
+                  <apex:outputPanel layout="block" rendered="{!(AND(NOT(rsaController.actionPlan.editModeFebReceipt),NOT(rsaController.actionPlan.editModeTax),NOT(rsaController.actionPlan.editModeConsigned)))}">  
+                    <apex:commandButton style="margin-right:8px" value="New" action="{!rsaController.actionPlan.addNewGeneral}" rendered="{!NOT(rsaController.actionPlan.editModeGeneral)}" reRender="generalOrders,messages,taxButtons,febButtons,conButtons" status="locker"/>
+                    <apex:commandButton style="margin-right:8px" value="{!$Label.ButtonAddMultipleLines}" action="{!rsaController.doLoadProductPickerGeneral}" rendered="{!NOT(rsaController.actionPlan.editModeGeneral)}" status="locker"/>
+                    <apex:commandButton style="margin-right:8px" value="Edit" action="{!rsaController.actionPlan.editGeneral}" rendered="{!NOT(rsaController.actionPlan.editModeGeneral)}" reRender="generalOrders,messages,taxButtons,febButtons" status="locker"/>
+                    <apex:commandButton style="margin-right:0px" value="Delete Selected Item(s)" action="{!rsaController.actionPlan.deleteSelectedGeneral}" rendered="{!NOT(rsaController.actionPlan.editModeGeneral)}" reRender="generalOrders,messages,taxButtons,febButtons,conButtons" status="locker"/> &nbsp;&nbsp;
+                    <apex:commandButton style="margin-right:8px" value="Save" action="{!rsaController.actionPlan.saveGeneral}" rendered="{!rsaController.actionPlan.editModeGeneral}" reRender="generalOrders,messages,taxButtons,febButtons,conButtons" status="locker" />
+                    <apex:commandButton style="margin-right:8px" value="Cancel" action="{!rsaController.actionPlan.cancelGeneral}" rendered="{!rsaController.actionPlan.editModeGeneral}" reRender="generalOrders,messages,taxButtons,febButtons,conButtons"  status="locker" immediate="true"/>
+                    <apex:commandButton style="margin-right:2px" value="Check RSS" action="{!rsaController.actionPlan.checkGeneralStock}" rendered="{!NOT(rsaController.actionPlan.editModeGeneral)}" status="locker"/>&nbsp;&nbsp;                    
+                    <apex:commandButton style="margin-right:8px" value="Create Preliminary Order"  rendered="{!NOT(rsaController.actionPlan.editModeGeneral)}" disabled="{!NOT(rsaController.actionPlan.displayCreateGeneralPreliminarButton)}" status="locker" rerender="popupPreliminary" onclick="openLookupPopup('Preliminary','General','false'); return false" />
+                    <apex:commandButton style="margin-right:3px" value="Create Final Order"  rendered="{!NOT(rsaController.actionPlan.editModeGeneral)}" disabled="{!NOT(rsaController.actionPlan.displayCreateGeneralFinalButton)}" status="locker" rerender="popupFinal" onclick="openLookupPopup('Final','General','false'); return false" />
+                  </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:pageBlockSection>             
+        
+       
+            <apex:pageBlockSection title="{!$Label.ConsignedOrders}" columns="1" id="ConsignedOrders">
+                <apex:pageBlockTable value="{!rsaController.actionPlan.consignedOrders}" var="currentItem">
+                    <apex:column headerValue="{!$Label.Action}" rendered="true" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">  
+                        <apex:inputCheckBox value="{!currentItem.selected}" rendered="{!NOT(currentItem.freezeDelete)}" >
+                        </apex:inputCheckBox>  
+                    </apex:column>
+                    <apex:column headerValue="Product" footerValue="SUM"  style="white-space:nowrap" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.ProductRef__r.Name}" rendered="{!OR(NOT(rsaController.actionPlan.editModeConsigned), currentItem.freezeDelete)}"/>
+                        <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!currentItem.lookupValue.id}" text="{!currentItem.lookupValue.text}" identifier="{!'regularSalesCell'&TEXT(counterRowNum)}" division="{!$CurrentPage.parameters.division}" catalog="Regular" consignment="true" rendered="{!AND(rsaController.actionPlan.editModeConsigned,NOT(currentItem.freezeDelete))}">
+                            <apex:inputText styleClass="idField" value="{!currentItem.lookupValue.id}"  />
+                        </c:CustomLookupField>
+                        <apex:outputPanel rendered="{!currentItem.freezeRow}">
+                            <script type="text/javascript" id="rowDisabler{!counterRowNum}">
+                                        // {!currentItem.freezeRow}
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.style.backgroundColor = '#eee';
+                                        document.getElementById('rowDisabler{!counterRowNum}').parentNode.parentNode.parentNode.setAttribute('onMouseOver','');
+                            </script>
+                        </apex:outputPanel>
+                        <apex:variable value="{!counterRowNum + 1}" var="counterRowNum"/>
+                        
+                        <apex:variable value="{!OR(False)}" var="disableCreateFinalConsignedOrder" rendered="{!AND(!currentItem.freezeRow,currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.preliminaryOrderRef_RSA__r.Status_RSA__c != 'Draft',OR(currentItem.item.FinalOrderRef_RSA__c == null,currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft'))}" />
+                        <apex:variable value="{!OR(True)}" var="disableCreatePreliminarConsignedOrder" rendered="{!AND(!currentItem.freezeRow,OR(AND(currentItem.item.PreliminaryOrderRef_RSA__c != null,currentItem.item.PreliminaryOrderRef_RSA__r.Status_RSA__c != 'Draft'),currentItem.item.FinalOrderRef_RSA__c != null))}" />
+                    
+                    </apex:column>
+                    <apex:column headerValue="Stock"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                 
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.ConsignedWarehouseRef__r.StockLeft__c}" />
+                         </apex:outputText>
+                        (<apex:outputText value="{0, number,0.#}">
+                               <apex:param value="{!currentItem.item.ConsignedWarehouseRef__r.Consumed__c}" />
+                         </apex:outputText>)                                    
+                    </apex:column>
+                    <apex:column headerValue="Budget"  styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">                     
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.TotalBudget-currentItem.TotalSales}" />
+                         </apex:outputText>
+                    </apex:column>
+                                       
+                    <apex:column headerValue="Quantity PY" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                         <apex:outputText value="{0, number, 0.#}">
+                               <apex:param value="{!currentItem.item.POGPY__c}" />
+                         </apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Forecast CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['CONSIGNED_CY_FORECAST'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.Forecast__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeConsigned,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft')))}"/>
+                        <apex:inputField value="{!currentItem.item.Forecast__c}"  rendered="{!AND(rsaController.actionPlan.editModeConsigned,NOT(rsaController.actionPlan.frozen),OR(ISNULL(currentItem.item.FinalOrderRef_RSA__c),currentItem.item.FinalOrderRef_RSA__r.Status_RSA__c == 'Draft'))}" styleClass="smallInput"/>
+                    </apex:column>
+                    <apex:column headerValue="Discussed CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['CONSIGNED_CY_DISCUSSED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.Agreed__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeConsigned,NOT(currentItem.freezeDiscussed),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.Agreed__c}"     rendered="{!AND(rsaController.actionPlan.editModeConsigned,NOT(currentItem.freezeDiscussed),NOT(currentItem.freezeRow))}" styleClass="smallInput"/>
+                    </apex:column>
+                    <apex:column headerValue="Ordered CY" footerValue="{!TEXT(rsaController.sumOfNumberFields['CONSIGNED_CY_ORDERED'])}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.POG__c}" rendered="{!NOT(AND(rsaController.actionPlan.editModeConsigned,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.POG__c}"     rendered="{!AND(rsaController.actionPlan.editModeConsigned,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput"/>
+                    </apex:column> 
+                    <apex:column headerValue="Plants per Hectares" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputText value="{!IF(ISNUMBER(currentItem.item.PlantingDensity__c),IF(VALUE(currentItem.item.PlantingDensity__c)<70000,$Label.NormalDensity,$Label.DoubleCropping),' - ')}" rendered="{!NOT(AND(rsaController.actionPlan.editModeConsigned,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow)))}"/>
+                        <apex:inputField value="{!currentItem.item.PlantingDensity__c}"     rendered="{!AND(rsaController.actionPlan.editModeConsigned,NOT(currentItem.freezeOrdered),NOT(currentItem.freezeRow))}" styleClass="smallInput" required="true"/>
+                    </apex:column>
+                    <apex:column headerValue="Delivered from" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.DistributorRef__c}" rendered="{!!(rsaController.actionPlan.editModeConsigned && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                        <apex:inputField value="{!currentItem.item.DistributorRef__c}" rendered="{!rsaController.actionPlan.editModeConsigned && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                    </apex:column>
+                    <apex:column headerValue="Point of Sales" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}">
+                        <apex:outputField value="{!currentItem.item.PoS__c}" rendered="{!!(rsaController.actionPlan.editModeConsigned && !currentItem.freezeOrdered && !currentItem.freezeRow)}"/>
+                        <apex:inputField value="{!currentItem.item.PoS__c}" rendered="{!rsaController.actionPlan.editModeConsigned && !currentItem.freezeOrdered && !currentItem.freezeRow}"/>
+                    </apex:column>
+                    <apex:column headerValue="Bag sizes conversion" value="{!currentItem.item.BagSizeConversion_RSA__c}" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}"/>
+                    <apex:column headerValue="U.S/Irrigat" styleClass="{!IF(AND(currentItem.hasPrelim,NOT(currentItem.freezeRow)), 'hasPreliminar','')}" >
+                        <apex:outputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}" rendered="{!NOT(rsaController.actionPlan.editModeConsigned && !currentItem.freezeOrdered && !currentItem.freezeRow && !currentItem.hasPrelim)}"/>
+                        <apex:inputField value="{!currentItem.item.Ultrashort_Irrigation_RSA__c}"     rendered="{!rsaController.actionPlan.editModeConsigned && !currentItem.freezeOrdered && !currentItem.freezeRow && !currentItem.hasPrelim}"/>
+                    </apex:column>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.PreliminaryOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.FinalOrderRef_RSA__c}"/>
+                    <apex:column rendered="{!NOT(ISNULL($CurrentPage.parameters.displayOrders))}" value="{!currentItem.item.Price_Copy__c}" />
+                </apex:pageBlockTable> 
+                <apex:outputPanel layout="block" rendered="{!NOT(rsaController.isEditButton)}" style="text-align:center;" id="requeButtons">
+                    <apex:commandButton value="Request"  rendered="true" disabled="false"   rerender="popupFinal" onclick="openRequestPage(); return false" />
+                </apex:outputPanel>               
+                <apex:outputPanel layout="block" style="text-align:center;" rendered="{!rsaController.isEditButton}" id="conButtons">
+                  <apex:outputPanel layout="block" rendered="{!(AND(NOT(rsaController.actionPlan.editModeTax),NOT(rsaController.actionPlan.editModeRegular),NOT(rsaController.actionPlan.editModeFebReceipt)))}">  
+                    <apex:commandButton style="margin-right:8px" value="New" action="{!rsaController.actionPlan.addNewConsigned}" rendered="{!NOT(rsaController.actionPlan.editModeConsigned)}" reRender="ConsignedOrders,messages,febButtons,taxButtons,regularButtons,conButtons" status="locker"/>
+                    <apex:commandButton style="margin-right:8px" value="{!$Label.ButtonAddMultipleLines}" action="{!rsaController.doLoadProductPickerConsigned}" rendered="{!NOT(rsaController.actionPlan.editModeConsigned)}" status="locker"/>
+                    <apex:commandButton style="margin-right:8px" value="Edit" action="{!rsaController.actionPlan.editConsigned}" rendered="{!NOT(rsaController.actionPlan.editModeConsigned)}" reRender="ConsignedOrders,conButtons" status="locker"/>
+                    <apex:commandButton style="margin-right:0px" value="Delete Selected Item(s)" action="{!rsaController.actionPlan.deleteSelectedConsigned}" rendered="{!NOT(rsaController.actionPlan.editModeConsigned)}" reRender="ConsignedOrders,messages,febButtons,taxButtons,regularButtons, conButtons" status="locker"/> &nbsp;&nbsp;
+                    <apex:commandButton style="margin-right:8px" value="Save" action="{!rsaController.actionPlan.saveConsigned}" rendered="{!rsaController.actionPlan.editModeConsigned}" reRender="ConsignedOrders,messages,campaignInfo,febButtons,taxButtons,regularButtons,conButtons" status="locker"/>
+                    <apex:commandButton style="margin-right:8px" value="Cancel" action="{!rsaController.actionPlan.cancelConsigned}" rendered="{!rsaController.actionPlan.editModeConsigned}" reRender="ConsignedOrders,messages,febButtons,taxButtons,regularButtons,conButtons"  status="locker" immediate="true"/>
+                    <apex:commandButton style="margin-right:2px" value="Check RSS" action="{!rsaController.actionPlan.checkConsignedStock}" rendered="{!NOT(rsaController.actionPlan.editModeConsigned)}" status="locker"/>&nbsp;&nbsp;                                             
+                    <apex:commandButton style="margin-right:8px" value="Create Preliminary Order"  rendered="{!NOT(rsaController.actionPlan.editModeConsigned)}" disabled="{!NOT(rsaController.actionPlan.displayCreateConsignedPreliminarButton)}" status="locker"  onclick="openLookupPopup('Preliminary','Regular','true'); return false" />
+                    <apex:commandButton style="margin-right:8px" value="Create Final Order"  rendered="{!NOT(rsaController.actionPlan.editModeConsigned)}" disabled="{!NOT(rsaController.actionPlan.displayCreateConsignedFinalButton)}" status="locker"  onclick="openLookupPopup('Final','Regular','true'); return false" />                                              
+                    <apex:commandButton value="Request"  rendered="{!NOT(rsaController.actionPlan.editModeConsigned)}" disabled="false"   rerender="popupFinal" onclick="openRequestPage(); return false" />
+                  </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:pageBlockSection>                 
+    </apex:pageBlock>
+
+    </apex:form>
+    
+    
+    
+        
+   
+    
+    
+    <!-- <script type="text/javascript">alert('TOTAL-> {!AND(NOT(isGermanView), OR( currentDivision.name = 'CP', currentDivision.name = 'Roundup', currentDivision.name = 'Latitude', currentDivision.name = 'Monitor',currentDivision.name = 'Monfast'))}')</script>
+    <script type="text/javascript">alert('NOTisGERMANview ->  {!NOT(isGermanView)}')</script>
+    <script type="text/javascript">alert('DIVISION DE CP -> {!OR( currentDivision.name = 'CP', currentDivision.name = 'Roundup', currentDivision.name = 'Latitude', currentDivision.name = 'Monitor',currentDivision.name = 'Monfast')}')</script> -->
+    
+    <apex:form rendered="{!AND(NOT(isItalianView), NOT(IsUKView), NOT(isRSAView), NOT(isGermanView), OR( currentDivision.name = 'Corn', currentDivision.name = 'OSR'))}">
+   
+    <apex:pageBlock >
+    <apex:pageBlockSection >
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >{!$Label.SelectedCampaignDivision}</apex:outputLabel>
+            <apex:outputText value="{!currentDivision.name}"/>
+        </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection title="{!$Label.TacticalPlanPrevCampaign}" columns="1">
+    <apex:pageBlockTable value="{!prevCampController.TacticalPlans}" var="tacticalPlan">
+        
+        <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label}" styleClass="{!IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),'','notOwner')}">
+            <apex:outputField value="{!tacticalPlan.record.ProductRef__c}"/>
+        </apex:column>
+        <apex:repeat var="f" value="{!prevCampController.fieldSetManager.managedFieldSetMembers}">
+                <apex:column rendered="{!IF(AND(account.recordType.name == 'Dist./Ret./PoS', OR(f.fieldPath == 'PoS__c', f.fieldPath=='DistributorRef__c')), false, true)}" styleClass="{!IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),'','notOwner')}">
+                    <apex:facet name="header">{!f.label}</apex:facet>
+                    <apex:outputField value="{!tacticalPlan.record[f.fieldPath]}"  />
+                </apex:column> 
+                
+        </apex:repeat>
+        <apex:column headerValue="{!$Label.History}" styleClass="{!IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),'','notOwner')}">
+            <a href="javascript:;" onclick="javascript:popUpHistory('/apex/TacticalPlanElementHistory?id={!tacticalPlan.record.id}');">{!$Label.ViewHistory}</a>
+        </apex:column>
+    </apex:pageBlockTable>
+    </apex:pageBlockSection>
+    
+
+    
+    <apex:pageblockSection >
+        <apex:outputField value="{!currentCampain.TotalCampaignBudget__c}"/>
+        <apex:outputText />
+        <apex:outputField value="{!currentCampain.TotalAllocatedCharged__c}"/>
+        <apex:outputField value="{!currentCampain.TotalAllocatedFOC__c}"/>
+        <apex:outputField value="{!currentCampain.TotalPendingBudget__c}"/>
+    </apex:pageblockSection>
+    
+    
+    
+    
+    <apex:pageBlockSection title="{!$Label.TacticalPlanCurrentCampaign}" columns="1">
+    <span class="smallTable">
+    <apex:pageBlockTable value="{!currentCampController.TacticalPlans}" var="tacticalPlan">
+        <apex:column rendered="{!IF(mode == 'view', true, false)}" headerValue="{!$Label.Action}" styleClass="{!IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),'','notOwner')}">
+                    <apex:inputCheckbox value="{!tacticalPlan.checked}" rendered="{!IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),true,false)}"/>
+        </apex:column>
+     
+      
+        <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label}" styleClass="{!IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),'','notOwner')}">
+            <apex:variable value="{!counter+1}" var="counter"/>
+                    <apex:outputField value="{!tacticalPlan.record.ProductRef__c}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),false,true)), true, false)}" />
+                     
+                     <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!tacticalPlan.lookupValue.id}" text="{!tacticalPlan.lookupValue.text}" identifier="{!'giveAwayCell'&TEXT(counter)}" division="{!$CurrentPage.parameters.division}" rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),true,false)), true, false)}">
+                            
+                            <apex:inputText styleClass="idField" value="{!tacticalPlan.lookupValue.id}"  />
+                     </c:CustomLookupField>
+        </apex:column>
+       
+        <apex:repeat var="f" value="{!prevCampController.fieldSetManager.managedFieldSetMembers}">
+                <apex:column rendered="{!IF(AND(account.recordType.name == 'Dist./Ret./PoS', OR(f.fieldPath == 'PoS__c', f.fieldPath=='DistributorRef__c')), false, true)}" styleClass="{!IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),'','notOwner')}">
+                    <apex:facet name="header" >{!f.label}</apex:facet> 
+                    <span class="{!f.fieldPath}"><apex:inputField value="{!tacticalPlan.record[f.fieldPath]}"  rendered="{!IF(AND(mode == 'edit', IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),true,false)), true, false)}" required="{!f.required}" /></span>
+                    <apex:outputField value="{!tacticalPlan.record[f.fieldPath]}" rendered="{!IF(OR(mode == 'view',IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),false,true)), true, false)}"/>
+                </apex:column> 
+                
+        </apex:repeat>
+        <apex:column headerValue="{!$Label.History}" rendered="{!IF(mode == 'view', true, false)}" styleClass="{!IF(OR($User.Id = tacticalPlan.record.ownerID,ISNULL(tacticalPlan.record.ownerID)),'','notOwner')}">
+            <a href="javascript:;" onclick="javascript:popUpHistory('/apex/TacticalPlanElementHistory?id={!tacticalPlan.record.id}');">{!$Label.ViewHistory}</a>
+        </apex:column>
+    </apex:pageBlockTable>
+    </span>
+    </apex:pageBlockSection>
+    <apex:pageBlockButtons location="bottom" rendered="{!currentCampController.IsEditButton}">
+                <apex:commandButton action="{!currentCampController.doLoadProductPicker}" value="{!$Label.ButtonAddMultipleLines}" rendered="{!IF(mode == 'view', true, false)}" />
+                <apex:commandButton action="{!currentCampController.save}" id="saveButton" value="{!$Label.Save}" rendered="{!IF(mode == 'edit', true, false)}" />
+                <apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!currentCampController.newRecord}"/>
+                <apex:commandButton action="{!currentCampController.cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true, false)}" immediate="true"/>
+                <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!currentCampController.Edit}" rendered="{!AND(mode == 'view', currentCampController.isHasElements)}"  />
+                <apex:commandButton action="{!currentCampController.deletex}" id="deleteButton" value="{!$Label.Delete}" rendered="{!AND(mode == 'view', currentCampController.isHasElements)}" />
+                <apex:commandButton action="{!doCreateAcreages}" id="acreages" value="{!$Label.CreateAcreages}" rendered="{!AND(mode == 'view', currentCampController.isHasElements)}" />
+                <apex:commandButton action="{!goToVoucherGeneratorPage}" value="{!$Label.CreateVoucher}" rendered="{!AND(mode == 'view', currentCampController.isHasElements)}"/>
+    </apex:pageBlockButtons>
+     
+    </apex:pageBlock>
+    </apex:form>
+
+</apex:component>

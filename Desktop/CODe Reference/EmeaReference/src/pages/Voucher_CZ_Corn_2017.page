@@ -1,0 +1,629 @@
+<apex:page sidebar="false" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" showHeader="false" language="cz" renderAs="pdf" standardcontroller="Voucher__c" extensions="Voucher_CZ_Corn_2017_Controller">
+    <html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <style>
+            @page {
+              size: A4 portrait;
+              border: 0;
+              margin: 0;
+              padding: 0;
+              margin-bottom: 118px;
+              
+              @top-center {
+                content: element(header);
+                width: 100%;
+              }
+              @bottom-left {
+                content: element(footer);
+                width: 100%;
+              }
+            }
+            @page:first {
+                @bottom-left {
+                    content: "";
+                }
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                color: #206082;
+                font-size: 11.5px;
+                font-weight: 400;
+                line-height: 1.15;
+                font-family: Arial Unicode MS, sans-serif;
+            }
+            b {
+                font-family: sans-serif;
+                font-weight: 600
+            }
+            ul {
+                list-style: none;
+                margin-left: 0
+            }
+            .hide {
+                display: none!important
+            }
+            .page-break {
+                display: block;
+                position: relative;
+                page-break-after: always
+            }
+            .right-align {
+                text-align: right
+            }
+            .center-align {
+                text-align: center
+            }
+            .dekalb-url {
+                font-family: Dialog, sans-serif;
+                font-size: 1.8em;
+                font-weight: bold;
+                text-align: right;
+            }
+            .header {
+                position: running(header);
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                background-color: red!important;
+                border-spacing: 0;
+            }
+            .footer {
+                position: running(footer);
+                bottom: 0;
+                width: 100%;
+                border-spacing: 0;
+            }
+            .wrapper {
+                margin: 130px 42px 0
+            }
+            .icon__reg {
+                position: relative;
+                font-size: .72em;
+                top: -.35em;
+            }
+            .box__cancel {
+                color: #F44336;
+                padding: 0 5px;
+                margin: 5px 0 0;
+                line-height: 1.8;
+                font-size: 1.2em;
+                display: inline-block;
+                border: 1px solid #F44336;
+            }
+            .table-head {
+                margin-top: 8px;
+                margin-bottom: 5px;
+                border-spacing: 0;
+                border-collapse: collapse
+            }
+            .table-head td {
+                vertical-align: top;
+                text-align: justify;
+                padding-right: 20px;
+            }
+            .table-head .box-wrapper {
+                border: 2px solid #206082;
+                vertical-align: top;
+                min-height: 45px;
+                padding: 3px 5px;
+                width: 24.5%
+            }
+            .field-output {
+                color: #333;
+                padding: 3px 0;
+                font-size: 1.05em;
+                text-align: left;
+            }
+            .table-lines {
+                width: 100%;
+                margin-top: 10px;
+                margin-bottom: 3px;
+                text-align: center;
+                border-spacing: 0;
+                border-collapse: collapse;
+                border: 2px solid #206082;
+                background-color: transparent
+            }
+            .table-lines.FOC {
+                border-color: #FFB800
+            }
+            .table-lines thead th {
+                background-color: #83A5CD;
+                border: 1px solid #206082;
+                border-bottom: 2px solid #206082;
+                line-height: 1.5;
+                color: #000000;
+                padding-left: 6px;
+                padding-right: 6px;
+            }
+            .table-lines.FOC thead th {
+                background-color: #FFE192;
+                border-color: #FFB800
+            }
+            .table-lines thead .head__scnd-row th {
+                border-top-color: transparent
+            }
+            .table-lines thead tr .head__merged-col {
+                line-height: 1.7;
+                border-bottom-color: transparent
+            }
+            .table-lines tbody tr td,
+            .table-lines tfoot tr td {
+                border: 1px solid #206082;
+                white-space:nowrap;
+                color: #000;
+                padding: 0 5px;
+                line-height: 1.9;
+                font-weight: bold;
+                font-family: Dialog, sans-serif;
+            }
+            .table-lines.FOC tbody tr td,
+            .table-lines.FOC tfoot tr td {
+                border-color: #FFB800
+            }
+            .table-lines tfoot tr td {
+                border-top: 2px solid #206082
+            }
+            .table-lines.FOC tfoot tr td {
+                border-color: #FFB800
+            }
+            .table-lines tbody tr td:first-child {
+                text-align: left;
+                background-color: #E3E9F4
+            }
+            .table-lines.FOC tbody tr td:first-child {
+                background-color: #FFEFC4
+            }
+            .table-lines tfoot tr td:first-child {
+                text-align: left;
+                font-weight: normal;
+                background-color: #B6C7E1
+            }
+            .table-lines.FOC tfoot tr td:first-child {
+                background-color: #FFE49E
+            }
+            
+            .table-summary {
+                width: 100%;
+                border-spacing: 0;
+                border-collapse: collapse;
+                margin: 22px 0
+            }
+
+            .table-summary thead th {
+                background-color: #206082;
+                border: 2px solid #206082;
+                padding: 6px 5px;
+                color: #FFF;
+            }
+            .table-summary tbody > tr > td {
+                padding: 2px 5px;
+                border: 2px solid #CCC;
+            }
+            .table-summary tbody td > div.white-box {
+                background-color: #FFF;
+                padding: 2px 5px
+            }
+            .table-summary tbody td > div.white-box .field-output {
+                line-height: 1.6;
+                text-align: right;
+            }
+            .empty__col {
+                border-color: transparent!important;
+                background-color: transparent!important
+            }
+            span.new-pce {
+                color: #F44336;
+                font-size: .9em;
+                letter-spacing: .5px;
+                display: inline-block;
+                position: relative;
+                top: -3px;
+                padding: 0 4px
+            }
+            .table-contents {
+                width: 100%;
+                margin: 6px 0;
+                text-align: justify;
+                border-spacing: 0;
+                border-collapse: collapse;
+                border: 2px solid #206082;
+                background-color: transparent
+            }
+            .table-contents .box-wrapper {
+                border: 2px solid #206082;
+                vertical-align: top;
+                padding: 3px 5px;
+            }
+            .table-contents.table-big {
+                margin: 3px 0 10px;
+            }
+            .table-contents.table-big .box-wrapper {
+                min-height: 88px;
+            }
+            .table-caption {
+                font-size: 1.1em;
+            }
+            
+            .box-wrapper-simple {
+                border: 2px solid #206082;
+                vertical-align: top;
+                padding: 3px 5px;
+                min-height: 60px
+            }
+            .columns {
+                overflow: hidden;
+            }
+            .columns > div {
+                text-align: justify;
+                float: left;
+                width: 48%
+            }
+            .columns > div:first-child {
+                width: 50%;
+                margin-right: 2%
+            }
+            
+            .col-title {
+                font-family: Dialog, sans-serif;
+                text-align: left;
+                font-weight: bold;
+                margin: 6px 0 -6px
+            }
+            .col-title i {
+                font-family: Arial Unicode MS, sans-serif;
+            }
+            .columns > div .col-title {
+                margin: 0;
+                font-size: 1em
+            }
+            .col-caption {
+                text-align: justify;
+                margin-top: 12px;
+                font-size: .8em
+            }
+            .small-letter {
+                font-size: .95em
+            }
+            
+            ul li {
+                margin: 10px 0
+            }
+        </style>
+    </head>
+    <body>
+    <div class="page-break">
+    
+        <div class="header">
+            <apex:image url="{!$Resource.DEKALB_BONUS_2017}" width="100%"/>
+        </div>
+        
+        <div class="footer">
+            <apex:image url="{!$Resource.DEKALB_BONUS_2016_FOOTER_CZ}" width="100%"/>
+        </div>
+
+        <div class="wrapper">
+        
+        <table class="table-head">
+            <tr>
+                <td class="">
+                     Objednejte u svého distributora kukuřice DEKALB<b class="icon__reg">&reg;</b> a získejte DEKALB<b class="icon__reg">&reg;</b> bonus od společnosti MONSANTO ČR s.r.o.<!-- Minimální objednané množství pro získání bonusu je 20 VJ. -->
+                     <div><span class="box__cancel {!if(status == 1,"","hide")}">zrušený</span></div>
+                </td>
+                <td class="box-wrapper">
+                    <div>Zákaznické číslo:</div>
+                    <div class="field-output">{!if(voucher.AccountRef__c != null, voucher.AccountRef__r.Client_Code__c, '')}</div>
+                </td>
+                <td class="box-wrapper">
+                    <div>Obchodní zástupce:</div>
+                    <div class="field-output">{!voucher.Owner.Name}</div>
+                </td>
+            </tr>
+        </table>
+
+        <apex:outputPanel >
+        <table class="table-lines">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 24%">Hybridy</th>
+                    <th rowspan="2" style="width: 12%">Moření</th>
+                    <!--<th rowspan="2" style="width: 8%">FAO</th>-->
+                    <th rowspan="2" style="width: 14%">Počet VJ</th>
+                    <th rowspan="2" style="width: 6%">Cena (CZK)</th>
+                    <th colspan="2" style="width: 36%" class="head__merged-col">DEKALB<b class="icon__reg">&reg;</b> bonus</th>
+                </tr>
+                <tr>
+                    <!--<th style="width: 12%; white-space: nowrap">Základní (%)</th>-->
+                    <th style="width: 18%; white-space: nowrap">Ostatní (%)</th>
+                    <th style="width: 18%; white-space: nowrap">Celkem CZK</th>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat value="{!VLI_lines_Charged}" var="vli">
+                    <tr>
+                        <td><apex:outputText value="{!vli[0]}" escape="false"/></td>
+                        <td style="font-weight: normal; color: #555; text-align: left">{!vli[1]}</td>
+                        <!--<td style="font-weight: normal; color: #555">{!vli[2]}</td>-->
+                        <td style="color: #333">{!vli[3]}</td>
+                        <td style="font-weight: normal; color: #555">{!vli[4]}</td>
+                        <!--<td style="font-weight: normal; color: #555">{!vli[5]}</td>-->
+                        <td style="font-weight: normal; color: #555">{!vli[6]}</td>
+                        <td style="font-weight: normal">{!vli[7]}</td>
+                    </tr>
+                </apex:repeat>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Celkem:</td>
+                    <td colspan="1"></td>
+                    <td>{!voucher.TotalBags__c}</td>
+                    <td colspan="2"></td>
+                    <td><apex:outputText value="{0, number, ##0.00}"><apex:param value="{!TotalDiscount}"/></apex:outputText></td>
+                </tr>
+            </tfoot>
+        </table>
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!VLI_lines_FOC.size > 0}">
+        <table class="table-lines FOC">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 20%">Hybridy</th>
+                    <th rowspan="2" style="width: 12%">Moření</th>
+                    <th rowspan="2" style="width: 8%">FAO</th>
+                    <th rowspan="2" style="width: 60%">Zboží zdarma (pytle)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat value="{!VLI_lines_FOC}" var="vli">
+                    <tr>
+                        <td><apex:outputText value="{!vli[0]}" escape="false" /></td>
+                        <td style="font-weight: normal; color: #555; text-align: left">{!vli[1]}</td>
+                        <td style="font-weight: normal; color: #555">{!vli[2]}</td>
+                        <td style="color: #333">{!vli[3]}</td>
+                    </tr>
+                </apex:repeat>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Celkem:</td>
+                    <td colspan="2"></td>
+                    <td>{!voucher.TotalBagsFOC__c}</td>
+                </tr>
+            </tfoot>
+        </table>
+        </apex:outputPanel>
+        
+        <table class="table-summary">
+            <thead>
+                <tr>
+                    <th style="width: 57%" colspan="3">Počet koupených VJ v roce 2016:</th>
+                    <th class="empty__col"></th>
+                    <th style="width: 41%" colspan="2">Výměra kukuřice 2017:</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="background-color: #CFCFCF; border-color: #CFCFCF; width: 18%">
+                        <table>
+                            <tr>
+                                <td>Nákup:</td>
+                                <td style="width: 65%"><div class="white-box"><div class="field-output">{!voucher.AccountRef__r.DE_POGCornPY__c} VJ</div></div></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="background-color: #CFCFCF; border-color: #CFCFCF; width: 21%">
+                        <table>
+                            <tr>
+                                <td>Bonus ve zboží:</td>
+                                <td style="width: 60%"><div class="white-box"><div class="field-output">{!voucher.AccountRef__r.DE_POGCornFOCPY__c} VJ</div></div></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="background-color: #CFCFCF; border-color: #CFCFCF; width: 18%">
+                        <table>
+                            <tr>
+                                <td><b style="color: #000">Celkem:</b></td>
+                                <td style="width: 65%"><div class="white-box"><div class="field-output"><b>{!voucher.AccountRef__r.DE_POGCornPY__c + voucher.AccountRef__r.DE_POGCornFOCPY__c} VJ</b></div></div></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="empty__col"></td>
+                    <td style="background-color: #FFE192; border-color: #FFE192">
+                        <table>
+                            <tr>
+                                <td>Zrno:</td>
+                                <td style="width: 90%"><div class="white-box"><div class="field-output">{!AcrGrain} ha</div></div></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="background-color: #BDCCE3; border-color: #BDCCE3">
+                        <table>
+                            <tr>
+                                <td>Siláž:</td>
+                                <td style="width: 90%"><div class="white-box"><div class="field-output">{!AcrSilage} ha</div></div></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <table class="table-contents table-big">
+            <tbody>
+                <tr>
+                    <td class="box-wrapper" style="width: 49%">
+                        <div>Distributor:</div>
+                        <div class="field-output">{!voucher.DistributorNameCopy__c}</div>
+                    </td>
+                    <td class="empty__col"></td>
+                    <td class="box-wrapper" style="width: 49%">
+                        <div>Poznámky:</div>
+                        <div class="field-output"><apex:outputField value="{!voucher.TXT_NOTES__c}"/></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="table-caption">Společnost/příjemce bonusu:</div>
+
+        <table class="table-contents">
+            <tbody>
+                <tr>
+                    <td colspan="2" class="box-wrapper" style="width: 50%">
+                        <div>Název podniku:</div>
+                        <div class="field-output">{!voucher.FarmNameCopy__c}</div>
+                    </td>
+                    <td colspan="2" class="box-wrapper">
+                        <div>Kontaktní osoba:</div>
+                        <div class="field-output">{!AccContact.Name}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" rowspan="2" class="box-wrapper">
+                        <div>Adresa sídla:</div>
+                        <div class="field-output">{!voucher.AddressCopy__c}</div>
+                    </td>
+                    <td class="box-wrapper" style="width: 25%">
+                        <div>Telefon:</div>
+                        <div class="field-output">{!if(AccContact.Phone!=null, AccContact.Phone, voucher.PhoneCopy__c)}</div>
+                    </td>
+                    <td class="box-wrapper">
+                        <div>Mobil:</div>
+                        <div class="field-output">{!AccContact.MobilePhone}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="box-wrapper">
+                        <div>Email:</div>
+                        <div class="field-output">{!voucher.EmailCopy__c}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="box-wrapper">
+                        <div>Okres:</div>
+                        <div class="field-output">{!voucher.AccountRef__r.County__c}</div>
+                    </td>
+                    <td colspan="2" rowspan="3" class="box-wrapper">
+                        <div>Podpis:</div> 
+                        <div class="field-output">
+                            <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}">
+                                <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="60px"/>
+                            </apex:outputPanel>
+                        </div>
+                    </td>    
+                </tr> 
+                <tr>
+                    <td class="box-wrapper" style="width: 25%">
+                        <div>IČ:</div>
+                        <div class="field-output">{!if(voucher.AccountRef__r.FiscalCode__c!=null,voucher.AccountRef__r.FiscalCode__c,voucher.FiscalCodeCopy__c)}</div>
+                    </td>  
+                    <td class="box-wrapper">
+                        <div>DIČ:</div>
+                        <div class="field-output">{!if(voucher.AccountRef__r.GC_VATIN_Number__c!=null,voucher.AccountRef__r.GC_VATIN_Number__c,'')}</div>
+                    </td>             
+                </tr>
+                <tr>
+                    <td colspan="2" class="box-wrapper">
+                        <div>Číslo účtu a kód banky podniku:</div>
+                        <div class="field-output">{!if(voucher.AccountRef__r.GC_Bank_Account_Number__c!=null,voucher.AccountRef__r.GC_Bank_Account_Number__c,'')}</div>
+                    </td> 
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="table-caption">Podpisem souhlasí příjemce bonusu s pravidly pro stanovení výše DEKALB<b class="icon__reg">&reg;</b> bonusu.</div>
+        
+        <div class="dekalb-url">www.dekalb.cz</div>
+        
+        </div><!-- end wrapper -->
+    
+    </div><!-- end page -->
+    
+    <div class="wrapper">
+    
+    <div class="col-title" style="margin-top: 10px">Souhlas</div>
+    <div class="columns">
+      <div class="small-letter">
+        
+        <ul>
+            <li>Podpisem tohoto formuláře a poskytnutím vašich osobních údajů* dáváte svolení společnosti Monsanto:</li>
+            <li>a) ke zpracování vašich osobních údajů v rozsahu a pro účely popsané v tomto známení,</li>
+            <li>b) k využití vaší e-mailové adresy, k zasílání SMS, MMS a dalších elektronických zpráv (na základě údajů, které se rozhodnete poskytnout) pro marketingové účely,</li>
+            <li>c) k postoupení vašich osobních údajů mimo vaši domovskou jurisdikci (včetně zemí mimo Evropský hospodářský prostor, které neposkytují stejná práva a/nebo úroveň ochrany ve vztahu k vašim osobním údajům) k tomu, aby společnost Monsanto a Monsanto Group (a jimi jmenovaná třetí strana, jež bude data zpracovávat) zpracovala vaše osobní údaje v souladu s tímto oznámením, včetně případů, kdy to vyžaduje zákon, a</li>
+            <li>d) s přelety dronu nad poli vlastněnými podnikem, s obstaráním snímků, záběrů a publikování těchto materiálů.</li>
+        </ul>
+      </div>
+
+      <div>
+        
+        <table class="table-contents">
+            <tbody>
+                <tr>
+                    <td colspan="2" class="box-wrapper" style="min-height: 32px">
+                        <div>Jméno:</div>
+                        <div class="field-output">{!AccContact.Name}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="box-wrapper">
+                        <div>Společnost:</div>
+                        <div class="field-output">{!voucher.FarmNameCopy__c}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="box-wrapper" style="width: 50%">
+                        <div>Datum:</div>
+                        <div class="field-output">{!VoucherDate}</div>            
+                    </td> 
+                    <td class="box-wrapper" style="width: 50%; min-height: 72px">
+                        <div>Podpis:</div> 
+                        <div>
+                            <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature!= null}">
+                                <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="60px"/>
+                            </apex:outputPanel>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="col-caption">* Povinné údaje: jméno, ulice, PSČ, P. O. Box, město, stát, kraj/region, země, fax, telefon, mobilní telefon/domácí telefon/jiný telefon, e-mail. Nepovinné údaje: oslovení, pracovní pozice, datum narození, pohlaví, lokace (zeměpisná délka/šířka) hospodářství, webové stránky, jméno používané pro Facebook účet, jméno používané pro Twitter účet a/nebo informace, zda-li se jedná o osobu s rozhodovací pravomocí.</div>
+      </div>
+    </div>
+    
+    <div class="col-title">Podmínky pro získání DEKALB<b class="icon__reg">&reg;</b> bonusu</div>
+    <div class="columns">
+      <div class="small-letter">
+        
+        <ul>
+            <li>1) Objednejte nejpozději do 31. 5. 2017 u obchodního zástupce společnosti MONSANTO ČR s.r.o., Brno Business Park – budova B, Londýnské náměstí 856/2, 639 00 Brno a následně odeberte osivo DEKALB<b class="icon__reg">&reg;</b> (dále jen osivo, popř. hybrid DEKALB<b class="icon__reg">&reg;</b>) u Vašeho distributora.</li>
+            <li>2) DEKALB<b class="icon__reg">&reg;</b> bonus je poskytován pouze na osivo určené pro konečného spotřebitele (konečným spotřebitelem se pro tyto účely rozumí také spotřebitel, který dodává osivo konečnému spotřebiteli, na kterém má majetkovou účast nebo jde o podnik ve skupině majetkově propojených subjektů) a je poskytován ve dvou formách a to: v penězích tzn. finanční bonus nebo ve zboží tzn. bonus ve zboží.</li>
+            <li>3) Finanční bonus je vypočítán z doporučených cen bez DPH hybridů pro konečné zákazníky pro rok 2017 vyhlášených firmou MONSANTO ČR s.r.o. a to na skutečně odebrané zboží, které je zdokladovatelné fakturami daného konečného spotřebitele. Doporučenou cenou hybridů se rozumí pouze doporučená cena za hybrid mořený standardním mořením (tzn. bonus se nepočítá z příplatků za speciální moření, které jsou vedeny v ceníku jako zvláštní položka).</li>
+            <li>4) Výše finančního bonusu nebo bonusu ve zboží bude vypočtena dle platných pravidel pro tuto kampaň. S detailními pravidly včetně celkové výše bonusu je povinen účastníka této kampaně seznámit obchodní zástupce společnosti MONSANTO ČR s.r.o., což účastník kampaně stvrdí svým podpisem na druhé straně tohoto formuláře. Bonus ve zboží bude vypočten procentem z objednaného objemu a bude poskytnut jako zboží navíc nad tento dodaný objem. Při výpočtu množství osiva bude použito standardní matematické zaokrouhlování.</li>
+            <li>5) Podmínkou poskytnutí finančního bonusu je to, že příjemce tohoto bonusu je povinen do 30. 6. 2017 k vyplněnému formuláři dodat kopie faktur (v případě požadavku na bonus ve zboží je jeho příjemce povinen do 30. 6. 2017 doložit kopie dodacích listů o odběru hybridů DEKALB<b class="icon__reg">&reg;</b>),</li>
+        </ul>
+      </div>
+      
+      <div class="small-letter">        
+        <ul>
+            <li>které dokladují nákup výše uvedených hybridů DEKALB<b class="icon__reg">&reg;</b> na adresu společnosti MONSANTO ČR s.r.o. nebo předat obchodnímu zástupci. Pokud nebude kopie faktur dodána do 30. 6. 2017 příjemci finančního bonusu, nárok na tento bonus zaniká. To stejné platí, pokud nebudou ve lhůtě do 30. 6. 2017 doloženy kopie dodacích listů, tzn. zaniká nárok na bonus ve zboží.</li>
+            <li>6) Společnost MONSANTO ČR s.r.o si vyhrazuje právo změny na již objednané bonusové zboží zákazníkem, v případě vyčerpání skladových zásob, tj. MONSANTO ČR s.r.o. je oprávněna poskytnout bonus v jiném hybridu.</li>
+            <li>7) V případě vzniku nároku na finanční bonus vyplatí MONSANTO ČR s.r.o. příslušnou finanční částku na účet příjemce do 31. 8. 2017 s tím, že tato částka bude příjemci doložena dobropisem. V případě, že v době splatnosti finančního bonusu má příjemce finanční závazky vůči MONSANTO ČR s.r.o. (splatné i nesplatné), je MONSANTO ČR s.r.o. oprávněno započíst finanční bonus na úhradu finančních závazků příjemce vůči němu.</li>
+            <li>8) Bonus ve zboží bude dodán buď společností MONSANTO ČR s.r.o. a jí nasmlouvanou třetí osobou nebo prostřednictvím distribučních partnerů. Tento nárok není převoditelný na třetí osoby, rovněž tento nárok nelze dát do zástavy. V případě, že příjemce má ke dni vzniku nároku poskytnutí bonusu ve zboží závazek vůči MONSANTO ČR s.r.o., potom je MONSANTO ČR s.r.o. oprávněno krátit tento bonus a dodat příjemci bonusové zboží v rozsahu, převyšujícím závazek příjemce vůči MONSANTO ČR s.r.o.</li>
+        </ul>
+        
+        <div class="col-title" style="text-align: justify">Tento formulá<i>ř</i> slouží jako garance finančního bonusu a ne jako objednávka! Pro více informací kontaktujte spole<i>č</i>nost MONSANTO <i>Č</i>R s.r.o.</div>
+        <div class="col-title" style="text-align: justify">MONSANTO <i>Č</i>R s.r.o. má právo na zm<i>ě</i>nu tohoto programu, tato zm<i>ě</i>na již nemá vliv na uskute<i>č</i>n<i>ě</i>né obchody.</div>
+      </div>
+      
+    </div>
+
+    </div>  
+
+    </body>
+    </html>
+</apex:page>

@@ -1,0 +1,466 @@
+<apex:page standardController="Case" Extensions="VFC_Delivery" showheader="false" id="pageID">
+ 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<apex:includeScript value="/support/console/30.0/integration.js"/>
+<apex:includeScript value="/soap/ajax/27.0/connection.js"/>
+<apex:includeScript value="/xdomain/xdomain.js"/>
+
+<apex:form id="pageForm">
+ <apex:outputPanel id="itest"> 
+           <div id='test'>
+           <apex:pageMessages id="pagmes1" ></apex:pageMessages></div>
+           </apex:outputpanel>
+  
+
+<script>
+        function switchMenu(obj,obj1,obj2) 
+        {
+            var el = document.getElementById(obj);                                       
+            if ( el.style.display != 'none' ) {
+            el.style.display = 'none';
+            }
+            else {
+            el.style.display = '';
+            }
+            var e2 = document.getElementById(obj1);                                       
+            if ( e2.style.display != 'none' ) {
+            e2.style.display = 'none';
+            }
+            else {
+            e2.style.display = '';
+            }
+             var e3 = document.getElementById(obj2);                                       
+            if ( e3.style.display != 'none' ) {
+            e3.style.display = 'none';
+            }
+            else {
+            e3.style.display = '';
+            }
+
+        }
+    $(function () {    
+   $("input.parentChk").change(function () {
+           $(this).closest("table.tbl").find("input[type='checkbox']").prop('checked', this.checked);
+    });     
+        });
+        
+        function checkpanel()
+        {
+        $('#spi5').show();
+
+                 
+        }
+        function checkpanel1()
+        {
+        $('#spi6').show();
+
+                 
+        }
+        function checkpanel2()
+        {
+        $('#spi7').show();
+
+                 
+        }
+         function boolFunction(variable)
+    {
+        
+          // callClass();             
+           var bool = variable.value;
+        document.getElementById('test').style.display = 'none';
+        // document.getElementById('spi5').style.display = 'none';
+       // document.getElementById('spi6').style.display = 'none';
+          
+        if(bool == 'ord')
+        {
+        $('#spi5').show();
+        $('#spi6').hide();
+        $('#spi7').hide();
+             callClass();
+           document.getElementById('idSpan1').style.display = 'block';
+           document.getElementById('idSpan2').style.display = 'none';
+           document.getElementById('idSpan3').style.display = 'none';
+             
+        }
+        
+         if(bool == 'Del')
+        {
+        $('#spi6').show();
+        $('#spi5').hide();
+        $('#spi7').hide();
+            callClass2();
+           document.getElementById('idSpan3').style.display = 'block';
+           document.getElementById('idSpan1').style.display = 'none';
+           document.getElementById('idSpan2').style.display = 'none';
+           
+        } 
+        
+          if(bool == 'Inv')
+        {
+        $('#spi6').hide();
+        $('#spi5').hide();
+        $('#spi7').show();
+          callClass1();
+           document.getElementById('idSpan2').style.display = 'block';
+           document.getElementById('idSpan1').style.display = 'none';
+           document.getElementById('idSpan3').style.display = 'none';
+             
+        }
+       
+    }
+    function testCloseTab() {
+    
+        if(sforce.console.isInConsole()){        
+         var closeSubtab = function closeSubtab(result) {            
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);            
+            }             
+            sforce.console.getEnclosingTabId(closeSubtab);  
+                     
+    }
+    else{
+   
+   window.top.close();
+    }
+    }
+    
+    function testCloseTab1() {
+    
+        if(sforce.console.isInConsole()){        
+         var closeSubtab = function closeSubtab(result) {            
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);            
+            }             
+            sforce.console.getEnclosingTabId(closeSubtab);  
+                     
+        }
+    }
+             
+var refreshPrimaryTab = function showTabId(result) {
+        var tabId = result.id;
+        sforce.console.refreshPrimaryTabById(tabId, true);
+    };
+
+    function doPrimaryTabRefresh() {
+        sforce.console.getEnclosingPrimaryTabId(refreshPrimaryTab);            
+    }
+
+    doPrimaryTabRefresh();
+
+        function runOnEnter(ev) { 
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) { 
+            SearchOrder(); 
+            return false; 
+            } else { 
+            return true; 
+            } 
+        } 
+        function runOnEnterdel(ev) { 
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) { 
+            SearchDelivery(); 
+            return false; 
+            } else { 
+            return true; 
+            } 
+        } 
+        function runOnEnterInv(ev) { 
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) { 
+            SearchInvoice(); 
+            return false; 
+            } else { 
+            return true; 
+            } 
+        } 
+ 
+</script>
+
+                <apex:actionFunction name="callClass2" reRender="w123search" />
+              <apex:actionFunction name="callClass" reRender="i5" />
+                <apex:actionFunction name="callClass1" reRender="i2search" />
+    <apex:pageblock id="firstPageBlock">  
+       <!-- <center><apex:commandButton value="Attach" onclick="doControllerSave() ,testCloseTab1(),doPrimaryTabRefresh();return false;"  /> 
+        <apex:actionFunction name="doControllerSave" action="{!Attach}"/>--->
+        <script>
+            function oncompleteOperation(attachFlag){
+               if(attachFlag == 'true'){
+                   doPrimaryTabRefresh();
+                   testCloseTab1();
+               }
+            }
+        </script>
+        
+        <center>
+        <apex:commandButton value="Attach"  action="{!Attach}"  reRender="firstPageBlock" oncomplete="oncompleteOperation('{!attachSuccess}');"/>
+        <!--<apex:actionFunction name="doControllerSave" action="{!Attach}" reRender="firstPageBlock" oncomplete="testCloseTab1(),doPrimaryTabRefresh();"/>--->
+      <apex:commandButton value="Cancel" onclick="testCloseTab();return false;" /> </center> 
+      
+        <apex:pageblockSection title=" Case Details" id="Section1" columns="1"  >
+            <apex:outputText value="{!accntnum}" label="Account Name"/>
+            <apex:outputText value="{!casenum}" label="Case Number"/>
+           <apex:selectRadio id="idRadio1" value="{!selectedOption }" onclick="boolFunction(this);"  style="align:center;padding-left: 38%;" ><!---->
+                    <apex:selectOption itemValue="ord" itemLabel="Orders"  />
+                     <apex:selectOption itemValue="Del" itemLabel="Deliveries" />
+                     <apex:selectOption itemValue="Inv" itemLabel="Invoices" />
+                  
+                </apex:selectRadio>
+         
+        </apex:pageblockSection>
+      <span id="idSpan3"  style = "display:none" >
+     <apex:panelGroup id="pbs3"  >
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><apex:outputLabel value="Enter Delivery Number"></apex:outputLabel></b>&nbsp;&nbsp;&nbsp;&nbsp;
+         <apex:inputText label="Enter Delivery Number" value="{!srchStrdel}" onkeypress="return runOnEnterdel(event);"  />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         <apex:commandButton oncomplete="checkpanel1();" value="Search" action="{!getdelivery}" rerender="w123search,itest,idSpan3,pbs3"/>
+         <apex:actionFunction name="SearchDelivery" action="{!getdelivery}" rerender="w123search,itest,idSpan3,pbs3" />
+       </apex:panelGroup>
+         
+      </span>
+       
+        <span id="idSpan1"  style = "display:none" >
+        
+        <apex:panelGroup id="pbs2"  >
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><apex:outputLabel value="Enter Order Number"></apex:outputLabel></b>&nbsp;&nbsp;&nbsp;&nbsp;
+         <apex:inputText label="Enter Order Number" value="{!srchStr}" onkeypress="return runOnEnter(event);" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         <apex:commandButton oncomplete="checkpanel();" value="Search" action="{!getorders}" rerender="i5,itest,idSpan1,pbs2" />
+         <apex:actionFunction name="SearchOrder" action="{!getorders}" rerender="i5,itest,idSpan1,pbs2" />
+       </apex:panelGroup>
+                   
+        </span>
+         
+         <span id="idSpan2"  style = "display:none" >
+          <apex:panelGroup id="pbs345"  >
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><apex:outputLabel value="Enter Invoice Number"></apex:outputLabel></b>&nbsp;&nbsp;&nbsp;&nbsp;
+         <apex:inputText label="Enter Invoice Number" value="{!srchStrinv}" onkeypress="return runOnEnterInv(event);" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         <apex:commandButton oncomplete="checkpanel2();" value="Search" action="{!getinvoices}" rerender="i2search,itest,idSpan2,pbs345" />
+         <apex:actionFunction name="SearchInvoice" action="{!getinvoices}" rerender="i2search,itest,idSpan2,pbs345" />
+       </apex:panelGroup> 
+          
+       
+        
+   </span> 
+   
+   <apex:outputPanel id="mainPanel">       
+   <!---Search Order pageblock--->
+               <span id="spi5">
+   <apex:outputPanel id="i5" layout="block"> 
+        <apex:outputPanel >
+        <apex:pageBlockSection title="Select Orders/Order Products" id="pageBlockSectionSearch"  rendered="{! IF(orderWrapperListsearch == null, false, true)}" columns="1" >    
+      
+        <apex:pageblocktable value="{!orderWrapperListsearch }"  var="OrdItm" id="firstPageBlockTableSearch" >               
+        <apex:column headervalue="SAP Order Number" >
+                  <apex:inputcheckbox value="{!OrdItm.flg1}" />&nbsp;   
+                  <apex:outputpanel id="plusimageSearch">
+                          <apex:image url="{!$Resource.CS_Expand}"  onclick="switchMenu('{!$Component.inlinetablesecSearch}','{!$Component.minusimagesearch}','{!$Component.plusimageSearch}')" title="Expand Order LineItems"/> 
+                   </apex:outputpanel>
+                    <apex:outputpanel id="minusimagesearch" style="display:none;">
+                          <apex:image url="{!$Resource.CS_Collapse}" onclick="switchMenu('{!$Component.inlinetablesecSearch}','{!$Component.plusimageSearch}','{!$Component.minusimagesearch}')" title="Collapse Order LineItems"/>
+                    </apex:outputpanel>                    
+                    <apex:outputtext value="{!OrdItm.ord.GC_Integration_Key__c }" id="idx"/> 
+                    <apex:outputpanel id="inlinetablesecSearch" style="display:none;">&nbsp;&nbsp;  
+                    <apex:outputText value="No Items" rendered="{! IF(OrdItm.OrderItemList!= null, false, true)}"/>
+                    <apex:pageblocktable value="{!OrdItm.OrderItemList}" var="tm"  id="secondPageBlockTable" styleClass="tbl" rendered="{! IF(OrdItm.OrderItemList == null, false, true)}">
+                     
+                         <apex:column headerValue="Select" >
+                            <apex:inputcheckbox value="{!tm.flg}" id="receivedInputID" styleclass="{!tm.ordLineItm.id }"/>
+                            </apex:column>
+                            <apex:column headerValue="SAP Item Line" >
+                                   <apex:outputfield value="{!tm.ordLineItm.GC_SalesOrder_Item_Nbr__c}"/>
+                             </apex:column>
+                                                      
+                            <apex:column headerValue="Product code" >
+                                   <apex:outputfield value="{!tm.ordLineItm.PricebookEntry.ProductCode}"/>
+                             </apex:column>
+                            <!-- <apex:column headerValue="OrderNumber" >
+                                   <apex:outputfield value="{!tm.ordLineItm.Orderid}"/>
+                             </apex:column>   --> 
+                             
+                               <apex:column headerValue="Product Description" >
+                                   <apex:outputfield value="{!tm.ordLineItm.Description}"/>
+                             </apex:column> 
+                                <apex:column headerValue="Quantity" >
+                                   <apex:outputfield value="{!tm.ordLineItm.GC_Quantity__c}"/>
+                             </apex:column>                          
+                                  
+                               <apex:column headerValue="Sales UoM" >
+                                   <apex:outputfield value="{!tm.ordLineItm.GC_Sales_UoM_Text__c}"/>
+                             </apex:column>  
+                                <apex:column headerValue="Net Unit Price" >
+                                   <apex:outputfield value="{!tm.ordLineItm.fGC_Unit_Price__c}"/>
+                             </apex:column>                              
+                        </apex:pageblocktable>
+                   </apex:outputpanel>    
+           </apex:column>
+            <apex:column headerValue="Ship To Party" > 
+            <apex:outputfield value="{!OrdItm.ord.GC_Ship_To_Party_Text__c}" />
+             </apex:column> 
+             <apex:column headerValue="Ship to Party Description" > 
+            <apex:outputfield value="{!OrdItm.ord.GC_Ship_To_Party_Descr__c}"/>
+             </apex:column> 
+             <apex:column headerValue="Currency Description" > 
+            <apex:outputfield value="{!OrdItm.ord.GC_Currency_Description__c}"/>
+             </apex:column>
+             <apex:column headerValue="Net Value" > 
+            <apex:outputfield value="{!OrdItm.ord.fGC_Total_Amount__c}"/>
+             </apex:column> 
+             <apex:column headerValue="PO Number" > 
+            <apex:outputfield value="{!OrdItm.ord.PONumber}"/>
+             </apex:column> 
+             <apex:column headerValue="Document Type" > 
+            <apex:outputfield value="{!OrdItm.ord.GC_Document_Type_Descr__c}"/>
+             </apex:column>
+             <apex:column headerValue="Last Modified Date" >
+                 <apex:outputfield value="{!OrdItm.ord.LastModifiedDate }"/>
+             </apex:column> 
+        </apex:pageblocktable>  &nbsp;&nbsp;
+        </apex:pageBlockSection> 
+        </apex:outputPanel>
+
+       </apex:outputPanel> 
+       </span>
+    <!---Search Delivery pageblock--->
+    <span id="spi6">
+   <apex:outputPanel id="w123search" layout="block">
+    <apex:outputPanel >
+        <apex:pageBlockSection title="Select Delivery/ Delivery Line Item" id="pageBlockSection3search" rendered="{! IF(deliveryWrapperListSearch == null, false, true)}"  columns="1">  
+        
+        <apex:pageblocktable value="{!deliveryWrapperListSearch }"  var="DelItm" id="firstPageBlockTable3search" >
+               <apex:column headervalue=" SAP Delivery Number" >
+                  <apex:inputcheckbox value="{!DelItm.isSelected}" />&nbsp;   
+                  <apex:outputpanel id="delplusimagesearch">
+                          <apex:image url="{!$Resource.CS_Expand}"  onclick="switchMenu('{!$Component.delinlinetablesecSearch}','{!$Component.delminusimagesearch}','{!$Component.delplusimagesearch}')" title="Expand Delivery"/> 
+                   </apex:outputpanel>
+                    <apex:outputpanel id="delminusimagesearch" style="display:none;">
+                          <apex:image url="{!$Resource.CS_Collapse}" onclick="switchMenu('{!$Component.delinlinetablesecSearch}','{!$Component.delplusimagesearch}','{!$Component.delminusimagesearch}')" title="Collapse Delivery"/>
+                    </apex:outputpanel>                    
+                    <apex:outputtext value="{!DelItm.del.name}" id="idxyw"/> 
+                    <apex:outputpanel id="delinlinetablesecSearch" style="display:none;">&nbsp;&nbsp;  
+                    <apex:outputText value="No Items" rendered="{! IF(DelItm.DelItemList != null, false, true)}"/>
+                    <apex:pageblocktable value="{!DelItm.DelItemList}" var="tm"  id="secondPageBlockTable" styleClass="tbl" rendered="{! IF(DelItm.DelItemList = null, false, true)}"  >
+                     
+                         <apex:column headerValue="Select" >
+                             <apex:inputcheckbox value="{!tm.flg}" id="receivedInputID" styleclass="{!tm.delLineItm.id }"/>
+                            </apex:column>
+                          
+                             <apex:column headerValue="SKU Line Item Number" >
+                                   <apex:outputfield value="{!tm.delLineItm .name}"/>
+                             </apex:column>  
+                             <apex:column headerValue="Material Code" >
+                                   <apex:outputfield value="{!tm.delLineItm .GC_Item_Code__c}"/>
+                             </apex:column>
+                             <apex:column headerValue="Material Description" >
+                                   <apex:outputfield value="{!tm.delLineItm .GC_Item_Descr__c}"/>
+                             </apex:column>
+                             <apex:column headerValue="Batch number Line Item" >
+                                   <apex:outputfield value="{!tm.delLineItm .GC_Batch_Number_Text__c}"/>
+                             </apex:column>                          
+                            <apex:column headerValue="Plant Description" >
+                                   <apex:outputfield value="{!tm.delLineItm.GC_Plant_Desc__c}"/>
+                             </apex:column>
+                             <apex:column headerValue="Quantity Actually Delivered" >
+                                   <apex:outputfield value="{!tm.delLineItm .GC_SKULineItem_Quantity__c}"/>
+                             </apex:column>
+                             <apex:column headerValue="Shipping Point Description" >
+                                   <apex:outputfield value="{!tm.delLineItm .GC_Shipping_Point_Descr__c}"/>
+                             </apex:column>  
+                                                   
+                        </apex:pageblocktable>
+                   </apex:outputpanel>    
+           </apex:column> 
+            <!-- <apex:column headerValue="Delivery Status Description" >--> 
+            <!--<apex:outputfield value="{!DelItm.del.GC_Delivery_Status_Descr__c}" style="width: 360px; height: 20px"/>-->
+            <!-- </apex:column> -->
+            <apex:column headerValue="Ship-To Name" >
+            <apex:outputfield value="{!DelItm.del.ShipTo_Acc_Integration_Key__c}"/>
+            </apex:column>
+            <apex:column headerValue="Delivery Creation Date (header)" >
+            <apex:outputfield value="{!DelItm.del.GC_Delivery_Creation_Date__c}"/>
+            </apex:column>
+            <apex:column headerValue="Delivery Date" >
+            <apex:outputfield value="{!DelItm.del.GC_Delivery_Date__c}" />
+            </apex:column>
+            <apex:column headerValue="Proposed GI Date" >
+            <apex:outputfield value="{!DelItm.del.GC_Proposed_GI_Date__c}"/>
+            </apex:column>
+            <apex:column headerValue="Actual GI Date" >
+            <apex:outputfield value="{!DelItm.del.GC_Actual_GI_Date__c}"/>
+            </apex:column>
+            <apex:column headerValue="Order Number" >
+            <apex:outputfield value="{!DelItm.del.GC_Order_Number__c}"/>
+            </apex:column>
+            <apex:column headerValue="Last Modified Date" >
+                  <apex:outputfield value="{!DelItm.del.LastModifiedDate }"/>
+             </apex:column>   
+        </apex:pageblocktable>  &nbsp;&nbsp;
+        </apex:pageBlockSection> 
+      </apex:outputpanel>
+      </apex:outputPanel>
+      </span>
+       <!---Search Invoice pageblock--->
+       <span id="spi7">
+       <apex:outputPanel id="i2search" layout="block">
+        <apex:outputPanel >    
+        <apex:pageBlockSection title="Select Invoice/Invoice line Items" id="pageBlockSection2search"  rendered="{! IF(invoiceWrapperListsearch== null, false, true)}" columns="1" > 
+        <apex:pageblocktable value="{!invoiceWrapperListsearch}"  var="InvItm" id="InvfirstPageBlockTablesearch">
+               <apex:column headervalue=" SAP Invoice Number" >
+                  <apex:inputcheckbox value="{!InvItm.isSelected}" />&nbsp;   
+                  <apex:outputpanel id="Invplusimagesearch">
+                          <apex:image url="{!$Resource.CS_Expand}"  onclick="switchMenu('{!$Component.Invinlinetablesecsearch}','{!$Component.Invminusimagesearch}','{!$Component.Invplusimagesearch}')" title="Expand Invoice"/> 
+                   </apex:outputpanel>
+                    <apex:outputpanel id="Invminusimagesearch" style="display:none;">
+                          <apex:image url="{!$Resource.CS_Collapse}" onclick="switchMenu('{!$Component.Invinlinetablesecsearch}','{!$Component.Invplusimagesearch}','{!$Component.Invminusimagesearch}')" title="Collapse Invoice"/>
+                    </apex:outputpanel>                    
+                    <apex:outputtext value="{!InvItm.Inv.name}" id="idx12"/> 
+                    <apex:outputpanel id="Invinlinetablesecsearch" style="display:none;">&nbsp;&nbsp;&nbsp; 
+                    <apex:outputText value="No Items" rendered="{! IF(InvItm.InvoiceItemList!= null, false, true)}"/>
+                    <apex:pageblocktable value="{!InvItm.InvoiceItemList}" var="tm"  id="InvsecondPageBlockTable" styleClass="tbl" rendered="{! IF(InvItm.InvoiceItemList == null, false, true)}">
+                         <apex:column headerValue="Select" >
+                             <apex:inputcheckbox value="{!tm.flg}" id="InvreceivedInputID" styleclass="{!tm.InvLineItm.id }"/>
+                            </apex:column>
+                              <apex:column headerValue="Item Number" >
+                                   <apex:outputfield value="{!tm.InvLineItm.Name}"/>
+                             </apex:column>
+                                <apex:column headerValue="Material Code" >
+                                   <apex:outputfield value="{!tm.InvLineItm.GC_Item_Code__c}"/>
+                             </apex:column>
+                             <apex:column headerValue="Description" >
+                                   <apex:outputfield value="{!tm.InvLineItm.GC_Item_Descr__c}"/>
+                             </apex:column>                      
+                            <apex:column headerValue="Net Value" >
+                                   <apex:outputfield value="{!tm.InvLineItm.GC_Net_Value_Amount__c}"/>
+                             </apex:column>
+                             <apex:column headerValue="QTY" >
+                                   <apex:outputfield value="{!tm.InvLineItm.GC_Quantity__c}"/>
+                             </apex:column>
+                              <apex:column headerValue="UOM -line item" >
+                                   <apex:outputfield value="{!tm.InvLineItm.GC_UOM_Line_Item_Descr__c}"/>
+                             </apex:column>
+                        </apex:pageblocktable>
+                   </apex:outputpanel>    
+           </apex:column>
+            <apex:column headerValue="Invoice Status" > 
+            <apex:outputfield value="{!InvItm.Inv.GC_Invoice_Status_Descr__c}" />
+             </apex:column> 
+             <apex:column headerValue="Currency Description" > 
+            <apex:outputfield value="{!InvItm.Inv.GC_Currency_Desc__c}" />
+             </apex:column>
+             <apex:column headerValue="Total Invoice amount" > 
+            <apex:outputfield value="{!InvItm.Inv.GC_Total_Inv_Amount_Nbr__c}" />
+             </apex:column> 
+             <apex:column headerValue="Invoice Creation Date" > 
+            <apex:outputfield value="{!InvItm.Inv.GC_Invoice_Creation_Date__c}" />
+             </apex:column> 
+             <apex:column headerValue="Invoice Due Date" > 
+            <apex:outputfield value="{!InvItm.Inv.GC_Invoice_Due_Date__c}" />
+             </apex:column>
+             <apex:column headerValue="Last Modified Date" >
+                 <apex:outputfield value="{!InvItm.Inv.LastModifiedDate }"/>
+             </apex:column> 
+        </apex:pageblocktable>  &nbsp;&nbsp;
+        </apex:pageBlockSection> 
+         </apex:outputPanel> 
+         </apex:outputPanel> 
+         </span>
+        </apex:outputPanel>
+</apex:pageblock>
+</apex:form>
+  
+</apex:page>

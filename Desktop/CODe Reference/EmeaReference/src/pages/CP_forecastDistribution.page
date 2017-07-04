@@ -1,0 +1,367 @@
+<apex:page controller="CP_forecastDistributionController">
+    <style type="text/css"> 
+        .inlineEditWriteOn{background:url(/img/func_icons/util/pencil12.gif) no-repeat right 2px} 
+    </style>
+    <apex:form >                    
+        <div>
+            <apex:pageBlock >
+                <div>                       
+                    <apex:outputLabel value="{!$Label.Forecast_to_distribute}" style="font-weight:bold;">
+                    </apex:outputLabel><apex:inputText style="margin-left:20px;" value="{!distributeForecast}"/>
+                </div>                
+                <div id="contentLoading" style="display:none;">
+                    <div style="text-align: center;">
+                        <img src="/img/loading.gif" alt="Loading graphic" />
+                    </div>
+                </div>
+                
+                <div id="contentLoaded">                    
+                    <hr/>
+                    <apex:pageblockSection id="productsSelected" columns="2">   
+                            <c:MultiselectPicklist leftLabel="{!$Label.Available_Products}"
+                            leftOptions="{!allProducts}"
+                            rightLabel="{!$Label.Seleced_Products}"
+                            rightOptions="{!selectedProducts}"
+                            size="10"
+                            width="300px"/>
+                        
+                            <c:MultiselectPicklist leftLabel="{!$Label.Available_Distributors}"
+                            leftOptions="{!allDistributors}"
+                            rightLabel="{!$Label.Selected_Distributors}"
+                            rightOptions="{!selectedDistributors}"
+                            size="10"
+                            width="350px"/>
+                    </apex:pageblockSection>
+                    <div style="margin-top:30px; text-align:center">
+                        <hr/>
+                        <div style="display:inline; margin: 0 auto; width:150px">
+                            <apex:commandButton value="{!$Label.Distribute_Forecast}" action="{!generateForecastPreview}" onclick="distributeLoaded(true)" oncomplete="distributeLoaded(false)" reRender="panelEditable" />
+                            <apex:commandButton value="{!$Label.Get_Forecast}" action="{!getForecast}" onclick="forecastLoaded(true)" oncomplete="forecastLoaded(false)" reRender="panelPreview, panelEditable"/>
+                        </div>                 
+                    </div>
+                </div>                                              
+              </apex:pageBlock>
+              <apex:outputPanel id="panelPreview">
+                  <div id="contentPreviewLoading" style="display:none;">
+                      <div style="text-align: center;">
+                          <img src="/img/loading.gif" alt="Loading graphic" />
+                      </div>
+                  </div>
+                  <div id="forecastPreview">
+                      <apex:pageBlock title="{!$Label.Forecast_actual_distribution}" rendered="{!forecastPreview.size > 0 && country.Units_of_Measurement__c == 'Basic Units'}">                     
+                            <apex:pageBlockTable value="{!forecastPreview}" var="item">                                            
+                                <apex:column headerValue="{!$Label.Account}" value="{!item.account}" /> 
+                                <apex:column headerValue="SKU" value="{!item.product}" style="min-width:140"/>                           
+                                <apex:column headerValue="{!previousFY}-09">
+                                    <apex:outputField value="{!item.forecastSeptember.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                         
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-10" width="75">
+                                    <apex:outputField value="{!item.forecastOctober.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                        
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-11" width="75">
+                                    <apex:outputField value="{!item.forecastNovember.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                        
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-12" width="75">
+                                    <apex:outputField value="{!item.forecastDecember.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                        
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-01" width="75">
+                                    <apex:outputField value="{!item.forecastJanuary.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                   
+                                </apex:column>                           
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-02" width="75">
+                                    <apex:outputField value="{!item.forecastFebruary.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-03" width="75">
+                                    <apex:outputField value="{!item.forecastMarch.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                        
+                                </apex:column>
+                               <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-04" width="75">
+                                    <apex:outputField value="{!item.forecastApril.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                         
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-05" width="75">
+                                    <apex:outputField value="{!item.forecastMay.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                         
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-06" width="75">
+                                    <apex:outputField value="{!item.forecastJune.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                         
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-07" width="75">
+                                    <apex:outputField value="{!item.forecastJuly.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                  
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-08" width="75">
+                                    <apex:outputField value="{!item.forecastAugust.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}" />                                                          
+                                </apex:column>
+                                <apex:column headerValue="Total units" width="75">
+                                    <apex:outputText value="{!item.totalUnits}" />                                                             
+                                </apex:column>
+                                <apex:column headerValue="Total rels" width="75">
+                                    <apex:outputText value="{!item.totalRels}" />                                                             
+                                </apex:column>                         
+                            </apex:pageBlockTable>   
+                      </apex:pageBlock>
+                      <apex:pageBlock title="{!$Label.Forecast_actual_distribution_Rel}" rendered="{!forecastPreview.size > 0 && country.Units_of_Measurement__c == 'Rels'}">                     
+                            <apex:pageBlockTable value="{!forecastPreview}" var="item">                                            
+                                <apex:column headerValue="{!$Label.Account}" value="{!item.account}" width="380"/> 
+                                <apex:column headerValue="SKU" value="{!item.product}"/>                           
+                                <apex:column headerValue="{!previousFY}-09">
+                                    <apex:outputField value="{!item.forecastSeptember.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                         
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-10" width="75">
+                                    <apex:outputField value="{!item.forecastOctober.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                          
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-11" width="75">
+                                    <apex:outputField value="{!item.forecastNovember.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                            
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-12" width="75">
+                                    <apex:outputField value="{!item.forecastDecember.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                         
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-01" width="75">
+                                    <apex:outputField value="{!item.forecastJanuary.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                      
+                                </apex:column>                           
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-02" width="75">
+                                    <apex:outputField value="{!item.forecastFebruary.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />  
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-03" width="75">
+                                    <apex:outputField value="{!item.forecastMarch.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                         
+                                </apex:column>
+                               <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-04" width="75">
+                                    <apex:outputField value="{!item.forecastApril.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                           
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-05" width="75">
+                                    <apex:outputField value="{!item.forecastMay.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                            
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-06" width="75">
+                                    <apex:outputField value="{!item.forecastJune.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                         
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-07" width="75">
+                                    <apex:outputField value="{!item.forecastJuly.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                     
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-08" width="75">
+                                    <apex:outputField value="{!item.forecastAugust.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}" />                                                           
+                                </apex:column>
+                                <apex:column headerValue="Total units" width="75">
+                                    <apex:outputText value="{!item.totalUnits}" />                                                             
+                                </apex:column>
+                                <apex:column headerValue="Total rels" width="75">
+                                    <apex:outputText value="{!item.totalRels}" />                                                             
+                                </apex:column>                         
+                            </apex:pageBlockTable>   
+                      </apex:pageBlock>
+                  </div>
+              </apex:outputPanel>
+              
+              <apex:outputPanel id="panelEditable">                  
+                  <div id="editableLoading" style="display:none;">
+                      <div style="text-align: center;">
+                          <img src="/img/loading.gif" alt="Loading graphic" />
+                      </div>
+                  </div>
+                  <div id="editableLoaded">
+                      <apex:pageBlock title="{!$Label.Forecast_distribution_preview}" rendered="{!forecastEditable.size > 0 && country.Units_of_Measurement__c == 'Basic Units'}">                      
+                            <apex:pageBlockTable value="{!forecastEditable}" var="item">                                            
+                                <apex:column headerValue="{!$Label.Account}" value="{!item.account}" /> 
+                                <apex:column headerValue="SKU" value="{!item.product}" style="min-width:140"/>                            
+                                <apex:column headerValue="{!previousFY}-09">
+                                    <apex:outputField value="{!item.forecastSeptember.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                          
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-10" width="75">
+                                    <apex:outputField value="{!item.forecastOctober.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                                 
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-11" width="75">
+                                    <apex:outputField value="{!item.forecastNovember.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick" />
+                                    </apex:outputField>                                                                                              
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-12" width="75">
+                                    <apex:outputField value="{!item.forecastDecember.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                                
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-01" width="75">
+                                    <apex:outputField value="{!item.forecastJanuary.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                              
+                                </apex:column>                           
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-02" width="75">
+                                    <apex:outputField value="{!item.forecastFebruary.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>    
+                                    </apex:outputField>                                    
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-03" width="75">
+                                    <apex:outputField value="{!item.forecastMarch.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                            
+                                </apex:column>
+                               <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-04" width="75">
+                                    <apex:outputField value="{!item.forecastApril.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                                 
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-05" width="75">
+                                    <apex:outputField value="{!item.forecastMay.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                               
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-06" width="75">
+                                    <apex:outputField value="{!item.forecastJune.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                                 
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-07" width="75">
+                                    <apex:outputField value="{!item.forecastJuly.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                                 
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-08" width="75">
+                                    <apex:outputField value="{!item.forecastAugust.NUM_Forecast__c}" rendered="{!country.Units_of_Measurement__c == 'Basic Units'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                                                                 
+                                </apex:column>
+                                <apex:column headerValue="Total units" width="75">
+                                    <apex:outputText value="{!item.totalUnits}"/>                                                              
+                                </apex:column>
+                                <apex:column headerValue="Total rels" width="75">
+                                    <apex:outputText value="{!item.totalRels}" />                                                             
+                                </apex:column>                         
+                            </apex:pageBlockTable>
+                        </apex:pageBlock>
+                        
+                        <apex:pageBlock title="{!$Label.Forecast_distribution_preview_Rel}" rendered="{!forecastEditable.size > 0 && country.Units_of_Measurement__c == 'Rels'}">                      
+                            <apex:pageBlockTable value="{!forecastEditable}" var="item">                                            
+                                <apex:column headerValue="{!$Label.Account}" value="{!item.account}" width="380"/> 
+                                <apex:column headerValue="SKU" value="{!item.product}"/>                            
+                                <apex:column headerValue="{!previousFY}-09">
+                                    <apex:outputField value="{!item.forecastSeptember.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                       
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-10" width="75">
+                                    <apex:outputField value="{!item.forecastOctober.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                             
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-11" width="75">
+                                    <apex:outputField value="{!item.forecastNovember.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                             
+                                </apex:column>
+                                <apex:column headerValue="{!previousFY}-12" width="75">
+                                    <apex:outputField value="{!item.forecastDecember.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                             
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-01" width="75">
+                                    <apex:outputField value="{!item.forecastJanuary.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                           
+                                </apex:column>                           
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-02" width="75">
+                                    <apex:outputField value="{!item.forecastFebruary.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>    
+                                    </apex:outputField>
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c}-03" width="75">
+                                    <apex:outputField value="{!item.forecastMarch.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                          
+                                </apex:column>
+                               <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-04" width="75">
+                                    <apex:outputField value="{!item.forecastApril.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                             
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-05" width="75">
+                                    <apex:outputField value="{!item.forecastMay.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                            
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-06" width="75">
+                                    <apex:outputField value="{!item.forecastJune.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                             
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-07" width="75">
+                                    <apex:outputField value="{!item.forecastJuly.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                             
+                                </apex:column>
+                                <apex:column headerValue="{!aplFY.PICK_Forecast_Fiscal_Year__c }-08" width="75">
+                                    <apex:outputField value="{!item.forecastAugust.NUM_Forecast_Rel__c}" rendered="{!country.Units_of_Measurement__c == 'Rels'}">
+                                        <apex:inlineEditSupport event="ondblclick"/>
+                                    </apex:outputField>                                                             
+                                </apex:column>
+                                <apex:column headerValue="Total units" width="75">
+                                    <apex:outputText value="{!item.totalUnits}"/>                                                              
+                                </apex:column>
+                                <apex:column headerValue="Total rels" width="75">
+                                    <apex:outputText value="{!item.totalRels}" />                                                             
+                                </apex:column>                         
+                            </apex:pageBlockTable>
+                         </apex:pageBlock>   
+                    <div style="margin-top:30px; text-align:center">
+                        <hr/>
+                        <div style="margin: 0 auto; width:150px">
+                            <!-- <apex:commandButton value="{!$Label.Save_Forecast}" onclick="return confirm('{!$Label.Sales_Forecast_Alert}');" action="{!saveForecast}" reRender="panelEditable" /> -->
+                            <apex:commandButton value="{!$Label.Save_Forecast}" action="{!saveForecast}" reRender="panelEditable" onclick="if(!confirm('{!$Label.CP_Save_Alert}')){return};reload(true);" oncomplete="reload(false)" />
+                        </div>                       
+                    </div>     
+                  
+                  </div>
+              </apex:outputPanel>                           
+          </div>
+    </apex:form>
+    
+    <script type="text/javascript">
+    function loading(val) {
+        if(val) {
+            document.getElementById('contentLoading').style.display = 'block';
+            document.getElementById('contentLoaded').style.display = 'none';
+            
+        }
+        else 
+        {
+            document.getElementById('contentLoading').style.display = 'none';
+            document.getElementById('contentLoaded').style.display = 'block';
+        }
+    }
+    function forecastLoaded(val) {
+        if(val)
+        {
+            document.getElementById('contentPreviewLoading').style.display = 'block';
+           document.getElementById('forecastPreview').style.display = 'none';
+           document.getElementById('editableLoaded').style.display = 'none'; 
+        }
+        else
+        {
+            document.getElementById('contentPreviewLoading').style.display = 'none';
+            document.getElementById('forecastPreview').style.display = 'block';
+            document.getElementById('editableLoaded').style.display = 'block';   
+        }
+    }
+    function distributeLoaded(val) {
+        if(val)
+        {
+           document.getElementById('editableLoading').style.display = 'block';
+           document.getElementById('editableLoaded').style.display = 'none'; 
+        }
+        else
+        {
+            document.getElementById('editableLoading').style.display = 'none';
+            document.getElementById('editableLoaded').style.display = 'block';   
+        }
+    }
+    function reload(val) {
+        if(val) {
+            document.getElementById('editableLoading').style.display = 'block';
+            document.getElementById('editableLoaded').style.display = 'none';
+        }
+        else
+        {
+            document.getElementById('editableLoading').style.display = 'none';
+            document.getElementById('editableLoaded').style.display = 'block';
+        }
+    }
+    </script>
+    
+</apex:page>

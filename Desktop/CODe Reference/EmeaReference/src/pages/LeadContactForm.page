@@ -1,0 +1,647 @@
+<apex:page sidebar="false" showHeader="false" controller="LeadContactFormController" language="{!$CurrentPage.parameters.lang}" title="{!$CurrentPage.parameters.origin} {!$Label.SLC_modification_title}" docType="html-5.0" cache="false"> 
+   <html>
+      <head>
+         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+         <meta http-equiv="content-type" content="text/html;charset=iso-8859-1"/>
+         <link href="{!URLFOR($Resource.bootStrap, 'bootstrap-3.3.2/dist/css/bootstrap.min.css')}" rel="stylesheet" media="screen"/>        
+              
+         <!-- CSS -->
+         <style type="text/css">
+            @font-face{
+            font-family: 'MorganSansCondBold';
+            font-style: normal;
+            font-variant: normal;                  
+            src:  {!IF($CurrentPage.parameters.lang = 'uk', 'url('+URLFOR($Resource.SLC_Font_Ukraine)+')', 'url('+URLFOR($Resource.SLC_Font)+')')};
+            }
+            html, body {
+            height: 100%;    /* The html and body elements cannot have any padding or margin. */                  
+            }                    
+            #wrapper {
+            padding: 0;
+            margin: 0 auto;
+            min-height: 100%;
+            height: 100%;
+            }
+            #content.content {
+            max-width: 84em;
+            margin: 0 auto;
+            padding: 0 .9375em;
+            }
+            .page-header{
+            font-family: arial;
+            }
+            .logo{
+            padding: 0 0 0 .625em;
+            }                
+            .control-label{
+            font-family: arial!important;
+            font-weight: {!IF(test.LeadSource=$Label.SLC_Dekalb_brand, 'normal', 'bold')};
+            color: {!IF(test.LeadSource=$Label.SLC_Dekalb_brand,'rgb(51, 51, 51)','rgb(89, 177, 36)')};
+            }                 
+            .headerIn{
+            background: #005983;
+            color: #fff;
+            border-bottom: .08em solid #fff;
+            }
+            .contentHeader {
+            max-width: 84em;
+            margin: 0 auto;
+            padding: 1.8em 0;
+            }
+            .btn{
+            margin: 30px 0 !important;
+            margin-left: 30px !important;
+            border: .2em solid #015778 !important;
+            background-color: #FFF !important;
+            background-image: none !important;
+            text-shadow: none !important;
+            text-transform: uppercase;
+            }
+            .btn-sprite{
+            margin: 30px 0 !important;
+            margin-left: 30px !important;
+            border: {!IF(test.leadSource=$Label.SLC_Dekalb_brand,'.2em solid #015778 !important','none !important')};
+            background-color: #FFF !important;
+            background: {!IF(test.leadSource=$Label.SLC_Dekalb_brand, 'none !important' ,'url(https://www.weedapplication.roundup.es/widma-theme/images/general/buttons_green/btn_green_sprite_der.png) no-repeat 0 0 transparent !important')};
+            text-shadow: none !important;
+            text-transform: {!IF(test.leadSource=$Label.SLC_Dekalb_brand, 'uppercase !important', 'none')};
+            }
+            label.error {
+            color: red;
+            font-size: 10px;
+            width: 45%;
+            line-height: 20px;
+            padding: 0 5px;
+            float: left;
+            }
+            .footer {
+            padding-top: 1.25em;
+            margin-top: 0;
+            width: 100%;
+            clear: both;
+            position: relative;
+            bottom: 0;
+            }            
+            #footerLogo {
+            margin: 7em 0 .625em 0;
+            width: 100%;
+            }
+            .footer .content {
+            max-width: 84em;
+            margin: 0 auto;
+            text-align: right;
+            }                      
+            #footerIn {
+            background: #005983;
+            color: #fff;
+            padding: .5em 0;
+            }
+            #footerIn ul {
+            float: left;
+            margin: 0;
+            font-size: .8125em;
+            font-weight: bold;
+            }
+            #footerIn ul li {
+            display: block;
+            float: left;
+            }         
+            #footerIn .copy {
+            padding: 0 .625em 0 0;
+            font-size: .8125em;
+            font-weight: bold;
+            display: inline-block;
+            line-height: 1;
+            }        
+            #footerIn .copy-mon {
+            padding: 0 .625em;
+            font-size: .8125em;
+            font-weight: bold;
+            }
+            #footerIn ul li a {
+            color: #fff;
+            padding: 0 .5em 0 .5em;
+            }           
+            .form-control {
+            border-color: {!IF(test.leadSource=$Label.SLC_Dekalb_brand,'rgb(0, 89, 131)','rgb(89, 177, 36)')};
+            border-radius: 0px; /* CSS3 */
+            -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0);
+            //oninvalid:"this.setCustomValidity('Please Enter valid email')"
+            }       
+            .form-control:focus {
+            border-color: rgb(0, 89, 131);
+            border-radius: 0px; /* CSS3 */
+            outline:none;
+            -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0);
+            -moz-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0);
+            }
+            .star {
+            color: red;
+            }
+            
+            input[type=checkbox] + label
+            {
+            background: url(/DEKALB-theme/css/../images/checked-contact-on.png) no-repeat;                   
+            }   
+            input[type=checkbox]:checked + label
+            {
+            background: url(/DEKALB-theme/css/../images/checked-contact.png) no-repeat 
+            }               
+         </style>
+      </head>
+      
+      <body>
+         <div class="container-fluid" id="wrapper">
+             <!-- HEADER -->
+            <header>
+               <apex:outputPanel layout="block" rendered="{!test.leadSource == $Label.SLC_Dekalb_brand}">
+                  <div class="headerIn">
+                     <div class="contentHeader">
+                        <div class="logo">
+                           <apex:image styleClass="img-responsive" url="{!$Resource.SLC_DEKALB}" />
+                        </div>
+                     </div>
+                  </div>
+               </apex:outputPanel>
+               <apex:outputPanel layout="block" rendered="{!test.leadSource == $Label.SLC_Roundup_brand}">
+                  <div class="headerIn" style="background: url({!$Resource.SLC_WIDMA_Header}) repeat-x">
+                     <div class="contentHeader">
+                        <div class="logo">
+                           <apex:image styleClass="img-responsive" url="{!$Resource.SLC_WIDMA}" />
+                        </div>
+                     </div>
+                  </div>
+               </apex:outputPanel>
+            </header>
+            <!-- CONTENT --->
+            <div class="container">
+            <div id="content" class="content">                
+               <!-- TITLE-->             
+               <apex:outputPanel layout="block" rendered="{!IF(test.leadSource == $Label.SLC_Dekalb_brand || test.leadSource == $Label.SLC_Roundup_brand, true, false)}">
+                  <div class="page-header">
+                     <h2 style="font-size: 18.375px">{!$Label.SLC_site_modif_Title}<br/></h2>                    
+                  </div>
+               </apex:outputpanel>
+               <!-- ERROR -->
+                <div class="error">
+                    <apex:outputPanel >
+                        <!-- ERRORS MESSAGES -->
+                        <apex:pageMessages escape="false"/><br/>
+                    </apex:outputPanel>             
+                </div>               
+               <apex:form styleClass="form-horizontal" id="leadForm" rendered="{!IF(test.leadStatus != 'Deleted', true, false)}">
+                  <!-- ROW -->
+                  <div class="container-fluid">
+                      <div class="row-fluid">
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'FirstName'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">                          
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.FirstName.Label} " for="firstName"><span class="star">*</span></apex:outputLabel>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="firstName" value="{!test.LeadFirstName}" />
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'LastName'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.LastName.Label} " for="lastName"><span class="star">*</span></apex:outputLabel>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="lastName" value="{!test.LeadLastName}"  />
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>
+                      <!-- ROW -->
+                      <div class="row-fluid">
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'DAT_Birthday__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.DAT_Birthday__c.Label}" for="birthday"/>
+                                  <div class="col-md-6">
+                                     <apex:input type="date" styleClass="form-control" id="birthday" value="{!test.LeadBirthday}" />
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                         <apex:outputpanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'Email'), true, false)}">
+                            <div class="col-sm-6 ccol-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.Email.Label} " for="email"><span class="star">*</span></apex:outputLabel>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="email" value="{!test.leadEmail}" />
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputpanel>
+                      </div>
+                      <!-- ROW -->
+                      <div class="row-fluid">
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'Phone'), true, false)}">
+                            <div class="col-sm-6 ccol-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.Phone.Label}" for="phone"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="phone" value="{!test.leadPhone}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'Fax'), true, false)}">
+                            <div class="col-sm-6 ccol-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.Fax.Label}" for="fax"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="fax" value="{!test.leadFax}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>
+                      <!-- ROW -->                             
+                      <div class="row-fluid">
+                          <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'Street'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.Address.Label}" for="street"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="street" value="{!test.leadStreet}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>                         
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c,'City'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.City.Label}" for="city"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="city" value="{!test.leadCity}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>
+                      <!-- ROW -->
+                      <div class="row-fluid">
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'State'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.State.Label}" for="state"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="state" value="{!test.leadState}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'PostalCode'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.PostalCode.Label}" for="postalcode"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="postalcode" value="{!test.leadPostalCode}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>                         
+                      </div>
+                      <!-- ROW -->
+                      <div class="row-fluid">
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'Country'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.Country.Label}" for="country"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="country" value="{!test.leadCountry}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'NUM_Farm_size_per_crop__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.NUM_Farm_size_per_crop__c.Label}" for="farmsize"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="farmsize" value="{!test.leadFarmSize}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>
+                      <!-- ROW -->
+                      <div class="row-fluid">
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'Website'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.Website.Label}" for="web"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="web" value="{!test.leadWebsite}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'Company'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.Company.Label} " for="company"><span class="star">*</span></apex:outputLabel>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="company" value="{!test.leadCompany}" />
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>
+                      <!-- ROW -->
+                      <div class="row-fluid">
+                         <apex:outputpanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'TXT_Position_in_the_company__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.TXT_Position_in_the_company__c.Label}" for="position"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="position" value="{!test.leadPosition}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputpanel>
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'TXT_VAT_ID__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.TXT_VAT_ID__c.Label}" for="vat"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="vat" value="{!test.leadVAT}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>
+                      <!-- ROW -->
+                      <div class="row-fluid">
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'NUM_Corn_Total_Acreages__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.NUM_Corn_Total_Acreages__c.Label}" for="cornacreages"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="cornacreages" value="{!test.leadCornAcreages}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'NUM_CornSilage_Total_Acres__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.NUM_CornSilage_Total_Acres__c.Label}" for="cornacreagessilage"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="cornacreagessilage" value="{!test.leadCornAcreagesSilage}" />
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>       
+                      <!-- ROW -->
+                      <div class="row-fluid">
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'NUM_Total_Acreages_OSR__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.NUM_Total_Acreages_OSR__c.Label}" for="osracreages"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="osracreages" value="{!test.leadOSRAcreages}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'TXT_Distributor__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.TXT_Distributor__c.Label}" for="distributor"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="distributor" value="{!test.leadDistributor}" />
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>
+                     <div class="row-fluid"> 
+                     <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'TXT_Suppliers_of_the_farm__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.TXT_Suppliers_of_the_farm__c.Label}" for="suppliers"/>
+                                  <div class="col-md-6">
+                                     <apex:inputText styleClass="form-control" id="suppliers" value="{!test.leadSuppliers}"/>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>
+                  </div>
+                  <!-- Picklist -->
+                  
+                  <div class="container-fluid">                      
+                      <!-- ROW  -->
+                      <div class="row-fluid">
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'PICK_User_category__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.PICK_User_category__c.Label}" for="category"/>
+                                  <div class="col-md-6">
+                                     <apex:selectList styleClass="form-control" id="category" value="{!test.leadCategory}" size="1" >
+                                        <apex:selectOptions value="{!category}"/>
+                                     </apex:selectList>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'PICK_Farm_usage__c'), true, false)}">
+                            <div class="col-sm-6 col-lg-6">
+                               <div class="form-group">
+                                  <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.PICK_Farm_usage__c.Label}" for="farmusage"/>
+                                  <div class="col-md-6">
+                                     <apex:selectList styleClass="form-control" id="farmusage" value="{!test.leadFarm}" size="1" >
+                                        <apex:selectOptions value="{!farmusage}"/>
+                                     </apex:selectList>
+                                  </div>
+                               </div>
+                            </div>
+                         </apex:outputPanel>
+                      </div>
+                      <!-- ROW -->
+                      <div class="row-fluid">
+                             <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c,'PICK_Gender__c'), true, false)}">
+                                <div class="col-sm-6 col-lg-6">
+                                   <div class="form-group">
+                                      <apex:outputLabel styleClass="col-md-4 control-label" value="{!$ObjectType.Lead.fields.PICK_Gender__c.Label}" for="gender"/>
+                                      <div class="col-md-6">
+                                         <apex:selectList styleClass="form-control" id="gender" value="{!test.leadGender}" size="1" >
+                                            <apex:selectOptions value="{!gender}"/>
+                                         </apex:selectList>
+                                      </div>
+                                   </div>
+                                </div>
+                             </apex:outputPanel>                         
+                      </div>
+                  </div>
+                  
+                  <!-- CHECKBOXES -->
+                  <div class="container-fluid">
+                  <!-- ROW -->
+                  <div class="row-fluid">
+                      <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'CHK_Consent_Accept_Terms__c'), true, false)}">                                                 
+                          <div class="checkbox col-md-offset-2">                                  
+                              <apex:inputCheckbox disabled="true" id="acceptTerms" value="{!test.leadAccept}"/>
+                              <apex:outputLabel for="acceptTerms" value="{!$Label.SLC_accept_terms}" />
+                          </div>                                       
+                      </apex:outputPanel>
+                  </div>
+                  <!-- ROW -->
+                  <div class="row-fluid">
+                      <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'CHK_Consent_Contact_by_email__c'), true, false)}">
+                          <div class="checkbox col-md-offset-2">
+                              <apex:inputCheckbox id="acceptemail" value="{!test.leadConsentEmail}"/>
+                              <apex:outputLabel for="acceptemail" value="{!$ObjectType.Lead.fields.CHK_Consent_Contact_by_email__c.Label}" />    
+                          </div>   
+                      </apex:outputPanel>
+                  </div>
+
+                  <!-- ROW -->
+                  <div class="row-fluid">
+                      <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'CHK_Consent_Contact_by_fax__c'), true, false)}">
+                          <div class="checkbox col-md-offset-2">
+                               <apex:inputCheckBox id="acceptfax" value="{!test.leadConsentFax}" />
+                               <apex:outputLabel value="{!$ObjectType.Lead.fields.CHK_Consent_Contact_by_fax__c.Label}" for="acceptfax" />
+                          </div>
+                      </apex:outputPanel>
+                  </div>
+                  <!-- ROW -->
+                  <div class="row-fluid">
+                      <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'CHK_Consent_Contact_by_phone__c'), true, false)}">
+                          <div class="checkbox col-md-offset-2">
+                              <apex:inputCheckbox id="acceptphone" value="{!test.leadConsentPhone}" />
+                              <apex:outputLabel value="{!$ObjectType.Lead.fields.CHK_Consent_Contact_by_phone__c.Label}" for="acceptphone" />
+                          </div>
+                      </apex:outputPanel>
+                  </div>
+                  <!-- ROW -->
+                  <div class="row-fluid">
+                      <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'CHK_Consent_Contact_by_postal__c'), true, false)}">
+                          <div class="checkbox col-md-offset-2">
+                              <apex:inputCheckBox id="acceptpostal" value="{!test.leadConsentPostal}" />
+                              <apex:outputLabel value="{!$ObjectType.Lead.fields.CHK_Consent_Contact_by_postal__c.Label}" for="acceptpostal" />
+                          </div>
+                      </apex:outputPanel>
+                  </div>
+                  <!-- ROW -->
+                  <div class="row-fluid">
+                      <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'CHK_Consent_Contact_by_SMS__c'), true, false)}">
+                          <div class="checkbox col-md-offset-2">
+                              <apex:inputCheckBox id="acceptsms" value="{!test.leadConsentSMS}" />
+                              <apex:outputLabel value="{!$ObjectType.Lead.fields.CHK_Consent_Contact_by_SMS__c.Label}" for="acceptsms" />
+                          </div>
+                      </apex:outputPanel>
+                  </div>
+                  <!-- ROW -->
+                  <div class="row-fluid">
+                      <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'CHK_Consent_Marketing_material__c'), true, false)}">
+                          <div class="checkbox col-md-offset-2">
+                              <apex:inputCheckBox id="acceptmarketing" value="{!test.leadConsentMarketing}" />
+                              <apex:outputLabel value="{!$Label.SLC_marketing_terms}" for="acceptmarketing"/>
+                          </div>
+                      </apex:outputPanel>
+                  </div>
+                  <!-- ROW -->
+                  <div class="row-fluid">
+                       <apex:outputPanel rendered="{!IF(contains(lcountryFields.TXT_Field__c, 'CHK_Consent_Newsletters__c'), true, false)}">
+                           <div class="checkbox col-md-offset-2">                               
+                               <apex:inputCheckBox id="acceptnews" value="{!test.leadConsentNewsletter}" />
+                               <apex:outputLabel value="{!$Label.SLC_newsletter_terms}" for="acceptnews"/>
+                           </div>
+                       </apex:outputPanel>
+                  </div> 
+                  </div>
+                  <!-- BUTTON -->
+                  <div class="row">
+                     <div class="span7 text-center">
+                        <apex:outputPanel rendered="{!test.LeadSource == $Label.SLC_Dekalb_brand && showButtons == true}">
+                           <div class="btn-group-sm">
+                              <apex:commandButton onclick="displayOnError();" styleClass="btn btn-default" style="font-family:MorganSansCondBold; font-weight: normal; color: rgb(1, 87, 120); font-size:13.125px;"  value="{!$Label.SLC_site_modif_save}" action="{!save}" />
+                              <apex:commandButton styleClass="btn btn-default" style="font-family:MorganSansCondBold; font-weight: normal; color: rgb(1, 87, 120); font-size:13.125px;"  value="{!$Label.SLC_site_modif_delete}" onclick="if(!confirm('{!$Label.SLC_site_modif_delete_conf}')){return false;}" action="{!reset}" />
+                           </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!test.LeadSource == $Label.SLC_Roundup_brand && showButtons == true}">
+                           <div class="btn-group-sm">
+                              <apex:commandButton onclick="displayOnError();" styleClass="btn-sprite" style="color: #fff; height: 30px; width: 84px" value="{!$Label.SLC_site_modif_save}" action="{!save}" />
+                              <apex:commandButton styleClass="btn-sprite" style="color: #fff; height: 30px; width: 84px" value="{!$Label.SLC_site_modif_delete}" onclick="if(!confirm('{!$Label.SLC_site_modif_delete_conf}')){return false;}" action="{!reset}" />
+                           </div>
+                        </apex:outputPanel>
+                     </div>
+                  </div>
+               </apex:form>
+            </div>
+            </div>
+            <!-- FOOTER -->
+            <footer class="footer">
+                <div id="footerLogo">
+                    <div class="content">
+                        <a href="http://www.monsanto.com">
+                            <apex:image id="theImage" value="{!$Resource.SLC_Monsanto}" />
+                         </a>
+                    </div>
+                </div>
+                
+                <apex:outputPanel rendered="{!test.leadSource == $Label.SLC_Dekalb_brand}">
+                    <div id="footerIn">
+                        <div class="content">
+                            <ul style="padding-left: 0px;">
+                               <li>
+                                  <a href="{!$Label.SLC_site_DEKALB_privacy_link}" target="_blank" title="{!$Label.SLC_site_DEKALB_privacy}">{!$Label.SLC_site_DEKALB_privacy}</a>
+                               </li>
+                               <li>
+                                  <a href="{!$Label.SLC_site_DEKALB_terms_link}" target="_blank" title="{!$Label.SLC_site_DEKALB_terms}">{!$Label.SLC_site_DEKALB_terms}</a>
+                               </li>
+                               <li>
+                                  <a href="{!$Label.SLC_site_DEKALB_cookies_link}" target="_blank" title="{!$Label.SLC_site_DEKALB_cookies}">{!$Label.SLC_site_DEKALB_cookies}</a>
+                               </li>
+                            </ul>
+                            <div class="box-copy">
+                               <span class="copy">
+                                   <apex:outputtext value="{!$Label.SLC_site_DEKALB_copyright}" escape="false" />
+                               </span> <br/>
+                               <span class="copy-mon">
+                                   <apex:outputtext value="{!$Label.SLC_site_DEKALB_registered}" escape="false" />
+                               </span>
+                            </div>
+                        </div>
+                    </div>                
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!test.leadSource == $Label.SLC_Roundup_brand}">
+                  <div id="footerIn" style="background: url({!$Resource.SLC_WIDMA_Header}) repeat-x">
+                     <div class="content">
+                        <ul style="padding-left: 0px;">
+                           <li>
+                              <a href="{!$Label.SLC_site_WidMa_privacy_link}" target="_blank" title="{!$Label.SLC_site_WidMa_privacy}">{!$Label.SLC_site_WidMa_privacy}</a>
+                           </li>
+                           <li>
+                              <a href="{!$Label.SLC_site_WidMa_terms_link}" target="_blank" title="{!$Label.SLC_site_WidMa_terms}">{!$Label.SLC_site_WidMa_terms}</a>
+                           </li>
+                           <li>
+                              <a href="{!$Label.SLC_site_WidMa_cookies_link}" target="_blank" title="{!$Label.SLC_site_WidMa_cookies}">{!$Label.SLC_site_WidMa_cookies}</a>
+                           </li>
+                        </ul>
+                        <div class="box-copy">
+                           <span class="copy">
+                               <apex:outputtext value="{!$Label.SLC_site_WidMa_copyright}" escape="false" />
+                           </span> <br/>
+                           <span class="copy-mon">
+                               <apex:outputtext value="{!$Label.SLC_site_WidMa_registered}" escape="false" />
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+               </apex:outputPanel>
+            
+            </footer>
+         </div>
+         <!-- END CONTAINER -->              
+      </body>   
+      
+   </html>
+</apex:page>

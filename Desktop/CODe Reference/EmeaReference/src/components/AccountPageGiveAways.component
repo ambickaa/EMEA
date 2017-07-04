@@ -1,0 +1,177 @@
+<apex:component allowDML="true" controller="AccountPageGiveAwaysController">
+    
+    <apex:attribute name="account" type="Account" description="currentAccount" required="true" />
+    
+    <apex:form id="List_Records_Table">
+    
+    <span class="component-messages">
+        <apex:pageMessages rendered="{!showGiveAwaysMessages}" escape="false" />
+    </span>
+    
+    <apex:pageBlock >
+
+        <div class="pageBlockSection">
+	        <apex:pageBlockSection title="{!$Label.GiveAways}" columns="1" collapsible="false"></apex:pageBlockSection>
+        </div>
+
+ 		<div class="pbHeader buttonsSection">
+	        <table>
+	        	<tr>
+		        	<td class="pbTitle"></td>
+		        	<td class="pbButton">
+			            <apex:commandButton value="{!$Label.New}" styleClass="{!IF(OR(modeEdit, NOT(isOwner), currentCampaign == null), 'hidden', '')} btn-view" onClick="modeAdd(this, Add_GiveAways); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_edit}" disabled="true" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner)), currentCampaign == null), 'hidden', '')} btn-view btn-rows" onClick="rowsEdit(this, RowsEdit_GiveAways); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_edit_all}" disabled="false" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner)), currentCampaign == null), 'hidden', '')} btn-view btn-all" onClick="rowsEditAll(this, RowsEdit_GiveAways); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_delete}" disabled="true" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')} btn-view btn-rows" onClick="xConfirm(this, 'delete', RowsDelete_GiveAways); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_add}" styleClass="{!IF(modeAdd, '', 'hidden')} btn-add" disabled="true" onClick="rowsAdd(this, RowsNew_GiveAways); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_save}" styleClass="{!IF(AND(modeEdit, NOT(modeAdd)), '', 'hidden')} btn-action" onClick="if(!requiredCheck(this)) { return false; } xConfirm(this, 'save', RowsSave_GiveAways); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_discard}" styleClass="{!IF(modeEdit, '', 'hidden')} btn-action" onClick="xConfirm(this, 'cancel', Cancel_GiveAways); return false;" />
+					</td>
+				</tr>
+			</table>
+		</div>
+        
+        <select class="chosen-product-picker {!IF(modeAdd, '', 'hidden')}" data-placeholder="{!$Label.AccountPage_picklist_choose_products}" multiple="multiple" id="ProductPicker_GiveAways"></select>
+        
+        <table class="sortable-features-off compact row-border hover nowrap {!IF(OR(List_Records_add == null, List_Records_add.size == 0), 'hidden', '')}">
+            <thead>
+                <tr>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <th>{!f.label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat var="r" value="{!List_Records_add}">
+                <tr>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <td class="{!f}">
+                        	<apex:outputField value="{!r[f.fieldPath]}" rendered="{!f.fieldPath == 'ProductRef__c'}" />
+                            <apex:inputField value="{!r[f.fieldPath]}" rendered="{!f.fieldPath != 'ProductRef__c'}" style="width:75%" styleClass="{!IF(OR(f.required, f.dbrequired), 'required', '')}" />
+                            <style type="text/css">
+                            	.apex_gaw td.Quantity__c input {max-width: 90px}
+                            </style>
+                        </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+        
+        <apex:variable var="rows_edit" value="{!''}{!Rows}" />
+
+        <table class="sortable compact row-border hover nowrap">
+            <thead class="{!IF(List_Records.size == 0, 'hidden', '')}">
+                <tr>
+                    <th class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"></th>
+                    <th class="col-flag {!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" /></th>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <th>{!f.label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat var="r" value="{!List_Records}">
+                <tr class="{!IF(OR(AND(modeEdit, NOT(CONTAINS(rows_edit, r.Id))), AND(modeNew, r.Id != null)), 'row-disabled', '')} {!IF(AND(!modeNew, r.Id == null), 'hidden', '')} {!IF(AND(modeNew, r.Id == null), 'newLine', '')}">
+                    <td class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r.Id}" title="{!r.Name}" target="_blank" onClick="event.stopPropagation()"><img src="/img/alohaSkin/help_grey.png" /></a></td>
+                    <td class="col-flag {!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" record-id="{!r.Id}" /></td>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <td class="{!f}">
+                        	<apex:outputText value="{!r.ProductRef__r.Name}" rendered="{!IF(AND(CONTAINS(rows_edit, r.Id), f.fieldPath == 'ProductRef__c'), true, false)}" />
+                            <apex:outputField value="{!r[f.fieldPath]}" rendered="{!IF(CONTAINS(rows_edit, r.Id), false, true)}" />
+                            <apex:inputField value="{!r[f.fieldPath]}" rendered="{!IF(AND(CONTAINS(rows_edit, r.Id), f.fieldPath != 'ProductRef__c'), true, false)}" style="width:75%" styleClass="{!IF(OR(f.required, f.dbrequired), 'required', '')}" />
+                            
+                        </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th class="{!IF(NOT(isAdmin), 'hidden', '')}"></th>
+                    <th class="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"></th>
+                    <apex:repeat var="f" value="{!FieldSet_Component}">
+                        <th class="{!IF(f.Type == 'double', f.Type + ' ' + f, '')}"></th>
+                    </apex:repeat>
+                </tr>
+            </tfoot>
+        </table>
+        
+        <ul class="block-details-list">
+    		<apex:repeat var="r" value="{!availableReports}">
+    			<li class="{!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r.Id}?pv1={!account.Id}" target="_blank"><img src="/img/icon/custom51_100/gears16.png" />{!r.Name}</a></li>
+    		</apex:repeat>
+        </ul>
+        
+    </apex:pageBlock>
+
+    <apex:actionFunction action="{!doDelete}" name="RowsDelete_GiveAways" reRender="List_Records_Table" oncomplete="iniAll()">
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+    </apex:actionFunction>
+
+    <apex:actionFunction action="{!modeNew}" name="RowsNew_GiveAways" reRender="List_Records_Table" oncomplete="iniAll()">
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction action="{!modeEdit}" name="RowsEdit_GiveAways" reRender="List_Records_Table" oncomplete="iniAll()">
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction action="{!cancelModes}" name="Cancel_GiveAways" reRender="List_Records_Table" oncomplete="iniAll()" />
+    <apex:actionFunction action="{!doSave}" name="RowsSave_GiveAways" reRender="List_Records_Table" oncomplete="iniAll()" />
+    <apex:actionFunction action="{!modeAdd}" name="Add_GiveAways" reRender="List_Records_Table" oncomplete="iniAll()" />
+
+	<script type="text/javascript">
+		$(document).ready(function()
+		{				
+			if('{!modeAdd}' == 'true')
+				iniProductPicker();
+		});
+		
+		function iniProductPicker()
+		{
+			var ProductCatalogue = '{!Id_ProductCatalogue}';
+		    query = "SELECT Id, ProductRef__c, Product_Name__c";
+		    query += " FROM ProductCatalogEntry__c";
+            query += " WHERE ProductCatalogRef__c = '" + ProductCatalogue + "'";
+            query += " AND IsActive__c = true AND ProductRef__c != null";
+            query += " AND ProductRef__r.IsActive = true";
+            query += " ORDER BY Product_Name__c ASC";
+            
+			try {
+            	result = sforce.connection.query(query);
+            } catch(e) {
+            	console.log(e);
+            }
+
+			var queryMore = true;
+			var options = "";
+		    while(queryMore)
+		    {
+		        var records = result.getArray("records");
+		        for(var i = 0; i < records.length; i++) 
+		            options += "<option value='" + records[i].ProductRef__c + "/" + records[i].Id + "'>" + records[i].Product_Name__c + "</option>";
+
+		        if(result.getBoolean("done"))
+		            queryMore = false;
+		        else
+		            result = sforce.connection.queryMore(result.queryLocator);
+		    }
+
+			$('#ProductPicker_GiveAways').html(options);
+
+		    $('#ProductPicker_GiveAways').chosen({disable_search_threshold: 8, max_selected_options: 8, search_contains: true, no_results_text: "{!$Label.AccountPage_picklist_no_results}"}).change(function() {
+
+		        $(this).trigger('chosen:updated');
+
+		        if($('#ProductPicker_GiveAways ~ .chosen-container .chosen-choices .search-choice').length == 0)
+		            $(this).closest('.accountBlock').find('.btn-add').prop('disabled', true).addClass('btnDisabled').removeClass('btn');
+		        else
+		            $(this).closest('.accountBlock').find('.btn-add').prop('disabled', false).removeClass('btnDisabled').addClass('btn');
+		    });
+		}
+	</script>
+    
+    </apex:form>
+    
+</apex:component>

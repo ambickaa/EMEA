@@ -1,0 +1,46 @@
+<apex:component controller="AccountGiveAwaysController" allowDML="true">
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    <apex:form >
+        <apex:variable value="{!0}" var="counter"/>
+        <apex:pageblock >
+            <apex:pageBlocksection title="{!$Label.GiveAways}" columns="1">
+            <apex:pageBlockTable value="{!merchandiseManagements}" var="merchandiseManagement" >
+                
+                <apex:column rendered="{!IF(mode == 'view', true, false)}" headerValue="{!$Label.Action}">
+                    <apex:inputCheckbox value="{!merchandiseManagement.checked}"/>
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.CampaignLineItem__c.fields.ProductRef__c.label}">
+                    <apex:variable value="{!counter+1}" var="counter"/>
+                    <apex:outputField value="{!merchandiseManagement.record.ProductRef__c}" rendered="{!IF(mode == 'view', true, false)}" />
+                     
+                     <c:CustomLookupField mode="GiveAway" accountId="{!accountid}" idField="{!merchandiseManagement.lookupValue.id}" text="{!merchandiseManagement.lookupValue.text}" identifier="{!'giveAwayCell'&TEXT(counter)}" division="{!$CurrentPage.parameters.division}" rendered="{!IF(mode == 'edit', true, false)}">
+                            <apex:inputText styleClass="idField" value="{!merchandiseManagement.lookupValue.id}"  />
+                     </c:CustomLookupField>
+                     
+                </apex:column>
+                
+                <apex:repeat var="f" value="{!fieldSetManager.managedFieldSetMembers}">
+                <apex:column >
+                    <apex:facet name="header">{!f.label}</apex:facet>
+                    <apex:outputField value="{!merchandiseManagement.record[f.fieldPath]}" rendered="{!IF(mode == 'view', true, false)}" />
+                    <apex:inputField value="{!merchandiseManagement.record[f.fieldPath]}" rendered="{!IF(mode == 'edit', true, false)}" required="{!f.required}" />
+                </apex:column> 
+                
+                </apex:repeat>
+            
+            </apex:pageBlockTable>
+            </apex:pageBlocksection>
+            
+            <apex:pageBlockButtons location="bottom" rendered="{!(IsEditButton&& !IsGermanyAPCountryLead)}">
+                <apex:commandButton action="{!doLoadProductPicker}" value="{!$Label.ButtonAddMultipleLines}" rendered="{!IF(mode == 'view', true, false)}" />          
+                <apex:commandButton action="{!save}" id="saveButton" value="{!$Label.Save}" rendered="{!IF(mode == 'edit', true, false)}" />
+                <apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!newRecord}" />
+                <apex:commandButton action="{!cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true, false)}" immediate="true"/>
+                <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!Edit}" rendered="{!AND(mode == 'view', isHasElements)}"  />
+                <apex:commandButton action="{!deletex}" id="deleteButton" value="{!$Label.Delete}" rendered="{!AND(mode == 'view', isHasElements)}" />
+                
+            </apex:pageBlockButtons>
+        </apex:pageblock>
+    </apex:form>
+</apex:component>

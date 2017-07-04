@@ -1,0 +1,537 @@
+<apex:page controller="ActivityReportGeneratorController" language="{!generator.TXT_Language__c}" renderAs="pdf" showheader="false" sidebar="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" >
+   <html lang="en">
+       <head>
+        <meta http-equiv="content-type" content="text/html;charset=iso-8859-1"/>
+           <style type="text/CSS" font-family="sans-serif">
+             
+             @page {
+              margin-top:178px;
+              margin-bottom:50px;
+              margin-right:40px;
+             @bottom-center{
+             color: #005983;
+             font-weight: bold;
+             font-family:sans-serif;
+             margin-bottom:0px;
+             content: "{!$Label.FCU_Page} " counter(page);
+             }
+             @top-center{
+              content: element(header);
+             }            
+             }
+             @page :first{
+             margin-top:-10px;
+             margin-left:0px;
+             margin-right:0px;
+             @bottom-center{
+             }
+             }
+             div.header{
+              position: running(header);
+              margin-top: -35px;
+              margin-left:-50px;
+              margin-right:-50px;
+              background-color:#005983;
+              padding:35px;
+             }
+             .title{
+                font-family: sans-serif; 
+                color: #005983; 
+                font-size:18pt; 
+              }
+              .title2{
+                font-family: sans-serif; 
+                color: #005983; 
+                font-size:11pt;
+              }
+              .normal{
+                font-family: sans-serif;
+                color:#000000; 
+                font-size:10pt;
+                margin-right:100px;
+              }
+              .information{
+                font-family: sans-serif;
+                color:#ff0000; 
+                font-size:10pt;
+                margin-right:100px;
+              }
+           </style>
+       </head>   
+              
+       <body>
+               <div style="page-break-after:always; margin-left:-10px; margin-right:-10px; margin-top:-10px;">
+            <div style="text-align:center">
+            <apex:image url="{!$Resource.SeedYourSuccess}" width="100%"/>
+            </div>                                     
+            <div style="margin-top:180px; text-align:center">
+                <div>
+                    <h1 style="font-family: sans-serif; color: #005983; font-size:22pt; text-transform: uppercase;">{!$Label.FCU_Custom_crop_report}</h1>
+                </div>
+                <div>
+                    <h1 style="font-family: sans-serif; color:#005983; font-size:12pt; text-transform: uppercase;">{!$Label.FCU_Field_Check_up_series}</h1>                        
+                </div>
+
+                <div style="margin-bottom:20px; margin-left:auto; margin-right:auto; width:20%; background-color:#005983; height: 2px;"/>
+                  
+                <div style="margin-top:0.1cm;">
+                    <h1 style="font-family: sans-serif; color:#1BAEF8; font-size:16pt; text-transform: uppercase;"><apex:repeat var="AC" value="{!AccountDataList}">{!AC.recordtype.name}</apex:repeat></h1>
+                </div>
+                <div style="margin-top:100px; text-align:right; margin-right:100px;">
+                    <h1 style="font-family: sans-serif; color:#005983; font-size:10pt;"><apex:repeat var="AC" value="{!Generator}"><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!AC.CreatedDate}"/></apex:outputText></apex:repeat></h1>
+                </div>
+                <div style="margin-top:0.1cm; text-align:right; margin-right:100px;">
+                    <h1 style="font-family: sans-serif; color:#005983; font-size:10pt; "><span style="text-transform: uppercase;">{!$Label.FCU_For}: </span><apex:repeat var="AC" value="{!AccountDataList}"><b> {!AC.LKP_Account__r.Name}</b></apex:repeat></h1>
+                </div>
+                  <div style="margin-top:0.1cm; text-align:right; margin-right:100px;">
+                    <h1 style="font-family: sans-serif; color:#005983; font-size:10pt; "><span style="text-transform: uppercase;">{!$Label.FCU_Report_completed_by}: </span><apex:repeat var="AC" value="{!UserList}"><b> {!AC.Name}</b></apex:repeat></h1>
+                </div>
+               <div style="margin-top:0.1cm; text-align:right; margin-right:100px;">
+                    <h1 style="font-family: sans-serif; color:#005983; font-size:10pt; "><span style="text-transform: uppercase;">{!$Label.FCU_Report_phone}: </span><apex:repeat var="AC" value="{!UserList}"><b> {!AC.Phone}</b></apex:repeat></h1>
+                </div>
+            </div>
+        </div>
+      
+        <div class="header">                   
+            <table width="100%">                     
+                <tr>
+                    <td rowspan="3" style="width:130px;"><apex:image url="{!$Resource.LogoDekalb}" style="width:130px; margin-left:30px;"/></td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-family: sans-serif; color:#FFFFFF; font-size:13pt;text-align:right; text-transform: uppercase; margin-right:30px;"><b style="margin-right:50px;">{!$Label.FCU_Custom_crop_report}</b></td>
+                </tr>
+                <tr>
+                    <td style="font-family: sans-serif; color:#FFFFFF; font-size:11pt;text-align:right; text-transform: uppercase; margin-right:30px;"><b style="margin-right:50px;"><apex:repeat var="AC" value="{!AccountDataList}">{!AC.recordtype.name}</apex:repeat></b></td>
+                </tr>
+            </table>
+        </div>        
+             
+        <div style="page-break-before:always;"> 
+                    
+            <div style="margin-top:30px;" >
+                <table>
+                    <tr>
+                        <td style="width:400px;">
+                            <table>
+                                <tr>
+                                    <td style="font-family: sans-serif; color: #005983; font-size:20pt;  width:400px;"><apex:repeat var="AC" value="{!AccountDataList}"><b>{!AC.LKP_Account__r.Name}</b></apex:repeat></td>
+                                </tr>
+                                <tr>
+                                    <td class="normal"  style="width:400px;"><apex:repeat var="AC" value="{!AccountDataList}">{!AC.LKP_Account__r.Client_Code__c}</apex:repeat></td>
+                                </tr>
+                                <tr>
+                                    <td style="width:400px;">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:400px;">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-family: sans-serif; color:#005983; font-size:12pt; width:400px; font-weight:bold"><apex:repeat var="AC" value="{!FieldDataList}">{!AC.LKP_Field__r.Name}</apex:repeat></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-family: sans-serif; color:#005983; font-size:12pt; width:400px; font-weight:bold"><apex:repeat var="AC" value="{!StageDataList}">{!AC.LKP_SM_Stage__r.LKP_StageMaster__r.Name}</apex:repeat></td>
+                                </tr>
+                                <tr>
+                                    <td class="normal" style="width:400px;"><apex:repeat var="AC" value="{!Generator}"><apex:outputText value="{0,date,MM'/'dd'/'yyyy}"><apex:param value="{!AC.CreatedDate}"/></apex:outputText></apex:repeat></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table >
+                                <tr>
+                                    <td style="font-family: sans-serif; color:#005983; font-size:12pt; text-transform: uppercase;"><apex:image url="{!$Resource.IconoLocalizador}" style="width:15px;"/><b>{!$Label.FCU_Address}</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="normal"><apex:repeat var="AC" value="{!AccountDataList}">{!AC.LKP_Account__r.Street__c}</apex:repeat></td>
+                                </tr>
+                                <tr>
+                                    <td class="normal"> <apex:repeat var="AC" value="{!AccountDataList}">{!AC.LKP_Account__r.City__c} {!AC.LKP_Account__r.ZIPPostalCode__c}</apex:repeat> </td>
+                                </tr>
+                                <tr>
+                                    <td class="normal" style="margin-right:100px;"> <apex:repeat var="AC" value="{!AccountDataList}">{!AC.LKP_Account__r.StateProvince__c} ({!AC.LKP_Account__r.CountryRef__r.name})</apex:repeat> </td>
+                                </tr>
+                                <tr>
+                                    <td class="normal"><b>&nbsp;</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="normal"><b>&nbsp;</b></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>  
+    <div style="margin-top:60px; margin-right:100px;">           
+        <apex:pageBlock rendered="{!fieldSetAccount!=null && fieldSetAccount.size>0}">
+            <div style="margin-top:20px; margin-bottom:10px;">
+                <table style="padding:0px; border-spacing:0px;">
+                    <tr>
+                        <td style="width:5px; background-color:#005983"></td>
+                        <td style="padding-left:15px; width:680px; font-family: sans-serif; color: #005983; font-size:12pt; background-color:#cdcdcd">{!$Label.FCU_Account_information}</td>
+                    </tr>
+                </table>
+            </div>             
+                <apex:pageBlockSection columns="2">
+                    <apex:repeat value="{!fieldSetAccount}" var="f"> 
+                        <apex:pageBlockSectionItem dataStyleClass="normal" labelStyleClass="normal" labelStyle="font-weight: bold; width:120px;" dataStyle="padding-left:20px; width:180px;">
+                            <apex:outputLabel value="{!$ObjectType['Account'].fields[f.fieldPath].Label}"  style="width:120px;" />
+                            <apex:outputField styleClass="information" value="{!acc[f.fieldPath]}" rendered="{!acc[f.fieldPath]<>''}" />
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <apex:pageBlock rendered="{!fieldSetContact!=null && fieldSetContact.size>0}">
+            <div style="margin-top:20px; margin-bottom:10px;">
+                <table style="padding:0px; border-spacing:0px;">
+                    <tr>
+                        <td style="width:5px; background-color:#005983"></td>
+                        <td style="padding-left:15px; width:680px; font-family: sans-serif; color: #005983; font-size:12pt; background-color:#cdcdcd">{!$Label.FCU_Contact_information}</td>
+                    </tr>
+                </table>
+            </div>   
+                <apex:pageBlockSection columns="2">
+                    <apex:repeat value="{!fieldSetContact}" var="f">
+                        <apex:pageBlockSectionItem dataStyleClass="normal" labelStyleClass="normal" labelStyle="font-weight: bold; width:120px;" dataStyle="padding-left:20px; width:180px;">
+                            <apex:outputLabel value="{!$ObjectType['Contact'].fields[f.fieldPath].Label}" style="width:120px;" />
+                            <apex:outputField value="{!cont[f.fieldPath]}" />
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                </apex:pageBlockSection>
+        </apex:pageBlock>
+    
+        <apex:pageBlock rendered="{!fieldSetField!=null && fieldSetField.size>0}">
+         <div style="margin-top:20px; margin-bottom:10px;">
+                <table style="padding:0px; border-spacing:0px;">
+                    <tr>
+                        <td style="width:5px; background-color:#005983"></td>
+                        <td style="padding-left:15px; width:680px; font-family: sans-serif; color: #005983; font-size:12pt; background-color:#cdcdcd">{!$Label.FCU_Field_information}</td>
+                    </tr>
+                </table>
+            </div> 
+                <apex:pageBlockSection columns="2">
+                    <apex:repeat value="{!fieldSetField}" var="f">
+                        <apex:pageBlockSectionItem dataStyleClass="normal" labelStyleClass="normal" labelStyle="font-weight: bold; width:120px;" dataStyle="padding-left:20px; width:180px;">
+                            <apex:outputLabel value="{!$ObjectType['Field__c'].fields[f.fieldPath].Label}"  style="width:120px;" />
+                            <apex:outputField value="{!fie[f.fieldPath]}" rendered="{!fie[f.fieldPath]<>''}" />
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                </apex:pageBlockSection>
+        </apex:pageBlock>
+    </div>
+    <div style="page-break-before:always;">
+       <apex:outputPanel rendered="{!ExtCondList.size > 0}">                                                                                       
+                <div style="margin-top:60px">
+                    <h1 class="title">{!$Label.FCU_External_conditions}</h1>
+                    <div style="margin-bottom:20px; margin-left:auto; margin-right:auto; width:100%; background-color:#005983; height: 2px;"/>                    
+                    
+                    <apex:pageBlock >
+                        <apex:pageBlockSection columns="6">
+                            <apex:variable value="{!1}" var="rowNum"/>
+                                <apex:repeat value="{!ExtCondList}" var="AC">
+                                    <apex:pageBlockSectionItem >
+                                        <apex:pageBlock >
+                                        <div style="width:120px; margin-left:20px;">
+                                            <div>
+                                                <span style="font-family: sans-serif; font-size:11pt;  color:#848484; text-align:center;">
+                                                    <b>{!AC.LKP_ExternalConditions__r.LKP_ExternalConditionsMaster__r.Name}</b>
+                                                </span>
+                                            </div>
+                                            <div style="margin-bottom:20px;vertical-align:middle; ">
+                                                <div style="height:100%;display:inline;"><apex:image width="50" url="{!imageURL}+{!AC.idDevice__c}"/></div>
+                                                <div style="height:100%;display:inline;font-family: sans-serif; font-size:13pt;  color:#005983;"><b>{!AC.TXT_Value__c}</b></div>
+                                                <div style="height:100%;display:inline; font-family: sans-serif; font-size:9pt; color:#005983;"><b>{!AC.LKP_ExternalConditions__r.LKP_ExternalConditionsMaster__r.TXT_Units_of_measure__c}</b></div>                                            
+                                            </div>
+                                        </div>
+                                        
+                                        </apex:pageBlock>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+                                </apex:repeat>
+                        </apex:pageBlockSection>
+                    </apex:pageBlock> 
+                    
+                          
+                    <div>
+                        <p class="normal"><b><apex:repeat var="AC" value="{!AccountDataList}">{!AC.TXT_Note_title_ExternalConditions__c}</apex:repeat></b></p>
+                        <p class="normal" style="text-align: justify;"><apex:repeat var="AC" value="{!AccountDataList}"><apex:outputText escape="false" style="text-align: justify; margin-right:100px;" value="{!AC.TXTA_Note_body_ExternalConditions__c}"/></apex:repeat></p>
+                    </div>               
+                </div> 
+        </apex:outputPanel>
+       </div> 
+        <apex:outputPanel rendered="{!SymptCausList.size > 0}"> 
+            
+                            
+                <div >
+                    <h1 class="title">{!$Label.FCU_Symptoms_Causes}</h1>
+                    <div style="margin-bottom:20px; margin-left:auto; margin-right:auto; width:100%; background-color:#005983; height: 2px;"/>
+                </div>
+                <div>
+                    <p class="normal" style="text-align: justify;">{!$Label.FCU_Symptoms_Causes_pdf_label}</p>
+                </div>   
+                <apex:repeat value="{!SymptCausList}" var="AC">
+                    <div>
+                        <h1 class="title2">{!AC.LKP_SymptomsCauses__r.LKP_SymptomsMaster__r.Name}</h1>
+                        <div style="margin-bottom:15px; margin-left:auto; margin-right:auto; width:100%; background-color:#005983; height: 2px;"/>
+                    </div>
+                    <apex:outputPanel rendered="{!AC.attachments.size>2}" style="width:730px">
+                     <apex:outputPanel rendered="{!AC.attachments.size > 0}">
+                        <table>
+                            <tr style="margin-bottom:30px;">
+                                <apex:repeat value="{!AC.attachments}" var="C">
+                                     <td style="margin-right:30px; margin-bottom:30px;"><apex:image style="margin-bottom:20px" width="160" url="{!imageURL}+{!C.id}"/></td>
+                                </apex:repeat>
+                            </tr>
+                        </table>
+                     </apex:outputPanel>   
+                        <table>
+                            <tr style="margin-bottom:30px;">
+                                <td style="margin-right:30px; margin-bottom:30px;" class="normal"><b>{!$Label.FCU_Cause}: </b>{!AC.LKP_SymptomsCauses__r.LKP_CausesMaster__r.Name}</td>
+                            </tr>
+                            <tr style="margin-bottom:30px;">
+                                <td class="normal" style="margin-bottom:30px;"><b>{!$Label.FCU_Remark}: </b>{!AC.TXTA_Remark__c}</td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!AC.attachments.size<3}">
+                        <table style="margin-right:100px;">
+                            <tr>
+                                <td>
+                                 <apex:outputPanel rendered="{!AC.attachments.size > 0}">
+                                    <table>
+                                        <tr style="margin-bottom:30px;">
+                                            <apex:repeat value="{!AC.attachments}" var="C">
+                                                <td style="margin-right:30px; margin-bottom:30px;"><apex:image style="margin-bottom:20px" width="160" url="{!imageURL}+{!C.id}"/></td>
+                                            </apex:repeat>
+                                        </tr>
+                                    </table>
+                                 </apex:outputPanel>
+                                </td>
+                                <td style="vertical-align: text-top;">
+                                    <table>
+                                        <tr style="margin-bottom:30px;">
+                                          <td class="normal" style="margin-right:30px; margin-bottom:30px;"><b>{!$Label.FCU_Cause}: </b>{!AC.LKP_SymptomsCauses__r.LKP_CausesMaster__r.Name}</td>
+                                        </tr>
+                                        <tr style="margin-bottom:30px;">
+                                           <td class="normal" style="margin-bottom:30px;"><b>{!$Label.FCU_Remark}: </b>{!AC.TXTA_Remark__c}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>     
+                </apex:repeat>  
+                     
+                <div style="margin-top:20px;">              
+                    <apex:repeat var="AC" value="{!AccountDataList}">
+                        <table>
+                            <tr>
+                                <td class="normal"><b>{!AC.TXT_Note_title_SymptomsCauses__c}</b></td>
+                            </tr>
+                            <tr style="margin-bottom:30px;">
+                                <td class="normal" style="margin-right:30px; margin-bottom:30px; text-align: justify;"><apex:outputText escape="false" style="text-align: justify; margin-right:100px;" value="{!AC.TXTA_Note_body_SymptomsCauses__c}"/></td>
+                            </tr>
+                        </table>
+                    </apex:repeat> 
+                </div>                               
+                                       
+       </apex:outputPanel> 
+    </div>            
+       <apex:outputPanel rendered="{!VRProductList.size > 0}">
+           <div style="page-break-before:always;"> 
+                       
+              <div>
+                 <h1 class="title">{!$Label.FCU_Visual_rating}</h1>
+                 <div style="margin-bottom:20px; margin-left:auto; margin-right:auto; width:100%; background-color:#005983; height: 2px;"/>
+              </div>
+              <div>
+                <p class="normal" style="text-align: justify;">{!$Label.FCU_Visual_rating_pdf_label}</p>
+              </div> 
+                <apex:repeat value="{!VRProductList}" var="AC">
+                    <div style="margin-top:20px;">
+                        <table style="padding:0px; border-spacing:0px;">
+                            <tr >
+                                <td style="width:5px; background-color:#cdcdcd"></td>
+                                <td style="padding-left:15px; width:680px; font-family: sans-serif; color: #FFFFFF; font-size:12pt; background-color:#005983">{!AC.LKP_Product__r.ProductDisplayName__c} - {!AC.LKP_Product__r.ProductTreatment__c}</td>
+                            </tr>
+                        </table>                
+                    </div>
+                    <div style="margin-top:20px;">
+                        <apex:outputPanel rendered="{!AC.attachments.size>2}">
+                            <apex:outputPanel rendered="{!AC.attachments.size > 0}">
+                                <table style="margin-bottom:20px;">
+                                    <tr>
+                                        <apex:repeat value="{!AC.attachments}" var="C">
+                                             <td style="margin-right:30px; margin-bottom:30px;"><apex:image style="margin-bottom:20px" width="160" url="{!imageURL}+{!C.id}"/></td>
+                                        </apex:repeat>
+                                    </tr>
+                                 </table>
+                            </apex:outputPanel> 
+                            <apex:repeat value="{!AC.FCU_Visual_ratings__r}" var="P">
+                            <apex:outputPanel rendered="{!P.TXT_Value__c!=''}">
+                                <table>
+                                    <tr style="margin-bottom:30px;">
+                                        <td class="normal" style="margin-right:30px; margin-bottom:30px;"><b>{!P.LKP_VisualRating__r.LKP_VisualRatingMaster__r.name}: </b>{!P.TXT_Value__c}</td>
+                                    </tr>
+                                </table>
+                            </apex:outputPanel> 
+                            </apex:repeat>       
+                        </apex:outputPanel>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <apex:outputPanel rendered="{!AC.attachments.size<3}">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <apex:outputPanel rendered="{!AC.attachments.size > 0}">
+                                            <table>
+                                                <tr style="margin-bottom:30px;">
+                                                    <apex:repeat value="{!AC.attachments}" var="C">
+                                                        <td style="margin-right:30px; margin-bottom:30px;"><apex:image style="margin-bottom:20px" width="160" url="{!imageURL}+{!C.id}"/></td>
+                                                    </apex:repeat>
+                                                </tr>
+                                            </table>
+                                        </apex:outputPanel>
+                                    </td>
+                                    <td style="vertical-align: text-top;">
+                                        <apex:repeat value="{!AC.FCU_Visual_ratings__r}" var="P">
+                                        <apex:outputPanel rendered="{!P.TXT_Value__c!=''}">
+                                            <table>
+                                                <tr style="margin-bottom:30px;">
+                                                    <td  class="normal" style="margin-right:30px; margin-bottom:30px;"><b>{!P.LKP_VisualRating__r.LKP_VisualRatingMaster__r.name}: </b>{!P.TXT_Value__c}</td>
+                                                </tr>
+                                            </table>
+                                        </apex:outputPanel> 
+                                        </apex:repeat> 
+                                    </td>
+                                </tr>
+                            </table>
+                        </apex:outputPanel>
+                    </div>     
+                </apex:repeat>
+                
+                <div>
+                    <apex:repeat var="AC" value="{!AccountDataList}">
+                        <table>
+                            <tr>
+                                <td class="normal"><b>{!AC.TXT_Note_title_VisualRating__c}</b></td>
+                            </tr>
+                            <tr style="margin-bottom:30px;">
+                                <td class="normal" style="margin-right:30px; margin-bottom:30px; text-align: justify;"><apex:outputText escape="false" style="text-align: justify; margin-right:100px;" value="{!AC.TXTA_Note_body_VisualRating__c}"/></td>
+                            </tr>
+                        </table>
+                    </apex:repeat>
+                </div>                  
+            </div>
+        </apex:outputPanel>  
+         <apex:outputPanel rendered="{!ObsList.size > 0}">
+             <div style="page-break-before:always;">
+                <div>
+                    <h1 class="title">{!$Label.FCU_Additional_information}</h1>
+                    <div style="margin-bottom:20px; margin-left:auto; margin-right:auto; width:100%; background-color:#005983; height: 2px;"/>
+                </div>
+                <div>
+                    <p class="normal" style="text-align: justify;">{!$Label.FCU_Observations_pdf_label}</p>
+                </div>
+                <apex:repeat value="{!ObsList}" var="AC">
+                    <div style="margin-top:20px;">
+                        <table style="padding:0px; border-spacing:0px;">
+                            <tr>
+                                <td style="width:5px; background-color:#cdcdcd"></td>
+                                <td style="padding-left:15px; width:680px; font-family: sans-serif; color: #FFFFFF; font-size:12pt; background-color:#005983">{!AC.LKP_Observations__r.LKP_ObservationsMaster__r.name}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <apex:outputPanel rendered="{!AC.attachments.size>2}">
+                            <apex:outputPanel rendered="{!AC.attachments.size>0}">
+                                <table>
+                                    <tr style="margin-bottom:30px;">
+                                        <apex:repeat value="{!AC.attachments}" var="C">
+                                             <td style="margin-right:30px; margin-bottom:30px;"><apex:image style="margin-bottom:20px" width="160" url="{!imageURL}+{!C.id}"/></td>
+                                        </apex:repeat>
+                                    </tr>
+                                 </table>
+                             </apex:outputPanel>
+                            <table>
+                                    <tr style="margin-bottom:30px;">
+                                                 <td class="normal" style="margin-bottom:30px; text-align: justify;"><apex:outputText escape="false" style="text-align: justify; margin-right:100px;" value="{!AC.TXTA_Value__c}"/></td>
+                                          </tr>
+                            </table>
+                        </apex:outputPanel>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <apex:outputPanel rendered="{!AC.attachments.size<3}">
+                            <table>
+                                <tr>
+                                    <td style="vertical-align: text-top;">
+                                        <apex:outputPanel rendered="{!AC.attachments.size>0}">
+                                            <table>
+                                                <tr style="margin-bottom:30px;">
+                                                    <apex:repeat value="{!AC.attachments}" var="C">
+                                                        <td style="margin-right:30px; margin-bottom:30px;"><apex:image style="margin-bottom:20px" width="160" url="{!imageURL}+{!C.id}"/></td>
+                                                    </apex:repeat>
+                                                </tr>
+                                            </table>
+                                        </apex:outputPanel>
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tr style="margin-bottom:30px;">
+                                              <td class="normal" style="margin-right:30px; margin-bottom:30px; text-align: justify;"><apex:outputText escape="false" style="text-align: justify; margin-right:100px;" value="{!AC.TXTA_Value__c}"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </apex:outputPanel>
+                    </div>     
+                </apex:repeat>
+                   
+              </div>
+          </apex:outputPanel>  
+         <apex:outputPanel rendered="{!NotesList.size > 0}">
+             <div style="page-break-before:always;">
+                 <div>
+                    <h1 class="title">{!$Label.FCU_Notes}</h1>
+                    <div style="margin-bottom:20px; margin-left:auto; margin-right:auto; width:100%; background-color:#005983; height: 2px;"/>
+                </div>
+                <apex:repeat value="{!NotesList}" var="AC"> 
+                    <table style="padding:0px; border-spacing:0px;">
+                        <tr>
+                            <td style="width:5px; background-color:#cdcdcd"></td>
+                            <td style="padding-left:15px; width:680px; font-family: sans-serif; color: #FFFFFF; font-size:12pt; background-color:#005983;">{!AC.title}</td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr style="margin-bottom:30px;">
+                          <td class="normal" style="margin-right:30px; margin-bottom:30px; text-align: justify;"><apex:outputText escape="false" style="text-align: justify; margin-right:100px;" value="{!AC.body}"/></td>
+                        </tr>
+                    </table>
+                </apex:repeat>
+                
+            </div>
+        </apex:outputPanel>  
+        
+        <apex:outputpanel rendered="{!$Label.FCU_Legal_Disclaimer_body_1 != 'Privacy policy provided by Monsanto.'}">
+            <div style="page-break-before:always;">
+            <div>
+                <h1 class="title">Legal Disclaimer</h1>
+                <div style="margin-bottom:20px; margin-left:auto; margin-right:auto; width:100%; background-color:#005983; height: 2px;"/>
+            </div>
+            <table style="padding:0px; border-spacing:0px; margin-bottom:20px;">
+                <tr>
+                    <td style="width:5px; background-color:#cdcdcd"></td>
+                    <td style="padding-left:15px; width:680px; font-family: sans-serif; color: #FFFFFF; font-size:12pt; background-color:#005983;">{!$Label.FCU_Legal_Disclaimer_title_1}</td>
+                </tr>
+            </table>
+            <div style="margin-bottom:30px;">            
+                <p class="normal" style="text-align: justify;" ><apex:outputText escape="false" value="{!$Label.FCU_Legal_Disclaimer_body_1}"/></p>
+            </div>
+            </div>             
+        </apex:outputpanel>  
+         
+        </body> 
+    </html>  
+</apex:page>

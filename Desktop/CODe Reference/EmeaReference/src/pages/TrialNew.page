@@ -1,0 +1,2 @@
+<apex:page standardController="Trial__c"  extensions="TrialNew" action="{!redirectCampaign}" >
+</apex:page>

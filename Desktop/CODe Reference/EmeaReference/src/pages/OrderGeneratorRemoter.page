@@ -1,0 +1,371 @@
+<apex:page controller="OrderGeneratorRemoter" showHeader="false" tabStyle="Order__c">
+
+
+<style>      
+        .LockOff { 
+         display: none; 
+         visibility: hidden; 
+      } 
+
+      .LockOn { 
+         display: block; 
+         visibility: visible; 
+         position: absolute; 
+         z-index: 999; 
+         top: 0px; 
+         left: 0px; 
+         width: 105%; 
+         height: 105%; 
+         text-align: center; 
+         padding-top: 20%; 
+         background-color:black;
+         opacity: 0.05;
+         filter: alpha(opacity = 5);
+      } 
+      
+
+.popupBackground{
+            background-color:black;
+            opacity: 0.05;
+            filter: alpha(opacity = 5);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+            align:center;      
+    }
+.popupBackground2{
+            background-color:black;
+            opacity: 0.05;
+            filter: alpha(opacity = 5);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+            align:center; 
+            display: none;     
+    }      
+        
+th{
+padding-left:5px;
+}
+.tbClass{
+border: 1px solid grey;
+border-collapse:collapse;
+
+}
+.hdrRow
+{
+background-color:#a1cbf4;
+color:#FFFFFF;
+font-size: .9em;
+font-weight: bold;
+vertical-align: inherit;
+text-align: center;
+}
+.stdRow
+{
+    text-align:center;
+    background-color:white;
+}
+.disRow
+{
+    text-align:center;
+    background-color:#D3D3D3;
+}
+.stdRowPre
+{
+    text-align:center;
+    background-color:AliceBlue;
+    
+}
+
+.slcList
+{
+float:left;
+height:200px;
+margin-top:50px
+}
+.tblCont
+{
+float:left;
+width:650px;
+position:absolute;
+left:200px;
+top:100px
+}
+#tableContainer{
+  position:relative;
+  Left:0;
+}
+</style> 
+
+
+    <apex:form >
+    <apex:pageBlock title="Order Generator" mode="edit">
+                    <apex:pageMessages id="errorPopupPanel" />
+     
+    <div id="popupBackgroundId" class="popupBackground2">
+    
+    </div>
+
+    <apex:pageBlockSection columns="2">
+    
+            <apex:outputPanel id="selectListOrder" styleClass="slcList">
+                 <apex:selectList value="{!orderOption}" multiselect="false" >
+                     <apex:selectOptions value="{!orderOptions}" />
+                 </apex:selectList><p/>                           
+            <apex:actionSupport event="onclick" action="{!launcher}"  rerender="skm_LockPane,divID,errorPopupPanel,createbutton,updatebutton,deletebutton,createbuttonfinal,txtpanelm"  oncomplete="getRemoteActionPlanItems('{!orderOption}','{!orderType}','{!catalogType}','{!consigned}','{!currentAccount}');" status="locker"/>                                  
+            <apex:actionStatus id="locker">
+                <apex:facet name="start">
+                    <div class="popupBackground">
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>    
+           </apex:outputPanel>
+           <div id="tableContainer" class="tblCont"><br/></div> 
+             
+             <apex:outputPanel style="align:center;position:relative" id="skm_LockPane" >
+                   
+                <apex:commandLink styleClass="btn"  id="createbutton" value="  Create  " rendered="{!IF(AND(orderType=='Preliminary',stringListIds!='',orderOption=='New Order'),'true','false')}"  action="{!createPreliminaryOrder}" rerender="" status="locker" />
+                <apex:commandLink styleClass="btn"  id="updatebutton" value="  Update  " rendered="{!IF(AND(orderType=='Preliminary',orderOption!='New Order'),'true','false')}"  action="{!updatePreliminaryOrder}" rerender=""  status="locker" />
+                <apex:commandLink styleClass="btn"  id="deletebutton" value="  Delete  " rendered="{!IF(AND(orderType=='Preliminary',orderOption!='New Order'),'true','false')}"  action="{!deletePreliminaryOrder}" rerender="" status="locker"  /> 
+                <apex:commandLink styleClass="btn"  id="createbuttonfinal" value="  Create  " rendered="{!IF(AND(orderType=='Final',stringListIds!=''),'true','false')}" action="{!createFinalOrder}" rerender="" status="locker"   />                    
+            </apex:outputPanel>
+
+            <apex:actionFunction oncomplete="skm_unLockScreen();"  id="actFun" name="echo" immediate="true"  reRender="skm_LockPane,txtpanelm" status="myStatus">
+                <apex:param name="firstParam" assignTo="{!stringListIds}" value="" />
+            </apex:actionFunction>
+                 <apex:actionStatus startText="requesting... " id="myStatus">
+                <apex:facet name="stop"></apex:facet>
+            </apex:actionStatus>
+            
+            <div id="skm_LockPane" class="LockOff">
+            </div>
+                    
+</apex:pageBlockSection>
+    </apex:pageBlock>   
+<div id="responseErrors"/>    
+</apex:form>
+
+<script type="text/javascript">
+
+
+
+function setIds (ids) {
+OrderGeneratorRemoter.foo(ids,callBack)
+
+function callBack(res){
+  alert(res);
+}
+}
+
+
+function getRemoteActionPlanItems(ordopt,ordtype,cattype,con,accId) {
+var preliminaryOrderId=ordopt;
+var orderType=ordtype;
+var catalogType=cattype;
+var consigned=con;
+var accountId=accId;
+
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.OrderGeneratorRemoter.getActionPlanItems}',
+            preliminaryOrderId,orderType,catalogType,consigned,accountId, 
+            function(result, event){
+                if (event.status) {
+                    divx = document.getElementById('tableContainer');
+                    document.getElementById('tableContainer').removeChild(divx.lastChild);
+                    document.getElementById('tableContainer').appendChild(drawProdTable(result,'prodTable',catalogType));
+                    getCheckedId('false');
+                } else if (event.type === 'exception') {
+                    document.getElementById("responseErrors").innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById("responseErrors").innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    
+var drawProdTable = function(results,tableId,catalogType) {
+ 
+  'use strict';
+ 
+  // Loops
+  var i,l;
+ 
+  // Table vars
+  //var headers = ['','Product','Stock',' Forecast ',' Discussed ',' Ordered ','P.Density','Bag Size Conv.','U.S/Irrigat'],
+  var headers = ['','Product',' Forecast ',' Discussed ',' Ordered ','P.Density','Bag Size Conv.','U.S/Irrigat'],
+  
+      table = document.createElement('table'),
+      thead = document.createElement('thead'),
+      tbody = document.createElement('tbody'),
+      th, cb, iCb;
+ 
+  table.className = 'tbClass';
+  var headerRow = document.createElement('tr'), th;
+  for (i=0,l=headers.length;i<l;i++) {
+      th = document.createElement('th');
+      th.appendChild(document.createTextNode(headers[i]));
+      headerRow.appendChild(th);
+  }
+ 
+  headerRow.className = 'hdrRow';
+  thead.appendChild(headerRow);
+ 
+  var tr, td;
+  for (i=0,l=results.length;i<l;i++) {
+ 
+    tr = document.createElement('tr');
+    if(results[i].PreliminaryOrderRef_RSA__c==null) tr.className = 'stdRow';
+    else  tr.className = 'stdRowPre';
+ 
+    td = [];
+ 
+    /*
+     *  IE Safe
+     */
+    if (tr.dataset === undefined) {
+      tr.setAttribute('data-id', results[i].Id);
+    } else {
+      tr.dataset.id = results[i].Id;
+    }
+ 
+    for (j=0;j<9;j++) {
+        td[j] = document.createElement('td');
+    }
+ 
+    cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.onclick = clickFunction;
+
+ 
+    td[0].appendChild(cb);
+    td[1].appendChild(document.createTextNode(results[i].ProductName_RSA__c));
+    /*if(catalogType=='Tax')
+        td[2].appendChild(document.createTextNode(results[i].TaxStockLeft_RSA__c));
+    else
+        td[2].appendChild(document.createTextNode(results[i].RegStockLeft_RSA__c)); */
+    td[2].appendChild(document.createTextNode(results[i].Forecast__c));
+    td[3].appendChild(document.createTextNode(results[i].Agreed__c));
+    td[4].appendChild(document.createTextNode(results[i].POG__c));
+    td[5].appendChild(document.createTextNode(results[i].PlantingDensity__c));
+    td[6].appendChild(document.createTextNode(results[i].BagSizeConversion_RSA__c));
+ 
+    if(results[i].Ultrashort_Irrigation_RSA__c)
+    td[7].appendChild(document.createTextNode('x'));
+    else
+    td[7].appendChild(document.createTextNode(' '));
+ 
+    for (var j=0;j<9;j++) {
+        tr.appendChild(td[j]);
+    }
+ 
+    tbody.appendChild(tr);
+  }
+ 
+  table.appendChild(thead);
+  table.appendChild(tbody);
+ 
+  // Asignamos el id a la tabla; 'prodTable' por defecto.
+  table.id = tableId || 'prodTable';
+   
+  return table;
+};
+
+var clickFunction = function() {
+  echo(getCheckedId('false'));    
+  skm_LockScreen();
+  //skm_unLockScreen();
+
+  var tableRows = document.getElementById('prodTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+ 
+  'use strict';
+ 
+  var i,l, chk = false;
+  for (i=0,l=tableRows.length;i<l;i++) {
+    if (tableRows[i].children[0].children[0].checked) {
+      chk = true;
+      break;
+    }
+  }
+  if (!this.checked) {
+    if (!chk) {
+      for (i=0,l=tableRows.length;i<l;i++) {
+            tableRows[i].className = 'stdRow';
+        tableRows[i].children[0].children[0].disabled = false;
+      }
+    }
+  } else {
+    var it = this.parentNode.parentNode.children[7].childNodes[0].nodeValue;
+    for (i=0,l=tableRows.length;i<l;i++) {
+      var ri = tableRows[i].children[7].childNodes[0].nodeValue;
+      if (ri !== it) {
+        tableRows[i].className = 'disRow';
+        tableRows[i].children[0].children[0].disabled = true;
+      }
+    }
+  }
+for (var i=0,l=tableRows.length;i<l;i++) {
+  var cb = tableRows[i].children[0].children[0];
+  cb.onclick = clickFunction;
+}
+  //skm_LockScreen();
+
+
+
+};
+
+function getCheckedId (toJson) {
+ 
+  'use strict';
+ 
+  var i,l;
+
+  var chkArray = []; 
+  var tableRows = document.getElementById('prodTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+ 
+  for (i=0,l=tableRows.length;i<l;i++) {
+    if (tableRows[i].children[0].children[0].checked) {
+      chkArray.push( tableRows[i].dataset === undefined ? tableRows[i].getAttribute('data-id') : tableRows[i].dataset.id );
+    }
+  }
+  return toJson ? chkArray.join(',') : chkArray.join(',');
+ 
+};
+
+function callActionMethodIdHandler()
+{
+echo(getCheckedId('false'));
+}
+window.onload = getRemoteActionPlanItems('INIT','{!orderType}','{!catalogType}','{!consigned}','{!currentAccount}');
+
+      function skm_LockScreen() 
+      { 
+         var lock = document.getElementById('skm_LockPane'); 
+         if (lock) 
+            lock.className = 'LockOn'; 
+      } 
+
+
+      function skm_unLockScreen() 
+      { 
+        setTimeout(function(){
+            var lock = document.getElementById('skm_LockPane'); 
+                 if (lock) 
+                    lock.className = 'LockOff';                 
+        },300);
+      
+        
+        
+      } 
+
+
+</script>
+</apex:page>

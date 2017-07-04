@@ -1,0 +1,1251 @@
+<apex:page standardController="Opportunity" extensions="OpportunityViewExtension2" showHeader="true"  id="page" > 
+    
+    <div id="contentLoading" style="display:none; width: 300px; height: 300px">
+        <div style="width: 100%; height: 100%; position: absolute; top:0; left:0; background-color: white;"> 
+            <img style="top:50%;left:50%;position:absolute;" src="/img/loading.gif" alt="Loading graphic" />
+            <span style="top:50%;left:54%;position:absolute;">Please wait while the order is inserted in SAP</span>
+        </div>  
+    </div>  
+    
+<!--for Spain we created this line in order to keep the order entry 1.0 model.
+<apex:detail subject="{!opportunity}" relatedList="True" id="detailContainerSpain" rendered="{!IF(usr.country=='Spain'&& ord.RecordType.name!='Transfer Order' , true, false)}"  /> 
+rendered="{!IF(usr.country!='Spain' || ord.RecordType.name=='Transfer Order' , true, false)}"
+rendered="{!IF(usr.country!='Spain' || ord.RecordType.name=='Transfer Order', true, false)}"
+-->
+    <div id="contentLoaded" >
+        <apex:form id="form" style="display:block;" >
+            <style type="text/css">
+                .bPageBlock .detailList table.black-borders tr td { border-color: #000; }
+                .bPageBlock .detailList .data2Col { padding: 5px 0; }
+                .bPageBlock .detailList .labelCol { width: 22%; }
+                .ct { text-align:center; width: 55px; }
+                .loadingImg {
+                    position: absolute;
+                    margin-top: .25rem;
+                    margin-left: -1.25rem;
+                }
+                .hide {
+                    display: none!important
+                }
+                #contentLoaded4 table input[type="checkbox"],
+                #contentLoaded2 table input[type="checkbox"],
+                #contentLoaded4 table .hoverable td.dataCell,
+                #contentLoaded2 table .hoverable td.dataCell {
+                    cursor: pointer;
+                }
+                #contentLoaded4 table .highlighted td.dataCell,
+                #contentLoaded2 table .highlighted td.dataCell {
+                    background-color: #e3f3ff;
+                }
+                #contentLoaded4 table tr.dataRow:active > td.dataCell,
+                #contentLoaded2 table tr.dataRow:active > td.dataCell {
+                    background-color: rgb(210, 230, 255);!important
+                }
+                
+                #contentLoaded2 table tr.dataRow td.newLine,
+                table tr.dataRow.newLine {
+                    display: none!important
+                }
+                .chosen-container.chosen-drop-up .chosen-drop {
+                    top: auto;
+                    bottom: 100%;
+                    border-top: 1px solid #aaa;
+                    border-bottom: none!important;
+                    border-radius: 4px 4px 0 0;
+                    box-shadow: 0 -1px 5px rgba(0,0,0,.10);
+                }
+                .chosen-container.chosen-drop-up .chosen-single {
+                    border-radius: 0 0 5px 5px!important;
+                }
+                .chosen-container .chosen-results {
+				    max-height:217px;
+				}
+                td.fieldRequired {
+                    background-color: #c00;
+                }
+            </style>
+            <apex:sectionHeader title="Transfer Order" subtitle="{!opportunity.name}" rendered="{!IF(ord.RecordType.name=='Transfer Order', true, false)}" />
+            
+            <apex:detail subject="{!opportunity}" relatedList="false" id="detailContainer" rendered="{!IF(((mode == 'view')||(mode == 'edit'))&&(ord.RecordType.name!='Transfer Order'), true, false)}" inlineEdit="true" /> 
+            
+            <apex:pageblock id="productsearch2" title="Find products" rendered="{!IF(mode == 'addM', true, false)}">
+                
+                <table>
+                    <tr>
+                        <td>
+                            <apex:outputLabel style="font-weight:bold;">Keyword</apex:outputLabel>
+                        </td>
+                        <td>
+                            <apex:outputLabel style="font-weight:bold;">By field Filter</apex:outputLabel>
+                        </td>
+                        <td>
+                        </td>    
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <apex:inputText value="{!keyWord}"/>
+                        </td>
+                        <td>
+                            <apex:actionRegion >
+                                <apex:selectList value="{!selectedField}" multiselect="false" size="1">
+                                    <apex:actionSupport event="onchange" action="{!filterPos}" reRender="opt2" />
+                                    <apex:selectOptions value="{!fieldNames}"/>
+                                </apex:selectList>
+                            </apex:actionRegion>
+                        </td>
+                        <td>
+                            <apex:actionRegion >
+                                <apex:selectList id="opt2" value="{!selectedFilter}" multiselect="false" size="1" >                            
+                                    <apex:selectOptions value="{!filterPosibilities}"/>
+                                </apex:selectList>
+                            </apex:actionRegion>
+                        </td>    
+                        <td>
+                            <apex:inputText value="{!searchBoxDate}" size="10" id="demo2" onfocus="DatePicker.pickDate(false, this, false);" rendered="{!IF(isDate,true,false)}" />               
+                        </td>
+                        <td>
+                            <apex:inputText value="{!searchBox}" rendered="{!IF(isDate,false,true)}"/>    
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <apex:commandButton id="searchButton2" oncomplete="chargePickStyle()" value="{!$Label.Search}" action="{!search}" reRender="addProducts,viewPanel,editPanel,table1,exceptionT" status="loadStatus" rendered="{!IF((mode == 'addM')||(mode == 'edit'), true, false)}"/>    
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>    
+                        <td>
+                        </td>
+                        <td style="text-align:right">
+                            <apex:commandButton action="{!addProducts}" oncomplete="chargePickStyle()" id="clearFilter2" value="{!$Label.Clear_results}" reRender="form" status="loadStatus" rendered="{!IF(mode == 'addM', true, false)}"/>
+                        </td>
+                    </tr>
+                </table>                                                                                                                            
+            </apex:pageblock>
+            <!--Order Transfer Credit & debit --->
+            <apex:pagemessages id="exceptionT" escape="false" rendered="{!if(showTOException==True,true,false)}" />
+           
+            <apex:pageBlock id="TOentry" title="{!$Label.OE2_0_Transfer_Detail_information}"  rendered="{!IF(ord.RecordType.name=='Transfer Order' && mode!='addM', true, false)}"   >
+                
+                <apex:pageBlocksection columns="2" rendered="{!IF(modeOT!='edit' && usr.country!='Italy',true,false)}" >
+                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.Transfer_Order_Fields}" var="f">                         
+                        <apex:outputField value="{!Ord[f.fieldpath]}" rendered="{!IF(f.Type!='textarea', true, false)}" />
+                    </apex:repeat>
+                </apex:pageBlocksection> 
+                <apex:pageBlocksection columns="2"  rendered="{!IF(modeOT=='edit',true,false)}" >
+                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.Transfer_Order_Fields}" var="f"> 
+                        <apex:inputField value="{!Ord[f.fieldpath]}" rendered="{!IF(f.Type!='textarea' && usr.country!='Italy', true, false)}" />
+                    </apex:repeat>
+                </apex:pageBlocksection>                 
+
+               
+                <apex:pageBlocksection columns="1" title="Detail information"  >
+                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.Transfer_Order_Fields}" var="f"> 
+                        <apex:outputField value="{!Opportunity[f.fieldpath]}" rendered="{!IF(f.Type=='textarea' && usr.country!='Italy', true, false)}" /> 
+                    </apex:repeat>
+                </apex:pageBlocksection>
+                               
+                 <apex:pageBlocksection columns="2" rendered="{!IF(modeOT!='edit',true,false)}" >
+                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.Transfer_Order_Fields_Italy}" var="f">                         
+                        <apex:outputField value="{!Ord[f.fieldpath]}" rendered="{!IF(f.Type!='textarea' && usr.country=='Italy', true, false)}" />
+                    </apex:repeat>
+                </apex:pageBlocksection> 
+                <apex:pageBlocksection columns="2"  rendered="{!IF(modeOT=='edit',true,false)}" >
+                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.Transfer_Order_Fields_Italy}" var="f"> 
+                        <apex:inputField value="{!Ord[f.fieldpath]}" rendered="{!IF(f.Type!='textarea' && usr.country=='Italy', true, false)}" />
+                    </apex:repeat>
+                </apex:pageBlocksection>                 
+
+               
+                <apex:pageBlocksection columns="1" title="Detail information"  >
+                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.Transfer_Order_Fields_Italy}" var="f"> 
+                        <apex:outputField value="{!Opportunity[f.fieldpath]}" rendered="{!IF(f.Type=='textarea' && usr.country=='Italy', true, false)}" /> 
+                    </apex:repeat>
+                </apex:pageBlocksection>
+                
+                
+                
+                <div  id="contentLoading1"  style="display:none;">
+                    <div style="text-align: center;"> 
+                        <img src="/img/loading.gif" alt="Loading graphic" />
+                    </div>
+                </div>                  
+                <div id="contentLoaded1">
+                    
+                    <apex:panelGrid columns="2" style="width:100%"  bgcolor="#F8F8F8" id="panelTO">
+                        <apex:pageBlock title="{!$Label.OE2_0_Transfer_Credit}"> 
+                            <apex:pageBlockSection id="credit1" columns="1">
+                                <apex:outputField value="{!ord.TXT_Credit_SAP_Order_Number__c}" label="{!$ObjectType.Opportunity.fields.TXT_Credit_SAP_Order_Number__c.label}" rendered="{!IF(ord.PICK_Status__c=='Submitted', true, false)}"/>
+                                <apex:inputField label="{!$ObjectType.Opportunity.fields.LKP_areaManager_Credit_OT__c.label}" value="{!ord.LKP_areaManager_Credit_OT__c}" rendered="{!IF(modeOT=='edit' && usr.country!= 'Italy', true, false)}" >                                      
+                                    <apex:actionSupport action="{!creditSoldTo}" event="onchange" rerender="credit1" onsubmit="loading(true,'contentLoading1','contentLoaded1')" oncomplete="loading(false,'contentLoading1','contentLoaded1'),chargePickStyle()"/>
+                                </apex:inputField>
+                                
+                                <apex:inputField label="{!$ObjectType.Opportunity.fields.LKP_Field_Agent_Credit_OT__c.label}" value="{!ord.LKP_Field_Agent_Credit_OT__c}" rendered="{!IF(modeOT=='edit' && usr.country== 'Italy', true, false)}" >                                      
+                                    <apex:actionSupport action="{!creditSoldTo}" event="onchange" rerender="credit1" onsubmit="loading(true,'contentLoading1','contentLoaded1')" oncomplete="loading(false,'contentLoading1','contentLoaded1'),chargePickStyle()"/>
+                                </apex:inputField>
+                                
+                                <apex:outputField value="{!ord.LKP_areaManager_Credit_OT__c}" label="{!$ObjectType.Opportunity.fields.LKP_areaManager_Credit_OT__c.label}" rendered="{!IF(modeOT=='show' && usr.country!= 'Italy', true, false)}"/>                                      
+                                
+                                <apex:outputField value="{!ord.LKP_Field_Agent_Credit_OT__c}" label="{!$ObjectType.Opportunity.fields.LKP_Field_Agent_Credit_OT__c.label}" rendered="{!IF(modeOT=='show' && usr.country== 'Italy', true, false)}"/> 
+                                
+                                <apex:selectList label="{!$ObjectType.Opportunity.fields.LKP_soldTo_Source_OT__c.label}" value="{!soldToC}"   styleClass="applyStyle" rendered="{!IF(modeOT=='edit', true, false)}" >
+                                    <apex:selectOption itemLabel="{!$Label.Default_pick_list_option}" itemValue="" />
+                                    <apex:selectOptions id="soldCoptions" value="{!soldstoC}"/>
+                                    <apex:actionSupport event="onchange" action="{!creditShipto}" onsubmit="loading(true,'contentLoading1','contentLoaded1')" oncomplete="loading(false,'contentLoading1','contentLoaded1'),chargePickStyle()" reRender="credit1" />
+                                </apex:selectList>                  
+                                
+                                <apex:outputField value="{!ord.LKP_soldTo_Source_OT__c}" label="{!$ObjectType.Opportunity.fields.LKP_soldTo_Source_OT__c.label}" rendered="{!IF(modeOT=='show', true, false)}"/>
+                                <apex:selectList id="shipToC" label="{!$ObjectType.Opportunity.fields.LKP_ShipTo_Source_OT__c.label}" value="{!shipToC}"   styleClass="applyStyle" rendered="{!IF(modeOT=='edit', true, false)}"  >
+                                    <apex:selectOption itemLabel="{!$Label.Default_pick_list_option}" itemValue="" />
+                                    <apex:selectOptions value="{!shipstoC}"/>
+                                    
+                                </apex:selectList>
+                                
+                                <apex:outputField value="{!ord.LKP_ShipTo_Source_OT__c}" label="{!$ObjectType.Opportunity.fields.LKP_ShipTo_Source_OT__c.label}" rendered="{!IF(modeOT=='show', true, false)}"/>
+                            </apex:pageBlockSection>
+                            
+                        </apex:pageBlock>
+                        
+                        <apex:pageBlock title="{!$Label.OE2_0_Transfer_Debit}" id="Debit">
+                            
+                            <apex:pageBlockSection id="debit1" columns="1"> 
+                                <apex:outputField value="{!ord.TXT_Debit_SAP_Order_Number__c}" label="{!$ObjectType.Opportunity.fields.TXT_Debit_SAP_Order_Number__c.label}" rendered="{!IF(ord.PICK_Status__c=='Submitted', true, false)}"/>
+                                
+                                <apex:inputField label="{!$ObjectType.Opportunity.fields.LKP_areaManager_Debit_OT__c.label}" value="{!ord.LKP_areaManager_Debit_OT__c}" rendered="{!IF(modeOT=='edit' && usr.country!= 'Italy', true, false)}" >                                      
+                                    <apex:actionSupport action="{!debitSoldTo}" event="onchange" rerender="debit1" onsubmit="loading(true,'contentLoading1','contentLoaded1')" oncomplete="loading(false,'contentLoading1','contentLoaded1'),chargePickStyle()"/>
+                                </apex:inputField>
+                                <apex:outputField value="{!ord.LKP_areaManager_Debit_OT__c}" label="{!$ObjectType.Opportunity.fields.LKP_areaManager_Debit_OT__c.label}" rendered="{!IF(modeOT=='show' && usr.country!= 'Italy', true, false)}"/>
+                                
+                                
+                                
+                                <apex:inputField label="{!$ObjectType.Opportunity.fields.LKP_Field_Agent_Debit_OT__c.label}" value="{!ord.LKP_Field_Agent_Debit_OT__c}" rendered="{!IF(modeOT=='edit' && usr.country== 'Italy', true, false)}" >                                      
+                                    <apex:actionSupport action="{!debitSoldTo}" event="onchange" rerender="debit1" onsubmit="loading(true,'contentLoading1','contentLoaded1')" oncomplete="loading(false,'contentLoading1','contentLoaded1'),chargePickStyle()"/>
+                                </apex:inputField>
+                                <apex:outputField value="{!ord.LKP_Field_Agent_Debit_OT__c}" label="{!$ObjectType.Opportunity.fields.LKP_Field_Agent_Debit_OT__c.label}" rendered="{!IF(modeOT=='show' && usr.country== 'Italy', true, false)}"/>
+                                
+                                
+                                <apex:selectList label="{!$ObjectType.Opportunity.fields.LKP_soldTo_Source_OT__c.label}" value="{!soldToD}"  styleClass="applyStyle"  rendered="{!IF(modeOT=='edit', true, false)}">
+                                    <apex:selectOption itemLabel="{!$Label.Default_pick_list_option}" itemValue="" />
+                                    <apex:selectOptions id="soldDoptions" value="{!soldstoD}"/>
+                                    <apex:actionSupport event="onchange" action="{!DebitShipTo}" rerender="debit1" onsubmit="loading(true,'contentLoading1','contentLoaded1')" oncomplete="loading(false,'contentLoading1','contentLoaded1'),chargePickStyle()" />
+                                </apex:selectList>
+                                <apex:outputField value="{!ord.accountId}" label="{!$ObjectType.Opportunity.fields.LKP_soldTo_Source_OT__c.label}" rendered="{!IF(modeOT=='show', true, false)}"/>
+                                <apex:selectList id="shipToD" label="{!$ObjectType.Opportunity.fields.LKP_Partner_Function__c.label}" value="{!shipToD}"   styleClass="applyStyle" rendered="{!IF(modeOT=='edit', true, false)}" >
+                                    <apex:selectOption itemLabel="{!$Label.Default_pick_list_option}" itemValue="" />
+                                    <apex:selectOptions value="{!shipstoD}"/>                       
+                                </apex:selectList>  
+                                <apex:outputField value="{!ord.LKP_Partner_Function__c}" label="{!$ObjectType.Opportunity.fields.LKP_Partner_Function__c.label}" rendered="{!IF(modeOT=='show', true, false)}"/>                  
+                                <apex:pageBlockSectionItem rendered="{!IF(ord.PICK_Status__c!='Submitted', true, false)}">
+                                    
+                                </apex:pageBlockSectionItem>
+                                
+                                <apex:outputText value="{!$Label.OE2_O_Transfer_New_Ship_to_fields}" style="font-weight:bold"></apex:outputText>
+                                
+                            </apex:pageBlockSection>    <apex:pageBlockSection >
+                            <apex:outputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_ShipToName__c.label}" value="{!ord.TXT_NewShipTo_ShipToName__c}" rendered="{!IF(modeOT=='show', true, false)}"/>                                                
+                            <apex:inputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_ShipToName__c.label}" value="{!ord.TXT_NewShipTo_ShipToName__c}" rendered="{!IF(modeOT=='edit', true, false)}"/>                    
+                            <apex:outputfield styleClass="width" label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_Address__c.label}" value="{!ord.TXT_NewShipTo_Address__c}" rendered="{!IF(modeOT=='show', true, false)}"/>                                                                                              
+                            <apex:inputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_Address__c.label}" value="{!ord.TXT_NewShipTo_Address__c}" rendered="{!IF(modeOT=='edit', true, false)}"/>
+                            <apex:outputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_ZIP_Contact__c.label}" value="{!ord.TXT_NewShipTo_ZIP_Contact__c}" rendered="{!IF(modeOT=='show', true, false)}"/>                                                                                             
+                            <apex:inputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_ZIP_Contact__c.label}" value="{!ord.TXT_NewShipTo_ZIP_Contact__c}" rendered="{!IF(modeOT=='edit', true, false)}"/>
+                            <apex:outputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_ZIP_Phone__c.label}" value="{!ord.TXT_NewShipTo_ZIP_Phone__c}" rendered="{!IF(modeOT=='show', true, false)}"/>                                                                                               
+                            <apex:inputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_ZIP_Phone__c.label}" value="{!ord.TXT_NewShipTo_ZIP_Phone__c}" rendered="{!IF(modeOT=='edit', true, false)}"/>
+                            <apex:outputfield label="{!$ObjectType.Opportunity.fields.PICK_COUNTRY__c.label}" value="{!ord.PICK_COUNTRY__c}" rendered="{!IF(modeOT=='show', true, false)}"/>                                                                                                
+                            <apex:inputfield label="{!$ObjectType.Opportunity.fields.PICK_COUNTRY__c.label}" value="{!ord.PICK_COUNTRY__c}" rendered="{!IF(modeOT=='edit', true, false)}"/>
+                            <apex:outputfield label="{!$ObjectType.Opportunity.fields.PICK_REGION__c.label}" value="{!ord.PICK_REGION__c}" rendered="{!IF(modeOT=='show', true, false)}"/>                                                                                                
+                            <apex:inputfield label="{!$ObjectType.Opportunity.fields.PICK_REGION__c.label}" value="{!ord.PICK_REGION__c}" rendered="{!IF(modeOT=='edit', true, false)}"/>
+                            <apex:outputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_ZIP_Code__c.label}" value="{!ord.TXT_NewShipTo_ZIP_Code__c}" rendered="{!IF(modeOT=='show', true, false)}"/>                                                                                                
+                            <apex:inputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_ZIP_Code__c.label}" value="{!ord.TXT_NewShipTo_ZIP_Code__c}" rendered="{!IF(modeOT=='edit', true, false)}"/>
+                            <apex:outputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_City__c.label}" value="{!ord.TXT_NewShipTo_City__c}" rendered="{!IF(modeOT=='show', true, false)}"/>                                                                                                
+                            <apex:inputfield label="{!$ObjectType.Opportunity.fields.TXT_NewShipTo_City__c.label}" value="{!ord.TXT_NewShipTo_City__c}" rendered="{!IF(modeOT=='edit', true, false)}"/>
+                            
+                            </apex:pageBlockSection>
+                            
+                        </apex:pageBlock>
+                        
+                    </apex:panelGrid>
+                </div>
+                <apex:pageBlockButtons id="buttonsTO">
+                    <apex:commandButton id="saveButton2"  value="{!$Label.Save}" action="{!save2}" onclick="loading(true,'contentLoading1','contentLoaded1');" oncomplete="loading(false,'contentLoading1','contentLoaded1');" rerender="form,attachs" rendered="{!IF((modeOT=='edit')&&(ord.PICK_Status__c!='Submitted'), true, false)}"  />
+                    <apex:commandButton id="cancelButton2"  value="{!$Label.Cancel}"  action="{!cancel2}" onclick="loading(true,'contentLoading1','contentLoaded1');" oncomplete="loading(false,'contentLoading1','contentLoaded1');"  rerender="form" rendered="{!IF((modeOT=='edit')&&(ord.PICK_Status__c!='Submitted'), true, false)}"  />                
+                    <apex:commandButton id="editButton2"  value="{!$Label.Edit}" action="{!edit2}" onclick="loading(true,'contentLoading1','contentLoaded1');" rerender="TOentry,productpicker" rendered="{!IF((modeOT=='show')&&(ord.PICK_Status__c!='Submitted') , true, false)}" oncomplete="loading(false,'contentLoading1','contentLoaded1'); chargePickStyle();"/>
+                    <apex:CommandButton id="cloneButton" value="{!$Label.Clone}"  action="{!URLFOR($Action.Opportunity.Clone,opportunity.id,[cloneli=1],true)}" onclick="return window.confirm('Are you sure?');" rendered="{!IF(modeOT=='show', true, false)}"/>                
+                    <apex:commandButton id="saveButton3"  value="{!$Label.Save}" oncomplete="window.location.reload()" action="{!save}"  rerender="form,attachs" style="display:none"  rendered="{!IF((modeOT=='show')&&(ord.PICK_Status__c!='Submitted'), true, false)}" />
+                    <apex:commandButton id="cancelButton3"  value="{!$Label.Cancel}"  rerender="form" style="display:none" rendered="{!IF((modeOT=='show')&&(ord.PICK_Status__c!='Submitted'), true, false)}"  />
+                    <apex:CommandButton id="deleteButton" value="{!$Label.AP_Delete}" action="{!URLFOR($Action.Opportunity.Delete,opportunity.id)}" onclick="return window.confirm('Are you sure?');"  rendered="{!IF((modeOT=='show')&&(ord.PICK_Status__c!='Submitted'), true, false)}"/>
+                    
+                    <apex:CommandButton id="submitButton" styleClass="btn__submit" onclick="submitTO();loading(true,'contentLoading','contentLoaded');" value="{!$Label.Submit}" rerender="page" rendered="{!IF((modeOT=='show') && (ord.PICK_Status__c!='Submitted') && (mode!='edit'), true, false)}"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+                       
+            <apex:pageblock id="productpicker"  title="{!$Objecttype.Product2.labelplural}">
+                
+                <apex:pageBlockSection id="addProducts" collapsible="true" columns="1">
+                    <apex:pagemessages escape="false" rendered="{!IF(modePr == 'NoProducts', true, false)}"  />  
+                    
+                    <!-- Existing Products--->     
+                    
+                    <apex:variable var="list_products" value="{!''}{!list_products_litres}" />
+                    
+                    <apex:outputPanel id="viewPanel" style="display:block;" rendered="{!IF(mode == 'view', true, false)}">                   
+                        <div  id="contentLoading2"  style="display:none;">
+                            <div style="text-align: center;"> 
+                                <img src="/img/loading.gif" alt="Loading graphic"/>
+                            </div>
+                        </div>                  
+                        <div id="contentLoaded2">
+                            <apex:pageBlockTable value="{!existingcOLIs}" var="item">
+                                <apex:column headerValue="{!$Label.Action}" headerClass="ct" style="text-align:center" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">
+                                    <apex:inputCheckbox styleClass="flagCell" value="{!item.selected}"/>
+                                </apex:column>    
+                                
+                                
+                           <!--       <apex:column >
+                                    <apex:facet name="header">
+                                      <apex:inputCheckbox onclick="checkAll(this,'checkedone')"/> 
+                                    </apex:facet>
+                                    <apex:inputCheckbox value="{!item.selected}" id="checkedone"/>
+                                </apex:column>-->
+                                
+                                
+                                
+                                <apex:column headerValue="{!$ObjectType.Product2.fields.name.label}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">
+                                    <apex:outputLink id="link" value="/{!item.OppLine.id}">{!item.OppLine.Product2.name}</apex:outputLink>                                                                                                                                                                  
+                                </apex:column>
+                                
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_QuantitySAP__c.label}" rendered="{!IF(Ord.PICK_Status__c='Not Submitted' && ord.RecordType.name!='Transfer Order' && availableQtyVisibility==true, true, false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">                                
+                                    <apex:outputField value="{!item.OppLine.NUM_QuantitySAP__c}" rendered="{!IF(item.OppLine.NUM_QuantitySAP__c!=-1, true, false)}"  />                                                                                                                                                                     
+                                    <apex:outputText value="N/A" rendered="{!IF(item.OppLine.NUM_QuantitySAP__c==-1, true, false)}" />                                                                                                                                                                     
+                                </apex:column>
+                                
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Type__c.label}" rendered="{!if(ord.RecordType.name!='Transfer Order',true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">                                
+                                    
+                                    <apex:outputField value="{!item.OppLine.Type__c}"  rendered="{!if(ord.RecordType.name!='Transfer Order',true,false)}" />                                                                                                                                                                     
+                                </apex:column>
+                                
+                                 
+                                
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Discount.label}" id="Discount" rendered="{!if(ord.RecordType.Name=='Sales Order CP Italy' || ord.RecordType.Name=='Sales Order CP Italy Submitted',true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">
+                                    <apex:outputField value="{!item.OppLine.NUM_Discount__c}"  rendered="{!IF(item.OppLine.Type__c=='Charged' ,true,false)}" />
+                                    <!-- -->
+                                </apex:column>                                
+                                <apex:column headerValue="Batch Number" rendered="{!if(ord.RecordType.name=='Transfer Order' && ord.CHK_Organized__c,true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">                                
+                                    <apex:outputField value="{!item.OppLine.TXT_BatchNumber_OT__c }"   />                                                                                                                                                                     
+                                </apex:column>     
+<apex:column styleclass="allocation" headerValue="{!$Label.OE2_0_Allocation}" rendered="{!if(ord.recordType.Name=='Sales Italy Charged' || ord.recordType.Name=='Sales Italy FOC',true,false)}" >
+                                    <apex:outputText value="{!item.allocation}" /> 
+                                    <apex:outputText style="color:red" value=" X" rendered="{!item.validateAllocation}"></apex:outputText>
+
+                                </apex:column>                              
+                                <apex:column styleclass="quantity" headerValue="{!$ObjectType.OpportunityLineItem.fields.Quantity.label}" rendered="{!if((Contains(ord.RecordType.Name,'Sales Order')&&!Contains(ord.RecordType.Name,'CP'))  || ord.RecordType.Name=='Sales Submitted' || ord.RecordType.Name=='Transfer Order' || ord.recordType.Name=='Sales Italy Charged' || ord.recordType.Name=='Sales Italy FOC',true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">                                
+                                    <apex:outputField value="{!item.OppLine.Quantity}"   > 
+                                        
+                                        <apex:actionSupport event="ondblclick" reRender="buttons" />
+                                    </apex:outputField>                                                                                                                                                                    
+                                </apex:column>
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_Quantity_litres_CP__c.label}" rendered="{!if(ord.RecordType.Name=='Sales Order CP Italy' ||  ord.RecordType.Name=='Sales Order CP' || ord.RecordType.Name==' CP Italy Submitted' || ord.RecordType.Name=='Sales CP Submitted',true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">                                
+                                    <apex:outputField value="{!item.OppLine.NUM_Quantity_litres_CP__c}"  > 
+                                       
+                                        <apex:actionSupport event="ondblclick" reRender="buttons" />
+                                    </apex:outputField>
+                                </apex:column>
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_Quantity_palets_CP__c.label}" rendered="{!if(ord.RecordType.Name=='Sales Order CP Italy' || ord.RecordType.Name=='Sales Order CP Italy Submitted'|| ord.RecordType.Name=='Sales CP Submitted'||  ord.RecordType.Name=='Sales Order CP',true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">                                
+                                    <apex:outputField value="{!item.OppLine.NUM_Quantity_palets_CP__c}"   > 
+                                       
+                                        <apex:actionSupport event="ondblclick" reRender="buttons" />
+                                    </apex:outputField>                                                                                                                                                                     
+                                </apex:column>    
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.TXT_PLANT_COPY__c.label}" rendered="{!if((Contains(ord.RecordType.Name,'Sales Order')&&!Contains(ord.RecordType.Name,'CP')) || ord.RecordType.name=='Sales Order CP' || ord.RecordType.Name=='Sales CP Submitted' || ord.RecordType.Name=='Sales Submitted',true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">
+                                    <apex:outputField value="{!item.OppLine.TXT_PLANT_COPY__c}" />
+                                </apex:column>                                 
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.TXT_SAP_Order_Number__c.label}" rendered="{!if(ord.PICK_Status__c=='Submitted',true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">                                
+                                    <apex:outputField value="{!item.OppLine.TXT_SAP_Order_Number__c}"   />                                                                                                                                                                     
+                                </apex:column>                            
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.TXT_SAP_Order_line_ID__c.label}" rendered="{!if(ord.PICK_Status__c=='Submitted',true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">
+                                    <apex:outputField value="{!item.OppLine.TXT_SAP_Order_line_ID__c}"   />                                                                                                                                                                     
+                                </apex:column>
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.TXT_Line_SAP_status__c.label}"  rendered="{!if(ord.PICK_Status__c=='Submitted' || ord.CHK_Error_SAP_Check__c,true,false)}" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">            
+                                    <apex:outputField value="{!item.OppLine.TXT_Line_SAP_status__c}"   />                                                                                                                                                                     
+
+                                </apex:column> 
+                                 
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.TXTA_Comments__c.label}" rendered="false" styleClass="{!IF(item.OppLine.id == null,'newLine','')}">
+                                    <apex:outputField value="{!item.OppLine.TXTA_Comments__c}" />
+                                </apex:column>                                
+                            </apex:pageBlockTable>
+                        </div>
+                    </apex:outputPanel>
+                    <apex:pagemessages escape="false"  rendered="{!IF(showException == true, true, false)}"  />        
+
+                     <script type="text/javascript">
+                        function checkAll(cb,cbid)
+                            {
+                                var inputElem = document.getElementsByTagName("input");                     
+                                for(var i=0; i<inputElem.length; i++)
+                                {             
+                                    if(inputElem[i].id.indexOf(cbid)!=-1){                                        
+                                        inputElem[i].checked = cb.checked;
+                                    }
+                                }
+                            }
+                    </script>
+                   
+                    <!-- Add product--->
+                    <apex:outputPanel id="addProducts" styleClass="{!IF(mode == 'edit', '', 'hide')}">
+                         <apex:pagemessages escape="false"  rendered="{!IF(error == true, true, false)}"  />
+                        <div  id="contentLoading3"  style="display:none;">
+                            <div style="text-align: center;">
+                                <img src="/img/loading.gif" alt="Loading graphic" />
+                                <span >Please wait while the product availability is updated</span>
+                            </div>
+                        </div>                  
+                        <div id="contentLoaded3">
+                            <apex:pageBlockTable value="{!existingcOLIs}" id="linesTable" var="item">                               
+                                <apex:column id="itemProd" headerValue="{!$ObjectType.Product2.fields.name.label}" rendered="{!if(ord.RecordType.name!='Transfer Order' && availableQtyVisibility==true,true,false)}">
+                                    
+                                    <apex:actionregion >
+                                        <apex:selectList value="{!item.prodName}" size="1" styleClass="applyStyle prodName" onfocus="showBatchs(this);" onchange="showBatchs(this);" disabled="{!if(item.selected==false ,true,false)}">
+                                            <apex:selectOption itemLabel="{!$Label.Default_pick_list_option}" itemValue=""  />
+                                            <apex:selectOptions value="{!productNames}"/>
+                                           <!-- <apex:actionSupport action="{!importStock}" event="onchange" reRender="addProducts" onsubmit="loading(true,'contentLoading3','contentLoaded3')" oncomplete="loading(false,'contentLoading3','contentLoaded3'),chargePickStyle()"  />     -->
+                                            
+                                        </apex:selectList>
+                                        
+                                    </apex:actionregion>
+                                </apex:column>
+                                <apex:column id="itemProd2" headerValue="{!$ObjectType.Product2.fields.name.label}" rendered="{!if(ord.RecordType.name=='Transfer Order' || availableQtyVisibility!=true,true,false)}" styleClass="{!IF(AND(item.OppLine.id == null, item.prodName == ''),'newLine','')}">
+                                    <span class="product_picker_select">
+                                    <apex:actionregion >
+                                        <apex:selectList value="{!item.prodName}"  size="1" styleClass="applyStyle prodName"  onchange="showBatchs(this);" disabled="{!if(item.selected==false, true, false)}" >
+                                            <apex:selectOption itemLabel="{!$Label.Default_pick_list_option}" itemValue=""/>
+                                            <apex:selectOptions value="{!productNames}" />
+                                       <!--     <apex:actionSupport action="{!BatchsForProd}" event="onchange" disabled="{!if(ord.RecordType.name!='Transfer Order' && ord.CHK_Organized__c==false, true, true)}" reRender="addProducts" oncomplete="chargePickStyle()" /> -->
+                                            
+                                        </apex:selectList>
+                                        
+                                    </apex:actionregion>
+                                    </span>
+                                </apex:column>
+                                
+                                
+                                <apex:column id="stock" headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_QuantitySAP__c.label}" rendered="{!IF(Ord.PICK_Status__c='Not Submitted' && ord.RecordType.name!='Transfer Order' && availableQtyVisibility==true, true, false)}">                                
+                                    <apex:outputField value="{!item.OppLine.NUM_QuantitySAP__c}" rendered="{!IF(item.OppLine.NUM_QuantitySAP__c!=-1, true, false)}"  />                                                                                                                                                                     
+                                    <apex:outputText value="N/A" rendered="{!IF(item.OppLine.NUM_QuantitySAP__c==-1, true, false)}"  />                                                                                                                                                                 
+                                </apex:column>
+                                <apex:column headerValue="Batch Number"  rendered="{!if(ord.RecordType.name=='Transfer Order' && ord.CHK_Organized__c,true,false)}">
+                                    
+                                    <apex:selectList id="batch2" title="batch2" value="{!item.OppLine.TXT_BatchNumber_OT__c}"  styleClass="applyStyle batchStyle">                                 
+                                        <apex:selectOption itemLabel="{!$Label.Default_pick_list_option}" rendered="{!IF(item.prodName!=null,true,false)}" itemValue=""/>
+                                     <apex:selectOptions id="obatchs" value="{!batchsForProds2}" />
+                                       
+                                    </apex:selectList>
+                                    
+                                </apex:column>                              
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Type__c.label}" rendered="{!IF(ord.RecordType.name!='Transfer Order' , true, false)}" >
+                                    <span class="type_picker_select">
+                                    <!-- <apex:actionregion> -->
+
+                                        <apex:inputField id="Type" required="{!IF(ord.RecordType.name!='Transfer Order' &&  item.prodName!='', true, false)}" rendered="{!IF((!(Contains(ord.RecordType.Name,'Sales Order')&&!Contains(ord.RecordType.Name,'CP'))) && ord.recordType.Name!='Sales Order CP Italy' && ord.recordType.Name != 'Sales Italy Charged' && ord.recordType.Name!='Sales Italy FOC' ,true,false)}" value="{!item.OppLine.Type__c}" styleClass="applyStyle ProdType"/>                                 
+                                    <!-- <apex:actionSupport event="onchange" oncomplete="hideNewLines(); chargePickStyle()" reRender="addProducts" disabled="{!IF(ord.recordType.Name=='Sales Order CP Italy', true, false)}"/> -->
+                                    <!-- </apex:actionregion> -->
+
+                                    </span>
+                                        <!--This is for the S&T orders. We put an outputfield in order to not able the insertion of FOC lines. Also we stablish previously the type in the free of charge code -->
+                                   <apex:outputField value="{!item.OppLine.Type__c}" rendered="{!IF((Contains(ord.RecordType.Name,'Sales Order') && !Contains(ord.RecordType.Name,'CP')) || ord.recordType.Name=='Sales Order CP Italy' || ord.recordType.Name=='Sales Italy Charged' || ord.recordType.Name=='Sales Italy FOC',true,false)}"/>
+                                </apex:column>
+                                
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_Discount__c.label}" id="Discount" rendered="{!if(ord.RecordType.Name=='Sales Order CP Italy',true,false)}">
+                                    <apex:inputField value="{!item.OppLine.NUM_Discount__c}"   />
+
+
+                                </apex:column>                                
+                                
+                                
+                                 <apex:column styleclass="allocation" headerValue="{!$Label.OE2_0_Allocation}" rendered="{!if(ord.recordType.Name=='Sales Italy Charged' || ord.recordType.Name=='Sales Italy FOC',true,false)}" >
+                                
+                                    <apex:outputText value="{!item.allocation}"/>
+                                    <apex:outputText style="color:red" value=" X" rendered="{!item.validateAllocation}"></apex:outputText> 
+                                </apex:column> 
+                                <apex:column styleclass="quantity" headerValue="{!$ObjectType.OpportunityLineItem.fields.Quantity.label}" id="Quantity" rendered="{!if((Contains(ord.RecordType.Name,'Sales Order')&& !Contains(ord.RecordType.Name,'CP')) || ord.RecordType.Name=='Transfer Order' || ord.recordType.Name=='Sales Italy Charged' || ord.recordType.Name=='Sales Italy FOC',true,false)}">
+                                    <apex:inputField id="lineQuantity" value="{!item.OppLine.Quantity}" required="false"  styleClass="fieldInput Quantity_Only"/>
+                                </apex:column>
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_Quantity_litres_CP__c.label}" id="litres" rendered="{!if(ord.RecordType.Name=='Sales Order CP Italy' || ord.RecordType.Name=='Sales Order CP',true,false)}">
+                                    <apex:inputField required="{!if(ord.RecordType.Name=='Sales Order CP' && (item.OppLine.Type__c=='Free of Charge' || contains(List_products, substitute(substitute(item.prodName, ',', '_'), ' ', '_'))), false, false)}" value="{!item.OppLine.NUM_Quantity_litres_CP__c}" rendered="{!IF(item.OppLine.Type__c!='' || ord.RecordType.Name=='Sales Order CP Italy', true, true)}" styleClass="fieldInput Quantity_In_Litres"/>
+
+
+                                </apex:column>
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_Quantity_palets_CP__c.label}" id="palets" rendered="{!if(ord.RecordType.Name=='Sales Order CP Italy' || ord.RecordType.Name=='Sales Order CP',true,false)}">
+                                    <apex:inputField required="{!if( ord.RecordType.Name=='Sales Order CP' && item.OppLine.Type__c=='Charged' && !contains(List_products, substitute(substitute(item.prodName, ',', '_'), ' ', '_')), false, false)}" value="{!item.OppLine.NUM_Quantity_palets_CP__c}" rendered="{!IF(item.OppLine.Type__c!='' || ord.RecordType.Name=='Sales Order CP Italy', true, true)}" styleClass="fieldInput Quantity_In_Palets"/>                                                                                                                                                                     
+
+                                    
+                                </apex:column>   
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.TXT_PLANT_COPY__c.label}" rendered="{!if(((Contains(ord.RecordType.Name,'Sales Order')&&!Contains(ord.RecordType.Name,'CP')) || ord.RecordType.name=='Sales Order CP'),true,false)}">
+                                    <apex:inputField value="{!item.OppLine.TXT_PLANT_COPY__c}" rendered="{!IF(item.OppLine.Type__c!='', true, true)}" styleClass="fieldInput"/>
+                                </apex:column> 
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.TXTA_Comments__c.label}" rendered="false">
+                                    <apex:inputField value="{!item.OppLine.TXTA_Comments__c}" rendered="{!IF((item.prodName!='' && ord.CHK_Organized__c)  || item.oppLine.Type__c!='' ||item.cBatchs.size==1 ||(ord.recordType.name=='Transfer Order' && ord.CHK_Organized__c==False),true,false)}"/>
+                                </apex:column>                                
+                            </apex:pageBlockTable>
+                            
+                        </div>
+                        <!--Add multiple products-->
+                    </apex:outputPanel>
+                    <apex:outputPanel id="editPanel"  style="display:block;" rendered="{!IF(mode == 'addM', true, false)}">  
+                        <apex:pagemessages escape="false"  rendered="{!IF(error == true, true, false)}"  />
+                        <div  id="contentLoading4"  style="display:none;">
+                            <div style="text-align: center;">
+                                <img src="/img/loading.gif" alt="Loading graphic" />
+                                <span >Please wait while the product availability is updated</span>
+                            </div>
+                        </div>                  
+                        <div id="contentLoaded4">
+                            
+                            <apex:pageBlockTable value="{!allcOLIs}" var="item1" id="table1">
+                                
+                                <apex:column headerValue="{!$Label.Action}" headerClass="ct" style="text-align:center" rendered="{!IF(Ord.PICK_Status__c='Not Submitted' && ord.RecordType.name!='Transfer Order'&& availableQtyVisibility==true, true, false)}" >
+                                    <apex:inputCheckbox value="{!item1.selected}" styleClass="flagCell flagMultiple"/>
+                                    <apex:actionSupport action="{!importStock}" event="onclick" reRender="editPanel" onsubmit="loading(true,'contentLoading4','contentLoaded4')" oncomplete="loading(false,'contentLoading4','contentLoaded4'), chargePickStyle()"    />     
+                                </apex:column> 
+                                 
+                                <apex:column headerValue="{!$Label.Action}" rendered="{!IF(Ord.PICK_Status__c='Not Submitted'&&(ord.RecordType.name=='Transfer Order' || availableQtyVisibility!=true), true, false)}" >
+                                    <apex:inputCheckbox value="{!item1.selected}" styleClass="flagCell flagMultiple"/>
+                                    <apex:actionSupport event="onclick" reRender="editPanel" oncomplete="chargePickStyle()" disabled="{!if((Contains(ord.RecordType.Name,'Sales Order')&&!Contains(ord.RecordType.Name,'CP')) || ord.recordType.Name=='Sales Order CP Italy', true, true)}" ></apex:actionSupport>
+                                </apex:column>
+                                
+                                <apex:column headerValue="{!$ObjectType.Product2.fields.name.label}">                                
+                                    <apex:outputText value="{!item1.prodName}" styleClass="prodName"/>                                                                                                                                                                  
+
+                                </apex:column>
+                                <apex:column id="stock" headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_QuantitySAP__c.label}" rendered="{!IF(Ord.PICK_Status__c='Not Submitted' && ord.RecordType.name!='Transfer Order' && availableQtyVisibility==true, true, false)}">                                
+                                    <apex:outputField value="{!item1.OppLine.NUM_QuantitySAP__c}" rendered="{!IF(item1.OppLine.NUM_QuantitySAP__c!=-1, true, false)}"  />                                                                                                                                                                     
+                                    <apex:outputText value="N/A" rendered="{!IF(item1.OppLine.NUM_QuantitySAP__c==-1, true, false)}"  />                                                                                                                                                                     
+                                </apex:column>
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Type__c.label}" rendered="{!if(ord.RecordType.name!='Transfer Order' && ord.RecordType.name!='Sales Italy Charged' && ord.RecordType.name!='Sales Italy FOC',true,false)}">                                                                        
+                                    <apex:inputField id="Type2" value="{!item1.OppLine.Type__c}" styleClass="applyStyle ProdType" rendered="{!IF(((!(Contains(ord.RecordType.Name,'Sales Order') && !Contains(ord.RecordType.Name,'CP')))) && (ord.RecordType.name!='Sales Order CP Italy'), true, false)}">
+                                        <!--<apex:actionSupport event="onchange"  oncomplete="chargePickStyle()" reRender="editPanel" disabled="{!if(ord.recordType.Name=='Sales Order CP Italy',true,true)}" />-->
+                                    </apex:inputField>
+
+                                        <!--This is for the S&T orders. We put an outputfield in order to not able the insertion of FOC lines. Also we stablish previously the type in the free of charge code -->
+                                    <apex:outputfield value="{!item1.OppLine.Type__c}" rendered="{!if((Contains(ord.RecordType.Name,'Sales Order')&&!Contains(ord.RecordType.Name,'CP')) ||  ord.RecordType.Name=='Sales Order CP Italy',true,false)}"></apex:outputfield>
+                                    
+                                </apex:column>
+                                <apex:column headerValue="Batch Number" id="btch" rendered="{!if(ord.RecordType.name=='Transfer Order' && ord.CHK_Organized__c,true,false)}">
+                                    
+                                    <apex:selectList id="batch" required="{!IF(item1.selected, true, false)}" value="{!item1.OppLine.TXT_BatchNumber_OT__c}" styleClass="applyStyle">
+                                        <apex:selectOption itemLabel="{!$Label.Default_pick_list_option}" rendered="{!if(item1.cBatchs.size>1 || (ord.TXTA_Sales_Org__c=='ES01' || ord.TXTA_Sales_Org__c=='CH02'),true,false)}" itemValue="" />
+                                        <apex:selectOptions value="{!item1.cBatchs}"/>
+                                        <!-- <apex:actionSupport onbeforedomupdate="action1();"  event="onchange"   reRender="table1" />-->
+                                    </apex:selectList>
+                                    
+                                </apex:column> 
+                                
+                                
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Discount.label}" id="Discount" rendered="{!if(ord.RecordType.Name=='Sales Order CP Italy' ,true,false)}">
+                                    <apex:inputField value="{!item1.OppLine.NUM_Discount__c}" />
+                                    <!-- -->
+                                </apex:column> 
+ <apex:column styleclass="allocation" headerValue="{!$Label.OE2_0_Allocation}" rendered="{!if(ord.recordType.Name=='Sales Italy Charged' || ord.recordType.Name=='Sales Italy FOC',true,false)}" >
+                                
+                                    <apex:outputText value="{!item1.allocation}"/>
+                                    <apex:outputText style="color:red" value=" X" rendered="{!item1.validateAllocation}"></apex:outputText>
+                                </apex:column>                              
+                                <apex:column styleclass="quantity" headerValue="{!$ObjectType.OpportunityLineItem.fields.Quantity.label}" id="Quantity2" rendered="{!if((Contains(ord.RecordType.Name,'Sales Order')&&!Contains(ord.RecordType.Name,'CP')) || ord.RecordType.Name=='Transfer Order' || ord.recordType.Name=='Sales Italy Charged' || ord.recordType.Name=='Sales Italy FOC',true,false)}" >
+                                    <apex:inputField value="{!item1.OppLine.Quantity}" required="false" rendered="{!IF((item1.Oppline.Type__c!='' ||item1.Oppline.TXT_BatchNumber_OT__c!=''   ||item1.cBatchs.size==1 || (ord.recordtype.name='Transfer Order')),true,false)}" styleClass="fieldInput Quantity_Only"/>
+                                    <!--required="{!IF((item1.selected)&&(usr.division=='S&T'), true, false)}"-->
+                                </apex:column>
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_Quantity_litres_CP__c.label}" id="Litres2" rendered="{!if(ord.RecordType.Name=='Sales Order CP Italy' ||ord.RecordType.Name=='Sales Order CP',true,false)}">                                
+                                    <apex:inputField required="{!IF(ord.RecordType.Name=='Sales Order CP' && (item1.selected) && (item1.OppLine.Type__c=='Free of Charge' || contains(List_products, substitute(substitute(item1.prodName, ',', '_'), ' ', '_'))), true, false)}" value="{!item1.OppLine.NUM_Quantity_litres_CP__c}" rendered="{!IF(item1.OppLine.Type__c!='' || ord.RecordType.Name=='Sales Order CP Italy', true, true)}" styleClass="fieldInput Quantity_In_Litres"/>                                                                                                                                                                   
+                                    <!-- -->
+                                </apex:column>
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.NUM_Quantity_palets_CP__c.label}" id="Palets2" rendered="{!if(ord.RecordType.Name=='Sales Order CP Italy' ||ord.RecordType.Name=='Sales Order CP',true,false)}">                              
+                                    <apex:inputField required="{!IF(ord.RecordType.Name=='Sales Order CP' && item1.selected && item1.OppLine.Type__c=='Charged' && !contains(List_products, substitute(substitute(item1.prodName, ',', '_'), ' ', '_')), true, false)}" value="{!item1.OppLine.NUM_Quantity_palets_CP__c}" rendered="{!IF(item1.Oppline.Type__c!='' || ord.RecordType.Name=='Sales Order CP Italy', true, true)}" styleClass="fieldInput Quantity_In_Palets"/>                                                                                                                                                                     
+                                    <!---->
+                                </apex:column>
+                                
+                               
+                                
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.TXT_PLANT_COPY__c.label}" rendered="{!if(((Contains(ord.RecordType.Name,'Sales Order')&&!Contains(ord.RecordType.Name,'CP')) || ord.RecordType.name=='Sales Order CP'),true,false)}">
+                                    <apex:inputField value="{!item1.OppLine.TXT_PLANT_COPY__c}" rendered="{!IF(Ord.RecordType.name!='Sales Order UA' && item1.OppLine.Type__c!='', true, true)}" styleClass="fieldInput"/>
+                                </apex:column>
+                                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.TXTA_Comments__c.label}" rendered="{!if(ord.RecordType.Name=='Transfer Order',true,false)}">
+                                    <apex:inputField value="{!item1.OppLine.TXTA_Comments__c}" rendered="{!IF((item1.Oppline.Type__c!='' ||item1.Oppline.TXT_BatchNumber_OT__c!=''||item1.cBatchs.size==1 || (ord.recordtype.name='Transfer Order')),True,false)}"  />
+                                </apex:column>                                
+                                
+                                
+                            </apex:pageBlockTable>
+                            
+                        </div>
+                        
+                    </apex:outputPanel>
+                    
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockButtons location="bottom"  id="buttons"  rendered="true">
+                    <apex:outputPanel id="preview2" rendered="{!if(!ord.CHK_OE2_0_Transfer_in_approv_proc__c,true,false)}">
+                       <div class="allocationMessages" style="position:relative;right:45%;min-width: 145%;">
+                                      <apex:pageMessages escape="false" id="warnings"></apex:pageMessages>
+                        </div>
+                        
+                        <apex:actionStatus id="loadingAction">
+                            <apex:facet name="start"><apex:image value="/img/loading.gif" styleClass="loadingImg"/></apex:facet>
+                        </apex:actionStatus>
+
+                        <apex:commandButton id="newButton" status="loadingAction" onClick="editMode(); newRow(); hideButton('submit'); showBatchs(); return false;" value="{!$Label.New}" styleClass="btn__new {!IF(Ord.PICK_Status__c='Not Submitted' && (mode == 'view' || mode == 'edit'), '', 'hide')}"/>
+                        <apex:commandButton id="editButton" status="loadingAction" onClick="editMode(); hideButton('submit');showBatchs(); return false;" value="{!$Label.Edit}" styleClass="btn__edit {!IF(Ord.PICK_Status__c="Not Submitted" && mode == 'view' && existingcOLIsSize.size > 0, '', 'hide')}"/>                        
+                        <apex:commandButton id="saveButton" status="loadingAction" value="{!$Label.Save}" action="{!save4}" onClick="replaceDots(); requiredCheck(); disableButtons(this);" reRender="form, attachs,warnings" styleClass="btn__save {!IF(Ord.PICK_Status__c='Not Submitted' && ((mode == 'addM')||(mode == 'edit')), '', 'hide')}"/>
+
+                        <apex:commandButton id="saveButton2" onclick="replaceDots()" value="{!$Label.Save}" action="{!save4}"  reRender="form,attachs" style="display:none"/>
+                        <apex:commandButton id="cancelButton2" action="{!cancel}" value="{!$Label.Cancel}" rerender="form,attachs"  style="display:none"/>
+                        
+                        <apex:commandButton id="cancelButton" status="loadingAction" onClick="disableButtons(this)" action="{!cancel}" value="{!$Label.Cancel}" reRender="form,attachs" styleClass="btn__cancel {!IF(Ord.PICK_Status__c='Not Submitted' && ((mode == 'addM')||(mode == 'edit')), '', 'hide')}" immediate="true"/>
+                        <apex:actionFunction name="action2" action="makeRequired(Quantity)"/>
+                        <apex:actionFunction name="saveLines" action="{!save4}"/>
+                        <apex:commandButton id="deleteButton" status="loadingAction" value="{!$Label.Delete}" onClick="if(confirm('Are you sure?')){disableButtons(this);} else {return false;}" action="{!deleteOLIs}" reRender="form" styleClass="btn__delete {!IF(Ord.PICK_Status__c="Not Submitted" && mode == 'view' && existingcOLIsSize.size > 0, '', 'hide')}"/> 
+                        <apex:commandButton id="rejectButton" status="loadingAction" value="{!$Label.Reject_Lines}" onClick="if(confirm('Are you sure?')){disableButtons(this);} else {return false;}" action="{!rejectOLIs}" reRender="productpicker"  styleClass="btn__delete {!IF((Ord.PICK_Status__c="Submitted" &&  ord.RecordType.Name=='Sales Submitted' && (ord.TXTA_Division__c="17"||usr.Division="S&T") && ord.TXTA_Sales_Org__c="IT01" && $User.Country="HQ") && mode == 'view' && existingcOLIsSize.size > 0, '', 'hide')}"/> 
+                        <apex:commandButton status="loadingAction" onClick="disableButtons(this)" action="{!addProducts}" id="Add_product" value="{!$Label.ButtonAddMultipleLines}" oncomplete="window.scrollTo(0,0);" reRender="form" styleClass="btn__addmultiple {!IF(Ord.PICK_Status__c='Not Submitted' && mode == 'view', '', 'hide')}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockButtons>            
+            </apex:pageblock> 
+           
+
+            
+            <script src="/soap/ajax/35.0/connection.js" type="text/javascript"></script>
+            <script src="/soap/ajax/35.0/apex.js" type="text/javascript"></script>
+            
+            <apex:includeScript value="{!$Resource.jQuery}"/>
+            <apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.jquery.min.js')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.jQuery_chosen, 'chosen.min.css')}" />
+
+          <script type="text/javascript">
+          function processLines(lines)
+          {
+            alert('these messages are a test by Fernando, please just accept them');
+            try{
+                var tabla = document.getElementById('page:form:productpicker:addProducts:linesTable:tb');
+                alert($(tabla).closest('tr').find('td.allocation').text);
+                $(this).closest('tr').find('td.allocation').text(value);
+
+                console.log($(this).val());
+            }
+            catch(err)
+            {
+            
+            }
+          }
+          $(document).ready(function()
+          {
+            //---------------
+            // Functions to trigger on load the page
+            //----------------
+            hideNewLines();
+            rowSelection();
+            chargePickStyle();
+            checkRequired();      
+            
+            if ('{!isItaly}' == 'true'){
+                AvailableProducts();
+            }
+    
+            //---------------
+            // Fix to avoid to insert duplicated orders
+            //----------------
+            $('input[name="submit"]').each(function(e)
+            {
+                var onclick = "$(this).prop('disabled',true).addClass('btnDisabled'); " + $(this).attr('onclick');
+                $(this).attr("onclick", onclick);
+            });
+            $('input[name="submit"]').click(function(e)
+            {
+                $(this).prop('disabled', false).removeClass('btnDisabled');
+            });
+    
+            //---------------
+            // This is for the approvals process in order to hide the not neccessary buttons 
+            //----------------
+            if ('{!opportunity.TXTA_Sales_Org__c}' == 'FR24' || '{!opportunity.TXTA_Sales_Org__c}' == 'BE01' || '{!opportunity.TXTA_Sales_Org__c}' == 'UA01')
+            {
+                if ('{!opportunity.PICK_Status__c}' == 'Approved')
+                    hideButton('edit');
+                
+                /*
+                if('{!opportunity.PICK_Status__c}'=='Pending Manager')
+                       hideButton('submit');
+                */
+    
+                if ('{!opportunity.PICK_Status__c}' == 'Not Submitted' || '{!opportunity.PICK_Status__c}' == 'Pending Manager')
+                {
+                    var buttons = document.getElementsByName('submit');
+    
+                    for (var i = 0; i < buttons.length; i++)
+                    {
+                        var buttonClick = String(buttons[i].onclick);
+                        if (!(buttons[i].name == 'submit' && buttonClick.indexOf('Modal') > -1))
+                        {
+                            buttons[i].className = "btnDisabled";
+                            buttons[i].disabled = true;
+                            buttons[i].type = 'hidden';
+                        }
+    
+                    }
+    
+                }
+            }
+          });
+    
+          function hideNewLines()
+          {
+            $('.newLine').closest('tr').addClass('newLine');
+            $('#contentLoaded3').parent('span.hide').closest('tr').addClass('hide');
+    
+            $('.fieldInput').each(function()
+            {
+                if ($(this).val() == '') $(this).prop('disabled', true);
+            });
+    
+          }
+    
+          function editMode()
+          {
+            $('.btn__submit').prop('disabled', true).addClass('btnDisabled');
+            $('.btn__edit, .btn__delete, .btn__addmultiple').addClass('hide');
+            $('.btn__save, .btn__cancel').removeClass('hide');
+            $('#contentLoaded2').parent('span').addClass('hide');
+            $('#contentLoaded3').parent('span').removeClass('hide');
+            $('#contentLoaded3').parent('span').closest('tr').removeClass('hide');
+    
+            $('.prodName').each(function()
+            {
+                chargeBatchs($(this));
+    
+            });
+    
+          }
+    
+          function newRow()
+          {
+            $('#contentLoaded3 tr.newLine').first().removeClass('newLine');
+            if ($('#contentLoaded3 tr.newLine').size() == 0) $('.btn__new').addClass('hide');
+    
+          }
+    
+          function hideButton(btnName)
+          {
+            try
+            {
+                var buttons = document.getElementsByName(btnName);
+                for (var i = 0; i < buttons.length; i++)
+                {
+    
+                    var buttonClick = String(buttons[i].onclick);
+    
+                    if (!(buttons[i].name == 'submit' && buttonClick.indexOf('Modal') == -1))
+                    {
+                        buttons[i].className = "btnDisabled";
+    
+                        buttons[i].disabled = true;
+                        buttons[i].type = 'hidden';
+                    }
+                }
+            }
+            catch (e)
+            {
+                var ee = e.message || 0;
+                alert('Error: \n\n' + e + '\n' + ee);
+            }
+          }
+    
+          function refreshList()
+          {
+            window.location.reload();
+          }
+    
+          function submitTO(e)
+          {
+            if (confirm('Are you sure?'))
+            {
+                sforce.connection.sessionId = "{!$Api.Session_ID}";
+                var qr = sforce.connection.query("SELECT Id FROM Attachment where parentId='" + "{!Opportunity.Id}" + "'");
+                var qr2 = sforce.connection.query("SELECT Id FROM Opportunity where CHK_Organized__c = true and Id='" + "{!Opportunity.Id}" + "'");
+                if (qr2.size == 1)
+                {
+                    if (qr.size == 0)
+                    {
+                        alert("{!$Label.Complaint_DDT_error_attachments}");
+                        window.location.reload();
+                    }
+                    else
+                    {
+                        var o = new sforce.SObject("Opportunity");
+                        o.id = "{!Opportunity.Id}";
+                        o.CHK_DDT_added__c = "TRUE";
+    
+                        sforce.apex.execute("ExportOrderTransferData", "convertOrders",
+                        {
+                            toConvertId: "{!Opportunity.Id}"
+                        },
+                        {
+                            onSuccess: refreshList,
+                            onFailure: refreshList
+                        });
+                        loading(true, 'contentLoading', 'contentLoaded');
+                    }
+                }
+                else
+                {
+                    sforce.apex.execute("ExportOrderTransferData", "convertOrders",
+                    {
+                        toConvertId: "{!Opportunity.Id}"
+                    },
+                    {
+                        onSuccess: refreshList,
+                        onFailure: refreshList
+                    });
+                    loading(true, 'contentLoading', 'contentLoaded');
+                }
+    
+            }
+            else
+            {
+                e.StopPropagation();
+            }
+          }
+    
+          function loading(val, contentLoading, contentLoaded)
+          {
+            if (val)
+            {
+                document.getElementById(contentLoading).style.display = 'block';
+                document.getElementById(contentLoaded).style.display = 'none';
+            }
+            else
+            {
+                document.getElementById(contentLoading).style.display = 'none';
+                document.getElementById(contentLoaded).style.display = 'block';
+            }
+          }
+    
+          function makeRequired(item)
+          {
+            document.getElementById(item).required = true;
+          }
+    
+          function showButtons(sbutton, cbutton)
+          {
+            document.getElementById(sbutton).style.display = 'inline';
+            document.getElementById(cbutton).style.display = 'inline';
+          }
+    
+          function hideButtons(sbutton, cbutton)
+          {
+            document.getElementById(sbutton).style.display = 'none';
+            document.getElementById(cbutton).style.display = 'none';
+          }
+    
+          // -------------------
+          // It applies jQuery Chosen style to Select elements
+          // -------------------
+          function chargePickStyle()
+          {
+            $('.applyStyle').chosen(
+            {
+                allow_single_deselect: true,
+                search_contains: true,
+                width: "100%",
+                placeholder_text_single: "{!$Label.Default_pick_list_option}"
+            });
+            
+            $('.chosen-container').addClass('chosen-drop-up');
+            
+            //$('.applyStyle').trigger('chosen:open').trigger('chosen:close');
+            $('.applyStyle').trigger('chosen:close');
+    
+            // -------------------
+            // It makes the dropdown actually drop up when the page edge breaks the dropdown list
+            // -------------------
+            $('.applyStyle').on('chosen:showing_dropdown', function(event, params)
+            {
+                var chosen_container = $(event.target).next('.chosen-container');
+                //var dropdown = chosen_container.find('.chosen-drop');
+                //var dropdown_top = dropdown.offset().top - $(window).scrollTop();
+                //var dropdown_height = dropdown.height();
+                //var viewport_height = $(window).height();
+                
+                var chosen_closed_pos = chosen_container.offset().top - $(window).scrollTop();
+                var chosen_opened_pos = chosen_container.offset().top - $(window).scrollTop() - 255;
+    
+                //if (dropdown_top + dropdown_height > viewport_height)
+                if (chosen_opened_pos < 0)
+                {
+                    chosen_container.removeClass('chosen-drop-up');
+                }
+            });
+    
+            $('.applyStyle').on('chosen:hiding_dropdown', function(event, params)
+            {
+                $(event.target).next('.chosen-container').addClass('chosen-drop-up');
+            });
+          }
+    
+          // -------------------
+          // It disables all siblings buttons - including itself - when clicking on a button
+          // -------------------
+          function disableButtons(a)
+          {
+            $(a).siblings('.btn').andSelf().prop('disabled', true).addClass('btnDisabled');
+          }
+    
+          // -------------------
+          // It enables row selection clicking in any part of the row
+          // -------------------
+          function rowSelection()
+          {
+            $('.btn__delete').prop('disabled', true).addClass('btnDisabled');
+    
+            $('td.dataCell').find(':checkbox:visible').parent('td').parent('tr').addClass('hoverable');
+    
+            $('#contentLoaded2 td.dataCell, #contentLoaded4 td.dataCell').click(function(e)
+            {
+                if ($(e.target).parent().hasClass('chosen-single') || $(e.target).hasClass('active-result') || $(e.target).is(':disabled'))
+                {
+                    e.stopPropagation();
+                }
+                else
+                {
+                    var parent = $(this).parent('tr');
+                    var flag = $(this).parent('tr').find(':checkbox:visible');
+                    if (!flag.is(':disabled') && flag.is(':visible'))
+                    {
+                        if (flag.is(':checked'))
+                        {
+                            flag.prop('checked', false);
+                            parent.removeClass('highlighted');
+                        }
+                        else
+                        {
+                            flag.prop('checked', true);
+                            parent.addClass('highlighted');
+                        }
+                        flag.trigger('change');
+    
+                        var prodLitres = '{!List_products_litres}';
+                        prodLitres = prodLitres.replace("[", "");
+                        prodLitres = prodLitres.replace("]", "");
+                        var prodLitresArray = prodLitres.split(', ');
+    
+                        if (flag.hasClass('flagMultiple') && flag.is(':checked'))
+                        {
+                            disableFields(flag, prodLitresArray);
+    
+                        }
+                        if (flag.hasClass('flagMultiple') && !flag.is(':checked'))
+                        {
+                            parent.find('.fieldInput').prop('disabled', true);
+                            parent.find('.requiredBlock').unwrap().remove();
+                        }
+                    }
+    
+                    toggleDeleteButton();
+                }
+            });
+            $('td.dataCell input, td.dataCell select, td.dataCell select *, td.dataCell a').click(function(e)
+            {
+                e.stopPropagation();
+    
+                if ($(this).hasClass('flagCell'))
+                {
+                    $('.flagCell').each(function()
+                    {
+                        if ($(this).is(':checked')) $(this).parent('td').parent('tr').addClass('highlighted');
+                        else $(this).parent('td').parent('tr').removeClass('highlighted');
+                    });
+    
+                    toggleDeleteButton();
+                }
+            });
+          }
+    
+          // -------------------
+          // It enables or disables the Delete button based on the number of checked flags
+          // -------------------
+          function toggleDeleteButton()
+          {
+            var checked = $('#contentLoaded2').find(':checkbox:visible:checked');
+            if (checked.length > 0)
+                $('.btn__delete').prop('disabled', false).removeClass('btnDisabled');
+            else
+                $('.btn__delete').prop('disabled', true).addClass('btnDisabled');
+          }
+    
+          // -------------------
+          // It checks the required fields when the dropdowns change their values or on loading page
+          // -------------------
+          function checkRequired()
+          {
+            var prodLitres = '{!List_products_litres}';
+            prodLitres = prodLitres.replace("[", "");
+            prodLitres = prodLitres.replace("]", "");
+            var prodLitresArray = prodLitres.split(', ');
+    
+            $('.prodName').each(function()
+            {
+                if(!$(this).closest('tr').hasClass('newLine'))
+                    disableFields($(this), prodLitresArray);
+            });
+    
+            $('.applyStyle').chosen().change(function()
+            {
+                if ($(this).closest('tr').find('.flagMultiple').length == 0 || $(this).closest('tr').find('.flagMultiple').is(':checked'))
+                {
+                    disableFields($(this), prodLitresArray);
+                }
+                var $mapAllocations = jQuery.parseJSON('{!JSENCODE(allocationForProdsJSON)}');
+                var value = $mapAllocations[$(this).val()];
+                $(this).closest('tr').find('td.allocation').text('');
+                $(this).closest('tr').find('td.allocation').text(value);
+
+                console.log($(this).val());
+                console.log($mapAllocations);
+            });
+    
+            $('.flagCell.flagMultiple').click(function()
+            {
+                if ($(this).is(':checked'))
+                {
+                    disableFields($(this), prodLitresArray);
+                }
+                else
+                {
+                    $(this).closest('tr').find('.fieldInput').prop('disabled', true);
+                    $(this).closest('tr').find('.requiredBlock').unwrap().remove();
+                }
+            });
+          }
+          //--------------------
+          // It assign the possible batch values to the product selected
+          //--------------------
+          function chargeBatchs(e)
+          {
+            if ('{!Ord.CHK_Organized__c}' == 'true')
+            {
+                if ($(e).closest('tr').find('.prodName').val() != null && $(e).closest('tr').find('.prodName').val() != '' && $(e).closest('tr').find(".batchStyle") != null)
+                {
+                    var prodName = $(e).closest('tr').find('.prodName').val();
+                    var $mapParentChBatchs = jQuery.parseJSON('{!JSENCODE(batchsForProdsJSON)}');
+                    var values = $mapParentChBatchs[prodName];
+                    var batch = $(e).closest('tr').find('.batchStyle option:selected').text();
+                    $(e).closest('tr').find(".batchStyle").empty();
+                    $(e).closest('tr').find(".batchStyle").append(new Option('{!$Label.Default_pick_list_option}', ''));
+                    for (var i = 0; i < values.length; i++)
+                    {
+                        if (values[i] != '' && values[i] != null && values[i] != batch)
+    
+                        {
+    
+                            $(e).closest('tr').find(".batchStyle").append(new Option(values[i], values[i]));
+    
+                            $(e).closest('tr').find(".batchStyle").data('chosen').allow_single_deselect = false;
+    
+                        }
+                    }
+    
+                    $(e).closest('tr').find(".batchStyle").append(new Option(batch, batch)).prop('selected', true);
+                    $(e).closest('tr').find(".batchStyle").val(batch);
+                    $(e).closest('tr').find(".batchStyle").trigger("chosen:updated");
+                }
+    
+            }
+          }
+          
+          
+          //-------------------
+          // Display available products for italy
+          //-------------------
+          function AvailableProducts()
+          {
+              
+              var Listprod1= Array();
+              var ListProducts = jQuery.parseJSON('{!JSENCODE(productNamesJSON)}');
+
+            $(".product_picker_select:visible .prodName").each(function()
+            {
+                if ($(this).val()!="" && $(this).val()!=null){
+                    Listprod1.push($(this).val());
+                }
+            });
+            $(".product_picker_select:visible .prodName").each(function()
+            {
+                var itemValue = $(this).val();
+                var Listprod2=Array();
+                var ListProd=Array();
+                Listprod2.push.apply(Listprod2, Listprod1);
+                ListProd.push.apply(ListProd, ListProducts);
+                
+                for(var i = Listprod2.length - 1; i >= 0; i--) {
+                    if(Listprod2[i] === $(this).val()) {
+                        Listprod2.splice(i, 1);
+                    }
+                }
+                                
+                for(var i = ListProd.length - 1; i >= 0; i--) {                 
+                    if(Listprod2.indexOf(ListProd[i]) > -1 ) {
+                        ListProd.splice(i, 1);
+                    } 
+                }
+                
+                $(this).empty();
+                $(this).append(new Option('{!$Label.Default_pick_list_option}',''));
+                for (var i = 0; i < ListProd.length; i++)
+                {
+                    if (ListProd[i] != '' && ListProd[i] != null)
+                    {
+                        if(itemValue != '' && itemValue != null && itemValue == ListProd[i] )
+                            $(this).append(new Option(ListProd[i], ListProd[i])).prop('selected', true);
+                        else
+                            $(this).append(new Option(ListProd[i], ListProd[i]));
+                    }
+                }
+                $(this).val(itemValue);
+            });
+            
+            $(".prodName").data('chosen').allow_single_deselect = false;
+            $(".prodName").trigger("chosen:updated");
+          }
+    
+          function showBatchs(e)
+          {
+            if ('{!Ord.CHK_Organized__c}' == 'true')
+            {
+                if ($(e).closest('tr').find('.prodName').val() != null)
+                {
+                    var prodName = $(e).closest('tr').find('.prodName').val();
+    
+                    var $mapParentChBatchs = jQuery.parseJSON('{!JSENCODE(batchsForProdsJSON)}');
+                    var values = $mapParentChBatchs[prodName];
+                    $(e).closest('tr').find(".batchStyle").empty();
+                    $(e).closest('tr').find(".batchStyle").append(new Option('{!$Label.Default_pick_list_option}', ''));
+    
+                    for (var i = 0; i < values.length; i++)
+                    {
+                        if (values[i] != '' && values[i] != null)
+                        {
+                            $(e).closest('tr').find(".batchStyle").append(new Option(values[i], values[i]));
+                            $(e).closest('tr').find(".batchStyle").data('chosen').allow_single_deselect = false;
+                            $(e).closest('tr').find(".batchStyle").trigger("chosen:updated");
+                        }
+                    }
+                }
+            }
+            
+            if ('{!isItaly}' == 'true'){
+                AvailableProducts();
+            }
+            
+          }
+          // -------------------
+          // It disable the corresponding fields based on the product and the type values
+          // -------------------
+          function disableFields(e, prodLitresArray)
+          {
+            var allDropdowns = true;
+    
+            e.closest('tr').find('.applyStyle').each(function()
+            {
+                if ($(this).val() == '' && $(this).closest('td').find('.batchStyle') == null)
+                {
+                    allDropdowns = false;
+    
+                    $(this).closest('td').contents().wrap('<div class="requiredInput">');
+                    $(this).closest('td').find('.requiredInput').prepend('<div class="requiredBlock">');
+                }
+            });
+    
+            if (allDropdowns)
+            {
+                var prodName = e.closest('tr').find('.prodName').val();
+    
+                if (prodName == '' || prodName == null)
+                    prodName = e.closest('tr').find('.prodName').text();
+    
+                prodName = prodName.replace(/,/g, "_");
+                prodName = prodName.replace(/ /g, "_");
+    
+                var Type = e.closest('tr').find('.ProdType').val();
+    
+                e.closest('tr').find('.fieldInput').prop('disabled', false);
+    
+                if ('{!ord.recordType.Name}' == 'Sales Order CP')
+                {
+                    if ($.inArray(prodName, prodLitresArray) > -1 || Type == 'Free of Charge')
+                    {
+                        e.closest('tr').find('.fieldInput.Quantity_In_Palets').prop('disabled', true).val('');
+                        e.closest('tr').find('.fieldInput.Quantity_In_Litres').prop('disabled', false);
+                    }
+                    else if (Type == 'Charged')
+                    {
+                        e.closest('tr').find('.fieldInput.Quantity_In_Litres').prop('disabled', true).val('');
+                        e.closest('tr').find('.fieldInput.Quantity_In_Palets').prop('disabled', false);
+                    }
+                    else
+                    {
+                        e.closest('tr').find('.fieldInput').prop('disabled', true).val('');
+                    }
+                }
+            }
+            else
+            {
+                e.closest('tr').find('.fieldInput').prop('disabled', true).val('');
+            }
+          }
+    
+          // -------------------
+          // It stops propagation if some required field has not been filled out
+          // -------------------
+          function requiredCheck(e)
+          {
+            var result = $('div.requiredInput:visible').find('.applyStyle').filter(function()
+            {
+                return $(this).val() == '';
+            }).closest('td').addClass('fieldRequired').size() == 0;
+            if (!result)
+            {
+                setTimeout(function()
+                {
+                    $('.fieldRequired').removeClass('fieldRequired');
+                }, 400);
+                e.stopPropagation();
+            }
+          }
+    
+          // -------------------
+          // It replaces dots in field values by commas
+          // -------------------
+          function replaceDots()
+          {
+            $('.fieldInput').each(function()
+            {
+                var value = $(this).val();
+                if (value.match(",")){
+                value = value.toString().replace(/\./g, "");
+                }else{
+                value = value.toString().replace(/\./g, ",");
+                }
+                $(this).val(value);
+            });
+          }
+    
+          // -------------------
+          // It triggers the jQuery and Javascript functions again, needed due to DOM changes
+          // Currently not needed because the reRender applies to the whole document, also including javascript functions
+          // -------------------
+          </script>
+          </apex:form>
+            
+        <apex:relatedList list="ProcessSteps" rendered="{!IF(ord.PICK_Status__c='Pending Manager' || ord.PICK_Status__c='Approved',true,false)}" />
+        <apex:relatedList id="attachs" list="CombinedAttachments" subject="{!opportunity}" rendered="{!if(ord.RecordType.name=='Transfer Order' && mode!='addM' && ord.CHK_Organized__c,true,false)}" />
+    </div>
+</apex:page>

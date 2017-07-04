@@ -1,0 +1,171 @@
+<apex:page standardController="Account" extensions="InvoicesController">
+    <style>
+        li{
+            display: inline;
+            margin: 5px 10px;
+            padding: 5px;
+        }
+        span.txt{
+            margin-right: 5px;
+            font-weight: bold;
+        }
+    </style>
+     <style>
+    #spinner{
+        display: none;
+        width:200px;
+        height: 70px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        text-align:center;
+        padding:10px;
+        font:normal 16px Tahoma, Geneva, sans-serif;
+        margin-left: -100px;
+        margin-top: -65px;
+        z-index:2;
+        overflow: auto;
+        border:1px solid #CCC;
+        background-color:white;
+        z-index:100;
+        padding:5px;
+        line-height:20px;
+     }
+     #opaque {
+         position: fixed;
+         top: 0px;
+         left: 0px;
+         width: 100%;
+         height: 100%;
+         z-index: 1;
+         display: none;
+         background-color: gray;
+         filter: alpha(opacity=30);
+         opacity: 0.3;
+         -moz-opacity:0.3;
+         -khtml-opacity:0.3
+     }
+     * html #opaque {
+         position: absolute;
+     }
+  </style>
+    <apex:pageBlock >
+        <apex:form >
+            <ul style="list-style-type: none">
+                <li>
+                    <span class="txt">Division Code</span>
+                    <apex:selectList size="1" value="{!division}">
+                        <apex:selectOptions value="{!lstDivisionCode}"/>
+                    </apex:selectList>
+                </li>
+                <li>
+                    <span class="txt">Sales Org</span>
+                    <apex:selectList size="1" value="{!salesOrg}">
+                        <apex:selectOptions value="{!lstSalesOrg}"/>
+                    </apex:selectList>
+                </li>
+                <li>
+                    <span class="txt">Distribution Channel</span>
+                    <apex:selectList size="1" value="{!distributionChannel}">
+                        <apex:selectOptions value="{!lstDistributionChannel}"/>
+                    </apex:selectList>
+                </li>
+                <li>
+                    <span class="txt">Billing Month</span>
+                    <apex:selectList size="1" value="{!billingDateByMnth}">
+                        <apex:selectOptions value="{!lstMonths}"/>
+                    </apex:selectList>
+                </li>
+                <li>
+                    <span class="txt">Invoice Type Description</span>
+                    <apex:selectList size="1" value="{!invTypeDescr}">
+                        <apex:selectOptions value="{!lstInvTypeDesc}"/>
+                    </apex:selectList>
+                </li>
+                <li>
+                    <apex:actionStatus id="actStatusId" >
+                        <apex:facet name="start" >
+                          <img src="/img/loading.gif" />                    
+                        </apex:facet>
+                    </apex:actionStatus>
+                    &nbsp;
+                    <apex:commandButton action="{!search}" value="Search" rerender="recordSectionInvoice" onclick="showSpinner()" oncomplete="stopspinner()" />                
+                </li>
+                <li style="float: right">
+                    <apex:commandLink value="View Report" onclick="fnOpenSubtab('{!oReport.Id}?pv0={!LEFT(accountId,15)}&pv1=','{!oReport.Name}'); return false;"/>
+                </li>
+            </ul>
+            
+            <apex:pageBlockSection collapsible="false" columns="1" id="recordSectionInvoice">
+                <apex:pageBlockSectionItem rendered="{!IF(lstInvoices.size==0,true,false)}">No records to display</apex:pageBlockSectionItem>
+                <apex:outputPanel rendered="{!IF(lstInvoices.size==0,false,true)}">
+                    <apex:pageBlockTable value="{!lstInvoices}" var="invoice" id="tblResultsInvoice">
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:outputPanel layout="block">
+                                    <apex:image url="{!$Resource.CS_Collapse}" id="btnCollapseAll" style="display:none"/>        
+                                    <apex:image url="{!$Resource.CS_Expand}" id="btnExpandAll"/>
+                                </apex:outputPanel>    
+                            </apex:facet>
+                            <apex:outputpanel id="plusimageSearch">
+                                <apex:image url="{!$Resource.CS_Expand}" onclick="switchMenu('{!$Component.colSubSection}','{!$Component.minusimagesearch}','{!$Component.plusimageSearch}')" title="Expand Invoice LineItems"/>
+                            </apex:outputpanel>
+                            <apex:outputpanel id="minusimagesearch" style="display:none;">
+                                <apex:image url="{!$Resource.CS_Collapse}" onclick="switchMenu('{!$Component.colSubSection}','{!$Component.plusimageSearch}','{!$Component.minusimagesearch}')" title="Collapse Invoice LineItems"/>
+                            </apex:outputpanel>
+                        </apex:column>    
+                        <apex:column headerValue="SAP Invoice Number">
+                            <apex:commandLink value="{!invoice.Name}" onclick="fnOpenSubtab('{!invoice.Id}','{!invoice.Name}'); return false;"/>
+                        </apex:column>
+                        <apex:column value="{!invoice.GC_Payer_Descr__c}" />
+                        <apex:column value="{!invoice.GC_Invoice_Type_Descr__c}" />                
+                        <apex:column value="{!invoice.GC_Invoice_Creation_Date__c}" />
+                        <apex:column value="{!invoice.GC_Invoice_Due_Date__c}" />
+                        <apex:column value="{!invoice.GC_Cash_Application_Date__c}" />
+                        <apex:column value="{!invoice.GC_Order_Number__c}" />
+                        <apex:column value="{!invoice.GC_Total_Inv_Amount_Nbr__c}" />                
+                        <apex:column value="{!invoice.LastModifiedDate}" />
+                        <apex:column value="{!invoice.View_Invoice_PDF__c}" />
+                        <apex:column breakBefore="true" colspan="11" style="display:none;" id="colSubSection" >
+                            <apex:outputpanel id="opSubSectionOrder" >
+                                <c:InvoiceLineItemComponent parentInvoiceId="{!invoice.Id}" parentInvoice="{!invoice}"/>
+                            </apex:outputpanel>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                    
+                    <apex:panelGrid columns="4" id="navLinksInvoice" style="float:left;margin-top:8px">                                     
+                        <apex:commandLink value="«Previous" action="{!previous}" rendered="{!hasPrevious}" reRender="tblResultsInvoice,navLinksInvoice,opSubSectionOrder"/>
+                        <apex:outputText value="«Previous" rendered="{!NOT(hasPrevious)}"/>
+                        <span>|</span>
+                        <apex:commandLink value="Next»" action="{!next}" rendered="{!hasNext}" reRender="tblResultsInvoice,navLinksInvoice,opSubSectionOrder"/>
+                        <apex:outputText value="Next»" rendered="{!NOT(hasNext)}"/>
+                    </apex:panelGrid>
+                    <apex:outputText value="Total records ({!totalRecords})" style="float: right;margin-top: 8px"/>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:form>
+    </apex:pageBlock>
+    <c:ODICommonJSComp />
+      <div id="opaque"/>
+   <div id="spinner">
+        <p align="center" style='{font-family:"Arial", Helvetica, sans-serif; font-size:20px;}'><apex:image value="/img/loading.gif"/>&nbsp;&nbsp;&nbsp;Searching...</p>
+   </div>
+   
+     <script>
+    function showSpinner()
+    {
+       document.getElementById('opaque').style.display='block';
+       var popUp = document.getElementById('spinner');
+      
+       popUp.style.display = 'block';
+    } 
+    
+    function stopspinner()
+    {
+       document.getElementById('opaque').style.display='none';
+       var popUp = document.getElementById('spinner');
+      
+       popUp.style.display = 'none';
+    }
+   </script>
+</apex:page>

@@ -1,0 +1,443 @@
+<apex:page renderAs="{!$CurrentPage.parameters.renderAs}" showHeader="false" standardController="Order__c" extensions="OrderPdfGeneratorExtension" action="{!save}">
+    <head>
+        <style>
+            @page {
+                size: A4 landscape;
+                margin: .4in;
+            }
+            .font_red{
+                color:red;
+            }
+            .font_red_cancel{
+                color:red;
+                
+                font-size:21px;
+            }
+            .back_yellow{
+                background-color: yellow;
+            }
+            .center{
+                text-align:center;
+            }
+            body{
+                font-size:10px;
+            }
+            td.section{
+                font-size:18px;
+                background-color: #c0c0c0;
+                text-align:center;
+            }
+            b{
+                //font-family: Arial,Helvetica,sans-serif;
+                font-weigh: bold;
+                //font-size: 12px;
+            }
+            table {
+                border-width: 1px;
+                border-spacing: 0px;
+                border-style: solid;
+                border-color: black;
+                border-collapse: collapse;
+                background-color: white;
+            }
+            table th {
+                border-width: 1px;
+                padding: 2px;
+                border-style: solid;
+                border-color: black;
+                background-color: white;
+                -moz-border-radius: ;
+            }
+            table td {
+                border-width: 1px;
+                padding: 0px;
+                border-style: solid;
+                border-color: black;
+                background-color: white;
+                overflow:hidden;
+                
+                -moz-border-radius: ;
+            }
+            
+            
+            table.withoutborder,
+            table.withoutborder td,
+            table.withborder table.withoutborder,
+            table.withborder table.withoutborder td{
+                border-width: 0px;
+                //padding: 2px 0px;
+            }
+            
+            table.withborder,
+            table.withborder td,
+            table.withoutborder table.withborder,
+            table.withoutborder table.withborder td{
+                border-width: 1px;
+                padding: 2px 5px;
+            }
+            
+            
+        </style>
+    </head>
+    <apex:pageMessages />
+    <table width="100%" class="withoutborder">
+        <tr>
+            <td colspan="14" align="center"><b>MONSANTO SA (PTY) LTD SEED ORDER AND PURCHASE AGREEMENT ('Agreement')</b></td>
+        </tr><tr>
+            <td colspan="14" align="center">entered into and between: sellers: Monsanto South Africa (Pty) Ltd reg.no. 1968/001485/07 of:  Building no 4, Fourways Office Park, Cnr Roos Str &amp; Fourways Boulevard, Fourways, South Africa (sellers' legal address). </td>
+        </tr>
+    </table>
+        <apex:outputPanel rendered="{!Order__c.Status_RSA__c == 'Cancelled'}">
+        <table width="100%" class="withoutborder">
+        <tr>
+            <td colspan="24" align="right"><font class="font_red_cancel"><b>Cancelled</b></font></td>
+        </tr>
+        </table>
+        </apex:outputPanel>
+    <table width="100%" class="withoutborder">
+        <tr>
+            <td><h2>{!IF(Order__c.recordTypeID == finalRecordType,'Final','Preliminary')} Order</h2></td>
+              <!--  <td colspan="5">&nbsp;</td>
+            <td colspan="2" class="back_yellow font_red center" width="10%">Thobontle</td>
+            <td colspan="5">&nbsp;</td> -->
+            <td><div style="float:right"><h2>{!if(Order__c.Type_RSA__c == 'Tax','FEB SALES',if(Order__c.Type_RSA__c == 'Feb Receipt','FEB RECEIPT',IF(Order__c.Consigned__c==true, 'Consignment', if(Order__c.Type_RSA__c == 'Regular','REGULAR',if(Order__c.Type_RSA__c == 'General','GENERAL','')))))} {!if(Order__c.isIrrigated_RSA__c,'(irrigated)','(non irrigated)')}</h2></div></td>
+        </tr><tr>
+            <td colspan="4" width="35%">
+                <table width="100%" class="withborder" >
+                    <tr>
+                       <td class="section"><b>Details of purchases (including those of his authorised representative) ("purchaser"):</b></td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Purchaser's Monsanto acc.no.:</div>{!Order__c.SAP_Number_copy_RSA__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Purchaser's full name:</div>{!Order__c.Name_copy__c}</td>
+                    </tr>
+                    <!-- <tr>
+                        <td align="right"><div style="float:left;">Purchaser's nick name:</div>{!Order__c.Buyer_Name_copy__c}</td>
+                    </tr> -->
+                    <tr>
+                        <td align="right"><div style="float:left;">Co/CC/Trust reg. No. Of purchaser:</div>{!Order__c.Trust_CC_Mpy_copy_RSA__c} {!Order__c.Trust_CC_Mpy_Value_copy_RSA__c}</td>
+                    </tr><tr>
+                        <td align="right"><div align="left">ID of purchaser:</div><div align="right">{!Order__c.IDNumber_Copy_RSA__c}</div></td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">VAT no.:</div>{!Order__c.VAT_copy__c}</td>
+                    </tr>
+                    <!-- <tr>
+                        <td align="right"><div style="float:left;">Payment Date</div>{!PaymentDate}</td>
+                    </tr> -->
+                    <!-- <tr>
+                        <td align="right"><div style="float:left;">Invoice to (purchaser liable):</div></td>
+                    </tr> -->
+                    <tr>
+                        <td align="right"><div style="float:left;">Coop Name/Number:</div>{!Order__c.CoopName_RSA_copy__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Farm Name/Mag. Distr.:</div>{!Order__c.CoopMember_RSA_copy__c}</td>
+                    </tr><!--<tr>
+                        <td align="right"><div style="float:left;">Co-op. approval no.:</div></td>
+                    </tr>--><tr>
+                        <td align="right"><div style="float:left;">Purchaser's postal address:</div>{!Order__c.PostalAddress_Region_copy_RSA__c}</td>
+                    </tr><tr>
+                    
+                      <!-- <td>
+                            <table width="100%" style="border-width:0px;">-->
+                               <!-- <tr> 
+                                    <td text-align="left" style="border-width:0px;">Village:</td>
+                                    <td width="40%" style="border-width:0px;text-align:center;">{!Order__c.City_copy__c},{!Order__c.StateProvince_copy__c}</td>
+                                    <td style="border-width:0px;">Postcode:</td>
+                                    <td width="40%" style="border-width:0px;text-align:center;">{!Order__c.ZIPPostalCode_copy__c}</td>
+                                </tr>-->
+                               
+                                   <td>
+                                       <div align="left">
+                                           Village: {!Order__c.City_copy__c},{!Order__c.StateProvince_copy__c}
+                                       </div>
+                                 
+                                       <div align="right">
+                                           Postcode: {!Order__c.ZIPPostalCode_copy__c}
+                                       </div>
+                                   </td>                         
+                                           
+                                                  <!--    </table>
+                        </td>-->
+                    </tr><tr>
+                        <td class="center">Address where legal notices can be sent:<br/>Farm name and physical address:           </td>
+                    </tr><tr>
+                        <td>{!Order__c.Buyer_Name_copy__c}</td>
+                    </tr><tr>
+                        <td>{!Order__c.CoopMember_RSA_copy__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Territory segment:</div>{!Order__c.AccountRef_RSA__r.PICK_TERRITORY_SEGMENT__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">E-mail address:</div>{!Order__c.Email_copy__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Magisterial district:</div>{!Order__c.StateProvince_copy__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Office number:</div>{!IF(ISNULL(Order__c.Buyer_Officenumber_Copy_RSA__c),Order__c.Office_number_copy__c,Order__c.Buyer_Officenumber_Copy_RSA__c)}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Contact mobile:</div>{!Order__c.Buyer_MobilePhone_copy__c}</td>
+                    </tr><tr>
+                                                <!--<td align="right"><div style="float:left;">Bank account holder:</div>{!Order__c.BankAccountHolder_copy_RSA__r.Name}</td>-->
+                        <td align="right"><div style="float:left;">Bank account holder:</div>{!Order__c.BankAccountHolder_copy_RSA__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Bank:</div>{!Order__c.Bank_Name_copy_RSA__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Bank Account no.:</div>{!Order__c.Bank_Account_Number_copy_RSA__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Branch name:</div>{!Order__c.Bank_Branch_copy_RSA__c}</td>
+                    </tr>
+                    <!-- <tr>
+                        <td align="right"><div style="float:left;">Branch code:</div></td>
+                    </tr>  -->
+                    <tr>
+                        <td align="right"><div style="float:left;">Sales Agent:</div>{!Order__c.CreatedBy.Name}</td>
+                    </tr><tr>
+                        <td align="right"><div align="left">Cell. no. of sales agent:</div><div style="float:right;"> {!Order__c.CreatedBy.MobilePhone}</div></td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Delivery Date:</div>{!DeliveryDate}</td>
+                    </tr><!--<tr>
+                        <td align="right"><div style="float:left;">Delivery address:</div></td>
+                    </tr><tr>
+                        <td align="right">{!Order__c.ZIPPostalCode_copy__c} {!Order__c.City_copy__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">Technology Agreement no.:</div> - </td>
+                    </tr>--><tr>
+                        <td align="right"><div style="float:left;">GPS co-ordinates LAT (S):</div>{!Order__c.Latitude_copy__c}</td>
+                    </tr><tr>
+                        <td align="right"><div style="float:left;">GPS co-ordinates LON (E):</div>{!Order__c.Longitude_copy__c}</td>
+                    </tr><tr>
+                        <td class="section">(Jointly "the parties")</td>
+                    </tr>
+                    
+                </table>
+            </td>
+            <td colspan="10" width="65%" valign="top">
+                <apex:variable var="rowNumber" value="{!0}"/>
+                <table width="100%" class="withborder">
+                    <tr>
+                        <td colspan="7" class="center">In accordance with which the following seed ('the seed') is to be supplied by sellers to purchaser subject to the terms and
+conditions set out in the attached documents ('the terms'):</td>
+                        <td colspan="1" class="center" width="15%"><br/>ORDER No.<br/>{!Order__c.Name}/{!Order__c.version_Id_RSA__c}</td>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <td>#</td>
+                        <td>SAP Code</td>
+                        <td>Cultivar - Seed Size</td>
+                        <td>Pack</td>
+                        <td>Planting Density</td>
+                        <td>Quantity</td>
+                        <td align="right">Unit Price</td>
+                        <td align="right">Amount</td>
+                    </tr>
+                    <apex:repeat value="{!Order__c.FinalItems__r}" var="finalItem">
+                    <tr>
+                        <td>{!rowNumber+1}</td>
+                        <td>{!actionPlanInfo[finalItem.id].ProductRef__r.ProductSAPCode__c}</td>
+                        <td>{!actionPlanInfo[finalItem.id].ProductRef__r.Name}</td>
+                        <td>{!actionPlanInfo[finalItem.id].ProductRef__r.Product_Packing__c}</td>
+                        <td>{!actionPlanInfo[finalItem.id].PlantingDensity__c}</td>
+                        <td>{!actionPlanInfo[finalItem.id].POG__c}</td>
+                        <td align="right">
+                            <apex:outputText value="R{0,number,###,###,###,###.00}">
+                               <apex:param value="{!actionPlanInfo[finalItem.id].Price_copy__c}"/>
+                            </apex:outputText>     
+                        </td>
+                        <td align="right">
+                             <apex:outputText value="R{0,number,###,###,###,###.00}">
+                               <apex:param value="{!actionPlanInfo[finalItem.id].POG__c * actionPlanInfo[finalItem.id].Price_copy__c}"/>
+                            </apex:outputText>      
+                        </td>
+                    </tr><apex:variable var="rowNumber" value="{!rowNumber+1}"/>
+                    </apex:repeat>
+                    <apex:repeat value="{!Order__c.PreliminaryItems__r}" var="finalItem">
+                    <tr>
+                        <td>{!rowNumber+1}</td>
+                        <td>{!actionPlanInfo[finalItem.id].ProductRef__r.ProductSAPCode__c}</td>
+                        <td>{!actionPlanInfo[finalItem.id].ProductRef__r.Name}</td>
+                        <td>{!actionPlanInfo[finalItem.id].ProductRef__r.Product_Packing__c}</td>
+                        <td>{!actionPlanInfo[finalItem.id].PlantingDensity__c}</td>
+                        <td>{!actionPlanInfo[finalItem.id].Agreed__c}</td>
+                        <td></td>
+                        <td></td>
+                    </tr><apex:variable var="rowNumber" value="{!rowNumber+1}"/>
+                    </apex:repeat>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td> Total: {!orderRecord.BagsQuantity_RSA__c} </td>
+                        <td> </td>
+                        <td></td>
+                    </tr>
+                </table>
+                <table class="withborder">
+                    <tr>
+                        <td class="section"><b>("The Order")</b></td>
+                    </tr><tr>
+                        <td>Purchaser confirms that he is aware of the terms, that  he is authorised to agree to the terms and sign the agreement and that he had sufficient opportunity to study
+and consider the terms prior to signing the agreement, and by signing this document, purchaser confirms that he agrees to the terms and that this is the only basis
+upon which the sellers sell seed to him.  Further, by signing below, purchaser confirms the accuracy of the order set out herein.</td>
+                    </tr><tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px;">
+                            <apex:outputPanel rendered="{!Order__c.recordTypeID == finalRecordType}">
+                                <table width="100%" class="withborder"  style="layout:fixed">
+                                    <tr>
+                                        <th width="65%"  class="center">DELIVERY INSTRUCTIONS / OTHER INSTRUCTIONS</th>
+                                        <th align="center">Type of Disc</th>
+                                        <th align="center">&nbsp;&nbsp;&nbsp;&nbsp;Subtotal&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                        <th align="right">
+                                            <apex:outputText value="R{0,number,###,###,###,###.00}">
+                                                    <apex:param value="{!(Order__c.Price_RSA__c)}"/>
+                                            </apex:outputText>      
+                                        </th>
+                                    </tr><tr> 
+                                        <td rowspan="5" height="80px" style="  position: relative; border:2px solid black;  height: 16px; overflow:hidden;" >  <div style=" padding-left:5px;  background:white; height:77px; width:426px;position: absolute;  top: 0x; left: 0px ; overflow:hidden; font-size:8px"> {!IF(ISNULL(Order__c.AccountRef_RSA__r.Txt_Delivery_Instructions__c),'','Farm:')} {!Order__c.AccountRef_RSA__r.Txt_Delivery_Instructions__c} <br/> Order: <apex:outputField value="{!OrderRecord.DeliveryInstructions__c}"/> </div> </td>
+                                        
+                                        <td style="height:16px;">{!IF(OR(ISNULL(Order__c.EarlyDeliveryDiscount_copy_RSA__c), (Order__c.EarlyDeliveryDiscount_copy_RSA__c==0)),' ','Early Confirmation')}</td>
+                                        <td style="height:16px;" align="right">
+                                        <apex:outputText value="{0,number,0.#}{1}">
+                                           <!--<apex:param value="{!IF(ISNULL(Order__c.EarlyDeliveryDiscount_copy_RSA__c),null,(Order__c.EarlyDeliveryDiscount_copy_RSA__c))}"/>
+                                           <apex:param value="{!IF(ISNULL(Order__c.EarlyDeliveryDiscount_copy_RSA__c),'','% Disc.')}"/>-->
+                                            <apex:param value="{!IF(OR(ISNULL(Order__c.EarlyDeliveryDiscount_copy_RSA__c), (Order__c.EarlyDeliveryDiscount_copy_RSA__c==0)),'',(Order__c.EarlyDeliveryDiscount_copy_RSA__c))}"/>
+                                               <apex:param value="{!IF(OR(ISNULL(Order__c.EarlyDeliveryDiscount_copy_RSA__c), (Order__c.EarlyDeliveryDiscount_copy_RSA__c== 0)),'','% Disc.')}"/>
+                                        </apex:outputText>   
+                                        
+                                        </td>
+                                        <td style="height:16px;" align="right">
+                                            <apex:outputText value="{0}{1,number,###,###,###,###.00}">
+                                                   <!-- <apex:param value="{!IF(ISNULL(Order__c.EarlyDeliveryDiscount_copy_RSA__c),null,'R')}"/>
+                                                    <apex:param value="{!IF(ISNULL(Order__c.EarlyDeliveryDiscount_copy_RSA__c),null,(Order__c.Price_RSA__c * (Order__c.EarlyDeliveryDiscount_copy_RSA__c / 100)))}"/>-->
+                                                    <apex:param value="{!IF(OR(ISNULL(Order__c.EarlyDeliveryDiscount_copy_RSA__c),(Order__c.EarlyDeliveryDiscount_copy_RSA__c ==0)),'', 'R')}"/>
+                                                <apex:param value="{!IF(OR(ISNULL(Order__c.EarlyDeliveryDiscount_copy_RSA__c),(Order__c.EarlyDeliveryDiscount_copy_RSA__c ==0)),'',(Order__c.Price_RSA__c * (Order__c.EarlyDeliveryDiscount_copy_RSA__c / 100)) )}"/>
+                                            </apex:outputText>                                      
+                                        </td>
+                                    </tr><tr>
+                                       
+                                        <td style="height:16px;">{!IF(OR(ISNULL(Order__c.VolumeDiscount_RSA__c), (Order__c.VolumeDiscount_RSA__c==0)),'','Volume')}</td>
+                                        <td style="height:16px;" align="right">                                                      
+                                            <apex:outputText value="{0,number,0.#}{1}">
+                                             <!--  <apex:param value="{!IF(ISNULL(Order__c.VolumeDiscount_RSA__c),null,(Order__c.VolumeDiscount_RSA__c))}"/>
+                                               <apex:param value="{!IF(ISNULL(Order__c.VolumeDiscount_RSA__c),'','% Disc')}"/>-->
+                                               <apex:param value="{!IF(OR(ISNULL(Order__c.VolumeDiscount_RSA__c), (Order__c.VolumeDiscount_RSA__c==0)),'',(Order__c.VolumeDiscount_RSA__c))}"/>
+                                               <apex:param value="{!IF(OR(ISNULL(Order__c.VolumeDiscount_RSA__c), (Order__c.VolumeDiscount_RSA__c== 0)),'','% Disc.')}"/>
+                                            </apex:outputText>                                        
+                                        </td>
+                                        <td style="height:16px;" align="right">
+                                            <apex:outputText value="{0}{1,number,###,###,###,###.00}">
+                                                <apex:param value="{!IF(OR(ISNULL(Order__c.VolumeDiscount_RSA__c),(Order__c.VolumeDiscount_RSA__c ==0)),'', 'R')}"/>
+                                                <apex:param value="{!IF(OR(ISNULL(Order__c.VolumeDiscount_RSA__c),(Order__c.VolumeDiscount_RSA__c ==0)),'',(Order__c.Price_RSA__c * (Order__c.VolumeDiscount_RSA__c / 100)) )}"/>
+                                                    <!--<apex:param value="{!IF(ISNULL(Order__c.VolumeDiscount_RSA__c),null,'R')}"/>
+                                                    <apex:param value="{!IF(ISNULL(Order__c.VolumeDiscount_RSA__c),null,(Order__c.Price_RSA__c * (Order__c.VolumeDiscount_RSA__c / 100)))}"/>-->
+                                                    
+                                            </apex:outputText>                           
+                                        </td>
+      
+                                    </tr><tr>
+                                      
+                                        <td style="height:16px;">{!IF(OR(ISNULL(Order__c.Discretionary_Discount_RSA__c), (Order__c.Discretionary_Discount_RSA__c==0)),'',Reason)}</td>
+                                        <td style="height:16px;" align="right">                                      
+                                            <apex:outputText value="{0,number,0.#}{1}">
+                                             <apex:param value="{!IF(OR(ISNULL(Order__c.Discretionary_Discount_RSA__c), (Order__c.Discretionary_Discount_RSA__c==0)),'',(Order__c.Discretionary_Discount_RSA__c))}"/>
+                                               <apex:param value="{!IF(OR(ISNULL(Order__c.Discretionary_Discount_RSA__c), (Order__c.Discretionary_Discount_RSA__c== 0)),'','% Disc.')}"/>
+                                              <!-- <apex:param value="{!IF(ISNULL(Order__c.Discretionary_Discount_RSA__c),null,(Order__c.Discretionary_Discount_RSA__c))}"/>
+                                               <apex:param value="{!IF(ISNULL(Order__c.Discretionary_Discount_RSA__c),'','% Disc.')}"/>-->
+                                            </apex:outputText>                                        
+                                        </td>
+                                        <td style="height:16px;" align="right">
+                                            <apex:outputText value="{0}{1,number,###,###,###,###.00}">
+                                                 <apex:param value="{!IF(OR(ISNULL(Order__c.Discretionary_Discount_RSA__c),(Order__c.Discretionary_Discount_RSA__c ==0)),'', 'R')}"/>
+                                                <apex:param value="{!IF(OR(ISNULL(Order__c.Discretionary_Discount_RSA__c),(Order__c.Discretionary_Discount_RSA__c ==0)),'',(Order__c.Price_RSA__c * (Order__c.Discretionary_Discount_RSA__c / 100)) )}"/>
+                                                   <!-- <apex:param value="{!IF(ISNULL(Order__c.Discretionary_Discount_RSA__c),null,'R')}"/>
+                                                    <apex:param value="{!IF(ISNULL(Order__c.Discretionary_Discount_RSA__c),null,(Order__c.Price_RSA__c * (Order__c.Discretionary_Discount_RSA__c / 100)))}"/>-->
+                                            </apex:outputText>                                     
+                                        </td>                                         
+                                        
+
+                                    </tr><tr>
+                                      <!--   <td>&nbsp;</td> -->
+                                        <td style="height:16px;">&nbsp;</td>
+                                        <td style="height:16px;" align="center">Subtotal</td>
+                                        <td style="height:16px;" align="right">
+                                            <apex:outputText value="R{0,number,###,###,###,###.00}">
+                                                <apex:param value="{!(Order__c.PriceBeforePayment_RSA__c)}"/>
+                                            </apex:outputText>
+                                         </td>
+                                    </tr> <!-- <tr>
+                                        <td>&nbsp;</td>
+                                        <td>Early Payment</td>
+                                        <td align="right">                                      
+                                            <apex:outputText value="{0,number,0.#}{1}">
+                                               <apex:param value="{!IF(OR(ISNULL(Order__c.EarlyPaymentDiscount_copy_RSA__c),(Order__c.EarlyPaymentDiscount_copy_RSA__c==0)),'',(Order__c.EarlyPaymentDiscount_copy_RSA__c))}"/>
+                                              <apex:param value="{!IF(OR(ISNULL(Order__c.EarlyPaymentDiscount_copy_RSA__c),(Order__c.EarlyPaymentDiscount_copy_RSA__c==0)),'','% Disc.')}"/>
+                                            </apex:outputText>                                        
+                                        </td>
+                                        <td align="right">
+                                           <apex:outputText value="{0}{1,number,###,###,###,###.00}">
+                                                    <apex:param value="{!IF(OR(ISNULL(Order__c.EarlyPaymentDiscount_copy_RSA__c),(Order__c.EarlyPaymentDiscount_copy_RSA__c==0)),'','R')}"/>
+                                                    <apex:param value="{!IF(OR(ISNULL(Order__c.EarlyPaymentDiscount_copy_RSA__c),(Order__c.EarlyPaymentDiscount_copy_RSA__c==0)),'',(Order__c.PriceBeforePayment_RSA__c * (Order__c.EarlyPaymentDiscount_copy_RSA__c / 100)))}"/>
+                                            </apex:outputText>                               
+                                        </td>                                             
+                                    
+                                    <!--<td>&nbsp;</td>
+                                        <td></td>
+                                        <td align="right">                                      
+                                                                                  
+                                        </td>
+                                        <td align="right">
+                                                                      
+                                        </td>       
+                        
+                                    </tr>--><tr>
+                                        <!--  <td>&nbsp;</td>-->
+                                        <td style="height:16px;">&nbsp;</td>
+                                        <td style="height:16px;" align="right">VAT( {!TEXT(Order__c.VAT_RSA__c)} )</td>
+                                      <!-- <td align="right">
+                                            <apex:outputText value="R{0,number,###,###,###,###.00}">
+                                                <apex:param value="{!(Order__c.VATAmount_RSA__c)}"/>
+                                            </apex:outputText>
+                                        </td>-->
+                                        
+                                        <td  style="height:16px;" align="right">
+                                            <apex:outputText value="{0}{1,number,###,###,###,###.00}">
+                                                    <apex:param value="{!IF(OR(ISNULL(Order__c.VATAmount_RSA__c),(Order__c.VATAmount_RSA__c==0)),null,'R')}"/>
+                                                    <apex:param value="{!IF(OR(ISNULL(Order__c.VATAmount_RSA__c),(Order__c.VATAmount_RSA__c==0)),null,(Order__c.VATAmount_RSA__c))}"/>
+                                            </apex:outputText>                                      
+                                        </td>                                             
+
+                                        
+                                    </tr><tr>
+                                        <td style=" height: 16px;" colspan="2">Delivered seed remains the property of sellers, until payment has been received in full</td>
+                                        <td style=" height: 16px;" align="right">TOTAL (price)</td>
+                                        <td style=" height: 16px;" align="right">
+                                            <apex:outputText value="R{0,number,###,###,###,###.00}">
+                                                <apex:param value="{!(Order__c.FinalPrice_RSA__c)}"/>
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </apex:outputPanel>
+                        </td>
+                    </tr><tr>
+                        <td>Further by signing below purchaser and sellers confirm that sellers' quotation regarding the variety, quantum, kernel size and price ('the quotation') has been
+accepted by the purchaser and agreed to by the parties; that the terms have been out and explained to the purchaser, in particular the suretyship provided for, 
+that purchaser understands the terms and conditions and agrees thereto; and that a sales agreement in accordance with the terms (set out on the attached terms and conditions) 
+has been entered into between the parties.  The words on the front apply to the terms and conditions attached.</td>
+                    </tr><tr>
+                        <td><table><tr><td>SIGNATURE:  Signed by the PURCHASER at the acceptance of the quotation, and conclusion of the sale agreement at (district)
+ {!UPPER(Order__c.StateProvince_Copy__c)} On this (date) &nbsp;<apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!Order__c.CreatedDate}" /></apex:outputText> by:
+
+SIGNATURE OF PURCHASER: {!UPPER(Order__c.Buyer_Name_Copy__c)}. Where the purchaser is not a natural person, then
+signature of the purchaser's representative on the agreement, the purchaser's representative binds himself as surety and co-principal debtor
+with the purchaser for the due and punctional payment by the purchaser of any amount that may now or in the future be or become due to the 
+sellers from whatever cause.<br></br>
+This order is subject to the Sales Representative obtaining internal approvals from Monsanto South Africa within 30 days from this order being signed.</td><td align="center">SIGNATURE OF THE BUYER<BR/><apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature != null}" ><img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" height="70px" width="210px" style="max-height:70px; max-width:210px;"/></apex:outputPanel></td></tr></table></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    </apex:page>

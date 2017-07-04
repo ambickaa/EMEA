@@ -1,0 +1,5 @@
+<apex:page standardController="case" extensions="VFC_UnreadWarning" action="{!save}" >
+ <apex:form >
+ <apex:pageMessages />
+ </apex:form>
+</apex:page>

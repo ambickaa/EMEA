@@ -1,0 +1,198 @@
+<apex:page sidebar="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="ru" standardcontroller="Voucher__c" extensions="Voucher_RU_Corn_2017_Controller" applyHtmlTag="false" applyBodyTag="false">
+    
+    <html lang="ru">
+        <head>
+            <meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+            <title>Voucher</title>
+            <style>
+                @page {
+                    size: A4 portrait;
+                    border: 0;
+                    margin: 0;
+                    padding: 0;
+                    
+                    @top-center {
+                        content: element(header);
+                        width: 100%;
+                    }
+                    @bottom-left {
+                        content: element(footer);
+                        width: 100%;
+                    }
+                }
+                body {
+                    margin: 0;
+                    padding: 0;
+                    color: #206082;
+                    font-size: 11.5px;
+                    font-weight: 400;
+                    line-height: 1.15;
+                    font-family: Arial Unicode MS, sans-serif;
+                }    
+                .header {
+                    position: running(header);
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    border-spacing: 0;
+                }
+                .footer {
+                    position: running(footer);
+                    bottom: 0;
+                    width: 100%;
+                    border-spacing: 0;
+                }
+            </style>
+        </head>
+
+        <body style=" margin:0;padding:0; border:0; font-weight:normal;  line-height:1.25; font-size:80%; font-size:10px; vertical-align:baseline; font-family:Arial Unicode MS, sans-serif; background-color:rgb(205,228,238);height:1052px"> 
+
+            <div id="PAGE" style="position:relative; width:794px; height:1122px;">
+                
+                <header>
+                    <apex:image url="{!$Resource.Voucher_RU_CORN_2017_HEADER}" width="100%" />
+                    
+                    <div style="position:absolute; top:14%; right:19.3%; align:right; font-family:sans-serif; font-size:16px; text-align:center; color:#000;"><br/>{!voucher.Name}</div>
+                </header>
+               
+                <footer style="position:absolute; display:block; bottom:-1px; width:794px; height:68px;">
+                    <apex:image url="{!$Resource.Voucher_RU_CORN_2017_FOOTER1}" width="100%" height="100%" style="display:block;"></apex:image>
+                </footer>
+                     
+                <div id="container" style="position:relative; margin:50px 30px; height:740px;">
+                    <div style="margin:0 35px">
+                
+                    <table width="95%; margin: 6px 0; {!IF(status==0,'Display:none','')}">
+                        <tr>                   
+                            <td style="white-space:nowrap;width:20%; color:#000;"></td>
+                            <td style="width: 1px; border: 1px solid rgb(179,0,0); background-color:rgb(179,0,0); color:white; white-space:nowrap; font-size:20px;">отмененный</td>
+                            <td>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <table width="95%">
+                        <tr>                   
+                            <td style="white-space:nowrap;width:20%; color:#000;">Учетная запись/<br/>Название хозяйства</td>
+                            <td style="border: 1px solid #00A3DF; width:80%; font-style:normal; color:#000; white-space:nowrap; background-color:#FFF; font-size:12px">{!voucher.FarmNameCopy__c}&nbsp;</td>
+                        </tr>
+                    </table>
+                    
+                    <table width="95%">    
+                        <tr>
+                            <td style="white-space:nowrap;width:20%; color:#000;">Код СІР</td>
+                            <td style="width:80%;text-align:left; border:0">
+                                <table style="padding:0; margin:0 0 0 -4px;border:0;border-spacing:3px">
+                                <tr>
+                                    <apex:variable value="{!0}" var="counter" />
+                                    <apex:repeat value="{!ListCC}" var="CC">
+                                        <td style="{!IF(counter==2,'','border:1px solid #00A3DF;background-color:#FFF;')} width:1px;padding:0 3px;font-style:normal;color:#000;font-size:12px">{!ListCC[counter]}</td> 
+                                        <apex:variable value="{!counter + 1}" var="counter" />
+                                    </apex:repeat>
+                                    <td style="{!IF(ListCC.size == 0, '', 'display:none')}"></td>
+                                </tr>
+                                </table>
+                            </td>
+                        </tr>                                    
+                    </table>
+                    
+                    <table width="95%">
+                        <tr >                   
+                            <td style="white-space:nowrap; width:20%; color:#000;">Область</td>
+                            <td style="border: 1px solid #00A3DF; width:80%; font-style:normal; color:#000;white-space:nowrap; background-color:#FFF; font-size:12px">{!voucher.AccountRef__r.StateProvince__c}</td>
+                        </tr>
+                    </table>
+                    
+                    <table width="95%">    
+                        <tr>                   
+                            <td style="white-space:nowrap; width:20%; color:#000;">Район</td>
+                            <td style="border: 1px solid #00A3DF; width:80%; font-style:normal; color:#000; white-space:nowrap; background-color:#FFF; font-size:12px">{!voucher.AccountRef__r.County__c}</td>
+                        </tr>
+                    </table>
+                    
+                    <table width="95%">    
+                        <tr>                   
+                            <td style="white-space:nowrap; width:20%; color:#000;">Город</td>
+                            <td style="border: 1px solid #00A3DF; width:80%; font-style:normal; color:#000; white-space:nowrap; background-color:#FFF; font-size:12px">{!voucher.AccountRef__r.City__c}</td>
+                        </tr>
+                    </table>
+                    
+                    <table width="95%">    
+                        <tr>                   
+                            <td style="white-space:nowrap; width:20%; color:#000;">Телефон</td>
+                            <td style="border: 1px solid #00A3DF; width:80%; font-style:normal; color:#000; white-space:nowrap; background-color:#FFF; font-size:12px">{!voucher.PhoneCopy__c}</td>
+                        </tr>
+                    </table>
+                    
+                    <table width="95%">    
+                        <tr>                   
+                            <td style="white-space:nowrap; width:20%; color:#000;">Электронная почта</td>
+                            <td style="border: 1px solid #00A3DF; width:80%; font-style:normal; color:#000; white-space:nowrap; background-color:#FFF; font-size:12px">{!voucher.EmailCopy__c}</td>
+                        </tr>
+                    </table>
+                    
+                    <table width="95%">    
+                        <tr>                   
+                            <td style="white-space:nowrap; width:20%; color:#000;">Дистрибьютор</td>
+                            <td style="border: 1px solid #00A3DF; width:80%; font-style:normal; color:#000; white-space:nowrap; background-color:#FFF; font-size:12px">{!voucher.DistributorNameCopy__c}</td>
+                        </tr>
+                    </table>
+                    
+                    </div>
+
+                    <!--  PRODUCTS DISPLAY -->
+                    <div style="background-color:rgb(205,228,238); position:relative; margin-bottom:20px">
+                    
+                        <div style="position:relative; margin:25px 35px 10px;">
+                            <table style="width:100%; border-collapse: collapse; border-spacing: 0">
+                                <tr>
+                                    <td style="">
+                                        <tr style="background-color: rgb(19,143,199); color:white; font-size:15px">
+                                                <td style="width:50%; border: 2px solid rgb(19,143,199)">Наименование Товара</td>
+                                                <td style="width:50%; border: 2px solid rgb(19,143,199)">Кол-во Mешков</td>
+                                        </tr>
+    
+                                        <apex:repeat value="{!MAP_VLI_Charged}" var="hybridName">   
+                                            <tr>
+                                                    <td style="width:60%; border: 2px solid rgb(19,143,199);background-color:white;text-align: center">{!hybridName}</td>
+                                                    <td style="width:40%; border: 2px solid rgb(19,143,199);background-color:white;text-align: center">{!MAP_VLI_Charged[hybridName].Bags__c}</td>
+                                            </tr>
+                                        </apex:repeat>
+                                        
+                                        <tr>
+                                                <td style="width:60%; border: 2px solid rgb(19,143,199);background-color: rgb(19,143,199); color:white; font-size:15px">Всего</td>
+                                                <td style="width:40%; border: 2px solid rgb(19,143,199);background-color: white; text-align: center">{!voucher.TotalBags__c}</td>
+                                        </tr>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div style="font-size:10px; color:black; margin:10px 0;padding:0 40px;width:100%;text-align: left; width:90%">Группа компаний Монсанто настоящим информирует, что в случае приобретения Вашим Хозяйством не менее <u><span style="color:#0011ff">{!voucher.TotalBags__c}</span></u> мешков<sup>[1]</sup> семян кукурузы товарного знака «Декалб» следующего ассортимента: гибриды DK315, DK391, DK440, DKC2949, DKC2960, DKC3151, DKC3203, DKC3472, DKC3476, DKC3511, DKC3623, DKC3705, DKC3717, DKC3759, DKC3730, DKC3912, DKC3939, DKC4014, DKC4964, DKC5007, DKC5143, DKC5170, DKC5190 (совместно и каждый по отдельности далее – «Товар») у любого уполномоченного дистрибьютора семян товарного знака «Декалб» (далее – «Дистрибьютор»)<sup>[2]</sup> и после предъявления этой справки о скидке (далее - "Справка") по юридическому адресу Дистрибьютора до 1 февраля 2017 года, Хозяйству за каждый Mешок такого Товара может быть начислена скидка в размере <u><span style="color:#0011ff">{!couponInRubbles}</span></u> российских рублей, что составляет <u><span style="color:#0011ff">{!couponInDollars}</span></u> долларов США согласно официальному курсу Центрального банка Российской Федерации на дату этой Cправки.</div>
+
+                    <div style="font-size:10px; color:black; margin:20px 0;padding:0 40px;width:100%;text-align: left; width:90%">Скидка может быть начислена на объем фактически приобретенного Товара непосредственно Дистрибьютором в период до 30 июня 2017 года включительно исключительно после предъявления этой Справки. Указанная скидка определена как скидка от цены без НДС.</div>   
+
+                    <div style="font-size:10px; color:black; margin:20px 0;padding:0 40px;width:100%;text-align: left; width:90%">НАСТОЯЩИЙ ДОКУМЕНТ НЕ ЯВЛЯЕТСЯ ОФЕРТОЙ. КОЛИЧЕСТВО ТОВАРА СО СКИДКОЙ ОГРАНИЧЕНО. ПОЖАЛУЙСТА, ВСЕГДА ПРЕДВАРИТЕЛЬНО ПРОВЕРЯЙТЕ НАЛИЧИЕ ТОВАРА СО СКИДКОЙ У ДИСТРИБЬЮТОРА.</div>     
+                    
+                    
+
+                                        
+                    <div style="position:relative; margin:5px 35px;">
+                        <table width="30%">
+                            <tr>                   
+                                <td style="white-space:nowrap;width:20%; color:#000; text-align:left">Дата</td>
+                                <td style="border: 1px solid #00A3DF; width:20%; font-style:normal; color:#000; white-space:nowrap; background-color:#FFF; font-size:12px; text-align: center"><apex:outputText value="{0, date,dd-MM-yyyy}"> <apex:param value="{!voucher.CreatedDate}"/></apex:outputText>&nbsp;</td>                            
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div style="font-size:9px; color:black;padding:0 40px;width:100%;text-align: left; width:90%"><sup>[1]</sup>мешок содержит 80000 семян кукурузы («Мешок»).</div>
+                    <div style="font-size:9px; color:black;padding:0 40px;width:100%;text-align: left; width:90%"><sup>[2]</sup>За более детальной информацией обращайтесь: www.dekalb.ru</div>
+
+                </div>
+            </div> 
+        </body>
+    </html>   
+</apex:page>

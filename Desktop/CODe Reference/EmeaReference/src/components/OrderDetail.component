@@ -1,0 +1,4 @@
+<apex:component >
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="order" type="Order__c" description="TODO: Describe me"/>
+</apex:component>

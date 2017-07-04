@@ -1,0 +1,38 @@
+<apex:component controller="AccountAcreagesProductListController" allowDML="true" rendered="{!IsList}">
+    <apex:attribute name="mode" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="accountid" type="String" description="TODO: Describe me"/>
+    
+    <apex:form >
+        <apex:variable value="{!0}" var="counter"/>
+        <apex:Pageblock >
+        <apex:pageBlockSection title="{!$Label.AccountAcreageTitle}" columns="1">
+            <apex:pageblockTable value="{!merchandiseManagements}" var="acreage" rendered="{!IsList}">
+                <apex:column rendered="{!IF(mode == 'edit', false, true)}" headerValue="{!'Action'}">
+                    <apex:inputCheckbox value="{!acreage.checked}"/>
+                </apex:column>
+                <apex:column headerValue="Product">
+                    <apex:variable value="{!counter+1}" var="counter"/>
+                    <apex:outputField value="{!acreage.acreage.AcrProductRef__c}" rendered="{!OR(mode == 'view', NOT(acreage.isNewAcreage))}" />
+                    <c:CustomLookupField mode="Sales" accountId="{!accountid}" idField="{!acreage.acreage.AcrProductRef__c}" text="{!acreage.acreage.AcrProductRef__r.Name}" identifier="{!'AcreageCell'&TEXT(counter)}" division="{!$CurrentPage.parameters.division}" rendered="{!AND(mode == 'edit', acreage.isNewAcreage)}">
+                            <apex:inputText styleClass="idField" value="{!acreage.acreage.AcrProductRef__c}"  />
+                    </c:CustomLookupField>
+                </apex:column>
+                <apex:repeat var="fieldSetMember" value="{!AcreageFieldSetManager.acreageFieldMembers}">
+                <apex:column >
+                    <apex:facet name="header">{!fieldSetMember.label}</apex:facet>
+                    <apex:outputField value="{!acreage.acreage[fieldSetMember.fieldPath]}" rendered="{!AND(OR(acreage.isHasPrev, NOT(fieldSetMember.isPrevField)), OR(mode == 'view', fieldSetMember.isReadOnly))}" />
+                    <apex:inputField value="{!acreage.acreage[fieldSetMember.fieldPath]}" rendered="{!AND(NOT(fieldSetMember.isPrevField), mode == 'edit',  NOT(fieldSetMember.isReadOnly))}" required="{!AND(NOT(acreage.isHasPrev), fieldSetMember.required)}" />
+                </apex:column>
+                </apex:repeat>
+            </apex:pageblockTable>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!save}" id="saveButton" value="{!$Label.Save}" rendered="{!IF(mode == 'edit', true, false)}" />
+                <apex:commandButton value="{!IF(mode == 'edit', $Label.SaveNew, $Label.New)}" action="{!newRecord}" />
+                <apex:commandButton action="{!cancel}" id="cancelButton" value="{!$Label.Cancel}" rendered="{!IF(mode == 'edit', true, false)}" immediate="true"/>
+                <apex:commandButton id="editButton" value="{!$Label.Edit}" action="{!Edit}" rendered="{!AND(mode == 'view', isHasElements)}"  />
+                <apex:commandButton action="{!deletex}" id="deleteButton" value="{!$Label.Delete}" rendered="{!AND(mode == 'view', isHasElements)}" />
+            </apex:pageBlockButtons>
+        </apex:Pageblock>
+    </apex:form>
+</apex:component>

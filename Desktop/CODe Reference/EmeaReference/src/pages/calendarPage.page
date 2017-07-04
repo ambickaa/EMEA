@@ -1,0 +1,88 @@
+<apex:page controller="TestCasePageController" id="thePage" sidebar="false" >
+    <style>
+        .vfHelpText a            {position:relative;}
+        .vfHelpText a span       {display: none;}
+        .vfHelpText a:hover span {display: block;
+                                  position:absolute;
+                                  top:1.25em;
+                                  padding:2px 5px;
+                                  left:-15em; width:15em;
+                                  z-index:100;
+                                  border:1px solid orange;
+                                  background-color:#FEFDB9;
+                                  color:black;
+                                 }
+    </style>
+    <apex:form id="theForm">
+        <apex:outputPanel id="theCalendar">
+            <div class="bCalendar" style="margin-left: 15px;">
+                <table class="calendarMonthView" width="100%">
+                    <caption>
+                        <div style="text-align:center;width:100%;">
+                            <apex:outputText value="Selected User: "/>
+                            <apex:selectList value="{!selectedSupporter}" size="1">
+                                <apex:selectOptions value="{!listSupportPeople}"/>
+                            </apex:selectList>
+                            &nbsp;&nbsp;
+                            <apex:commandButton value="Select User" action="{!accessSupporter}" rerender="theCalendar"/>
+                        </div>
+                        <div class="calHeader"> 
+                            
+                            <apex:commandLink action="{!prev}" rerender="theCalendar">
+                                <img title="Previous Month" class="prevCalArrow"
+                                    alt="Previous Month" src="/s.gif" />
+                            </apex:commandLink>
+                            &nbsp;&nbsp;{!month.monthName}&nbsp;&nbsp;
+                                       {!month.yearname}&nbsp;&nbsp;
+                            <apex:commandLink action="{!next}" rerender="theCalendar">
+                                <img title="Next Month" class="nextCalArrow" alt="Next Month"
+                                    src="/s.gif" />
+                                    <apex:outputLink value="#" onclick="javascript:window.print()" style="padding:4px 5px 4px 5px; text-decoration:none;"  >
+                                        <apex:image url="{!$Resource.printer}" title="Print" alt="Print" width="20" height="20" />
+                                    </apex:outputLink>
+                            </apex:commandLink>
+                        </div>
+                    </caption>
+                    <tbody>
+                        <tr class="headerRow">
+                            <th scope="col" class="calDays">Monday</th>
+                            <th scope="col" class="calDays">Tuesday</th>
+                            <th scope="col" class="calDays">Wednesday</th>
+                            <th scope="col" class="calDays">Thursday</th>
+                            <th scope="col" class="calDays">Friday</th>
+                        </tr>
+
+                        <apex:repeat value="{!weeks}" var="wk" id="foreachWeek">
+                            <tr>
+                                <apex:repeat value="{!wk.days}" var="day" id="foreachday">
+                                    <td class="{!day.cssname}" style="border-width: 1px 1px 1px 1px" height="90" valign="top">
+                                        <div class="date">
+                                            {!day.dayofmonth}
+                                        </div>
+
+                                        <div> 
+                                              <apex:repeat value="{!day.casestoday}" var="r"
+                                                id="foreachevent">
+                                                <span style="font-weight:bold">CR Number: </span> <span> <apex:outputLink value="/{!r.record.id}">{!r.record.Module__c}</apex:outputLink> </span><span class="vfHelpText">
+                                                    <apex:outputLink value="javascript:return false;">
+                                                        <img src="/s.gif" alt="" class="helpOrb" />
+                                                        <span>{!r.record.Description__c}</span>
+                                                    </apex:outputLink></span><br /> 
+                                                                                                   
+                                                <span style="font-weight:bold">Assigned to: </span><span >{!r.record.Assigned_to__c}<br /></span>
+                                                <span style="font-weight:bold">Subject: </span><span class="call">{!r.record.Subject__c}<br /></span>
+                                                <br />
+                                            </apex:repeat>
+                                        </div></td>
+                                </apex:repeat> 
+                            </tr>
+
+                        </apex:repeat>
+
+                    </tbody>
+                </table>
+            </div>
+        </apex:outputPanel>
+
+    </apex:form>
+</apex:page>

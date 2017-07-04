@@ -1,0 +1,1 @@
+<apex:page controller="PublicAttachmentController" showHeader="false" sidebar="false" contentType="{!currentAttachment.ContentType}">{!attachmentData}</apex:page>

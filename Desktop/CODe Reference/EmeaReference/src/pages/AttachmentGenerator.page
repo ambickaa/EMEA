@@ -1,0 +1,5 @@
+<apex:page controller="AttachmentGeneratorController" renderAs="pdf" >
+
+<apex:outputText value="{!content}" escape="false" />
+
+</apex:page>

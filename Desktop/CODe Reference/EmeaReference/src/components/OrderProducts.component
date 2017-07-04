@@ -1,0 +1,121 @@
+<apex:component controller="OrderDetailExtensions" allowDML="true"> 
+   <apex:attribute name="mode" type="String" description="TODO: Describe me"/>  
+         
+       <apex:form id="theForm"> 
+       <apex:pageMessages id="messages2"  rendered="true"></apex:pageMessages>                
+        <apex:pageBlock title="Products" id="thePageBlock"> 
+            <div id="spinerId">   
+            <apex:pageBlockTable value="{!OrderProducts}" var="product" id="thePageBlockTable">               
+                   <apex:variable value="{!1}" var="counterRowNum"/ >
+                    <apex:column headerValue="" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                        <apex:inputCheckBox value="{!product.checked}" rendered="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),false,true)}"  />
+                    </apex:column> 
+                   <apex:column headerValue="Product"   styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                        <apex:outputField value="{!product.record.ProductRef__r.Name}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),true,false)}" />
+                        <c:CustomLookupField mode="Sales" accountId="{!product.record.FarmRef__c}" idField="{!product.lookupValue.id}" text="{!product.lookupValue.text}" identifier="{!'SalesCell'&TEXT(counterRowNum)}" consignment="{!isConsigned}" division="{!product.record.ProductRef__r.DivisionRef__c}" catalog="{!product.record.CatalogType_RSA__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),false,true)}">
+                            <apex:inputText styleClass="idField" value="{!product.lookupValue.id}"  />
+                        </c:CustomLookupField>
+                        <apex:variable value="{!counterRowNum + 1}" var="counterRowNum"/>                    
+                    </apex:column>
+                <apex:column styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumnBig','productColumnBig')}">
+                    <apex:outputField value="{!product.record.Forecast__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),true,false)}" id="ForecastTypeDOM"/> 
+                    <apex:inputField value="{!product.record.Forecast__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),false,true)}" id="ForecastInTypeDOM"/>                                       
+                    <apex:facet name="header">Forecast</apex:facet>
+                    <apex:facet name="footer">{!Map_Summarized_Order_Fields['Forecast']}</apex:facet>
+                </apex:column>                     
+                <apex:column styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumnBig','productColumnBig')}">
+                    <apex:outputField value="{!product.record.Agreed__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),true,false)}" id="AgreedTypeDOM"/ > 
+                    <apex:inputField value="{!product.record.Agreed__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),false,true)}" id="AgreedInTypeDOM"/ >                    
+                    <apex:facet name="header">Discussed</apex:facet>
+                    <apex:facet name="footer">{!Map_Summarized_Order_Fields['Agreed']}</apex:facet>
+                </apex:column>                                                            
+                <apex:column rendered="{!isFinal}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumnBig',IF(AND(isFinal,product.record.POG__c==0),'productColumn noStock','productColumnBig'))}"> 
+                    <apex:outputField value="{!product.record.POG__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),true,false)}" id="PoGTypeDOM" /> 
+                    <apex:inputField value="{!product.record.POG__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),false,true)}" id="PoGInTypeDOM" />                     
+                    <apex:facet name="header" >  Ordered </apex:facet>
+                    <apex:facet name="footer">{!Map_Summarized_Order_Fields['POG']}</apex:facet>
+                </apex:column> 
+                  <apex:column styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumnBig','productColumnBig')}">
+                    <apex:outputField value="{!product.record.PlantingDensity__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),true,false)}" id="PlantingDensityTypeDOM"/> 
+                    <apex:inputField value="{!product.record.PlantingDensity__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),false,true)}" id="PlantingDensityInTypeDOM"/> 
+                    <apex:facet name="header">P. Density</apex:facet>
+                </apex:column>                                             
+                <apex:column rendered="{!IF(AND(orderRecord.Type_RSA__c!='Feb Receipt',orderRecord.Type_RSA__c!='General'),true,false)}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                    <apex:outputField value="{!product.record.ProductCatalogEntryRef__r.Price__c}" id="PriceDOM" />  
+                        <apex:facet name="header">Price</apex:facet>
+                </apex:column> 
+                <apex:column rendered="{!IF(orderRecord.Type_RSA__c='General',true,false)}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                    <apex:outputField value="{!product.record.ProductCatalogEntryRef__r.NUM_PriceGeneral__c}" id="PriceGenDOM" />  
+                        <apex:facet name="header">Price</apex:facet>
+                </apex:column> 
+                <apex:column rendered="{!IF(orderRecord.Type_RSA__c='Feb Receipt',true,false)}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                    <apex:outputField value="{!product.record.ProductCatalogEntryRef__r.PriceOld__c}" id="PriceOldDOM" />  
+                        <apex:facet name="header">Price</apex:facet>
+                </apex:column>                                             
+                <apex:column styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow','')}">
+                    <apex:outputField value="{!product.record.DistributorRef__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),true,false)}" id="DistTypeDOM"/> 
+                    <apex:inputField value="{!product.record.DistributorRef__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),false,true)}" id="DistInTypeDOM"/> 
+                    <apex:facet name="header">Distributor</apex:facet>
+                </apex:column> 
+                <apex:column styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow','')}">
+                    <apex:outputField value="{!product.record.PoS__c}"  rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),true,false)}" id="PoSTypeDOM"/> 
+                    <apex:inputField value="{!product.record.PoS__c}" rendered="{!IF(OR(NOT(editMode),NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),false,true)}" id="PoSInTypeDOM"/> 
+                    <apex:facet name="header">PoS</apex:facet>
+                </apex:column>                 
+                 <apex:column styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                    <apex:outputField value="{!product.record.Ultrashort_Irrigation_RSA__c}" id="USSIDOM" />  
+                        <apex:facet name="header">Irrigation</apex:facet>
+                </apex:column>
+                 <apex:column rendered="{!IF(AND(OR(orderRecord.Type_RSA__c='Tax',orderRecord.Type_RSA__c='General'),NOT(isConsigned)),true,false)}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn',IF(AND(isFinal,product.record.POG__c==0),'productColumn noStock','productColumn'))}">
+                        <apex:facet name="header">Stock left</apex:facet>
+                         <a href="javascript:;" onclick="javascript:popUpStock('/apex/StockDetail?id={!product.record.GlobalStock_RSA__c}');">{!product.record.GlobalStock_RSA__r.TaxStockLeft_RSA__c}</a>                                                               
+                </apex:column>
+                 <apex:column rendered="{!IF(AND(NOT(orderRecord.Type_RSA__c='Tax'),NOT(orderRecord.Type_RSA__c='General'),NOT(isConsigned)),true,false)}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                        <apex:facet name="header">Stock left</apex:facet>
+                         <a href="javascript:;" onclick="javascript:popUpStock('/apex/StockDetail?id={!product.record.GlobalStock_RSA__c}');">{!product.record.GlobalStock_RSA__r.StockLeft_RSA__c}</a>                                               
+                </apex:column>                   
+                 <apex:column rendered="{!IF(AND(OR(orderRecord.Type_RSA__c='Tax',orderRecord.Type_RSA__c='General'),NOT(isConsigned)),true,false)}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn',IF(AND(isFinal,product.record.POG__c==0),'productColumn noStock','productColumn'))}">
+                        <apex:facet name="header">Hybrid Left</apex:facet>
+                        <a href="javascript:;" onclick="javascript:popUpStock('/apex/HybridDetail?id={!product.record.GlobalStock_RSA__r.HybridRef__c}');">{!product.record.GlobalStock_RSA__r.HybridRef__r.TaxStockleft__c}</a>                                                               
+                </apex:column>
+                 <apex:column rendered="{!IF(AND(NOT(orderRecord.Type_RSA__c='Tax'),NOT(orderRecord.Type_RSA__c='General'),NOT(isConsigned)),true,false)}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                        <apex:facet name="header">Hybrid Left</apex:facet>
+                        <a href="javascript:;" onclick="javascript:popUpStock('/apex/HybridDetail?id={!product.record.GlobalStock_RSA__r.HybridRef__c}');">{!product.record.GlobalStock_RSA__r.HybridRef__r.Stockleft__c}</a>                                               
+                </apex:column>
+                 <apex:column rendered="{!IF(isConsigned,true,false)}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                        <apex:facet name="header">Stock Left</apex:facet>
+                        <a href="javascript:;" onclick="javascript:popUpStock('/apex/WareHouseDetail?id={!product.record.ConsignedWarehouseRef__c}');">{!product.record.ConsignedWarehouseRef__r.StockLeft__c}</a>                                               
+                </apex:column>                
+                 <apex:column rendered="{!NOT(isFinal)}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                    <apex:outputLink id="FinalDOM" value="/{!product.record.FinalOrderRef_RSA__c}" >{!product.record.FinalOrderRef_RSA__r.Name}</apex:outputLink> 
+                    <apex:facet name="header">Final Order</apex:facet>
+                </apex:column>
+                <apex:column rendered="{!isFinal}" styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                    <apex:outputLink id="PreliminaryDOM" value="/{!product.record.PreliminaryOrderRef_RSA__c}" >{!product.record.PreliminaryOrderRef_RSA__r.Name}</apex:outputLink>
+                    <apex:facet name="header">Preliminary</apex:facet>
+                </apex:column>                                               
+                 <apex:column styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                    <apex:outputField value="{!product.record.LastModifiedBy.Name}" id="LastModifiedDOM" />  
+                        <apex:facet name="header">Last Modified By</apex:facet>
+                </apex:column>
+                <apex:column styleClass="{!IF(OR(NOT(isAdmin),OrderRecord.Status_RSA__c=='Cancelled',OrderRecord.Status_RSA__c=='Waiting for discount approval',AND(product.record.FinalOrderRef_RSA__c!=null,NOT(isFinal))),'disRow productColumn','productColumn')}">
+                        <apex:facet name="header">Last Modified Date</apex:facet>
+                     <!--  <a href="javascript:;" onclick="javascript:popUpHistory('/apex/TacticalPlanElementHistory?id={!product.record.id}');">-->
+                        <apex:outputField value="{!product.record.LastModifiedDate}"/>
+                     <!-- </a -->                                    
+                </apex:column>
+            </apex:pageBlockTable> 
+            </div>  
+            <apex:pageBlockButtons > 
+                <apex:actionStatus id="loadingStocks" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>                   
+                <apex:commandButton value="Add" action="{!Add}" id="addButton" reRender="thePageBlock,messages2" status="loadingStocks" rendered="{!AND(isAdmin,OrderRecord.Status_RSA__c!='Cancelled',OrderRecord.Status_RSA__c!='Waiting for discount approval')}"/>                
+                <apex:commandButton value="Save" action="{!Save}" id="saveButton" onclick="popupSpinner('spinerId');" rerender="{!IF(reloadPage,'messages2,detailId,theForm,thePageBlockTable','messages2,theForm,thePageBlockTable')}" oncomplete="{!IF(reloadPage,'window.location.reload(true);','popupSpinnerClose();')}" rendered="{!AND(editMode,isAdmin,OrderRecord.Status_RSA__c!='Cancelled',OrderRecord.Status_RSA__c!='Waiting for discount approval')}"/>
+                <apex:commandButton value="Delete" action="{!DeleteAll}" id="deleteButton" onclick="popupSpinner('spinerId');" rerender="messages2,detailId,theForm" oncomplete="{!IF(reloadPage,'window.location.reload(true);','popupSpinnerClose();')}" rendered="{!AND(showEditDelete,OR(AND(NOT(isFinal),showEditDelete),isFinal),isAdmin,OrderRecord.Status_RSA__c!='Cancelled',OrderRecord.Status_RSA__c!='Waiting for discount approval')}"/>
+                <apex:commandButton value="Cancel" action="{!Cancel}" id="cancelButton" reRender="thePageBlock"  rendered="{!AND(editMode,isAdmin,OrderRecord.Status_RSA__c!='Cancelled',OrderRecord.Status_RSA__c!='Waiting for discount approval')}"/>              
+                <apex:commandButton value="Edit" action="{!Edit}" id="editButton"  reRender="thePageBlock" rendered="{!AND(OR(AND(NOT(isFinal),showEditDelete),isFinal),NOT(editMode),isAdmin,OrderRecord.Status_RSA__c!='Cancelled',OrderRecord.Status_RSA__c!='Waiting for discount approval')}"/>              
+                <apex:commandButton value="Switch Irrigation" action="{!doSwitch}" onclick="popupSpinner('spinerId');" rendered="{!AND(showSwitcher, NOT(editMode))}" oncomplete="window.location.reload(true);" />
+            </apex:pageBlockButtons> 
+        </apex:pageBlock> 
+    </apex:form>
+    
+</apex:component>

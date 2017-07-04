@@ -1,0 +1,5 @@
+<apex:page >
+
+    <script>window.open("{!$Label.Global_Instance_URL}","_blank")</script>
+    
+</apex:page>

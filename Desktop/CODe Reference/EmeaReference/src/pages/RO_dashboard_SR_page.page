@@ -1,0 +1,62 @@
+<apex:page standardController="Account" extensions="BarChartController">
+    <apex:pageBlock title="Sales Summary" rendered="{!UserProfile='00eD00000012jq7'}">
+        <apex:form styleClass="enhanced_charts">
+            <apex:panelGroup >                
+    <apex:pageBlockSection columns="2">
+        
+         <apex:sectionHeader title="Volume by Status"/>
+         <style>
+         body .enhanced_charts .bPageTitle .ptBody h1.noSecondHeader{ font-size: 15px }
+         .individualPalette .accountBlock .enhanced_charts .secondaryPalette{
+             background-color:transparent;
+             border-color:transparent;
+        }
+        .individualPalette .accountBlock .enhanced_charts .secondaryPalette img{
+             display: none
+        }
+         </style>
+         <p></p>
+        <apex:chart Name="Volume by Status" data="{!dataVolumeByStatus}" width="500" height="380px">
+            <apex:legend position="bottom"/>
+            <apex:axis type="Numeric" position="left" grid="false" fields="forecast,agreed,pog,budget,MS" dashSize="2" minimum="0" title="Quantity"><apex:chartLabel /></apex:axis>
+            <apex:axis type="Category" position="bottom"  fields="acc" ></apex:axis>              
+            <apex:barSeries orientation="vertical" axis="left" stacked="false" xField="acc" yField="budget,forecast,agreed,pog,MS"/>
+        </apex:chart>
+            
+            <p><hr></hr><pre><font size="2.5" style="font-family:verdana"> <b>{!UserName}'s Farms: </b>  Retention = {!dataVolumeByStatus[0].retention} % ||  Penetration = {!dataVolumeByStatus[0].penetration} % ||  Inventory = {!dataVolumeByStatus[0].inventory}</font></pre><hr></hr></p>
+
+         <apex:sectionHeader title="Crop Size"/>
+         <p></p>
+        <apex:chart name="Crop Size" data="{!Farm}" width="500" height="380px">
+            <apex:legend position="bottom"/>
+            <apex:axis type="Numeric" position="left" grid="false" fields="forecast,agreed,pog,MS" dashSize="2" minimum="0" title="Quantity"><apex:chartLabel /></apex:axis>
+            <apex:axis type="Category" position="bottom"  fields="acc" ></apex:axis>
+            <apex:barSeries orientation="vertical" axis="left" stacked="false" xField="acc" yField="forecast,agreed,pog,MS"/>
+        </apex:chart>
+        
+            <p><hr></hr><pre><font size="2.5" style="font-family:verdana"><b>Small Crop Farms: </b>   Retention = {!Farm[0].retention} % ||  Penetration = {!Farm[0].penetration} % || Inventory = {!Farm[0].inventory}</font></pre><hr></hr></p>
+            
+            <p><hr></hr><pre><font size="2.5" style="font-family:verdana"><b>Medium Crop Farms: </b>    Retention = {!Farm[1].retention} % ||  Penetration = {!Farm[1].penetration} % || Inventory = {!Farm[1].inventory}</font></pre><hr></hr></p>
+            
+            <p><hr></hr><pre><font size="2.5" style="font-family:verdana"><b>Key Crop Farms: </b>  Retention = {!Farm[2].retention} % ||  Penetration = {!Farm[2].penetration} % || Inventory = {!Farm[2].inventory}</font></pre><hr></hr></p>
+
+       <apex:sectionHeader title="Product Mix"/>
+        <p></p>
+       <apex:chart name="Product Mix" data="{!ProdMix}" width="500" height="380px">
+            <apex:legend position="bottom"/>
+            <apex:axis type="Numeric" position="left" grid="false" fields="forecast,agreed,pog" dashSize="2" minimum="0" title="Quantity"><apex:chartLabel /></apex:axis>
+            <apex:axis type="Category" position="bottom"  fields="acc" ></apex:axis>
+            <apex:barSeries orientation="vertical" axis="left" stacked="false" xField="acc" yField="forecast,agreed,pog"/>
+        </apex:chart>
+        
+            <p><hr></hr><pre><font size="2.5" style="font-family:verdana"><b>Clasic OSR: </b>   Inventory = {!ProdMix[0].inventory}</font></pre><hr></hr></p>
+            
+            <p><hr></hr><pre><font size="2.5" style="font-family:verdana"><b>Clearfield OSR: </b>   Inventory = {!ProdMix[1].inventory}</font></pre><hr></hr></p>
+      
+    </apex:pageBlockSection>
+        
+        </apex:panelGroup>
+            
+        </apex:form>
+    </apex:pageBlock>
+</apex:page>

@@ -1,0 +1,39 @@
+<apex:page sidebar="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="it" standardcontroller="Voucher__c" extensions="VoucherItaly2015Controller">
+    <html lang="it" style="margin:0; padding:0;" >
+    <head>
+        <style>
+            @page {
+              size: A4 portrait;
+              margin: 0px;
+              padding: 0px;
+              border: 0px;}
+        </style>
+    </head>
+    <body style="margin:20px 60px; padding: 0; border: 0; font-weight: normal; font-style: normal; font-size: 100%; font-size:13px; line-height:1.2em; vertical-align: baseline; text-decoration: none;font-family:sans-serif;"> 
+         
+        <div style=" page-break-inside: avoid; padding:10px; padding-left:30px;  border: 0px; font-weight: normal; font-style: normal; font-size: 100%; vertical-align: baseline; text-decoration: none;font-family: 'Sans-serif';">
+            <div style="font-weight: bold; padding-bottom: 0px; padding-top:60px; margin-bottom: 0px; font-size:115%; width:100%; text-align:center; vertical-align: baseline; text-decoration:none;" >Programma di semina sicura 2015</div>
+            <div style="text-align:justify; padding-top:20px"><span>Monsanto Agricoltura Italia SPA si impegna a rifornire gratuitamente il seme per la risemina nel caso in cui condizioni climatiche particolarmente sfavorevoli o attacchi fungini non garan- tiscano una nascita regolare e determinino un investimento finale inferiore a 4,5 piante/m2.</span><span style="font-weight:bold"> La fornitura di seme gratuito avverrà secondo le condizioni sotto riportate.</span></div> 
+            <div style="font-weight: bold; padding-bottom: 0px; margin-bottom: 0px; font-size:115%;  width:100%; text-align:center; vertical-align: baseline; text-decoration:none;padding-top:20px" >CONDIZIONI GENERALI DEL PROGRAMMA "SEMINA SICURA DEKALB 2015"</div>
+            <div style="font-weight: bold; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;padding-top:20px" >• Il presente programma di risemina ha validità solo se firmato entro il 28 febbraio 2015;</div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• L'acquisto minimo dovrà essere di 10 (dieci) sacchi da 25.000 semi di mais DEKALB; </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Gli ibridi mais DEKALB acquistati e coperti dal programma sono quelli indicati nel presente Piano Di Raccolta (eventuali variazioni andranno concordate con il tecnico di zona); </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Per attivare il programma, la semina degli ibridi indicati nel presente Piano Di Raccolta dovrà avvenire entro il 30 maggio 2015 e seguire le buone pratiche agronomiche (umidità, temperatura, condizioni del terreno e profondità adeguate);</div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Il programma di risemina copre le eventuali risemine di mais fino allo stadio massimo di 6 foglie vere;</div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Per attivare il programma occorre consegnare la copia indicata come "rivenditore" del presente Piano Di Raccolta al rivenditore presso il quale sarà effettuato l'acquisto del seme; </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Ai fini dell'attivazione e della gestione del programma, il firmatario del Presente Piano Di Raccolta autorizza Monsanto Agricoltura Italia, a visionare o richiedere le prove di acquisto al rivenditore segnalato nel presente Piano Di Raccolta per le dosi indicate nel Piano stesso.</div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Nel caso in cui ci siano potenziali condizioni di risemina e quindi di applicazione del programma occorre contattare il tecnico di zona per permettere di effettuare un sopraluogo in maniera tempestiva; </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• L'agricoltore si impegna a conservare il presente Piano Di Raccolta in originale e le prove d'acquisto (bolla o fattura) del seme e consegnarle al tecnico di zona nel caso in cui venga fatta richiesta di risemina; </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Il seme per la risemina sarà fornito a titolo gratuito solo ed unicamente se il tecnico di zona DEKALB avrà autorizzato l'applicazione del programma dopo il sopraluogo, valutando la conve- nienza tecnico-economica dell'operazione di risemina;</div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Il seme concordato per la risemina sarà consegnato dal tecnico di zona o dal rivenditore di riferimento solo nel caso in cui venisse previsto dal tecnico stesso; </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Per la risemina sarà fornito lo stesso ibrido oggetto di Piano Di Raccolta, salvo disponibilità. Qualora l'ibrido non fosse disponibile, sarà sostituito con quello tecnicamente più simile, se disponibile. </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Il seme fornito a titolo gratuito andrà utilizzato per la risemina entro fine giugno 2015, e dovrà essere utilizzato per lo stesso campo ove si siano verificate le condizioni di risemina; in nessun caso il seme potrà essere ceduto o trasferito a terzi; </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Il seme totale concordato per la risemina non potrà mai superare i 100 sacchi da 25.000 semi. </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Il programma non prevede in alcun caso risarcimenti monetari, anche in mancanza di disponi- bilità di seme per la risemina; </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Per rendere attivo il programma occorre compilare il Piano Di Raccolta in tutte le sue parti e il nostro modulo di Consenso al Trattamento dati Personali (Privacy) se non già completato e consegnato; </div>
+            <div style="font-weight: normal; padding-bottom: 0px; margin-bottom: 0px; width:100%; text-align:justify; vertical-align: baseline; text-decoration:none;" >• Tale programma non è applicabile per circostanze diverse da quelle indicate nelle condizioni di cui sopra. </div>
+        </div>
+
+    </body>
+    </html>   
+</apex:page>

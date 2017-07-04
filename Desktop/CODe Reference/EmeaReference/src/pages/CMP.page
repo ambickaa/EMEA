@@ -1,0 +1,1477 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" applyBodyTag="true" applyhtmlTag="true" controller="CMP_Controller">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Case Management Portal</title>
+    
+    <!-- Import Stylesheets -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css"/>
+    
+    <!-- Styles -->
+    <style type="text/css">
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        main {
+            flex: 1 0 auto;
+        }
+        pre {
+            white-space: normal!important
+        }
+        header, main, footer, .fullscreen {
+            padding-left: 240px
+        }
+        @media only screen and (max-width : 992px) {
+          header, main, footer, .fullscreen {
+            padding-left: 0!important
+          }
+        }
+        nav, nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i {
+            height: auto;
+            line-height: 1
+        }
+        nav a.button-collapse i {
+            font-size: 1.75rem;
+            margin-right: 10px;
+        }
+        html {
+            overflow-y: scroll!important;
+            font-size: .9em
+        }
+        .page-footer {
+            background-color: #778899!important;
+            opacity: 0
+        }
+        .container {
+            max-width: 100%;
+        }
+        @media only screen and (min-width: 993px) {
+            .container {
+                width: 80%;
+            }
+        }
+        a.clickable {
+            cursor: pointer;
+        }
+        a.link {
+            cursor: pointer;
+            text-decoration: none!important;
+            border-bottom: 1px solid transparent;
+            transition: border-color .15s ease-in
+        }
+        a.btn {
+            text-decoration: none!important
+        }
+        a.link:hover,
+        a.link[href^="http://"]:hover,
+        a.link[href^="mailto:"]:hover,
+        a.link[href^=".."]:hover,
+        a.link[href^="/"]:hover {
+            border-color: initial
+        }
+        input[type=text]:focus:not([readonly]),
+        input[type=password]:focus:not([readonly]),
+        input[type=email]:focus:not([readonly]),
+        input[type=url]:focus:not([readonly]),
+        input[type=time]:focus:not([readonly]),
+        input[type=date]:focus:not([readonly]),
+        input[type=datetime-local]:focus:not([readonly]),
+        input[type=tel]:focus:not([readonly]),
+        input[type=number]:focus:not([readonly]),
+        input[type=search]:focus:not([readonly]),
+        textarea.materialize-textarea:focus:not([readonly]) {
+            border-bottom: 1px solid #1976d2;
+            box-shadow: 0 1px 0 0 #1976d2;
+        }
+        input[type=text]:focus:not([readonly])+label,
+        input[type=password]:focus:not([readonly])+label,
+        input[type=email]:focus:not([readonly])+label,
+        input[type=url]:focus:not([readonly])+label,
+        input[type=time]:focus:not([readonly])+label,
+        input[type=date]:focus:not([readonly])+label,
+        input[type=datetime-local]:focus:not([readonly])+label,
+        input[type=tel]:focus:not([readonly])+label,
+        input[type=number]:focus:not([readonly])+label,
+        input[type=search]:focus:not([readonly])+label,
+        textarea.materialize-textarea:focus:not([readonly])+label {
+            color: #1976d2;
+        }
+        .bold-300 { font-weight: 300!important }
+        .bold-400 { font-weight: 400!important }
+        .bold-500 { font-weight: 500!important }
+        .bold-600 { font-weight: 600!important }
+        .side-nav,
+        .side-nav.fixed {
+            background-color: #172561!important;
+            box-shadow: none!important;
+        }
+        .side-nav .side-nav-li-inactive {
+            color: #333;
+            padding: 0 15px 0 25px;
+            margin-bottom: 15px;
+            overflow: hidden
+        }
+        .side-nav .side-nav-li-inactive:hover {
+            background-color: inherit;
+            background-color: initial
+        }
+        .side-nav .side-nav-li-inactive span {
+            line-height: 1.2rem;
+            padding: .1rem 0;
+            clear: both;
+            max-width: 200px
+        }
+        .side-nav__img {
+            margin: 2.2rem 0 1.2rem;
+            width: 120px;
+            height: 120px;
+            background: #ddd;
+            background-size: contain;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+        .side-nav li a {
+            text-decoration: none!important;
+            line-height: 3.5rem;
+            padding: 0 10px;
+            height: auto
+        }
+        .side-nav li:hover {
+            background-color: #2b3d84
+        }
+        .side-nav li a i.left {
+            line-height: inherit
+        }
+        i.left.aligned {
+            line-height: inherit
+        }
+        h6 {
+            line-height: 120%
+        }
+        table th {
+            font-weight: 500
+        }
+        table:not(.table__fixed) > tbody > tr > td {
+            padding: 8px 4px
+        }
+        table:not(.table__fixed) > thead > tr > th {
+            font-size: 1.1em;
+            padding: 12px 4px
+        }
+        table:not(.table__fixed) > tbody > tr > td:first-child,
+        table:not(.table__fixed) > thead > tr > th:first-child {
+            padding-left: 11px
+        }
+        table:not(.table__fixed) > tbody > tr > td:last-child,
+        table:not(.table__fixed) > thead > tr > th:last-child {
+            padding-right: 11px
+        }
+        table > tbody > tr:not(:last-child) > td,
+        table > tbody > tr:last-child > td:not(:first-child):not(:last-child),
+        table > thead > tr > th:not(:first-child):not(:last-child) {
+            border-radius: 0
+        }
+        table td:not(.ui-sortable-handle) > i,
+        table th:not(.ui-sortable-handle) > i {
+            cursor: default
+        }
+        .handle__icon.no-sortable > i {
+            display: none!important
+        }
+        .collection .collection-item {
+            padding: .75rem
+        }
+        .no-margin-top { margin-top: 0!important }
+        .no-margin-bottom { margin-bottom: 0!important }
+        .table-touchable {
+            font-size: .88em
+        }
+            .table-touchable > thead {
+                border-color: transparent
+            }
+            .table-touchable > tbody {
+                position: relative
+            }
+            .table-touchable > tbody::before {
+                content: '';
+                position: absolute;
+                top: initial;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background-color: #bbdefb
+            }
+            .table-touchable > tbody > tr > td {
+                border-top: 1px solid #efefef;
+                border-bottom: 1px solid #efefef;
+                white-space: nowrap
+            }
+            .table-touchable.rating__none > tbody > tr > td {
+                border-color: #b3e5fc
+            }
+            .td__fixed > div {
+                width: 100%;
+                height: 100%;
+                position: relative
+            }
+            .td__fixed > div::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 20%;
+            }
+            .td__fixed.white > div::after {
+                background: rgba(255,255,255,0);
+                background: -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 80%, rgba(255,255,255,1) 100%);
+                background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,0)), color-stop(80%, rgba(255,255,255,1)), color-stop(100%, rgba(255,255,255,1)));
+                background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 80%, rgba(255,255,255,1) 100%);
+                background: -o-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 80%, rgba(255,255,255,1) 100%);
+                background: -ms-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 80%, rgba(255,255,255,1) 100%);
+                background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 80%, rgba(255,255,255,1) 100%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
+            }
+            .td__fixed.light-blue.lighten-6 > div::after {
+                background: rgba(244,251,255,0);
+                background: -moz-linear-gradient(left, rgba(244,251,255,0) 0%, rgba(244,251,255,1) 80%, rgba(244,251,255,1) 100%);
+                background: -webkit-gradient(left top, right top, color-stop(0%, rgba(244,251,255,0)), color-stop(80%, rgba(244,251,255,1)), color-stop(100%, rgba(244,251,255,1)));
+                background: -webkit-linear-gradient(left, rgba(244,251,255,0) 0%, rgba(244,251,255,1) 80%, rgba(244,251,255,1) 100%);
+                background: -o-linear-gradient(left, rgba(244,251,255,0) 0%, rgba(244,251,255,1) 80%, rgba(244,251,255,1) 100%);
+                background: -ms-linear-gradient(left, rgba(244,251,255,0) 0%, rgba(244,251,255,1) 80%, rgba(244,251,255,1) 100%);
+                background: linear-gradient(to right, rgba(244,251,255,0) 0%, rgba(244,251,255,1) 80%, rgba(244,251,255,1) 100%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4fbff', endColorstr='#f4fbff', GradientType=1 );
+            }
+            .table__fixed {
+                table-layout: fixed
+            }
+                .table__fixed td {
+                    padding: 0;
+                    white-space: nowrap;
+                    overflow: hidden;
+                }
+        .ui-state-highlight {
+            opacity: 0
+        }
+        .ui-sortable-handle {
+            cursor: pointer;
+        }
+        .ui-sortable-handle.disabled {
+            cursor: default;
+        }
+            .ui-sortable-handle.disabled > i.grey-text.text-lighten-1,
+            .ui-sortable-handle.disabled:hover > i.grey-text.text-lighten-1 {
+                color: #efefef!important
+            }
+        .ui-sortable-item.tmp_movement > td {
+            opacity: .58
+        }
+            .ui-sortable-handle > i.grey-text.text-lighten-1 {
+                transition: color .15s ease-in
+            }
+            .ui-sortable-handle:hover > i.grey-text.text-lighten-1 {
+                color: #222!important
+            }
+        .light-blue.lighten-6 {
+            background-color: #f4fbff!important
+        }
+        .box__ntf {
+            display: inline-block;
+            padding: .1rem .3rem;
+            font-weight: 500;
+            font-size: .92em;
+            border-radius: 2px;
+            white-space: nowrap
+        }
+            .box__ntf i.material-icons {
+                cursor: default;
+                margin: .15em 0
+            }
+        #CaseCurrentPanel tr.headerRow .box__ntf {
+            padding: .05rem .3rem
+        }
+        .box__tooltip {
+            position: absolute;
+            display: none;
+            text-transform: none!important;
+            border-radius: 2px;
+            color: #ffffff;
+            background-color: #000000;
+            color: rgba(255,255,255,.95);
+            background-color: rgba(0,0,0,.72);
+            white-space: nowrap;
+            padding: 0 1em;
+            line-height: 1.85rem;
+            font-size: .85rem;
+            font-weight: 500
+        }
+            .tooltip-left .box__tooltip {
+                 margin-right: 5px;
+                 right: 100%
+            }
+            .tooltip-left-down .box__tooltip {
+                margin-top: 12px;
+                right: 0
+            }
+            .tooltip-right-down .box__tooltip {
+                margin-top: 12px;
+                left: 0
+            }
+            .tooltip-right-top .box__tooltip {
+                margin-bottom: 2px;
+                left: 0
+            }
+        .box__bubble {
+            display: inline-block;
+            border-radius: 100%;
+            text-align: center;
+            background-color: #9c9c9c;
+            color: #fff;
+            width: 1.5em;
+            height: 1.5em;
+            font-weight: 600
+        }
+        .activator__tooltip {
+            position: relative;
+            overflow: visible
+        }
+        .ieAlert {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 20px;
+            background-color: rgba(0,0,0,.72);
+        }
+        .toast > span,
+        .ieAlert > span {
+            text-transform: uppercase;
+            margin-right: .35rem;
+            font-size: .95em;
+            font-weight: 500
+        }
+        .toast > span.white-text,
+        .ieAlert > span.white-text {
+            text-transform: none
+        }
+        .waves-effect.waves-blue .waves-ripple {
+            background-color: rgba(33, 150, 243, .65);
+        }
+        .material-icons.md-16 { font-size: 16px; }
+        .material-icons.md-18 { font-size: 18px; }
+        .material-icons.md-24 { font-size: 24px; }
+        .material-icons.md-36 { font-size: 36px; }
+        .material-icons.md-48 { font-size: 48px; }
+        
+        #header__lvl1 {
+            padding-top: 15px;
+            margin-bottom: -57px;
+            padding-bottom: 57px;
+            /*
+            background-image: url({!$Resource.cmp_image_corn_land});
+            background-position: 92% bottom;
+            background-repeat: no-repeat
+            */
+            background-color: #778899!important
+        }
+        #CaseCurrentPanel {
+            margin-top: .6rem;
+        }
+            #CaseCurrentPanel thead th.hide-on-med-and-down {
+                padding-right: 8px
+            }
+        .CaseCurrent {
+            line-height: 1.35rem
+        }
+        .CaseCurrentDescr {
+            padding: .75rem;
+            border-radius: 2px;
+            border: 1px solid #dfdfdf
+        }
+        .CaseCurrentDelete {
+            display: inline-block;
+            padding: .55rem;
+            border-radius: 2px;
+            color: #b71c1c;
+            border: 1px solid #ef9a9a
+        }
+        
+        .effectHide {
+            top:60px;
+            opacity:0;
+            -webkit-animation: animeHide .5s ease-in-out;
+            -moz-animation: animeHide .5s ease-in-out;
+            animation: animeHide .5s ease-in-out;
+        }
+        
+        @-webkit-keyframes animeHide {
+            0%   {top: 0; opacity:1;}
+            50%  {top; 0; opacity:1;}
+            100% {top: 60px; opacity:0;}
+        }
+        @-moz-keyframes animeHide {
+            0%   {top: 0; opacity:1;}
+            50%  {top; 0; opacity:1;}
+            100% {top: 60px; opacity:0;}
+        }
+        @keyframes animeHide {
+            0%   {top: 0; opacity:1;}
+            50%  {top; 0; opacity:1;}
+            100% {top: 60px; opacity:0;}
+        }
+        
+        .effectShow {
+            top:0;
+            opacity:1;
+            -webkit-animation: animeShow .5s ease-in-out;
+            -moz-animation: animeShow .5s ease-in-out;
+            animation: animeShow .5s ease-in-out;
+        }
+        .effectShow.sluggish {
+            -webkit-animation-duration: .8s;
+            -moz-animation-duration: .8s;
+            animation-duration: .8s;
+        }
+        
+        @-webkit-keyframes animeShow {
+            0%   {top: 60px; opacity:0;}
+            50%  {top; 60px; opacity:0;}
+            100% {top: 0; opacity:1;}
+        }
+        @-moz-keyframes animeShow {
+            0%   {top: 60px; opacity:0;}
+            50%  {top; 60px; opacity:0;}
+            100% {top: 0; opacity:1;}
+        }
+        @keyframes animeShow {
+            0%   {top: 60px; opacity:0;}
+            50%  {top; 60px; opacity:0;}
+            100% {top: 0; opacity:1;}
+        }
+        
+        #loader {
+            text-align: center
+        }
+        .loader {
+            margin: 57px 0 0;
+            padding: 1em 0
+        }
+        
+        @media only screen and (max-width: 992px) {
+            .block-on-med-and-down {
+                display: block !important;
+            }
+            .box__ntf {
+                line-height: 1.6rem
+            }
+        }
+        .info__section {
+            padding: 3px 4px 3px 11px!important;
+            vertical-align: top
+        }
+        .collection .collection-item {
+            overflow: hidden
+        }
+        .collection .collection-item > span {
+            float: left;
+            clear: both
+        }
+        .main__card {
+            margin-top: 10px!important
+        }
+        .html__content img,
+        .html__content table {
+            max-width: 100%!important;
+            width: 100%!important; /* It causes bug in images, but fixes other bugs */
+            width: auto!important; /* Possible solution for previous issue */
+            height: auto
+        }
+        tfoot td {
+            padding: 0;
+            text-align: right
+        }
+        tfoot td > h4 {
+            font-size: 1.6rem;
+            margin: .5rem 1rem
+        }
+        tfoot td > h4 > span {
+            font-size: .9rem;
+            text-transform: uppercase
+        }
+        h5.main__card {
+            margin-top: 30px!important;
+            font-size: 1.28rem;
+            line-height: 1.58rem
+        }
+        
+        .message-info {
+            font-size: .9rem;
+            clear: none!important
+        }
+        .message-info.activator__tooltip {
+            clear: both!important
+        }
+            .message-info > i.left {
+                cursor: default;
+                margin-right: 6px
+            }
+        
+          .rating {
+            unicode-bidi: bidi-override;
+            direction: rtl;
+            position: relative;
+            text-align: center;
+            zoom: 1.2;
+            padding: 5px 0;
+            background-color: #fafafa;
+            border: 1px solid #dfdfdf;
+            border-radius: 2px
+          }
+          .rating > a {
+            display: inline-block;
+            position: relative;
+            width: 1.25em;
+            color: #757575;
+            cursor: pointer;
+            outline: 0;
+            direction: ltr;
+          }
+          .rating > a:hover,
+          .rating > a:hover ~ span {
+            color: transparent;
+          }
+          .rating > a:hover i:before,
+          .rating > a:hover ~ a i:before,
+          .rating > a.chosen i:before,
+          .rating > a.chosen ~ a i:before {
+             content: '&#xe838;';
+             position: absolute;
+             color: #0091EA;
+          }
+          .rating.rated > a:not(.chosen):hover i:before,
+          .rating.rated > a:not(.chosen):hover ~ a i:before {
+            color: #00B0FF;
+          }
+          .rating.rated > a.chosen {
+            cursor: default;
+          }
+          .rating > a > .box__tooltip {
+            zoom: .9
+          }
+          
+            .rating.submitted::after,
+            .card.frozen::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: 0; bottom: 0;
+            background: rgba(255,255,255,.45);
+            z-index: 100;
+          }
+          
+          #comments-wrapper > label {
+            left: 0;
+            top: 1.5rem
+          }
+          #AdminPanel {
+            padding: 10px 20px 0;
+            background: #fcfcfc!important
+          }
+          
+          .modal {
+            max-width: 480px
+          }
+            .modal .modal-content h5 {
+                margin: 0
+            }
+            .modal .modal-content p {
+                margin-bottom: 0
+            }
+          .row.no__foot {
+            margin-bottom: 0
+          }
+          .dropdown-content {
+            top: 5px!important
+          }
+          .dropdown-content li {
+            line-height: 1.15rem
+          }
+          .dropdown-content li.disabled {
+            cursor: default
+          }
+            .dropdown-content li > a,
+            .dropdown-content li > span {
+                font-size: 1.05rem;
+                padding: .65rem 1rem;
+                color: #1E88E5
+            }
+            .dropdown-content li.disabled > a,
+            .dropdown-content li.disabled > span {
+                color: #CCC
+            }
+          .card {
+            overflow: initial
+          }
+          /*
+          .fixed-action-btn > a {
+            cursor: default
+          }
+          .timeago:first-letter {
+            text-transform: uppercase
+          }
+          */
+    </style>
+    
+    <!--[if lte IE 9]>
+    <style type="text/css">
+        a.link:hover {
+            border-color: transparent;
+            text-decoration: underline!important
+        }
+        .table__fixed td {
+            text-overflow: ellipsis
+        }
+        .rating,
+        .rating > a > .box__tooltip {
+            zoom: 1
+        }
+        .dropdown-content {
+            border: 1px solid #ddd
+        }
+    </style>
+    <![endif]-->
+    
+    <!--[if gte IE 9]>
+    <style type="text/css">
+        .td__fixed.white > div::after,
+        .td__fixed.light-blue.lighten-6 > div::after {
+            filter: none!important
+        }
+    </style>
+    <![endif]-->
+</head>
+<body class="grey lighten-5">
+
+<!-- START: HEADER + SIDENAV -->
+<header>
+<nav class="blue darken-2 z-depth-0" id="header__lvl1">
+    <div class="container">
+        <div class="row no-margin-bottom section">
+            <div class="col s12">
+                <h5 class="white-text"><a href="#" data-activates="slide-out" class="button-collapse white-text"><i class="material-icons">&#xe5d2;</i></a>Case Management Portal</h5>
+                <h6 class="lime-text text-accent-2">Drag and drop your opened tickets to sort them easily by priority</h6>
+            </div>
+        </div>
+    </div>
+<ul id="slide-out" class="side-nav fixed stop-scroll">
+  <li class="side-nav-li-inactive">
+    <div class="side-nav__img circle left" style="background-image: url({!User_Current.FullPhotoUrl})"></div>
+    <span class="left bold-500 blue-text text-lighten-2">{!User_Current.Name}</span>
+    <span class="left lime-text text-accent-2">{!if(User_Current.Title != null, User_Current.Title, User_Current.UserRole.Name)}</span>
+  </li>
+  <li><a class="truncate white-text" href="/" target="_blank"><i class="material-icons left">&#xe7ee;</i> eCIP Home</a></li>
+  <li><a class="truncate white-text" href="/sfc/#workspaces" target="_blank"><i class="material-icons left">&#xe54b;</i> Libraries</a></li>
+  <li><a class="truncate white-text" href="mailto:ecip.support@monsanto.com"><i class="material-icons left">&#xe145;</i> New ticket</a></li>
+  <li><a class="truncate white-text" href="/apex/CMP"><i class="material-icons left">&#xe5d5;</i> Refresh page</a></li>
+</ul>
+</nav>
+</header>
+<!-- END: HEADER + SIDENAV -->
+
+<main>
+
+<!-- START: NEW TICKET SECTION -->
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a href="mailto:ecip.support@monsanto.com" class="btn-floating btn-large deep-orange lighten-1 activator__tooltip tooltip-left" text-tooltip="New ticket"><i class="large material-icons">&#xe145;</i></a>
+        <ul>
+        <!-- 
+          <li><a href="mailto:ecip.support@monsanto.com?subject=Priority 3 - " class="activator__tooltip tooltip-left btn-floating deep-orange darken-4" text-tooltip="High Priority"><i class="material-icons">&#xe3fb;</i></a></li>
+          <li><a href="mailto:ecip.support@monsanto.com?subject=Priority 2 - " class="activator__tooltip tooltip-left btn-floating deep-orange darken-1" text-tooltip="Medium Priority"><i class="material-icons">&#xe401;</i></a></li>
+          <li><a href="mailto:ecip.support@monsanto.com?subject=Priority 1 - " class="activator__tooltip tooltip-left btn-floating orange darken-2" text-tooltip="Low Priority"><i class="material-icons">&#xe400;</i></a></li>
+         -->
+        </ul>
+    </div>
+<!-- END: NEW TICKET SECTION -->
+ 
+    <div class="container">
+    
+        <div class="row">
+            <div class="col s12">
+
+<!-- START: LIST SORTABLE CASES -->
+                <div class="card effectShow main__card" style="display:none">
+                <apex:outputPanel id="List_Case">
+                <table class="table-touchable grey lighten-3">
+                    <thead>
+                        <tr class="headerRow">
+                            <th class="blue lighten-5 blue-text text-darken-1">Ticket</th>
+                            <th class="blue lighten-5"></th>
+                            <th class="blue lighten-5 blue-text text-darken-1" colspan="{!if(NOT(isPrioritized), '2', '1')}">Subject</th>
+                            <th class="blue lighten-5 blue-text text-darken-1 activator__tooltip tooltip-left {!if(NOT(isPrioritized), 'hide', '')}" text-tooltip="Priority"><i class="material-icons" style="font-size:21px">&#xe000;</i></th>
+                            <th class="blue lighten-5 blue-text text-darken-1 activator__tooltip tooltip-left" text-tooltip="Days alive"><i class="material-icons" style="font-size:21px">&#xe924;</i></th>
+                            <th class="blue lighten-5 blue-text text-darken-1">Status</th>
+                            <th class="blue lighten-5 blue-text text-darken-1">Created</th>
+                            <th class="blue lighten-5"></th>
+                        </tr>
+                    </thead>
+                    <!-- START: ADMINISTRATION PANEL TO SWITCH COUNTRIES -->
+                    <tbody class="{!if(isAdmin, '', 'hide')}">
+                        <tr>
+                            <th colspan="8" class="white" id="AdminPanel">
+                                <div class="row no__foot">
+                                <div class="input-field col s12 m6 l4">
+                                    <select id="switcher">
+                                        <option value="" disabled="disabled" selected="selected">Choose a country</option>
+                                        <apex:repeat value="{!Map_Country}" var="c">
+                                            <option value="{!c}">{!c}</option>
+                                        </apex:repeat>
+                                    </select>
+                                    <label>Show tickets as seen by...</label>
+                                </div>
+                                </div>
+                            </th>
+                        </tr>
+                    </tbody>
+                    <!-- END: ADMINISTRATION PANEL TO SWITCH COUNTRIES -->
+                    <!-- START: NO TICKETS -->
+                    <tbody class="{!if(List_Case.size > 0, 'hide', '')}">
+                        <tr>
+                            <th colspan="8" class="white">
+                                <div class="center-align">
+                                    <h2><i class="grey-text text-lighten-1 material-icons" style="font-size: 4.5rem">&#xe541;</i></h2>
+                                    <h5 class="grey-text">Currently no opened tickets</h5>
+                                </div>
+                            </th>
+                        </tr>
+                    </tbody>
+                    <!-- END: NO TICKETS -->
+                    <tbody class="ui-sortable">
+                        <apex:repeat value="{!List_Case}" var="case">
+                        <tr class="ui-sortable-item" id="{!case.Id}">
+                            <td class="white"><a class="link deep-orange-text" onClick="hideCard(this); renderCase('{!case.Id}');">{!case.CaseNumber}</a></td>
+                            <td class="white hide-on-med-and-down"><span class="box__ntf grey lighten-3">{!case.GC_Country_Name__c}</span></td>
+                            <td class="white hide-on-large-only"><span class="box__ntf grey lighten-3"><apex:outputText value="{!Map_ISOCode[case.GC_Country_Name__c]}"/></span></td>
+                            
+                            <td class="white td__fixed" colspan="{!if(case.NUM_USER_PRIORITY__c == null, '2', '1')}">
+                                <div>
+                                    <table class="table__fixed">
+                                        <tr>
+                                            <td><a class="link black-text" onClick="hideCard(this); renderCase('{!case.Id}');">{!case.Subject}</a></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            
+                            <td class="white {!if(case.NUM_USER_PRIORITY__c == null, 'hide', '')}"><span class="box__bubble">{!case.NUM_USER_PRIORITY__c}</span></td>
+                            
+                            <td class="white">{!case.FRML_DaysFromCreation__c}</td>
+                            
+                            <td class="white hide-on-med-and-down">
+                                <span class="box__ntf white-text {!Map_StatusColor[case.Status]['color']}">{!if(case.Status == 'Closed' && case.GC_is_Close_Email_Sent__c,'Closed with Email', case.Status)}</span>
+                            </td>
+                            <td class="white hide-on-large-only">
+                                <div class="activator__tooltip tooltip-left" text-tooltip="{!if(case.Status == 'Closed' && case.GC_is_Close_Email_Sent__c,'Closed with Email', case.Status)}">
+                                <span class="box__ntf white-text {!Map_StatusColor[case.Status]['color']}">
+                                    <i class="material-icons md-18 status-icons"><apex:outputText value="{!if(case.Status == 'Closed' && case.GC_is_Close_Email_Sent__c,'&#xe0e1;', Map_StatusColor[case.Status]['icon'])}" escape="false"/></i>
+                                </span>
+                                </div>
+                            </td>
+                            
+                            <td class="white">
+                                <span class="grey-text text-darken-2"><apex:outputText value="{0,date,dd/MM/yy}"><apex:param value="{!case.CreatedDate}"/></apex:outputText></span>
+                                <span class="hide-on-med-and-down"><apex:outputText value="{0,date, HH:mm}"><apex:param value="{!case.CreatedDate}"/></apex:outputText></span>
+                            </td>
+                            <td class="white handle__icon {!if(!isCountrySelected, 'ui-sortable-handle', 'no-sortable')}"><i class="material-icons grey-text text-lighten-1">&#xe8fe;</i></td>
+                        </tr>
+                        </apex:repeat>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="8" class="blue lighten-5 blue-text text-darken-1"><h4>{!List_Case.size} <span>tickets</span></h4></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                </apex:outputPanel>
+                </div>
+<!-- END: LIST SORTABLE CASES -->
+
+<!-- START: LIST CLOSED CASES WITHOUT RATING -->
+                <h5 class="black-text sluggish effectShow main__card closed__itm_control" style="display:none">The rating survey is not answered for some closed tickets</h5>
+                <div class="card sluggish effectShow main__card closed__itm_control" style="display:none">
+                <apex:outputPanel id="List_Case_Closed">
+                <table class="table-touchable rating__none grey lighten-4">
+                    <thead>
+                        <tr class="headerRow">
+                            <th class="blue lighten-5 blue-text text-darken-1">Ticket</th>
+                            <th class="blue lighten-5"></th>
+                            <th class="blue lighten-5 blue-text text-darken-1">Subject</th>
+                            <th class="blue lighten-5 blue-text text-darken-1">Status</th>
+                            <th class="blue lighten-5 blue-text text-darken-1">Created</th>
+                            <th class="blue lighten-5 blue-text text-darken-1">Closed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!List_Case_Closed}" var="case">
+                        <tr id="{!case.Id}" class="closed__itm">
+                            <td class="light-blue lighten-6"><a class="link deep-orange-text" onClick="hideCard(this); renderCase('{!case.Id}');">{!case.CaseNumber}</a></td>
+                            <td class="light-blue lighten-6 hide-on-med-and-down"><span class="box__ntf grey lighten-2">{!case.GC_Country_Name__c}</span></td>
+                            <td class="light-blue lighten-6 hide-on-large-only"><span class="box__ntf grey lighten-2"><apex:outputText value="{!Map_ISOCode[case.GC_Country_Name__c]}"/></span></td>
+                            
+                            <td class="light-blue lighten-6 td__fixed">
+                                <div>
+                                    <table class="table__fixed">
+                                        <tr>
+                                            <td><a class="link black-text" onClick="hideCard(this); renderCase('{!case.Id}');">{!case.Subject}</a></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            
+                            <td class="light-blue lighten-6 hide-on-med-and-down">
+                                <span class="box__ntf white-text {!Map_StatusColor[case.Status]['color']}">{!case.Status}</span>
+                            </td>
+                            <td class="light-blue lighten-6 hide-on-large-only">
+                                <div class="activator__tooltip tooltip-left" text-tooltip="{!case.Status}">
+                                <span class="box__ntf white-text {!Map_StatusColor[case.Status]['color']}">
+                                    <i class="material-icons md-18 status-icons"><apex:outputText value="{!Map_StatusColor[case.Status]['icon']}" escape="false"/></i>
+                                </span>
+                                </div>
+                            </td>
+                            
+                            <td class="light-blue lighten-6">
+                                <span class="grey-text text-darken-2"><apex:outputText value="{0,date,dd/MM/yy}"><apex:param value="{!case.CreatedDate}"/></apex:outputText></span>
+                                <span class="hide-on-med-and-down"><apex:outputText value="{0,date, HH:mm}"><apex:param value="{!case.CreatedDate}"/></apex:outputText></span>
+                            </td>
+                            <td class="light-blue lighten-6">
+                                <span class="grey-text text-darken-2"><apex:outputText value="{0,date,dd/MM/yy}"><apex:param value="{!case.ClosedDate}"/></apex:outputText></span>
+                                <span class="hide-on-med-and-down"><apex:outputText value="{0,date, HH:mm}"><apex:param value="{!case.ClosedDate}"/></apex:outputText></span>
+                            </td>
+                        </tr>
+                        </apex:repeat>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="7" class="blue lighten-5 blue-text text-darken-1"><h4>{!List_Case_Closed.size} <span>tickets</span></h4></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                </apex:outputPanel>
+                </div>
+<!-- END: LIST CLOSED CASES WITHOUT RATING -->
+
+<!-- START: LOADER -->
+                <div id="loader">
+                <apex:actionStatus id="loader">
+                    <apex:facet name="start">
+                      <div class="loader">
+                      <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-blue-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                </div>
+<!-- END: LOADER -->
+                
+<!-- START: CURRENT CASE -->
+                <div class="card" id="CaseCurrentPanel" style="display:none">
+                <apex:outputPanel id="Item_Case">
+                <table class="grey lighten-2">
+                    <thead>
+                        <tr class="headerRow">
+                            <th class="grey lighten-4"><a class="clickable back_btn_ini" onClick="hideCard(this);"><i class="material-icons">&#xe5c4;</i></a></th>
+                            <th class="grey lighten-4 td__fixed">
+                                <div>
+                                    <table class="table__fixed">
+                                        <tr>
+                                            <td>{!CaseCurrent.CaseNumber}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </th>
+                            <th class="grey lighten-4">
+                                <span class="box__ntf white-text grey">{!CaseCurrent.Owner.Name}</span>
+                            </th>
+                            <th class="grey lighten-4 hide-on-med-and-down">
+                                <span class="box__ntf white-text {!Map_StatusColor[CaseCurrent.Status]['color']}">{!if(CaseCurrent.Status == 'Closed' && CaseCurrent.GC_is_Close_Email_Sent__c,'Closed with Email', CaseCurrent.Status)}</span>
+                            </th>
+                            <th class="grey lighten-4 hide-on-large-only">
+                                <div class="activator__tooltip tooltip-left-down" text-tooltip="{!if(CaseCurrent.Status == 'Closed' && CaseCurrent.GC_is_Close_Email_Sent__c,'Closed with Email', CaseCurrent.Status)}">
+                                <span class="box__ntf white-text {!Map_StatusColor[CaseCurrent.Status]['color']}">
+                                    <i class="material-icons md-18 status-icons"><apex:outputText value="{!if(CaseCurrent.Status == 'Closed' && CaseCurrent.GC_is_Close_Email_Sent__c,'&#xe0e1;', Map_StatusColor[CaseCurrent.Status]['icon'])}" escape="false"/></i>
+                                </span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="CaseCurrent white" colspan="4">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2"><b>{!CaseCurrent.Subject}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info__section"><span class="blue-text text-darken-2 bold-500 block-on-med-and-down">Case number:</span>
+                                                <a href="../{!CaseCurrent.Id}" target="_blank" class="link black-text">{!CaseCurrent.CaseNumber}</a>
+                                            </td>
+                                            <td class="info__section"><span class="blue-text text-darken-2 bold-500 block-on-med-and-down">Type:</span>
+                                                {!CaseCurrent.Type}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info__section"><span class="blue-text text-darken-2 bold-500 block-on-med-and-down">Created:</span>
+                                                <span class="grey-text text-darken-2"><apex:outputText value="{0,date,dd/MM/yy}"><apex:param value="{!CaseCurrent.CreatedDate}"/></apex:outputText></span>
+                                                <span class="hide-on-small-only"><apex:outputText value="{0,date, HH:mm}"><apex:param value="{!CaseCurrent.CreatedDate}"/></apex:outputText></span>
+                                            </td>
+                                            <td class="info__section"><span class="blue-text text-darken-2 bold-500 block-on-med-and-down">Contact:</span>
+                                                {!CaseCurrent.Contact.Name}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info__section {!if(CaseCurrent.Status == 'Closed', '', 'hide')}"><span class="blue-text text-darken-2 bold-500 block-on-med-and-down">Closed:</span>
+                                                <span class="grey-text text-darken-2"><apex:outputText value="{0,date,dd/MM/yy}"><apex:param value="{!CaseCurrent.ClosedDate}"/></apex:outputText></span>
+                                                <span class="hide-on-small-only"><apex:outputText value="{0,date, HH:mm}"><apex:param value="{!CaseCurrent.ClosedDate}"/></apex:outputText></span>
+                                            </td>
+                                            <td class="info__section {!if(CaseCurrent.Status != 'Closed', '', 'hide')}"><span class="blue-text text-darken-2 bold-500 block-on-med-and-down">Days alive:</span>
+                                                {!CaseCurrent.FRML_DaysFromCreation__c}
+                                            </td>
+                                            <td class="info__section"><span class="blue-text text-darken-2 bold-500 block-on-med-and-down">Country:</span>
+                                                {!CaseCurrent.GC_Country_Name__c}
+                                            </td>
+                                        </tr>
+                                        <tr class="{!if(OR(AND(CaseCurrent.Status == 'New',CaseCurrent.Owner.Name = 'Case Queue'),AND(CaseCurrent.Status != 'In Progress', CaseCurrent.Status != 'Closed', CaseCurrent.Status != 'New')), '', 'hide')}">
+                                            <td colspan="2">
+                                                <a class="btn light-blue darken-1 white-text waves-effect waves-light modal-trigger {!if(OR(CaseCurrent.Status == 'In Progress', CaseCurrent.Status == 'Closed', CaseCurrent.Status == 'New'), 'hide', '')}" href="#confirm-close" style="margin-right: 5px"><i class="material-icons left aligned">&#xe8dc;</i> Close ticket</a>
+                                                <a class="btn deep-orange darken-1 white-text waves-effect waves-light modal-trigger {!if(AND(CaseCurrent.Status == 'New', CaseCurrent.Owner.Name = 'Case Queue'), '', 'hide')}" href="#confirm-del"><i class="material-icons left aligned">&#xe872;</i> Delete ticket</a>
+                                            </td>
+                                        </tr>
+                                        <tr class="{!if(OR(CaseCurrent.Status != 'Closed', CaseCurrent.PICK_RATING__c != null), 'hide', '')}">
+                                            <td colspan="2">
+                                                <p class="deep-orange-text text-darken-2">What is your satisfaction with the support received regarding this ticket?<br/>
+                                                Please, rate how helpful was the service and leave a comment, helping us to improve the support processes.</p>
+   
+                                                <div class="rating">
+                                                    <a class="rate-item activator__tooltip tooltip-right-down" text-tooltip="Excellent"><i class="material-icons">&#xe83a;</i></a>
+                                                    <a class="rate-item activator__tooltip tooltip-right-down" text-tooltip="Very Good"><i class="material-icons">&#xe83a;</i></a>
+                                                    <a class="rate-item activator__tooltip tooltip-right-down" text-tooltip="Good"><i class="material-icons">&#xe83a;</i></a>
+                                                    <a class="rate-item activator__tooltip tooltip-right-down" text-tooltip="Average"><i class="material-icons">&#xe83a;</i></a>
+                                                    <a class="rate-item activator__tooltip tooltip-right-down" text-tooltip="Poor"><i class="material-icons">&#xe83a;</i></a>
+                                                </div>
+
+                                                <div class="input-field" id="comments-wrapper">
+                                                    <textarea class="materialize-textarea" length="120" disabled="disabled" id="comments"></textarea>
+                                                    <label for="comments">Leave your comment...</label>
+                                                    <button class="btn blue darken-2 waves-effect waves-light" onclick="" disabled="disabled" id="comments-submit">
+                                                    <i class="material-icons right">&#xe163;</i>Submit
+                                                    </button>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="CaseCurrentDescr grey lighten-5">
+                                                    <apex:outputField value="{!CaseCurrent.Description}"/>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="{!if(List_Messages.size == 0, 'hide', '')}">
+                                            <td colspan="2">
+                                                <b>Emails</b>
+                                                <ul class="collection">
+                                                    <apex:repeat value="{!List_Messages}" var="msg">
+                                                    <li class="collection-item grey lighten-5">
+                                                        <span><a class="link {!if(msg.Status == '0', 'bold-600 text-darken-2', '')}" onClick="hideCard(this); renderEmail('{!msg.Id}');">{!msg.Subject}</a></span>
+                                                        <span><i class="grey-text text-darken-1"><apex:outputText value="{!if(len(msg.TextBody) > 80, left(msg.TextBody, 80)+'...', msg.TextBody)}"/></i></span>
+                                                        <span class="message-info black-text activator__tooltip tooltip-right-top left" text-tooltip="{!messageStatus[msg.Status]}">
+                                                            <i class="material-icons md-16 left aligned {!if(msg.Status != '0', 'hide', '')} teal-text text-lighten-2">&#xe159;</i>
+                                                            <i class="material-icons md-16 left aligned {!if(msg.Status != '1', 'hide', '')} indigo-text">&#xe151;</i>
+                                                            <i class="material-icons md-16 left aligned {!if(msg.Status != '2', 'hide', '')} deep-orange-text">&#xe15e;</i>
+                                                            <i class="material-icons md-16 left aligned {!if(msg.Status != '3', 'hide', '')} purple-text">&#xe163;</i>
+                                                            <i class="material-icons md-16 left aligned {!if(msg.Status != '4', 'hide', '')} red-text">&#xe154;</i>
+                                                        </span>
+                                                        <span class="message-info left truncate bold-500">
+                                                            <i class="material-icons md-16 left aligned">&#xe7fd;</i>
+                                                            {!msg.FromAddress}
+                                                        </span>
+                                                    </li>
+                                                    </apex:repeat>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- START: MODAL TO CONFIRM DELETE ACTION -->
+                <div id="confirm-del" class="modal">
+                <div class="modal-content">
+                  <h5>Delete ticket?</h5>
+                  <p class="grey-text text-darken-1">You can remove this ticket if it was created by mistake. Please, bear in mind that you will lost all related data.</p>
+                </div>
+                <div class="modal-footer">
+                  <a class="modal-action modal-close btn-flat deep-orange-text text-darken-2 bold-500" onClick="deleteAction()">Delete</a>
+                  <a class="modal-action modal-close btn-flat bold-500">Cancel</a>
+                </div>
+                </div>
+                <!-- END: MODAL TO CONFIRM DELETE ACTION -->
+                
+                <!-- START: MODAL TO CONFIRM CLOSE ACTION -->
+                <div id="confirm-close" class="modal">
+                <div class="modal-content">
+                  <h5>Close ticket?</h5>
+                  <p class="grey-text text-darken-1">You can close this ticket if you think all is done here.</p>
+                </div>
+                <div class="modal-footer">
+                  <a class="modal-action modal-close btn-flat light-blue-text text-darken-2 bold-500" onClick="closeAction()">Close</a>
+                  <a class="modal-action modal-close btn-flat bold-500">Cancel</a>
+                </div>
+                </div>
+                <!-- END: MODAL TO CONFIRM CLOSE ACTION -->
+                
+                </apex:outputPanel>
+                </div>
+<!-- END: CURRENT CASE -->
+
+<!-- START: CURRENT EMAIL -->
+                <div class="card flighty" id="EmailCurrentPanel" style="display:none">
+                <apex:outputPanel id="Item_Email">
+                <table class="grey lighten-2">
+                    <thead>
+                        <tr class="headerRow">
+                            <th class="grey lighten-4"><a class="clickable back_btn_case" onClick="hideCard(this);"><i class="material-icons">&#xe5c4;</i></a></th>
+                            <th class="grey lighten-4 td__fixed">
+                                <div>
+                                    <table class="table__fixed">
+                                        <tr>
+                                            <td>{!EmailCurrent.Subject}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="EmailCurrent white" colspan="4">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2" class="html__content"><apex:outputText value="{!EmailCurrent.HtmlBody}" escape="false"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </apex:outputPanel>
+                </div>
+<!-- END: CURRENT EMAIL -->
+        
+            </div>
+        </div>
+    
+    </div>
+
+</main>
+
+<footer class="page-footer">
+    <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h5 class="white-text">Case Management Portal</h5>
+        <p class="grey-text text-lighten-4">Drag and drop your opened tickets to sort them easily by priority</p>
+      </div>
+    </div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">CMP v2.0 2016-02</div>
+    </div>
+</footer>
+
+<!-- START: FUNCTIONS -->
+<apex:form >
+
+    <!-- It sets the current case to show in the panel -->
+    <apex:actionFunction action="{!renderPanels}" name="renderCase" status="loader" oncomplete="revealCaseCurrent()" reRender="Item_Case">
+        <apex:param name="firstParam" assignTo="{!CaseCurrent}" value=""/>
+    </apex:actionFunction>
+    
+    <!-- It sets the current email message to show in the panel -->
+    <apex:actionFunction action="{!renderPanels}" name="renderEmail" status="loader" oncomplete="revealEmailCurrent()" reRender="Item_Email">
+        <apex:param name="firstParam" assignTo="{!EmailCurrent}" value=""/>
+    </apex:actionFunction>
+    
+    <!-- It triggers the action doSort() to sort the tickets -->
+    <apex:actionFunction action="{!doSort}" name="doSorting" reRender="actionResult">
+        <apex:param name="firstParam" assignTo="{!ListCases}" value=""/>
+    </apex:actionFunction>
+    
+    <!-- It triggers the action doRate() to rate the survey for a given ticket -->
+    <apex:actionFunction action="{!doRate}" name="doSurvey" reRender="actionResult, List_Case_Closed">
+        <apex:param name="firstParam" assignTo="{!RatingValue}" value=""/>
+        <apex:param name="secondParam" assignTo="{!RatingComments}" value=""/>
+    </apex:actionFunction>
+    
+    <!-- It triggers the action doDelete() to delete a given ticket -->
+    <apex:actionFunction action="{!doDelete}" name="doDelete" reRender="actionResult, List_Case">
+    </apex:actionFunction>
+    
+    <!-- It triggers the action doClose() to close a given ticket -->
+    <apex:actionFunction action="{!doClose}" name="doClose" reRender="actionResult, List_Case, List_Case_Closed">
+    </apex:actionFunction>
+    
+    <!-- It switches between countries, hiding the cards and showing them again on complete for a smoothness effect -->
+    <apex:actionFunction action="{!switcher}" name="switcher" status="loader" oncomplete="$('.main__card').show().removeClass('effectHide').addClass('effectShow');" reRender="actionResult, List_Case, List_Case_Closed">
+        <apex:param name="firstParam" assignTo="{!CountrySelected}" value=""/>
+    </apex:actionFunction>
+
+</apex:form>
+<!-- END: FUNCTIONS -->
+  
+    <!-- Import external scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.4.3/jquery.timeago.min.js"></script> -->
+    
+<apex:outputPanel id="actionResult">
+    <script type="text/javascript">
+    $(document).ready(function() {
+        //----------------------------------------------
+        // Confirmation, warning or error message when submitting an action.
+        //----------------------------------------------
+        if('{!JSENCODE(actionResult)}' != '') {
+            var miliSec = '{!JSENCODE(actionResult)}' == 'success' ? 3000 : 12000;
+            
+            //----------------------------------------------
+            // The message toast is not necessary when switching between countries.
+            //----------------------------------------------
+            if('{!JSENCODE(actionType)}' != 'switcher')
+                message('{!JSENCODE(actionResult)}', '{!JSENCODE(actionText)}', miliSec);
+            
+            if('{!JSENCODE(actionType)}' == 'switcher') {
+                $('select#switcher option[value="{!CountrySelected}"]').prop('selected', true);
+                iniFunction();
+                setSortable();
+            }
+
+            if('{!JSENCODE(actionType)}' == 'sort')
+                $('.ui-sortable-handle').removeClass('disabled');
+            
+            if('{!JSENCODE(actionType)}' == 'delete' || '{!JSENCODE(actionType)}' == 'close' || '{!JSENCODE(actionType)}' == 'survey') {
+                $('.back_btn_ini').trigger('click');
+                $('#CaseCurrentPanel').removeClass('frozen');
+                iniFunction();
+                setSortable();
+            }
+        }
+    });
+    </script>
+</apex:outputPanel>
+    
+    <!-- Scripts -->
+    <script type="text/javascript">
+    $(document).ready(function() {
+    //----------------------------------------------
+    // Materialize and initial functions on ready document.
+    //----------------------------------------------
+        $('.button-collapse').sideNav();
+        
+        iniFunction();
+        setSortable();
+        
+        setTimeout(function() {
+            $('.main__card, .page-footer').show().removeClass('effectHide').addClass('effectShow');
+        }, 1000);
+    });
+    
+    //----------------------------------------------
+    // iniFunction()
+    // Set of initial functions to load on ready document.
+    //----------------------------------------------
+    function iniFunction() {
+    
+        //----------------------------------------------
+        // Some Materialize and jQUery functions need to be recalled.
+        //----------------------------------------------
+        $('select').material_select();
+        //$('.timeago').timeago();
+    
+        //----------------------------------------------
+        // It hides the list of closed tickets without rating based on the size of the list.
+        //----------------------------------------------
+        var closedItems = $('.closed__itm').length;
+        if(closedItems == 0)
+            $('.closed__itm_control').addClass('hide');
+        else
+            $('.closed__itm_control').removeClass('hide');
+    
+        //----------------------------------------------
+        // Custom functions: Tooltips.
+        //----------------------------------------------
+        $('.activator__tooltip').mouseenter(function() {
+        
+            $(this).append('<span class="box__tooltip">' + $(this).attr('text-tooltip') + '</span>');
+            
+            var Tooltip_parent = $(this).outerHeight(true);
+            var Tooltip_child = $(this).children('.box__tooltip').outerHeight(true);
+            if(Tooltip_parent >= Tooltip_child)
+                Pos = (Tooltip_parent - Tooltip_child)/2;
+            else
+                Pos = (Tooltip_child - Tooltip_parent)/2;
+            
+            if($(this).hasClass('tooltip-left'))
+                $(this).children('.box__tooltip').css({'top': Pos + 'px'}).fadeIn('fast');
+            if($(this).hasClass('tooltip-left-down') || $(this).hasClass('tooltip-right-down'))
+                $(this).children('.box__tooltip').css({'top': Tooltip_parent + 'px'}).fadeIn('fast');
+            if($(this).hasClass('tooltip-right-top'))
+                $(this).children('.box__tooltip').css({'bottom': Tooltip_parent + 'px'}).fadeIn('fast');
+        }).mouseleave(function(){
+            $(this).children('.box__tooltip').remove();
+        });
+        
+        //----------------------------------------------
+        // Custom functions: Rating survey. It consists in three different parts:
+        // 1. Function on click a star (rating)
+        // 2. Function on key up the comments box
+        // 3. Function on click button to submit the survey
+        //----------------------------------------------
+        
+        //----------------------------------------------
+        // 1. Function on click a star (rating).
+        //----------------------------------------------
+        $('.rate-item').click(function() {
+        
+        if(!$(this).hasClass('chosen')) {
+          $('.rating').addClass('rated');
+          $('.rate-item').removeClass('chosen');
+          $(this).addClass('chosen');
+          
+          $('#comments').prop('disabled', false);
+
+          $('#comments-submit').prop('disabled', false);
+            if($('#comments').val().length <= 120) {
+            
+              $('#comments').removeClass('invalid');
+              $('#comments-submit').prop('disabled', false);
+            } else {
+            
+              $('#comments').addClass('invalid');
+              $('#comments-submit').prop('disabled', true);
+            }
+        }
+        });
+        
+        //----------------------------------------------
+        // 2. Function on key up the comments box.
+        //----------------------------------------------
+        $('#comments').on('keyup', function() {
+        if($(this).val().length < 15 || $(this).val().length > 120) {
+            $('#comments-submit').prop('disabled', true);
+            if($(this).val().length != 0)
+              $(this).addClass('invalid');
+            else
+              $(this).removeClass('invalid');
+        }
+        else {
+          if(!$.trim($('#comments').val())) {
+            $('#comments-submit').prop('disabled', true);
+            $(this).addClass('invalid');
+          } else {
+            $('#comments-submit').prop('disabled', false);
+            $(this).removeClass('invalid');
+          }
+        }
+        });
+        
+        //----------------------------------------------
+        // 3. Function on click button to submit the survey
+        //----------------------------------------------
+        $('#comments-submit').click(function() {
+            $('#comments, #comments-submit').prop('disabled', true);
+            $('.rating').addClass('submitted');
+            $('#CaseCurrentPanel').addClass('frozen');
+            
+            var value = $('.chosen').attr('text-tooltip');
+            var comments = $('#comments').val() + ' ';
+            doSurvey(value, comments);
+        });
+        
+        //----------------------------------------------
+        // Custom functions: Avoid scrolling page when reaching the final point of a div element on scroll.
+        //----------------------------------------------
+        $('.stop-scroll, .dropdown-content').bind('mousewheel DOMMouseScroll', function (e) {
+            var e0 = e.originalEvent,
+            delta = e0.wheelDelta || -e0.detail;
+            this.scrollTop += (delta < 0 ? 1 : -1) * 30;
+            e.preventDefault();
+        });
+        
+        //----------------------------------------------
+        // Custom functions: Switcher to change between country views.
+        //----------------------------------------------
+        $('select#switcher').change(function() {
+            $('.main__card').hide();
+            switcher($(this).val());
+        });
+    }
+    
+    //----------------------------------------------
+    // setSortable()
+    // Sortable function initialized when the document is ready.
+    //----------------------------------------------
+    function setSortable() {
+        
+        //----------------------------------------------
+        // This code here helps to the Sortable function to behaves better.
+        //----------------------------------------------
+        var fixHelperModified = function(e, tr) {
+            var $originals = tr.children();
+            var $helper = tr.clone();
+            $helper.children().each(function(index) {
+              $(this).width($originals.eq(index).outerWidth(true))
+            });
+            return $helper;
+        };
+        
+        //----------------------------------------------
+        // Here it starts Sortable, with all its options. There are functions on
+        // starting, sorting and stoping situations, and after all there is a bind method
+        // that triggers the doSorting() function, the one that calls the controller.
+        //----------------------------------------------
+        $(".ui-sortable").sortable({
+            axis: 'y',
+            cursor: 'move',
+            items: '.ui-sortable-item',
+            handle: '.ui-sortable-handle:not(.disabled)',
+            containment: 'parent',
+            tolerance: 'pointer',
+            placeholder: 'ui-state-highlight',
+            helper: fixHelperModified,
+            start: function(e, ui) {
+                ui.placeholder.html(ui.item.html());
+                ui.placeholder.height(ui.item.outerHeight(true)-1);
+            },
+            sort: function(e, ui) {
+                $('.ui-sortable-helper').addClass('z-depth-2');
+                $('.ui-sortable-item').not('.ui-sortable-helper').addClass('tmp_movement');
+            },
+            stop: function(e, ui) {
+                $('.ui-sortable-helper').removeClass('z-depth-2');
+                $('.ui-sortable-item').not('.ui-sortable-helper').removeClass('tmp_movement');
+            }
+        }).disableSelection().bind('sortupdate', function() {
+            $('.ui-sortable-handle').addClass('disabled');
+
+            var allCases = '';
+            $('.ui-sortable-item').each(function(){
+                allCases += $(this).attr('id') + ',';
+            });
+            doSorting(allCases);
+        });
+
+    }
+    
+    //----------------------------------------------
+    // isIE()
+    // Function to find out if the current browser is Internet Explorer.
+    //----------------------------------------------
+    function isIE() {
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf('MSIE ');
+        return msie > 0 ? true : false;
+    }
+    
+    //----------------------------------------------
+    // message(type, text, time)
+    // Function to display messages by toast (or by alert if the current browser is Internet Explorer).
+    //----------------------------------------------
+    function message(type, text, time) {
+        var color = '';
+        if(type == 'success') color = 'green-text text-lighten-2';
+        if(type == 'warning') color = 'orange-text'
+        if(type == 'error') color = 'red-text';
+        if(!isIE()) {
+            $('.toast').remove();
+            Materialize.toast('<span class=\'' + color + '\'>' + type + '</span>' + '<span class=\'white-text\'>' + text + '</span>', time);
+        }
+        else {
+            $('main').prepend('<div class=\'ieAlert\'><span class=\'' + color + '\'>' + type + '</span>' + '<span class=\'white-text\'>' + text + '</span></div>');
+            setTimeout(function() {
+                $('.ieAlert').remove();
+            }, time);
+        }
+    }
+    
+    //----------------------------------------------
+    // Set of functions that help to switch cards
+    // (between the list of cases and selected items, such as cases or email messages).
+    // - hideCard(a)
+    // - revealCaseCurrent()
+    // - revealEmailCurrent()
+    //----------------------------------------------
+    function hideCard(a) {
+        $(a).parents('.card').siblings('.card, .main__card').andSelf().hide();
+        if($(a).hasClass('clickable') && $(a).hasClass('back_btn_ini'))
+            $('.main__card').show().removeClass('effectHide').addClass('effectShow');
+        if($(a).hasClass('clickable') && $(a).hasClass('back_btn_case')) {
+            $('#CaseCurrentPanel').show().removeClass('effectHide').addClass('effectShow');
+            $('.html__content').html('');
+        }
+    }
+    
+    function revealCaseCurrent() {
+        $('#CaseCurrentPanel').show().removeClass('effectHide').addClass('effectShow');
+        //----------------------------------------------
+        // Materialize function to count characters and for modals in text areas is initialized here.
+        //----------------------------------------------
+        $('textarea#comments').characterCounter();
+        $('.modal-trigger').leanModal();
+        
+        iniFunction();
+    }
+    function revealEmailCurrent() {
+        $('#EmailCurrentPanel').show().removeClass('effectHide').addClass('effectShow');
+        iniFunction();
+    }
+    
+    //----------------------------------------------
+    // deleteAction()
+    // Function triggered when accepting action to delete a ticket.
+    //----------------------------------------------
+    function deleteAction() {
+        $('#CaseCurrentPanel').addClass('frozen');
+        doDelete();
+    }
+    
+    //----------------------------------------------
+    // closeAction()
+    // Function triggered when accepting action to close a ticket.
+    //----------------------------------------------
+    function closeAction() {
+        $('#CaseCurrentPanel').addClass('frozen');
+        doClose();
+    }
+    </script>
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,123 @@
+<apex:page Controller="PDPManagerController" >
+   
+<apex:form > 
+    
+<style>
+.popupBackground{
+
+    background-color:black;
+    opacity: 0.05;
+    filter: alpha(opacity = 5);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+            align:center;
+            
+    }
+.stdRow
+{
+    background-color:white;
+    height:25px;
+}
+.disRow
+{
+    background-color:AliceBlue;
+        height:25px;
+    
+}    
+        </style>
+        <apex:pageBlock title="PDP Manager">
+             <apex:outputPanel layout="block" style="overflow:auto;width:750px;height:500px" >
+               
+                <apex:pageBlockTable id="groupTable" value="{!cgw}" var="cw" style="width:600px" >                   
+                    <apex:column headerValue="ALIAS" styleClass="{!IF(AND(NOT(cw.disabled),anySelected),'disRow','stdRow')}">                   
+                    <apex:outputLink target="_blank" value="/{!cw.cg.ID}" >{!cw.cg.Name}</apex:outputLink> </apex:column>
+                    <apex:column headerValue="Country" styleClass="{!IF(AND(NOT(cw.disabled),anySelected),'disRow','stdRow')}">                   
+                    <apex:outputLink target="_blank"  value="/{!cw.cg.ID}" >{!cw.cg.Description__c}</apex:outputLink> </apex:column>                    
+                    <apex:column headerValue="Repeat L1" styleClass="{!IF(AND(NOT(cw.disabled),anySelected),'disRow','stdRow')}">
+                        <apex:inputField value="{!cw.cg.Repeat_L1__c}" rendered="{!IF(cw.selected,true,false)}" >
+                           	<apex:actionSupport event="onclick" action="{!launcher2}"  rerender="outPan" status="locker">                                  
+                              <apex:actionStatus id="locker">
+                                    <apex:facet name="start">
+                                        <div class="popupBackground">
+                                        </div>
+                                    </apex:facet>
+                               </apex:actionStatus> 
+                               </apex:actionSupport>
+                        </apex:inputField>
+                        
+                        <apex:outputField value="{!cw.cg.Repeat_L1__c}" rendered="{!IF(cw.selected,false,true)}" styleClass="disRow"/>
+                    </apex:column>
+                    <apex:column headerValue="Repeat L2" styleClass="{!IF(AND(NOT(cw.disabled),anySelected),'disRow','stdRow')}" >
+                        <apex:inputField value="{!cw.cg.Repeat_L2__c}" rendered="{!IF(AND(cw.selected,NOT(cw.cg.Country_LVL_2__c)),true,false)}" styleClass="">
+                              <apex:actionSupport event="onclick" action="{!launcher2}"  rerender="outPan" status="locker">                                  
+                              <apex:actionStatus id="locker">
+                                    <apex:facet name="start">
+                                        <div class="popupBackground">
+                                        </div>
+                                    </apex:facet>
+                               </apex:actionStatus> 
+                               </apex:actionSupport>
+                        </apex:inputField>
+                        
+                        
+                        <apex:outputField value="{!cw.cg.Repeat_L2__c}" rendered="{!IF(cw.selected,false,true)}" styleClass="disRow"/>
+                    </apex:column>
+                    <apex:column headerValue="Repeat L3" styleClass="{!IF(AND(NOT(cw.disabled),anySelected),'disRow','stdRow')}">
+                        <apex:inputField value="{!cw.cg.Repeat_L3__c}" rendered="{!IF(cw.selected,true,false)}" styleClass="">
+                              <apex:actionSupport event="onclick" action="{!launcher2}"  rerender="outPan" status="locker">                                  
+                              <apex:actionStatus id="locker">
+                                    <apex:facet name="start">
+                                        <div class="popupBackground">
+                                        </div>
+                                    </apex:facet>
+                               </apex:actionStatus> 
+                               </apex:actionSupport>
+                        </apex:inputField>
+                        
+                        
+                        <apex:outputField value="{!cw.cg.Repeat_L3__c}" rendered="{!IF(cw.selected,false,true)}" styleClass="disRow"/>
+                    </apex:column>
+                    <apex:column headerValue="Grouping" styleClass="{!IF(AND(NOT(cw.disabled),anySelected),'disRow','stdRow')}">  
+                        <apex:inputField value="{!cw.cg.Grouping__c}" rendered="{!IF(anySelected,false,true)}" />
+                        <apex:outputField value="{!cw.cg.Grouping__c}" rendered="{!IF(anySelected,true,false)}" styleClass="disRow"/>
+                    </apex:column>
+                  
+                <apex:column headerValue="Selected" styleClass="{!IF(AND(NOT(cw.disabled),anySelected),'disRow','stdRow')}">  
+                          <apex:inputCheckbox value="{!cw.selected}" disabled="{!IF(OR(cw.selected,NOT(anySelected)),false,true)}">
+                              <apex:actionSupport event="onclick" action="{!launcher}"  rerender="groupTable,resultTable,outPan" status="locker">                                  
+                              <apex:actionStatus id="locker">
+                                    <apex:facet name="start">
+                                        <div class="popupBackground">
+                                        </div>
+                                    </apex:facet>
+                               </apex:actionStatus> 
+                               </apex:actionSupport>
+                            </apex:inputCheckbox>
+                    </apex:column> 
+                    
+                                     
+                </apex:pageBlockTable>
+                
+      </apex:outputPanel>
+                
+                <br/>    
+                  <apex:outputPanel id="outPan" >
+                    <div style="position:relative;left:250px;top:0px">
+                     
+					<apex:outputLink value="{!CreateAliasURL}" target="" disabled="{!IF(anySelected,false,true)}" styleClass="{!IF(anySelected,'btn','')}">{!IF(anySelected,'Extract(ALIAS)','')}</apex:outputLink>
+					<apex:outputLink value="{!CreateSAPCodeURL}" target="" disabled="{!IF(anySelected,false,true)}" styleClass="{!IF(anySelected,'btn','')}">{!IF(anySelected,'Extract(SAP Code)','')}</apex:outputLink>
+				<!-- 	<apex:outputLink value="{!CreateNameURL}" target="" disabled="{!IF(anySelected,false,true)}" styleClass="{!IF(anySelected,'btn','')}">{!IF(anySelected,'Extract(Name)','')}</apex:outputLink> -->
+
+                    </div>
+                  </apex:outputPanel> 
+                  
+                </apex:pageBlock> 
+                
+    </apex:form>
+    
+
+</apex:page>

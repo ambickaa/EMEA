@@ -1,0 +1,394 @@
+<apex:component >
+
+    <apex:stylesheet value="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/jquery.dataTables.min.css" />
+    <apex:stylesheet value="//cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css" />
+    <apex:stylesheet value="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/2.5.1/jquery-confirm.min.css" />
+    <style type="text/css">
+    
+        /*-- Start: Util --*/
+        .hidden,
+        .hide {
+            display: none!important
+        }
+        .scroll-disabled {
+            overflow: hidden!important
+        }
+        .ellipsis {
+            text-overflow: ellipsis;
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .unwrapped {
+            white-space: normal;
+        }
+        .btn,
+        .btnDisabled {
+            margin-right: 3px!important;
+            margin-left: 3px!important
+        }
+        .btn.btnNewLines,
+        .btnDisabled.btnNewLines {
+            margin: 0 0 2px 0!important
+        }
+        .listHoverLinks {
+            display: none
+        }
+        .component-messages {
+            position: fixed;
+            z-index: 999;
+            top: 5px;
+            right: 0;
+            left: 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        .component-messages .message {
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,.18);
+        }
+        .dismiss-message {
+            position:absolute;
+            top:2px;
+            right:6px;
+            color: #0000EE;
+            cursor: pointer;
+        }
+        .imgLoader {
+            position: relative;
+            top: 5px; left: 2px;
+        }
+        .individualPalette .accountBlock .secondaryPalette {
+            background-color: #f6f6f6!important;
+            border-left: 1px solid #e0e0e0!important;
+            border-right: 1px solid #e0e0e0!important;
+            border-bottom: 2px solid #c3c3c3!important
+        }
+        #PageComponents .bPageBlock .pbBody .pbSubheader {
+            padding: 4px 12px!important;
+            color: #000!important;
+        }
+        .block-details-list {
+            padding: 0
+        }
+            .block-details-list > li {
+                display: inline-block;
+                margin: 0 .75em
+            }
+            .block-details-list > li:first-child {
+                margin-left: 0
+            }
+                .block-details-list > li a img {
+                    vertical-align: text-bottom;
+                    margin-right: 5px
+                }
+        .row-disabled td, .row-disabled td * {
+            color:#9c9c9c;
+        }
+        .fieldRequired::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 2px;
+            bottom: 0;
+            border: 3px solid #c00;
+            background: rgba(204, 0, 0, .4);
+        }
+        .pageBlockSection {
+            margin: -7px -13px 0
+        }
+        .buttonsSection {
+            border: none!important
+        }
+            .buttonsSection > table {
+                border: none!important;
+                padding: 3px 0!important
+            }
+        
+        .panelTitle {
+		    padding-top: 10px!important;
+		    padding-bottom: 10px!important;
+		    color: #236fbd!important;
+		    text-transform: uppercase;
+		}
+        /*-- End: Util --*/
+        
+        /*-- Start: colors for components --*/
+        .apex_acr .bPageBlock {
+            border-top-color: #319431!important
+        }
+            .apex_acr .pbSubheader {
+                border-bottom: 1px solid #C6E2C6!important;
+                background-color: #D2EFD2!important;
+            }
+        .apex_swi .bPageBlock.brandSecondaryBrd.apexDefaultPageBlock.secondaryPalette {
+            border-bottom: 0!important;
+            margin-bottom: 0!important;
+            border-radius: 4px 4px 0 0!important;
+        }
+            .apex_swi .pbSubheader {
+                border-bottom: 1px solid #C6CEEC!important;
+                background-color: #DAE0FD!important;
+            }
+        .apex_cli .bPageBlock {
+            border-top: none;
+            border-radius: 0 0 4px 4px!important
+        }
+            .apex_cli .pbSubheader {
+                border-bottom: 1px solid #C6CEEC!important;
+                border-top: 1px solid #C6CEEC!important;
+                background-color: #DAE0FD!important;
+            }
+        .apex_cliDE .bPageBlock {
+            border-top: none;
+            border-radius: 0 0 4px 4px!important
+        }
+            .apex_cliDE .pbSubheader {
+                border-bottom: 1px solid #C6CEEC!important;
+                border-top: 1px solid #C6CEEC!important;
+                background-color: #DAE0FD!important;
+            }
+        .apex_ret .bPageBlock {
+        	margin-top: 2px!important;
+            border-top-color: #4b635c!important
+        }
+            .apex_ret .pbSubheader {
+                border-bottom: 1px solid #b3dfd2!important;
+                background-color: #c1e6db!important;
+            }
+        .apex_tri .bPageBlock {
+            border-top-color: #7016af!important
+        }
+            .apex_tri .pbSubheader {
+                border-bottom: 1px solid #DCC2EF!important;
+                background-color: #E7D5F5!important;
+            }
+        .apex_gaw .bPageBlock {
+            border-top-color: #e8a200!important
+        }
+            .apex_gaw .pbSubheader {
+                border-bottom: 1px solid #F1E4AE!important;
+                background-color: #FBF0C1!important;
+            }
+        .apex_vou .bPageBlock {
+            border-top-color: #b14f60!important
+        }
+            .apex_vou .pbSubheader {
+                border-bottom: 1px solid #ECC2C2!important;
+                background-color: #F9D6D6!important;
+            }
+        .apex_mrk .bPageBlock {
+             border-top-color: #75ab9a!important;
+        }
+            .apex_mrk .pbSubheader {
+                border-bottom: 1px solid #a4dac8!important;             
+                background-color: #b2f1dc!important;
+            }
+        /*-- End: colors for components --*/
+        
+        /*-- Start: jquery-confirm --*/
+        .jconfirm-scrollpane > .container {
+            margin: 0 auto
+        }
+        .jconfirm-scrollpane .btn {
+            padding: 6px 8px!important
+        }
+        .jconfirm-scrollpane .content {
+            font-size: 1.15em;
+            color: #333
+        }
+        .jconfirm.jconfirm-white .jconfirm-bg {
+            background-color: rgba(0,0,0,0.55);
+        }
+        .jconfirm ::-moz-selection { color: inherit;  background: transparent; }
+        .jconfirm ::selection      { color: inherit;  background: transparent; } 
+        .btn {
+            outline: none!important
+        }
+        .btn.btn-info {
+            background-color: #3b9eef;
+            border-color: #308fdd;
+        }
+            .btn.btn-info:hover {
+                background-color: #388cd1;
+                border-color: #227ac1;
+            }
+        .btn.btn-cancel {
+            background-color: #c3c3c3;
+            border-color: #bbb;
+        }
+            .btn.btn-cancel:hover {
+                background-color: #bbb;
+                border-color: #b4b4b4;
+            }
+        .btn.btn-danger {
+            background-color: #d9534f;
+            border-color: #d43f3a;
+        }
+            .btn.btn-danger:hover {
+                background-color: #c9302c;
+                border-color: #ac2925;
+            }
+        /*-- End: jquery-confirm --*/
+
+        /*-- Start: DivisionSwitcher --*/
+        .apex_swi select {
+            outline: 0;
+            cursor: pointer;
+            margin: 6px 0 8px
+        }
+            .apex_swi option {
+                cursor: pointer
+            }
+        .apex_swi .loadingImg {
+            position: relative;
+            left: 6px;
+            top: 4px;
+        }
+
+        /*-- End: DivisionSwitcher --*/
+    
+        /*-- Start: pageBlockTables --*/
+        .col-flag, .record-flag {
+            width: 1px!important;
+            padding-right: 4px!important;
+            background-image: none!important
+        }
+        .col-flag input[type="checkbox"] {
+            cursor: pointer
+        }
+        .row-selected td {
+            background: #E3F3FF!important
+        }
+        .row-disabled td {
+            background: #F3F3F3!important;
+            color: #9C9C9C!important
+        }
+        .row-disabled td * {
+            color: #9C9C9C!important
+        }
+        td textarea {
+            resize: vertical!important;
+            width: 90%!important
+        }
+        /*-- End: pageBlockTables --*/
+    
+        /*-- Start: dataTables --*/
+        table.sortable {
+            width: 100%
+        }
+        .dataTables_length, .dataTables_filter {
+            margin-bottom: 10px
+        }
+        .dataTables_length {
+            position: relative;
+            top: 2px
+        }
+        .dataTables_paginate {
+            padding-top: 8px!important
+        }
+        .dataTables_paginate .paginate_button {
+            padding: .125em .48em!important
+        }
+        .dataTables_empty {
+            border-top: none!important
+        }
+        table.dataTable tbody tr:first-child > td {
+            border-top: 1px solid #999!important
+        }
+        table.dataTable thead th {
+            background-repeat: no-repeat!important;
+            background-position: right center!important;
+            border-bottom: none!important;
+            white-space: normal!important
+        }
+        table.dataTable thead th.col-flag {
+            background-image: none!important
+        }
+        table.dataTable tfoot th,
+        table.dataTable tfoot td {
+            border-top: 1px solid #999!important
+        }
+        table.dataTable.no-footer {
+            border-bottom: 1px solid #999!important
+        }
+        table.dataTable input[type="checkbox"] {
+            width: auto!important
+        }
+        table.dataTable tbody td {
+            position: relative;
+        }
+        table.dataTable .row-disabled td {
+            height: 19px
+        }
+        /*--
+        table.dataTable thead .sorting_desc {
+            background-image: url("https://cdn.datatables.net/1.10.12/images/sort_desc.png")!important
+        }
+        table.dataTable thead .sorting_asc {
+            background-image: url("https://cdn.datatables.net/1.10.12/images/sort_asc.png")!important
+        }
+        table.dataTable thead .sorting {
+            background-image: url("https://cdn.datatables.net/1.10.12/images/sort_both.png")!important
+        }
+        --*/
+        table.sortable-features-off {
+            margin-bottom: 15px
+        }
+        table.sortable table.sortable-features-off,
+        table.sortable-features-off table.sortable-features-off {
+            border: 1px solid #999!important;
+            width: 100%!important;
+            margin: 6px 0!important;
+        }
+        table.sortable table.sortable-features-off tr:not(.row-selected) > td,
+        table.sortable-features-off table.sortable-features-off tr:not(.row-selected) > td {
+            background-color: #fcfdff!important;
+        }
+        table.sortable table.sortable-features-off th,
+        table.sortable-features-off table.sortable-features-off th {
+            background-color: #f9f2ff
+        }
+        table.sortable table.sortable-features-off tbody tr:not(:first-child) > td,
+        table.sortable-features-off table.sortable-features-off tbody tr:not(:first-child) > td {
+            border-top: 1px solid #ddd
+        }
+        /*-- End: dataTables --*/
+        
+        /*-- Start: chosen-select --*/
+        .chosen-select {
+            max-width: 220px!important
+        }
+        .chosen-container {
+            width: 100%!important;
+            outline: none!important
+        }
+        .chosen-container-active .chosen-single,
+        .chosen-container-active .chosen-choices {
+            border-color: #aaa;
+            box-shadow: none;
+        }
+        .chosen-product-picker ~ .chosen-container {
+            margin-top: 5px;
+            margin-bottom: 15px
+        }
+        /*-- End: chosen-select --*/
+        
+        /*-- Start: pageMessages --*/
+        .messageCell {
+            padding-left: 12px
+        }
+            .messageCell > div {
+                display: inline
+            }
+        .message .messageText a {
+            margin: 0 2px;
+            font-size: 100%;
+            color: #1797C0
+        }
+        /*-- End: pageMessages --*/
+    </style>
+
+</apex:component>

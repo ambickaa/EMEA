@@ -1,0 +1,7 @@
+<apex:page standardController="Stock__c"  sidebar="false">
+ 
+<meta name="viewport" content="width=1600" />
+	<div id="errorDiv_ep"></div>
+    <apex:pageMessages id="messages"  rendered="true"></apex:pageMessages>
+    <apex:detail subject="{!Stock__c}" relatedList="false" showChatter="false" inlineEdit="true" oncomplete="window.location.reload(false);"/>
+</apex:page>

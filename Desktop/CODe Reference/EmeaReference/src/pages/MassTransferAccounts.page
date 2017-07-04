@@ -1,0 +1,282 @@
+<apex:page controller="AccountTransfer" title="Mass Transfer Accounts" id="MassTransferAccountsPage" showHeader="false" sidebar="false" >
+
+    <apex:sectionHeader title="Data Migration Page"/>
+
+    <apex:form id="txfrAccountsForm" >
+        <!--
+        -- Comment/Uncomment one of the following two lines to enable debugging in page controller.
+        --    DEGUGTRUE = Show SOQL statement and results of query
+        -->
+        
+        <!-- <apex:inputHidden id="DebugSetting" value="{!SetDebugModeTRUE}"/>    -->
+        <apex:inputHidden id="DebugSetting" value="{!SetDebugModeFALSE}"/>
+        
+        
+        <apex:pageBlock title="Mass Transfer Account" id="xferAccountsPageBlock" tabStyle="Campaign"
+        helpTitle="Entering Criteria" helpUrl="https://login.salesforce.com/help/doc/en/reports_filter.htm">
+        <apex:pageMessages id="messages" escape="false"/>
+        
+        <!-- ********* THE [SEARCH] BUTTON ************ -->
+        <apex:pageBlockButtons id="findButton" location="bottom"  >
+            <apex:commandButton title="Find" value="Find" action="{!doSearch}" status="loadingSearch" reRender="Results, findButton, messages"/>
+            <apex:actionStatus id="loadingSearch" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+        </apex:pageBlockButtons> 
+        
+        <apex:outputPanel id="userLookup_ActiveUsers">
+        <apex:pageBlockSection columns="3" id="UserSelection1">
+            <apex:pageBlockSectionItem id="FromUser1">
+                <apex:outputLabel >Transfer From User:</apex:outputLabel>
+                <apex:inputField value="{!fromUserLookup.OwnerID}" id="oldOwner" required="false" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="ToUser1">
+                <apex:outputLabel >Transfer To User:</apex:outputLabel>
+                <apex:inputField value="{!toUserLookup.OwnerID}" required="false" id="newOwner1" />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        <!-- ********* SEARCH CRITERIA ************ -->
+        <apex:pageBlockSection columns="6" title="Selection Criteria" collapsible="false" id="Criteria" >
+        <apex:dataTable value="{!searchCriteria}" columns="5" var="criteria" id="CriteriaRows">
+            <apex:column width="25%">
+                <apex:selectList value="{!criteria.searchField}" size="1" id="SearchField" >
+                    <apex:selectOptions value="{!searchFields}"></apex:selectOptions>
+                </apex:selectList>
+            </apex:column>
+
+            <apex:column width="25%">
+            <apex:selectList size="1" value="{!criteria.searchOperator}" id="SearchOperator">
+                <apex:selectOptions value="{!criteria.OperatorSelectList}"></apex:selectOptions>
+            </apex:selectList>
+            </apex:column>
+            <apex:column width="25%">
+            <apex:inputText size="20" id="SearchValue" value="{!criteria.searchValue}"/>
+            </apex:column>
+            <apex:column width="5%"><apex:outputText value="{!criteria.Logical}"/></apex:column>
+            <apex:column width="20%"><apex:outputText value="{!criteria.errMsg}" style="color:red;"/></apex:column>
+        </apex:dataTable>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="1" >
+            Note: Dates Must be Entered in {!InputDateFormat} format or use special date literals (ex: THIS WEEK)
+        </apex:pageBlockSection>
+        
+        <!-- ********* TRANSFER OPTIONS ************ -->
+        <apex:pageBlockSection columns="2" title="Transfer Options" collapsible="false" id="Options">
+            <apex:pageBlockSectionItem id="OptioneMail">
+                <apex:outputText >Send an eMail to New Owner with List of Accounts</apex:outputText>
+                <apex:inputCheckbox Value="{!optSendeMailToOwner}" id="optSendeMail" title="Send eMail" />
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem id="All">
+                <apex:outputText >Include related records from other owners</apex:outputText>
+                <apex:inputCheckbox Value="{!transferAll}" id="All2" title="transferAll" />
+            </apex:pageBlockSectionItem>   
+            <apex:pageBlockSectionItem id="Accounts">
+                <apex:outputText >Include Accounts to the transfer process</apex:outputText>
+                <apex:inputCheckbox Value="{!transferAccounts}" id="Accounts2" title="Accounts" />
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem id="Acreages">
+                <apex:outputText >Include Acreages to the transfer process</apex:outputText>
+                <apex:inputCheckbox Value="{!transferAcreages}" id="Acreages2" title="Acreages" />
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem id="Contacts">
+                <apex:outputText >Include Contacts to the transfer process</apex:outputText>
+                <apex:inputCheckbox Value="{!transferContacts}" id="Contacts2" title="Contacts" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="ActionPlan">
+                <apex:outputText >Include Action Plan lines to the transfer process</apex:outputText>
+                <apex:inputCheckbox Value="{!transferCLIs}" id="AP" title="ActionPlan" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="Trials">
+                <apex:outputText >Include Trials to the transfer process</apex:outputText>
+                <apex:inputCheckbox Value="{!transferTrials}" id="Trials2" title="Trials" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="Vouchers">
+                <apex:outputText >Include Vouchers to the transfer process</apex:outputText>
+                <apex:inputCheckbox Value="{!transferVouchers}" id="Vouchers2" title="Vouchers" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="Cases">
+                <apex:outputText >Include NPS Cases to the transfer process</apex:outputText>
+                <apex:inputCheckbox Value="{!transferCases}" id="Cases2" title="Cases" />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+      </apex:pageBlock>
+
+
+    <apex:outputPanel id="Results" layout="block" style="{!ShowBlockIfResults}">
+        <apex:pageBlock id="resultsBlock" tabStyle="Contact">
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton title="Transfer Selected" value="Transfer Selected" action="{!doTransfer}" status="transferSellv" reRender="Results, messages"/>
+            <apex:commandButton title="Transfer All" value="Transfer All" status="transferAllv"  onclick="if(!confirm( {!ssc.ResultSize} + ' records are ready to be transfered. Are you sure?')){return false;}" action="{!doTransferAll}" reRender="Results, findButton, messages"/>
+            <apex:actionStatus id="transferSellv" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            <apex:actionStatus id="transferAllv" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+        </apex:pageBlockButtons>
+        <!--CR-00000375 Start Oriol 17/05/2016-->
+        <!-- Multipicklist Year-Division-->
+        <apex:pageBlockSection id="yearDivPick" columns="2">   
+                <c:MultiselectPicklist leftLabel="Available Years"
+                leftOptions="{!AvailableYears}"
+                rightLabel="Selected Years"
+                rightOptions="{!SelectedYears}"
+                size="5"
+                width="150px"/>
+                
+                <c:MultiselectPicklist leftLabel="Available Divisions"
+                leftOptions="{!AvailableDivisions}"
+                rightLabel="Selected Divisions"
+                rightOptions="{!SelectedDivisions}"
+                size="5"
+                width="150px"/>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockButtons >
+            <apex:commandButton title="Select 5" value="Select 5" onClick="selectx(5); return false;" />
+            <apex:commandButton title="Select 10" value="Select 10" onClick="selectx(10); return false;" />
+            <apex:commandButton title="Select 20" value="Select 20" onClick="selectx(20); return false;" />
+         </apex:pageBlockButtons>
+        <!--CR-00000375 Start Oriol 17/05/2016-->
+        
+            <apex:dataTable value="{!searchResults}" var="Results" id="resultsDataTable"
+            styleClass="tableClass list"
+            rowClasses="odd,even"
+            onrowmouseout="if (window.hiOff){hiOff(this);}"
+            onrowmouseover="if (window.hiOn){hiOn(this);}">
+                <apex:facet name="caption"></apex:facet>
+                <apex:facet name="header"></apex:facet>
+                <apex:column >
+                    <apex:facet name="header"><apex:inputCheckbox id="selectall" selected="false"
+                        onclick="javascript:customSelectAllOrNoneByCheckbox(document.forms['MassTransferAccountsPage:txfrAccountsForm'],'MassTransferAccountsPage:txfrAccountsForm:resultsBlock:resultsDataTable:', this);"/></apex:facet>
+                    <apex:inputCheckbox value="{!Results.selected}" id="selected" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Name</apex:facet>
+                    <apex:outputLink target="_blank" value="{!URLFOR($Action.Account.View, Results.account.ID)}" >{!Results.account.name}</apex:outputLink>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Account Client Code</apex:facet>
+                    <apex:outputText value="{!Results.account.Client_Code__c}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Owner</apex:facet>
+                    <apex:outputText value="{!Results.account.owner.name}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Created Date</apex:facet>
+                    <apex:outputText value="{!Results.CreatedDate}"/>
+                </apex:column>
+                <apex:column >
+                <apex:facet name="header">Record Type</apex:facet>
+                    <apex:outputText value="{!Results.account.RecordType.Name}"/>
+                </apex:column>                
+            </apex:dataTable>
+     </apex:pageBlock> 
+     </apex:outputPanel>
+     
+<!-- BEGIN -->
+                <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="otpNav2">  
+                  Total Records Found: <apex:outputText rendered="{!IF(ssc.resultSize==10000,true,false)}">10000 +</apex:outputText><apex:outputText rendered="{!IF(ssc.resultSize < 10000,true,false)}">{!ssc.resultSize}</apex:outputText>  
+                  <apex:image url="/img/search_prevarrow_disabled.gif" styleClass="prevArrow" rendered="{!NOT(ssc.HasPrevious)}"/>  
+                  <apex:image url="/img/search_prevarrow.gif" title="Previous Page" styleClass="prevArrow" rendered="{!ssc.HasPrevious}"/>  
+                  <apex:commandLink onclick="javascript:getAlert(document.forms['MassTransferAccountsPage:txfrAccountsForm'],'MassTransferAccountsPage:txfrAccountsForm:resultsBlock:resultsDataTable:', this);" action="{!Previous}" title="Previous Page" value="Previous Page" reRender="otpNav2, resultsBlock" rendered="{!ssc.HasPrevious}" status="loadingAccounts"/>  
+                  <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(ssc.HasPrevious)}">Previous Page</apex:outputPanel>           
+                  &nbsp;({!IF(ssc.PageNumber == 1,1,((ssc.PageNumber -1) * ssc.PageSize)+1)}-{!IF(ssc.resultSize < ssc.PageSize,ssc.resultSize,ssc.PageNumber * ssc.pageSize)})&nbsp;  
+                  <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(ssc.HasNext)}">Next Page</apex:outputPanel>           
+                  <apex:commandLink onclick="javascript:getAlert(document.forms['MassTransferAccountsPage:txfrAccountsForm'],'MassTransferAccountsPage:txfrAccountsForm:resultsBlock:resultsDataTable:', this);" title="Next Page" value="Next Page" rendered="{!ssc.HasNext}" action="{!Next}" reRender="otpNav2, resultsBlock" status="loadingAccounts"/>&nbsp;  
+                  <apex:image url="/img/search_nextarrow.gif" title="Next Page" styleClass="nextArrow" rendered="{!ssc.HasNext}"/>  
+                  <apex:image url="/img/search_nextarrow_disabled.gif" rendered="{!NOT(ssc.HasNext)}"/>   
+                  <apex:actionStatus id="loadingAccounts" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+              </apex:outputPanel>
+<!-- END -->
+    </apex:form>
+<!-- ********* JAVASCRIPT USED TO TOGGLE SELECTION OF SEARCH RESULTS ************ -->
+<script  type="text/javascript">
+
+// GLOBAL JAVASCRIPT VARIABLES
+// - These are the ID's of various blocks and buttons throughout the VisualForce page
+var baseBlockID = 'MassTransferAccountsPage:txfrAccountsForm:xferAccountsPageBlock:';
+var FromUserBlock_ActiveOnly = baseBlockID + 'userLookup_ActiveUsers';
+var FromUserBlock_InActive = baseBlockID + 'userLookup_InActiveUsers';
+var displayed = false;
+
+// MassTransferAccountsPage:txfrAccountsForm:xferAccountsPageBlock:UserSelection1:ToUser1:newOwner1
+// MassTransferAccountsPage:txfrAccountsForm:xferAccountsPageBlock:
+// MassTransferAccountsPage:txfrAccountsForm:xferAccountsPageBlock:UserSelection1:ToUser1:newOwner1
+var ToUserID_Active = baseBlockID + 'UserSelection1:ToUser1:newOwner1';
+var ToUserID_InActive = baseBlockID + 'UserSelection2:ToUser2:newOwner2';
+
+var ToUserName_Active = baseBlockID + 'userLookup_InActiveUsers';
+var ToUserName_InActive = baseBlockID + 'userLookup_InActiveUsers';
+
+// ************************************************************************************
+// Function: toggleUserSelectionBlocks()
+// - Called "Show Inactive Users" checkbox on the page to show or hide the
+//   the picklist area for selecting inactive users
+// ************************************************************************************
+function toggleUserSelectionBlocks(show) {
+    if (show) {
+        document.getElementById(FromUserBlock_InActive).style.display = '';
+        document.getElementById(FromUserBlock_ActiveOnly).style.display = 'none';
+        document.getElementById(ToUserID_InActive).value = document.getElementById(ToUserID_Active).value;
+    }
+    else{
+        document.getElementById(FromUserBlock_ActiveOnly).style.display = '';
+        document.getElementById(FromUserBlock_InActive).style.display = 'none';
+        document.getElementById(ToUserID_Active).value = document.getElementById(ToUserID_InActive).value;
+    }
+}
+
+// ************************************************************************************
+// Function: selectx()
+// ************************************************************************************
+function selectx(n) {
+    var table = document.getElementById("MassTransferAccountsPage:txfrAccountsForm:resultsBlock:resultsDataTable:tb");
+    var inputs = table.getElementsByTagName("input");
+    var j = 0;
+    for (var i = 0; i < inputs.length; i++) {
+        if (j == n) break;
+        if (inputs[i].type == "checkbox" && inputs[i].checked == false) {
+            inputs[i].checked = true;
+            j++;
+        }
+    }
+}
+
+// ************************************************************************************
+// Function: customSelectAllOrNoneByCheckbox()
+// - Check/Uncheck ALL values in the search results
+// ************************************************************************************
+function customSelectAllOrNoneByCheckbox(form, element_name, control)
+{  customSelectChecked(form, element_name, control.checked); }
+
+// ************************************************************************************
+// Function: customSelectChecked()
+// - Check/Uncheck the individual values in the search results
+// - Called by the customSelectAllOrNoneByCheckbox() function (which is called by the
+//   checking or unchecking the 'select all' checkbox in the search results
+// ************************************************************************************
+function customSelectChecked(form, element_name, value)
+{
+    var i = 0;
+    for (i = 0; i < form.elements.length; i++) {
+        if (form.elements[i].name.search('selected') > 0 && form.elements[i].disabled == false) {
+            form.elements[i].checked = value;
+        }
+    }
+}
+//*************************************************************************************
+function getAlert(form, element_name, value)
+{
+    if(!displayed){
+        var i = 0;
+        for (i = 0; i < form.elements.length; i++) {
+            if (form.elements[i].name.search('selected') > 0  && form.elements[i].checked) {
+                displayed=true;
+                alert("Selected records are lost when the current page is changed");
+                break;
+            }    
+        }
+    }
+}
+</script>
+</apex:page>

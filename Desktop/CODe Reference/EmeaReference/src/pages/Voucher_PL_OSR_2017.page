@@ -1,0 +1,259 @@
+<apex:page sidebar="false" standardStylesheets="false" renderAs="pdf" showHeader="false" language="pl" standardcontroller="Voucher__c" extensions="Voucher_PL_OSR_2017_Controller" applyHtmlTag="false" applyBodyTag="false">
+    
+    <html lang="pl">
+        <head>
+            <meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+            <title>Voucher</title>
+            <style>
+                @page {
+                    size: A4 portrait;
+                    border: 0;
+                    margin: 0;
+                    padding: 0;
+                    
+                    @top-center {
+                        content: element(header);
+                        width: 100%;
+                    }
+                    @bottom-left {
+                        content: element(footer);
+                        width: 100%;
+                    }
+                }
+                body {
+                    margin: 0;
+                    padding: 0;
+                    color: #206082;
+                    font-size: 11.5px;
+                    font-weight: 400;
+                    line-height: 1.15;
+                    font-family: Arial Unicode MS, sans-serif;
+                }    
+                .header {
+                    position: running(header);
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    border-spacing: 0;
+                }
+                .footer {
+                    position: running(footer);
+                    bottom: 0;
+                    width: 100%;
+                    border-spacing: 0;
+                }
+                .wrapper {
+                    overflow: hidden;
+                    width:90%;
+                }
+                .wrapper > div {
+                    float: left;
+                    margin-left:5%;
+                    width: 88%;
+                }
+                .wrapper > div:first-child {
+                    margin-left:5%;
+                    width: 88%;
+                }
+                .wrapper > div > table{
+                    padding-left:5px;
+                    padding-bottom:5px;
+                }
+                .tablePremium{
+                    background-color:rgb(255,225,146);
+                    border-radius:  12px;
+                    -moz-border-radius:12px;
+                    padding-left:5px;
+                    padding-bottom:5px;
+                }
+                h1{
+                   font-family: sans-serif; 
+                }
+            </style>
+        
+        </head>
+
+        <body style=" margin:0;padding:0; border:0; font-weight:normal;  line-height:1.25; font-size:80%; font-size:10px; vertical-align:baseline; font-family:Arial Unicode MS, sans-serif; background-color:#c3e2eb;"> 
+
+            <div id="PAGE" style="position:relative; width:794px; height:1122px;"> 
+
+                <header>
+                    <apex:image url="{!$Resource.Voucher_PL_OSR_2017_HEADER1}" width="100%"/>
+                </header>
+
+                <footer style="position:absolute; display:block; bottom:-3px; width:794px; height:69px;">
+                    <apex:image url="{!$Resource.Voucher_PL_OSR_2017_FOOTER1}" width="100%" height="95%" style="display:block;"></apex:image>
+                </footer>
+
+                <div id="container" style="position:relative; margin:0px 30px; height:875px">
+
+                    <div style="width:78%">       
+
+                        <p style="margin-top:5px; margin-left:1.5px; line-height:1; color:#000; font-size:16px;">                            
+                            Kup minimum <b style="font-weight:bold; margin:0px;font-family:Gill Sans Extrabold, sans-serif;font-size:20px; color:#000;">30</b> worków dowolnej odmiany rzepaku ozimego DEKALB<sup>®</sup>,<br/>          
+                            a na produkty objęte promocją dostaniesz od nas super rabat. Promocja<br/>
+                            dotyczy odmian:
+                        </p>
+                        <h3 style ="margin-top:1px;margin-bottom:0px;margin-right:10px;margin-left:1.5px;color:#D2232B;font-family:MorganSansCond-Regular,sans-serif;font-weight:bold;padding-bottom:2px;font-size:13px;"> DK EXCEPTION, DK EXPRIT, DK EXQUISITE, DK EXTERRIER, DK EXTIME, DK EXTRACT,<br/>DK IMPLEMENT CL, DK IMPRESSION CL, DK PLATINIUM, DK SENSEI, DK SECRET</h3>
+                        <p style="margin-top:1px;margin-bottom:25px;margin-right:10px;margin-left:1.5px;font-family:MorganSansCond, sans-serif;font-size:13px;color:#000;">Promocja trwa do 30 wrze<b style="font-family: Arial Unicode MS">ś</b>nia 2017 r., lub do wyczerpania zapasów ww. odmian.</p>
+                    </div>
+
+                    <table width="100%" style="margin-bottom:10px;">    
+                        <tr>                   
+                            <td style="white-space:nowrap;width:12%; color:#000;">Imię i nazwisko<br/>lub nazwa firmy<b style="color:#D2232B"> *</b></td>
+                            <td style="border-bottom:1px dotted #000; width:88%; font-style:normal; color:#000; font-size:12px;padding-left:10px;">{!voucher.FarmNameCopy__c}&nbsp;</td>
+                        </tr>
+                    </table>
+
+                    <table width="100%" style="margin-bottom:10px;">    
+                        <tr>                   
+                            <td style="white-space:nowrap;width:12%; color:#000;">Adres<b style="color:#D2232B"> *</b></td>
+                            <td style="border-bottom:1px dotted #000; width:88%;font-style:normal;color:#000; font-size:12px;padding-left:10px;">{!voucher.AccountRef__r.Street__c},   {!voucher.AccountRef__r.City__c} - {!voucher.AccountRef__r.StateProvince__c}</td>                  
+                        </tr>
+                    </table>
+
+                    <table width="100%" style="margin-bottom:10px;">    
+                        <tr>                   
+                            <td style="white-space:nowrap; width:12%; color:#000;">Kod i poczta<b style="color:#D2232B"> *</b></td>
+                            <td style="border-bottom:1px dotted #000; width:28%; font-style:normal; color:#000; font-size:12px;padding-left:10px;">{!voucher.AccountRef__r.DE_Territory_Key__r.DE_CP__c}</td>
+                            <td style="padding-left:30px;white-space:nowrap; width:15%; color:#000;">Adres e-mail <b style="color:#D2232B"> *</b></td>
+                            <td style="border-bottom:1px dotted #000; width:45%; font-style:normal; color:#000; font-size:12px;padding-left:10px;">{!voucher.EmailCopy__c}</td>
+                        </tr>
+                    </table>
+
+                    <table width="100%" style="margin-bottom:10px;">    
+                        <tr>                   
+                            <td style="white-space:nowrap; width:12%; color:#000;">Numer telefonu <b style="color:#D2232B"> *</b></td>
+                            <td style="border-bottom:1px dotted #000; width:28%; font-style:normal; color:#000; font-size:12px;padding-left:10px;">{!voucher.PhoneCopy__c}</td>
+                            <td style="padding-left:30px;white-space:nowrap; width:15%; color:#000;">NIP <b style="color:#D2232B"> *</b></td>
+                            <td style="border-bottom:1px dotted #000; width:45%; font-style:normal; color:#000; font-size:12px;padding-left:10px;">{!voucher.AccountRef__r.GC_VATIN_Number__c}</td>
+                        </tr>
+                    </table>
+                    
+                    <table width="100%" style="margin-bottom:5px;">    
+                        <tr>                   
+                            <td style="white-space:nowrap; width:12%; color:#000;">Źródło zakupu <b style="color:#D2232B"> *</b></td>
+                            <td style="border-bottom:1px dotted #000; width:88%; font-style:normal; color:#000; font-size:12px;padding-left:10px;">{!voucher.DistributorNameCopy__c}</td>
+                        </tr>
+                    </table>
+                   <div style="width:10%">
+                        <apex:image url="{!$Resource.Voucher_PL_OSR_2017_BANNER2}" width="110px" style="position:absolute; top:1%; right:1%"/>
+                        <div style="position:absolute; top:13%; right:0%; align:right; font-family:sans-serif; font-size:16px; text-align:center; color:#000"><b>Numer kuponu</b><br>{!voucher.Name}</br><br><b style="color:#D2232B"> </b></br></div>
+                        <apex:image url="{!$Resource.Voucher_PL_OSR_2017_CANCELLED}" rendered="{!voucher.Status__c == 'Cancelled'}" width="110px" style="position:absolute; top:18%; right:1%"/>
+                        <apex:outputPanel layout="block" rendered="{!$CurrentPage.parameters.signature!=null}">
+                            <div style="position:absolute; top:38.8%; right:8px; border:1px solid #00A3DF;padding:2px; font-style:normal; white-space:nowrap;background-color:white"> <img src="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.signature}" width="140px" height="56px"/></div>
+                        </apex:outputPanel>
+                    </div>
+
+                    <div style="width:100%">
+                        <p style="margin-bottom:2px; margin-top:0px; text-align:justify; margin-left:1.5px; color:#000;font-size:10px;">Oświadczam, że jestem pełnoletni/a i wyrażam dobrowolnie zgodę na przetwarzanie moich danych osobowych przez Monsanto Polska Sp. z o.o. z siedzibą w Warszawie (02-672) przy ul. Domaniewskiej 49 w celach związanych z niniejszą promocją. Zostałem/am poinformowany/a, że podanie moich danych jest dobrowolne oraz, że przysługuje mi prawo dostępu do tresci swoich danych osobowych oraz ich poprawiania.</p>
+                    </div>
+
+                    <table style="width:100%; margin-top:37px; color:#000;margin-bottom:0px;">
+                        <tr>
+                            <td style="width:15%;"><b style="color:#D2232B">* </b>pola obowiązkowe</td>
+                            <td style="width:30%;"></td>
+                            <td style="width:4%; text-align:right">data<b style="color:#D2232B">* </b></td>
+                            <td style="width:10%; text-align:center;border-bottom:1px dotted #000;">{!Data}</td>
+                            <td style="width:4%; text-align:right">podpis<b style="color:#D2232B">* </b></td>
+                            <td style="width:20%; text-align:right;border-bottom:1px dotted #000;"></td>
+                        </tr>                                            
+                    </table>
+                    
+                    <!--  PRODUCTS DISPLAY -->                    
+                    <div style="background-color:#c3e2eb; position:relative; width:780px; height:425px; margin-left:-37px;margin-top:8px;">
+                        <div> 
+                            <h3 style="font-size:16px; color:#000; margin-top:15px; font-weight:bold; font-family:MorganSansCond,sans-serif; line-height:1; padding:0 40px;">Zaznacz krzy<b style="font-family: Arial Unicode MS">&#380;</b>ykiem pole przy wybranej odmianie i wpisz ilo<b style="font-family: Arial Unicode MS">&#347;</b><b style="font-family: Arial Unicode MS">&#263;</b> zamówionych worków <br/><b style="font-size:16px;font-weight: normal;">(minimum 30 worków dowolnej odmiany rzepaku ozimego DEKALB<sup>®</sup>*):</b></h3>
+                        </div>
+                        <div class='wrapper'>
+                            <!-- Premium Products -->
+                            <div >
+                                <table style="width:100%; line-height:1.25em;background-color:rgb(255,225,146); border-collapse:separate;border-radius:12px; -moz-border-radius:12px;">
+                                <apex:variable var="prodNr" value="{!0}" />
+                                    <tr>
+                                    <td style="width:48%;">
+                                        <table >
+                                            <tr><td colspan="5" style="font-size:16px; color:#000; font-weight:bold; font-family:MorganSansCond,sans-serif; line-height:20px;">Odmiany obj<b style="font-family: Arial Unicode MS">ę</b>te rabatem:</td></tr>
+                                            
+                                            <apex:repeat value="{!MAP_Products_Premium_Keys}" var="pceId" >
+                                            <tr style="vertical-align:bottom;line-height: 18px;{!IF(prodNr <= 4,'display:', 'display:none')}">
+                                                <td style="font-size:25px; background-color:rgb(255,225,146)"><apex:image style="margin-bottom:4px;" value="{!IF(MAP_Products_Premium[pceId], $Resource.Voucher_PL_OSR_2017_CHECKBOX, $Resource.Voucher_PL_OSR_2017_CHECKBOX_UNCHECKED)}" width="17px" height="17px"/></td>
+                                                <td style="width:30px; font-size:16px; font-family:Arial, sans-serif; color:#000;margin-left:0px;border-bottom:1px dotted#000;text-align:center;">{!IF(CONTAINS(pcesInVliPremium,pceId),MAP_VLI_Premium[pceId].Bags__c,null)}</td>
+                                                <td colspan="2" style="font-size:13px; font-family:Arial,sans-serif; color:#000;text-align:left;vertical-align: text-bottom;padding:0px;">worków</td>        
+                                                <td style="font-size:14px; font-family:sans-serif; color:#000; margin-right:1px; padding:0px;"><b style="font-family:sans-serif; font-size:15px;letter-spacing: -1px; font-weight:700; color:rgb(0,159,221);">{!Map_PCE[pceId].prodDesc__c}</b> <apex:image rendered="{!MAP_Pce[pceId].NewProduct__c}" value="{!IF(MAP_Pce[pceId].NewProduct__c, $Resource.PL_Voucher2017_NewProduct, NULL)}" width="50px" style="position: relative; bottom: -1px; margin:0 0 0 4px; padding:0px; border:0;"/></td>                   
+                                                <apex:variable var="prodNr" value="{!prodNr+1}"/>
+                                                </tr>
+                                            </apex:repeat>
+                                        </table>
+                                    </td>
+                                    <td style="width:52%;">
+                                        <table >
+                                        <apex:variable var="prodNr" value="{!0}" />
+                                            <apex:repeat value="{!MAP_Products_Premium_Keys}" var="pceId" >
+                                            <tr style="line-height: 18px;{!IF(prodNr <= 4,'display:none', 'display:')}">
+                                                <td style="font-size:25px; background-color:rgb(255,225,146)"><apex:image style="margin-bottom:4px;" value="{!IF(MAP_Products_Premium[pceId], $Resource.Voucher_PL_OSR_2017_CHECKBOX, $Resource.Voucher_PL_OSR_2017_CHECKBOX_UNCHECKED)}" width="17px" height="17px"/></td>
+                                                <td style="width:30px; font-size:16px; font-family:Arial, sans-serif; color:#000;margin-left:0px;border-bottom:1px dotted#000;text-align:center;">{!IF(CONTAINS(pcesInVliPremium,pceId),MAP_VLI_Premium[pceId].Bags__c,null)}</td>
+                                                <td colspan="2" style="font-size:13px; font-family:Arial,sans-serif; color:#000;text-align:left;">worków</td>        
+                                                <td style="font-size:14px; font-family:sans-serif; color:#000; margin-right:1px; padding:0px;"><b style="font-family:sans-serif; font-size:15px;letter-spacing: -1px; font-weight:700; color:rgb(0,159,221);">{!Map_PCE[pceId].prodDesc__c}</b> <apex:image rendered="{!MAP_Pce[pceId].NewProduct__c}" value="{!IF(MAP_Pce[pceId].NewProduct__c, $Resource.PL_Voucher2017_NewProduct, NULL)}" width="50px" style="position: relative; bottom: -1px; margin:0 0 0 4px; padding:0; border:0;"/></td>                   
+                                                <apex:variable var="prodNr" value="{!prodNr+1}"/>
+                                                </tr>
+                                            </apex:repeat>
+                                        </table>
+                                    </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <!-- Standard Products -->
+                            <div>
+                                <table style="width:100%; line-height:1.25em;margin-top:0px;">
+                                <apex:variable var="prodNr" value="{!0}" />
+                                    <tr>
+                                    <td style="width:48%;">
+                                        <table >
+                                            <tr><td colspan="5" style="font-size:16px; color:#000; font-weight:bold; font-family:MorganSansCond,sans-serif; line-height:20px;">Odmiany pozosta<b style="font-family: Arial Unicode MS">&#322;</b>e:</td></tr>
+                                            
+                                            <apex:repeat value="{!MAP_Products_Keys}" var="pceId" >
+                                            <tr style="line-height: 18px;{!IF(prodNr <= 3,'', 'display:none')}">
+                                                <td style="font-size:25px;"><apex:image style="margin-bottom:4px;" value="{!IF(MAP_Products[pceId], $Resource.Voucher_PL_OSR_2017_CHECKBOX, $Resource.Voucher_PL_OSR_2017_CHECKBOX_UNCHECKED)}" width="17px" height="17px"/></td>
+                                                <td style="width:30px; font-size:16px; font-family:Arial, sans-serif; color:#000;margin-left:0px;border-bottom:1px dotted#000;text-align:center;">{!IF(CONTAINS(pcesInVli,pceId),MAP_VLI[pceId].Bags__c,null)}</td>
+                                                <td colspan="2" style="font-size:13px; font-family:Arial,sans-serif; color:#000;text-align:left;">worków</td>        
+                                                <td style="font-size:14px; font-family:sans-serif; color:#000; margin-right:1px; padding-left:0px;"><b style="font-family:sans-serif; font-size:15px;letter-spacing: -1px; font-weight:700; color:rgb(0,159,221);">{!Map_PCE[pceId].prodDesc__c}</b> <apex:image rendered="{!MAP_Pce[pceId].NewProduct__c}" value="{!IF(MAP_Pce[pceId].NewProduct__c, $Resource.PL_Voucher2017_NewProduct, NULL)}" width="50px" style="position: relative; bottom: -1px; margin:0 0 0 4px; padding:0; border:0;"/></td>                   
+                                                <apex:variable var="prodNr" value="{!prodNr+1}"/>
+                                                </tr>
+                                            </apex:repeat>
+                                        </table>
+                                    </td>
+                                    <td style="width:52%;">
+                                        <table >
+                                        <apex:variable var="prodNr" value="{!0}" />
+                                            <apex:repeat value="{!MAP_Products_Keys}" var="pceId" >
+                                            <tr style="line-height: 18px;{!IF(prodNr <= 3,'display:none', '')}">
+                                                <td style="font-size:25px;"><apex:image style="margin-bottom:4px;" value="{!IF(MAP_Products[pceId], $Resource.Voucher_PL_OSR_2017_CHECKBOX, $Resource.Voucher_PL_OSR_2017_CHECKBOX_UNCHECKED)}" width="17px" height="17px"/></td>
+                                                <td style="width:30px; font-size:16px; font-family:Arial, sans-serif; color:#000;margin-left:0px;border-bottom:1px dotted#000;text-align:center;">{!IF(CONTAINS(pcesInVli,pceId),MAP_VLI[pceId].Bags__c,null)}</td>
+                                                <td colspan="2" style="font-size:13px; font-family:Arial,sans-serif; color:#000;text-align:left;">worków</td>        
+                                                <td style="font-size:14px; font-family:sans-serif; color:#000; margin-right:1px; padding-left:0px;"><b style="font-family:sans-serif; font-size:15px;letter-spacing: -1px; font-weight:700; color:rgb(0,159,221);">{!Map_PCE[pceId].prodDesc__c}</b> <apex:image rendered="{!MAP_Pce[pceId].NewProduct__c}" value="{!IF(MAP_Pce[pceId].NewProduct__c, $Resource.PL_Voucher2017_NewProduct, NULL)}" width="50px" style="position: relative; bottom: -1px; margin:0 0 0 4px; padding:0; border:0;"/></td>                   
+                                                <apex:variable var="prodNr" value="{!prodNr+1}"/>
+                                                </tr>
+                                            </apex:repeat>
+                                            <tr><td></td></tr>
+                                        </table>
+                                    </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div style="width=10%">
+                            <apex:image url="{!$Resource.Voucher_PL_OSR_2017_BAG}" width="110px" height="187px" style="position:absolute; top:25%; right:0%"/>
+                            <div style="font-size:16px; color:#000;font-family:sans-serif; text-align:center; position:absolute; top:68%; right:0%;">Ca<b style="font-family: Arial Unicode MS">&#322;</b>kowity rabat</div>
+                            <div style="font-size:14px; color:#000;font-family:sans-serif; text-align:center; position:absolute;top:72%; right:3%; padding-top: 5px"><b>{!BAG_DISCOUNT}</b> z<b style="font-family: Arial Unicode MS">&#322;</b></div>
+                        </div>
+                        <div style="width:85%; position:absolute; bottom:17px"> 
+                            <p style="text-align:justify; margin-left:40px; color:#000;">*Zamówienie może stanowić mix różnych odmian z grupy Odmiany objęte rabatem oraz z grupy Odmiany pozosta<b style="font-family: Arial Unicode MS">&#322;</b>e. Rabat naliczany jest jednak tylko dla odmian z grupy Odmiany objęte rabatem.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>   
+</apex:page>

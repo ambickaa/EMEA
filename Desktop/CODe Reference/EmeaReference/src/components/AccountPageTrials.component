@@ -1,0 +1,382 @@
+<apex:component allowDML="true" controller="AccountPageTrialsController">
+    
+    <apex:attribute name="account" type="Account" description="currentAccount" required="true" />
+    
+    <apex:form id="List_Records_Table">
+    
+    <span class="component-messages">
+        <apex:pageMessages rendered="{!showTrialsMessages}" escape="false" />
+    </span>
+    
+    <apex:pageBlock >
+
+        <div class="pageBlockSection">
+	        <apex:pageBlockSection title="{!$Label.Trials}" columns="1" collapsible="false"></apex:pageBlockSection>
+        </div>
+
+ 		<div class="pbHeader buttonsSection">
+	        <table>
+	        	<tr>
+		        	<td class="pbTitle"></td>
+		        	<td class="pbButton">
+			            <apex:commandButton value="{!$Label.AccountPage_btn_new_trial}" styleClass="{!IF(OR(modeEdit, modeNewLines, NOT(isOwner), currentCampaign == null), 'hidden', '')} btn-view" onClick="modeAdd(this, Add_Trials); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_add_trial_line}" disabled="true" styleClass="{!IF(OR(modeEdit, modeNewLines, NOT(isOwner), currentCampaign == null), 'hidden', '')} btn-view btn-newlines" onClick="rowsNewLines(this, RowsNewLines_Trials); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_edit}" disabled="true" styleClass="{!IF(OR(modeEdit, modeNewLines, AND(NOT(isAdmin), NOT(isOwner)), currentCampaign == null), 'hidden', '')} btn-view btn-rows" onClick="rowsEdit(this, RowsEdit_Trials); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_edit_all}" disabled="false" styleClass="{!IF(OR(modeEdit, AND(NOT(isAdmin), NOT(isOwner)), currentCampaign == null), 'hidden', '')} btn-view btn-all" onClick="rowsEditAll(this, RowsEdit_Trials); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_delete}" disabled="true" styleClass="{!IF(OR(modeEdit, modeNewLines, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')} btn-view btn-rows" onClick="xConfirm(this, 'delete', RowsDelete_Trials); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_add}" styleClass="{!IF(modeAdd, '', 'hidden')} btn-add" disabled="true" onClick="rowsAdd(this, RowsNew_Trials); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_save}" styleClass="{!IF(AND(OR(modeEdit, modeNewLines), NOT(modeAdd)), '', 'hidden')} btn-action" onClick="if(!requiredCheck(this)) { return false; } xConfirm(this, 'save', RowsSave_Trials); return false;" />
+			            <apex:commandButton value="{!$Label.AccountPage_btn_discard}" styleClass="{!IF(OR(modeEdit, modeNewLines), '', 'hidden')} btn-action" onClick="xConfirm(this, 'cancel', Cancel_Trials); return false;" />
+					</td>
+				</tr>
+			</table>
+		</div>
+
+        <select class="chosen-product-picker {!IF(modeAdd, '', 'hidden')}" data-placeholder="{!$Label.AccountPage_picklist_choose_products}" multiple="multiple" id="ProductPicker_Trials"></select>
+        
+        <table class="sortable-features-off compact row-border hover nowrap {!IF(OR(NOT(modeNew), List_Records_add == null, List_Records_add.size == 0), 'hidden', '')}">
+            <thead>
+                <tr>
+                	<th>Products</th>
+                    <apex:repeat var="f" value="{!FieldSet_Parents}">
+                        <th>{!f.label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat var="r" value="{!List_Parents_add}">
+                <tr>
+                	<td>
+                            <table class="sortable-features-off compact nowrap tablePCE">
+                            	<thead>
+                            		<tr>
+	                            		<apex:repeat var="f" value="{!FieldSet_Component}">
+					                        <th>{!f.label}</th>
+					                    </apex:repeat>
+	                            	</tr>
+                            	</thead>
+                            	<tbody>
+                            		<apex:repeat var="r2" value="{!List_Records_add}">
+                            		<tr class="dataPCE" data-pce="{!r2.ProductCatalogEntryRef__c}">
+	                            		<apex:repeat var="f2" value="{!FieldSet_Component}">
+	                            			<td class="{!f2}">
+	                            				<apex:outputField value="{!r2[f2.fieldPath]}" rendered="{!IF(f2.fieldPath != 'ProductRef__c', false, true)}" />
+												<apex:inputField value="{!r2[f2.fieldPath]}" rendered="{!IF(f2.fieldPath != 'ProductRef__c', true, false)}" style="width:75%" styleClass="{!IF(OR(f2.required, f2.dbrequired), 'required', '')}" />
+	                            			</td>
+											<style type="text/css">
+				                            	.apex_tri td.Yield__c input {max-width: 90px}
+				                            </style>
+	                            		</apex:repeat>
+                            		</tr>
+                            		</apex:repeat>
+                            	</tbody>
+                            </table>
+                	</td>
+                    <apex:repeat var="f" value="{!FieldSet_Parents}">
+                        <td class="{!f}">
+                            <apex:inputField value="{!r[f.fieldPath]}" rendered="{!AND(f.fieldPath != 'Type__c', f.fieldPath != 'Status__c', f.fieldPath != 'HarvestedBy__c')}" style="width:75%" styleClass="{!IF(OR(f.required, f.dbrequired), 'required', '')}" />
+                            
+    						<apex:selectList rendered="{!f.fieldPath == 'Type__c'}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select {!IF(OR(f.required, f.dbrequired), 'required', '')}">
+    							<apex:selectOption itemValue="" itemLabel="" itemDisabled="false" />
+    							<apex:selectOptions value="{!Options_Type}" />
+    						</apex:selectList>
+
+    						<apex:selectList rendered="{!f.fieldPath == 'Status__c'}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select {!IF(OR(f.required, f.dbrequired), 'required', '')}">
+    							<apex:selectOption itemValue="" itemLabel="" itemDisabled="false" />
+    							<apex:selectOptions value="{!Options_Status}" />
+    						</apex:selectList>
+    						
+    						<apex:selectList rendered="{!f.fieldPath == 'HarvestedBy__c'}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select {!IF(OR(f.required, f.dbrequired), 'required', '')}">
+    							<apex:selectOption itemValue="" itemLabel="" itemDisabled="false" />
+    							<apex:selectOptions value="{!Options_HarvestedBy}" />
+    						</apex:selectList>
+                        </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+		
+		<apex:variable var="rows_parents_newlines" value="{!''}{!RowsParents}" />
+		<apex:variable var="rows_parents_edit" value="{!''}{!RowsParents}" />
+        <apex:variable var="rows_edit" value="{!''}{!Rows}" />
+
+        <table class="sortable compact row-border hover nowrap">
+            <thead class="{!IF(List_Parents.size == 0, 'hidden', '')}">
+                <tr>
+                    <th class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"></th>
+                    <th class="col-flag {!IF(OR(modeEdit, modeNewLines, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" /></th>
+                    <th>{!$ObjectType.Product2.labelPlural}</th>
+                    <apex:repeat var="f" value="{!FieldSet_Parents}">
+                        <th>{!f.label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat var="r" value="{!List_Parents}">
+                <tr class="{!IF(OR(AND(modeEdit, NOT(CONTAINS(rows_parents_edit, r.Id))), AND(modeNewLines, NOT(CONTAINS(rows_parents_newLines, r.Id))), AND(modeNew, r.Id != null)), 'row-disabled', '')} {!IF(AND(!modeNew, r.Id == null), 'hidden', '')} {!IF(AND(modeNew, r.Id == null), 'newLine', '')}">
+                    <td class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r.Id}" title="{!r.Name}" target="_blank" onClick="event.stopPropagation()"><img src="/img/alohaSkin/help_grey.png" /></a></td>
+                    <td class="col-flag record-parent {!IF(OR(modeEdit, modeNewLines, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" record-id="{!r.Id}" /></td>
+                    <td class="hiddenLines">
+                            <table class="sortable-features-off compact nowrap">
+                            	<thead>
+                            		<tr>
+                            			<th class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"></th>
+                    					<th class="col-flag {!IF(OR(modeEdit, modeNewLines, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" class="hidden" /></th>
+	                            		<apex:repeat var="f" value="{!FieldSet_Component}">
+					                        <th>{!f.label}</th>
+					                    </apex:repeat>
+	                            	</tr>
+                            	</thead>
+                            	<tbody>
+                            		<apex:repeat var="r2" value="{!Map_Key[r.Id]}">
+                            		<tr class="{!IF(AND(modeEdit, NOT(CONTAINS(rows_edit, r2.Id))), 'row-disabled', '')} {!IF(AND(!modeNewLines, r2.Id == null), 'hidden', '')} {!IF(AND(modeNewLines, r2.Id == null), 'newLine', '')}">
+                            			<td class="record-flag {!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r2.Id}" title="{!r2.Name}" target="_blank" onClick="event.stopPropagation()"><img src="/img/alohaSkin/help_grey.png" /></a></td>
+                    					<td class="col-flag {!IF(OR(modeEdit, modeNewLines, AND(NOT(isAdmin), NOT(isOwner))), 'hidden', '')}"><input type="checkbox" record-id="{!r2.Id}" /></td>
+	                            		<apex:repeat var="f2" value="{!FieldSet_Component}">
+	                            			<td class="{!f2}">
+	                            				<apex:outputField value="{!r2[f2.fieldPath]}" rendered="{!IF(OR(AND(CONTAINS(rows_edit, r2.Id), f2.fieldPath != 'ProductRef__c'), AND(modeNewLines, r2.Id == null)), false, true)}" />
+												<apex:inputField value="{!r2[f2.fieldPath]}" rendered="{!IF(OR(AND(CONTAINS(rows_edit, r2.Id), f2.fieldPath != 'ProductRef__c'), AND(modeNewLines, r2.Id == null, f2.fieldPath != 'ProductRef__c')), true, false)}" style="width:75%" styleClass="{!IF(OR(f2.required, f2.dbrequired), 'required', '')}" />
+	                            			
+					    						<apex:selectList rendered="{!IF(AND(modeNewLines, r2.Id == null, f2.fieldPath == 'ProductRef__c'), true, false)}" value="{!r2[f2.fieldPath]}" size="1" styleClass="chosen-select {!IF(OR(f2.required, f2.dbrequired), 'required', '')} listProducts">
+					    							<apex:selectOption itemValue="" itemLabel="" itemDisabled="false" />
+					    							<apex:selectOptions value="{!Options_Products}" />
+					    						</apex:selectList>
+	                            			</td>
+	                            		</apex:repeat>
+                            		</tr>
+                            		</apex:repeat>
+                            	</tbody>
+                            </table>
+                            <apex:commandButton value="{!$Label.AccountPage_btn_add_line}" styleClass="{!IF(AND(modeNewLines, CONTAINS(rows_parents_newlines, r.Id)), '', 'hidden')} btnNewLines" onClick="addNewLine(this); return false;" />
+                    </td>
+                    <apex:repeat var="f" value="{!FieldSet_Parents}">
+                        <td class="{!f}">
+                            <apex:outputField value="{!r[f.fieldPath]}" rendered="{!IF(AND(NOT(modeNewLines), CONTAINS(rows_parents_edit, r.Id)), false, true)}" />
+                            <apex:inputField value="{!r[f.fieldPath]}" rendered="{!IF(AND(NOT(modeNewLines), CONTAINS(rows_parents_edit, r.Id), f.fieldPath != 'Type__c', f.fieldPath != 'Status__c', f.fieldPath != 'HarvestedBy__c'), true, false)}" style="width:75%" styleClass="{!IF(OR(f.required, f.dbrequired), 'required', '')}" />
+
+    						<apex:selectList rendered="{!IF(AND(NOT(modeNewLines), CONTAINS(rows_parents_edit, r.Id), f.fieldPath == 'Type__c'), true, false)}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select {!IF(OR(f.required, f.dbrequired), 'required', '')}">
+    							<apex:selectOption itemValue="" itemLabel="" itemDisabled="false" />
+    							<apex:selectOptions value="{!Options_Type}" />
+    						</apex:selectList>
+
+    						<apex:selectList rendered="{!IF(AND(NOT(modeNewLines), CONTAINS(rows_parents_edit, r.Id), f.fieldPath == 'Status__c'), true, false)}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select {!IF(OR(f.required, f.dbrequired), 'required', '')}">
+    							<apex:selectOption itemValue="" itemLabel="" itemDisabled="false" />
+    							<apex:selectOptions value="{!Options_Status}" />
+    						</apex:selectList>
+    						
+    						<apex:selectList rendered="{!IF(AND(NOT(modeNewLines), CONTAINS(rows_parents_edit, r.Id), f.fieldPath == 'HarvestedBy__c'), true, false)}" value="{!r[f.fieldPath]}" size="1" styleClass="chosen-select {!IF(OR(f.required, f.dbrequired), 'required', '')}">
+    							<apex:selectOption itemValue="" itemLabel="" itemDisabled="false" />
+    							<apex:selectOptions value="{!Options_HarvestedBy}" />
+    						</apex:selectList>
+    						
+                        </td>
+                    </apex:repeat>
+                </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+        
+        <ul class="block-details-list">
+    		<apex:repeat var="r" value="{!availableReports}">
+    			<li class="{!IF(NOT(isAdmin), 'hidden', '')}"><a href="/{!r.Id}?pv1={!account.Id}" target="_blank"><img src="/img/icon/custom51_100/gears16.png" />{!r.Name}</a></li>
+    		</apex:repeat>
+        </ul>
+        
+    </apex:pageBlock>
+
+    <apex:actionFunction action="{!doDelete}" name="RowsDelete_Trials" reRender="List_Records_Table" oncomplete="iniAll()">
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+        <apex:param name="secondParam" assignTo="{!RowsParents}" value="" />
+    </apex:actionFunction>
+
+    <apex:actionFunction action="{!modeNew}" name="RowsNew_Trials" reRender="List_Records_Table" oncomplete="iniAll()">
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+        <apex:param name="secondParam" assignTo="{!RowsParents}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction action="{!modeEdit}" name="RowsEdit_Trials" reRender="List_Records_Table" oncomplete="iniAll()">
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+        <apex:param name="secondParam" assignTo="{!RowsParents}" value="" />
+    </apex:actionFunction>
+
+    <apex:actionFunction action="{!modeNewLines}" name="RowsNewLines_Trials" reRender="List_Records_Table" oncomplete="iniAll()">
+        <apex:param name="firstParam" assignTo="{!Rows}" value="" />
+        <apex:param name="secondParam" assignTo="{!RowsParents}" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction action="{!cancelModes}" name="Cancel_Trials" reRender="List_Records_Table" oncomplete="iniAll()" />
+    <apex:actionFunction action="{!doSave}" name="RowsSave_Trials" reRender="List_Records_Table" oncomplete="iniAll()" />
+    <apex:actionFunction action="{!modeAdd}" name="Add_Trials" reRender="List_Records_Table" oncomplete="iniAll()" />
+
+    <script type="text/javascript">
+        $(document).ready(function()
+        {               
+            if('{!modeAdd}' == 'true')
+                iniProductPicker();
+            
+            if('{!modeEdit}' == 'true')
+            	fixRowsParents();
+            
+            if('{!modeNewLines}' == 'true')
+            	groupProducts();
+            
+            if('{!modeNew}' == 'true' && '{!modeAdd}' == 'false')
+                fillProductValues();
+        });
+        
+        function fixRowsParents()
+        {
+        	$('.sortable tr .sortable-features-off').each(function()
+        	{
+        		var enabledRows = $(this).find('tbody tr:not(.row-disabled)');
+        		if(enabledRows.length > 0)
+        			$(this).closest('tr').removeClass('row-disabled');
+				else
+					$(this).closest('tr').addClass('row-disabled');
+        	});
+        }
+        
+        function groupProducts()
+        {
+        	$('.listProducts').each(function()
+        	{
+        		var vendors = {};
+        		
+        		$('option', this).each(function(i)
+        		{
+        			if(i === 0)
+        				return;
+        			var itm_option = $(this);
+        			var itm_vendor_array = itm_option.text().split('/');
+        			
+        			if(!vendors[itm_vendor_array[0]])
+        				vendors[itm_vendor_array[0]] = [];
+        			
+        			vendors[itm_vendor_array[0]].push(itm_option);
+        		});
+        		
+        		for(var vendor in vendors)
+        		{
+        			if(vendors.hasOwnProperty(vendor))
+        			{
+        				var groupElements = $(vendors[vendor]).map(function()
+        				{
+        					return this.toArray();
+        				});
+        				
+        				var optGroup = $('<optgroup/>');
+        				optGroup.attr('label', vendor);
+        				
+        				groupElements.wrapAll(optGroup);
+        				
+        				groupElements.each(function()
+        				{
+        					$(this).text(function()
+        					{
+        						return $(this).text().replace(vendor + '/', '');
+        					});
+        				});
+        			}
+        		}
+        	});
+        }
+        
+        function iniProductPicker()
+        {
+            var ProductCatalog_Trial = '{!Id_ProductCatalog_Trial}';
+            var ProductCatalog_Competitor = '{!Id_ProductCatalog_Competitor}';
+            query = "SELECT Id, ProductRef__c, Product_Name__c, ProductRef__r.ProductVendor__c, Vendor__c";
+            query += " FROM ProductCatalogEntry__c";
+            query += " WHERE (ProductCatalogRef__c = '" + ProductCatalog_Trial + "' OR ProductCatalogRef__c = '" + ProductCatalog_Competitor + "')";
+            query += " AND IsActive__c = true AND ProductRef__c != null";
+            query += " AND ProductRef__r.ProductVendor__c != null";
+            query += " AND ProductRef__r.IsActive = true";
+            query += " ORDER BY Vendor__c ASC, Product_Name__c ASC";
+    
+			try {
+            	result = sforce.connection.query(query);
+            } catch(e) {
+            	console.log(e);
+            }
+
+            var queryMore = true;
+            var options = "";
+            while(queryMore)
+            {
+		        var records = result.getArray("records");
+		        var records_mto = [];
+		        var records_other = [];
+		        for(var i = 0; i < records.length; i++)
+		        {
+		        	if(records[i].Vendor__c.indexOf('Monsanto') >= 0)
+		        		records_mto.push(records[i]);
+		        	else
+		        		records_other.push(records[i]);
+		        }
+		        records = $.merge( $.merge( [], records_mto ), records_other );
+		        for(var i = 0; i < records.length; i++)
+		        {
+		        	if(i == 0)
+                		options += "<optgroup label='" + records[i].Vendor__c + "'>";
+                	
+		            options += "<option value='" + records[i].ProductRef__c + "/" + records[i].Id + "'>" + records[i].Product_Name__c + "</option>";
+		            
+		            if(i != (records.length - 1) && records[i].ProductRef__r.ProductVendor__c != records[i+1].ProductRef__r.ProductVendor__c)
+		                options += "</optgroup><optgroup label='" + records[i+1].Vendor__c + "'>";
+		            if(i == (records.length - 1))
+		                options += "</optgroup>";
+				}
+		        if(result.getBoolean("done"))
+		            queryMore = false;
+		        else
+		            result = sforce.connection.queryMore(result.queryLocator);
+            }
+
+            $('#ProductPicker_Trials').html(options);
+
+            $('#ProductPicker_Trials').chosen({disable_search_threshold: 8, max_selected_options: 8, search_contains: true, no_results_text: "{!$Label.AccountPage_picklist_no_results}"}).change(function() {
+
+                $(this).trigger('chosen:updated');
+
+                if($('#ProductPicker_Trials ~ .chosen-container .chosen-choices .search-choice').length == 0)
+                    $(this).closest('.accountBlock').find('.btn-add').prop('disabled', true).addClass('btnDisabled').removeClass('btn');
+                else
+                    $(this).closest('.accountBlock').find('.btn-add').prop('disabled', false).removeClass('btnDisabled').addClass('btn');
+            });
+        }
+        
+        function fillProductValues()
+        {
+            var arrayPCE = [];
+            $('.dataPCE').each(function()
+            {
+                arrayPCE.push('\'' + $(this).attr('data-pce') + '\'');
+            });
+            
+            query = "SELECT Id, ProductRef__r.Name, ProductRef__r.Description,";
+            query += " ProductRef__r.ProductTypeRef__c, ProductRef__r.ProductTypeRef__r.Name,";
+            query += " ProductRef__r.ProductTreatment__c, ProductRef__r.ProductVendor__r.Name, ProdHumidity__c";
+            query += " FROM ProductCatalogEntry__c";
+            query += " WHERE Id IN (" + arrayPCE.toString() + ")";
+
+            result = sforce.connection.query(query);
+            records = result.getArray("records");
+            for(i = 0; i < records.length; i++) {
+                $('.tablePCE').find('[data-pce="' + records[i].Id + '"]').children('td').each(function() {
+                    if($(this).hasClass('ProductRef__c')) $(this).html(records[i].ProductRef__r.Name);
+                    if($(this).hasClass('HybridName__c')) $(this).html(records[i].ProductRef__r.Description);
+                    if($(this).hasClass('Treatment__c')) $(this).html(records[i].ProductRef__r.ProductTreatment__c);
+                    if($(this).hasClass('Provider__c')) $(this).html(records[i].ProductRef__r.ProductVendor__r.Name);
+                    if($(this).hasClass('Humidity__c')) $(this).html(records[i].ProdHumidity__c);
+                    if($(this).hasClass('FRML_PRODUCTTYPE__c')) {
+                        records[i].ProductRef__r.ProductTypeRef__c != null ? $(this).html(records[i].ProductRef__r.ProductTypeRef__r.Name) : $(this).html('');
+                    }
+                });
+            }
+        }
+    </script>
+    
+    </apex:form>
+    
+</apex:component>

@@ -1,0 +1,87 @@
+<apex:page controller="CP_BudgetSKUDistributionController"  >
+    <style type="text/css"> 
+        .inlineEditWriteOn{background:url(/img/func_icons/util/pencil12.gif) no-repeat right 2px}
+        .inlineEditDiv input[type=text]{max-width: 50px}
+        hr {
+		    border: 0;
+		    height: 2px;
+		    background-color: #e4e4e4;
+		    margin-bottom: 12px;
+        }
+        #tmp {
+        	border: 0;
+        	margin: 0;
+        	padding: 0;
+        }
+    </style>
+   <apex:form >
+      <div>
+         <apex:pageBlock >
+            <apex:actionStatus onstart="loading(true)" onstop="loading(false)" id="loadStatus"/>
+            <div>
+               <apex:outputLabel value="{!$Label.CP_Fiscal_Year} " style="font-weight:bold"/>
+                <apex:inputField value="{!aplFY.PICK_Budget_Fiscal_Year__c}" required="true">               
+                    <apex:actionSupport event="onchange" action="{!getData}" onsubmit="loading(true)" oncomplete="loading(false)" reRender="budgetPreview"/>
+                </apex:inputField>
+            </div>
+         </apex:pageBlock>
+         
+         <apex:pageBlock id="budgetPreview" title="{!$Label.Budget_Distribution_Preview}" rendered="{!budgetPreview.size > 0}">
+	         <div id="contentLoading" style="display:none;">
+	            <div style="text-align: center;">
+	               <img src="/img/loading.gif" alt="Loading graphic" />
+	            </div>
+	         </div>
+	         <div id="contentLoaded">
+		         <apex:pageBlockTable value="{!budgetPreview}" var="item">
+		            <apex:column headerValue="{!$Label.SKU}" value="{!item.product}" />
+		            <apex:column headerValue="{!$Label.Budget_BU}" width="150" rendered="{!IF(country.Units_of_Measurement__c  == 'Basic Units', true, false)}" >                     
+		                <apex:outputField value="{!item.budget.NUM_Budget__c}" rendered="{!IF(isDevice == 'true', true, false)}">
+		                    <apex:inlineEditSupport event="onmouseover" />
+		                </apex:outputField>
+		                <apex:outputField value="{!item.budget.NUM_Budget__c}" rendered="{!IF(isDevice == 'false', true, false)}">
+		                    <apex:inlineEditSupport event="ondblclick" />
+		                </apex:outputField>
+		            </apex:column>
+		            <apex:column headerValue="{!$Label.Budget_REL}" width="150" rendered="{!IF(country.Units_of_Measurement__c  == 'Rels', true, false)}" >
+		                <apex:outputField value="{!item.budget.NUM_Budget_Rel__c}" rendered="{!IF(isDevice == 'true', true, false)}">
+		                    <apex:inlineEditSupport event="onmouseover" />
+		                </apex:outputField>
+		                <apex:outputField value="{!item.budget.NUM_Budget_Rel__c}" rendered="{!IF(isDevice == 'false', true, false)}">
+		                    <apex:inlineEditSupport event="ondblclick" />
+		                </apex:outputField>
+		            </apex:column>
+		         </apex:pageBlockTable>
+	         </div>
+         </apex:pageBlock>
+         <div style="margin-top:20px; text-align:center">
+            <hr/>
+            <apex:commandButton styleClass="saveBtn" value="{!$Label.Save_Budget}" action="{!saveBudgetSKU}" onclick="if(!confirm('{!$Label.CP_Save_Alert}')){return false;}; loading(true); saveBudgetF(); return false;" />                  
+            <apex:actionFunction action="{!saveBudgetSKU}" name="saveBudgetF" reRender="budgetPreview" oncomplete="loading(false)" />
+         </div>
+      </div>
+   </apex:form>
+	<apex:includeScript value="{!$Resource.jQuery}"/>
+	<apex:includeScript value="{!URLFOR($Resource.jQuery_chosen,'chosen.jquery.min.js')}" />
+	<apex:includeScript id="a" value="https://www.google.com/jsapi" />
+   <script type="text/javascript">
+      function loading(val) 
+      {
+          if(val) {
+          	var DivHeight = $('#contentLoaded').height() - 16;
+            document.getElementById('contentLoading').style.display = 'block';
+            document.getElementById('contentLoaded').style.display = 'none';
+            
+            $('#contentLoading').before('<div id="tmp" style="height: ' + DivHeight +'px"></div>');
+      		$('.saveBtn').prop('disabled', 'disabled').addClass('btnDisabled');
+          }
+          else 
+          {
+          	$('#tmp').remove();
+            document.getElementById('contentLoading').style.display = 'none';
+            document.getElementById('contentLoaded').style.display = 'block';
+            $('.saveBtn').prop('disabled', '').removeClass('btnDisabled');
+          }
+      }
+   </script>
+</apex:page>

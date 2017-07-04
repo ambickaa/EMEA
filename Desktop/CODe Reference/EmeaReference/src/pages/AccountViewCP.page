@@ -1,0 +1,27 @@
+<apex:page id="page" standardController="Account"  extensions="AccountViewExtension" sidebar="false">
+
+	<script type="text/javascript">document.body.className += ' scroll-disabled';</script>
+    <div id="PageLoader" style="position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 99; background: #fff"></div>
+
+	<c:AccountPageStyles />
+	<apex:detail relatedList="true" showChatter="false" inlineEdit="true"/>
+	<c:AccountDetail account="{!account}"/>
+   
+    <span id="PageComponents">
+        <span class="apex_acr"><c:AccountPageAcreages account="{!account}" /></span>
+    </span>
+
+	<span style="display:{!IF(OR(account.RecordType.name == 'Group/Farm/Site', account.RecordType.name == 'Dist./Ret./PoS'), '', 'none')}">        
+		<c:AccountActionPlanCP id="CPComponent" rendered="{!(isCpUser && account.RecordType.name == 'Dist./Ret./PoS') || $Profile.Name == 'System Administrator'}" category="{!account.GC_Cust_Account_Grp_Descr__c}" />
+	</span>
+	<span id="RelatedLists"></span>
+	<c:AccountStyle />
+	<script src="/apex/TacticalPlanPermission?id={!account.Id}&division={!divisionId}&core.apexpages.devmode.url=1"></script>
+   
+	<c:AccountPageScripts />
+	
+    <span class="PageLocale hidden">
+        <apex:outputField value="{!account.NUM_Locale_Test__c}" />
+    </span>
+    
+</apex:page>

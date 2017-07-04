@@ -1,0 +1,73 @@
+<apex:page standardController="Order__c"  extensions="OrderDetailExtensions" sidebar="false">
+<apex:includeScript value="{!$Resource.jQuery_1_9_1}"/>
+<apex:includeScript value="/soap/ajax/28.0/connection.js" />
+<apex:includeScript value="/soap/ajax/28.0/apex.js" />
+<script src="{!URLFOR($Resource.spin_min_js)}"></script>
+ 
+<meta name="viewport" content="width=1600" />
+
+<script>
+ 
+
+if(top.window.opener!=null)
+{
+  top.window.opener.reloadPage(window.location.href);
+  top.window.close()
+};
+  
+var opts = {
+  lines: 13, // The number of lines to draw
+  length: 7, // The length of each line
+  width: 4, // The line thickness
+  radius: 10, // The radius of the inner circle
+  rotate: 0, // The rotation offset
+  color: '#000', // #rgb or #rrggbb
+  speed: 1, // Rounds per second
+  trail: 60, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: 'auto', // Top position relative to parent in px
+  left: 'auto' // Left position relative to parent in px
+};
+
+function popupSpinner(elementId)
+{    
+    target2 = document.getElementById(elementId);
+    spinner2 = new Spinner(opts).spin(target2);     
+}
+             
+function popupSpinnerClose()
+{
+    spinner2.stop();
+}
+
+
+</script>
+    <div id="errorDiv_ep"></div>
+    <apex:pageMessages id="messages"  rendered="true"></apex:pageMessages>
+    <apex:detail id="detailId" subject="{!Order__c}" relatedList="false" showChatter="false" inlineEdit="true" oncomplete="window.location.reload(false);"/>
+    <c:OrderDetail order="{!Order__c}" />
+    <c:OrderProducts />
+    <apex:pageMessages id="messages2"  rendered="true"></apex:pageMessages>           
+   
+   
+    <apex:relatedList id="attachments" list="NotesAndAttachments" />
+    <apex:relatedList id="approval" list="ProcessSteps" />     
+    <c:GenericHistoryComponent id="history" recordLimit="50" myObject="{!Order__c}"/>
+    <c:OrderDetailStyle />
+    
+    <script>
+    var elements = document.getElementsByTagName('a');
+    for(i=0;i<elements.length;i++)
+    {
+        if(elements[i].href.indexOf('?et=REASSIGN')>-1)
+        {
+          elements[i].parentNode.removeChild(elements[i]);
+        }
+    }
+    </script>
+
+    
+</apex:page>

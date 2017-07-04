@@ -1,0 +1,10 @@
+<apex:component controller="AccountTrialStandardController">
+
+<apex:relatedList list="Trials__r" subject="{!$CurrentPage.parameters.id}" pageSize="500" /> 
+
+<script type="text/javascript">
+    $(':input[type="button"]').get(-1).setAttribute('onclick',$(':input[type="button"]').get(-1).getAttribute('onclick')
+        .replace('?','?{!$Label.CF_Trial_CampaignRef}={!currentCampaign.Name}&{!$Label.CF_Trial_CampaignRef}_lkid={!currentCampaign.id}&'));
+</script>
+
+</apex:component>

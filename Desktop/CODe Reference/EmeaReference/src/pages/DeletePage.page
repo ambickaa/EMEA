@@ -1,0 +1,91 @@
+<apex:page controller="DeletePageController" showHeader="false" sidebar="false" >
+
+    <apex:sectionHeader title="Delete Management Page"/>
+
+    <apex:form >
+ 
+        <apex:pageMessages id="messages"/>
+        <!-- Filters to search budgets -->
+        <apex:pageBlock title="Account Search" id="accfilters" tabStyle="Account">
+            <apex:pageBlockSection >
+                Accounts to Delete<apex:inputText value="{!accToFind}"/>
+                By Client Code<apex:inputcheckbox value="{!clientCodes}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Search" action="{!doFindAcc}"  reRender="messages, search"  status="loadingSearch"/>
+                <apex:actionStatus id="loadingSearch" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        <apex:pageBlock title="Contact Search" id="confilters" tabStyle="Contact">
+            <apex:pageBlockSection >
+                Contacts to Delete<apex:inputText value="{!conToFind}"/>
+                By Monsanto ID<apex:inputcheckbox value="{!monsantoIDs}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Search" action="{!doFindCon}" reRender="messages, search" status="loadingSearch2"/>
+                <apex:actionStatus id="loadingSearch2" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            </apex:pageBlockButtons>
+           </apex:pageBlock> 
+           <apex:pageBlock id="search" >
+               <apex:pageBlockSection title="Accounts to Delete" id="acc2del" >
+                    <apex:pageBlockTable value="{!accToDel}" var="acc">
+                        <apex:column value="{!acc.id}"/>
+                        <apex:column value="{!acc.name}"/>
+                        <apex:column value="{!acc.Category__c}"/>
+                        <apex:column value="{!acc.Client_Code__c}"/>
+                        <apex:column value="{!acc.Owner.Name}"/>
+                        <apex:column value="{!acc.OwnerId}"/>
+                        <apex:column value="{!acc.Phone}"/>
+                        <apex:column value="{!acc.CountryRef__r.Name}"/> 
+                        <apex:column value="{!acc.GC_Email_Address__c}"/>
+               </apex:pageBlockTable>
+           </apex:pageBlockSection>
+           <apex:pageBlockSection title="Contacts to Delete" id="con2Del" >
+                <apex:pageBlockTable value="{!conToDel}" var="con">
+                   <apex:column value="{!con.id}"/>
+                   <apex:column value="{!con.Account.Name}"/>
+                   <apex:column value="{!con.AccountId}"/>
+                   <apex:column value="{!con.DE_MonsantoID__c}"/>
+                   <apex:column value="{!con.Owner.Name}"/>
+                   <apex:column value="{!con.OwnerId}"/>
+                   <apex:column value="{!con.Email}"/>
+                   <apex:column value="{!con.Phone}"/>
+                   <apex:column value="{!con.CountryRef__r.Name}"/>
+               </apex:pageBlockTable>
+           </apex:pageBlockSection> 
+           <apex:pageBlockSection title="Campaign Line Items to Delete" id="cli2Del" >
+               <apex:pageBlockTable value="{!cliToDel}" var="cli">
+                   <apex:column value="{!cli.id}"/>
+                   <apex:column value="{!cli.name}"/>
+                   <apex:column value="{!cli.RecordType.Name}"/>
+                   <apex:column value="{!cli.ProductName_RSA__c}"/>
+                   <apex:column value="{!cli.FarmName__c}"/>
+                   <apex:column value="{!cli.FarmRef__c}"/>
+                   <apex:column value="{!cli.CampaignRef__r.Name}"/>
+                   <apex:column value="{!cli.Forecast__c}"/>
+                   <apex:column value="{!cli.Agreed__c}"/>
+                   <apex:column value="{!cli.POG__c}"/>
+                   <apex:column value="{!cli.PreliminaryOrderRef_RSA__r.Name}"/>
+                   <apex:column value="{!cli.FinalOrderRef_RSA__r.Name}"/>
+               </apex:pageBlockTable>
+           </apex:pageBlockSection>
+           <apex:pageBlockSection title="Acreages to Delete" id="acr2Del" >
+               <apex:pageBlockTable value="{!acrToDel}" var="acr">
+                   <apex:column value="{!acr.id}"/>
+                   <apex:column value="{!acr.name}"/>
+                   <apex:column value="{!acr.AcrFarmRef__r.Name}"/>
+                   <apex:column value="{!acr.AcrFarmRef__c}"/>
+                   <apex:column value="{!acr.AcrProductRef__r.Name}"/>
+                   <apex:column value="{!acr.AcrTotalAcreages__c}"/>
+                   <apex:column value="{!acr.AcrPrevTotalAcreages__c}"/>                   
+               </apex:pageBlockTable>
+           </apex:pageBlockSection>
+       </apex:pageBlock>
+       <apex:pageBlock >
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Delete" action="{!doDelete}" reRender="messages, search" status="loadingSearch"/>
+                <apex:actionStatus id="loadingSearch" ><apex:facet name="start"><apex:image value="/img/loading.gif"/></apex:facet></apex:actionStatus>         
+            </apex:pageBlockButtons>
+       </apex:pageBlock>
+    </apex:form>
+</apex:page>
